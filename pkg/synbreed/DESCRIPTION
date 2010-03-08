@@ -1,0 +1,12 @@
+Package: synbreed
+Type: Package
+Title: Collection of methods developed the synbreed project for animal and plant breeding
+Version: 0.1-1
+Date: 2010-03-05
+Author: Valentin Wimmer
+Depends: lattice
+Maintainer: Valentin Wimmer <Valentin.Wimmer@wzw.tum.de>
+Description: A package containing statistical models for genotyping and analysing animal and plant breeding data. The package contains as well functions for data management, analysing functions and plotting methods. 
+License: GPL-2
+LazyLoad: yes
+ZipData: no
