@@ -1,0 +1,171 @@
+\documentclass[12pt, a4paper, titlepage, ngerman]{book}
+
+% Lade wichtige Packete
+
+%%% Standard-Pakete
+\usepackage[latin1]{inputenc} % Dateien sind in latin1 (ISO8859-1)-Zeichenkodierung
+\usepackage[T1]{fontenc}      % T1-Kodierung für west- und osteuropäischen Sprachen mit lateinischem Alphabet
+\usepackage[ngerman]{babel}   % Sprache ist deutsch
+\usepackage{graphicx}
+
+%%% Weitere Pakete
+\usepackage{Sweave}     % zur Verwendung von Sweave
+\usepackage{lmodern}  % Ersatz für Computer Modern-Schriften, alternativ auch Palatino (oder mathpazo, falls im Text mathematische Symbole vorkommen)
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amstext}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{subfig}
+\usepackage{multirow} 
+\usepackage{pdfpages} % zur Einbindung von pdf's mit \includepdf()
+\usepackage{setspace} % Regelt den Zeilenabstand
+\usepackage[automark, headsepline]{scrpage2} % Steuert Kopf- und Fußzeile
+\usepackage[round]{natbib}   % for enhanced citing features
+% \usepackage{bbm}      % for double stem math symbols like \mathbbm{1}
+\usepackage{float}    % for float specifier [H]
+\usepackage{picins}   % for text floating figures
+\usepackage[inner=3cm, outer=3cm, top=3cm, bottom=3cm]{geometry} % regelt das Seitenlayout
+\usepackage{algorithm}
+
+%%% Stil
+\onehalfspacing
+%\setkomafont{caption}{\small}
+\setlength{\skip\footins}{3ex}
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0cm}
+\setlength{\headheight}{1.1\baselineskip}
+\clearscrheadfoot
+\ihead[]{\headmark}
+\ohead[]{\pagemark}
+\pagestyle{plain}
+
+
+%%% Eigene Befehle
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\pdfODERpng}{png}   % Schalter: Für höchste Qualität pdf statt png verwenden
+\newcommand{\geg}{\,\vert\,}
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\IR}{\mathbbm{R}}
+\newcommand{\IN}{\mathbbm{N}}
+\newcommand{\IZ}{\mathbbm{Z}}
+\newcommand{\id}{\mathbbm{1}}
+\newcommand{\E}{\operatorname{E}}     % Erwartungswert
+\newcommand{\Lik}{\operatorname{L}}     % Likelihood
+\newcommand{\Var}{\operatorname{Var}} % Varianz
+\newcommand{\Cov}{\operatorname{Cov}} % Kovarianz
+\newcommand{\N}{\operatorname{N}}     % Normalverteilung
+\newcommand{\Po}{\operatorname{Po}}   % Poissonverteilung
+\newcommand{\rg}{\operatorname{rg}}   % Rang
+\newcommand{\diag}{\operatorname{diag}}   % Diagonalmatrix
+\newcommand{\Spur}{\operatorname{Spur}}   % Spur einer Matrix
+
+
+\newcommand{\m}{\mu_{1\mid jk}}
+\newcommand{\vtheta}{\boldmath$\theta$\unboldmath\,}
+\newcommand{\vgamma}{\boldmath$\gamma$\unboldmath\,}
+\newcommand{\vtau}{\boldmath$\tau$\unboldmath\,}
+\newcommand{\vbeta}{\boldmath$\beta$\unboldmath\,}
+\newcommand{\vq}{\boldmath$q$\unboldmath\,}
+\newcommand{\mvtheta}{\mbox{\boldmath$\theta$\unboldmath}}
+\newcommand{\mvgamma}{\mbox{\boldmath$\gamma$\unboldmath}}
+\newcommand{\mvtau}{\mbox{\boldmath$\tau$\unboldmath}}
+\newcommand{\mvbeta}{\mbox{\boldmath$\beta$\unboldmath}}
+\newcommand{\mvq}{\mbox{\boldmath$q$\unboldmath}}
+\newcommand{\ml}{{\scriptscriptstyle ML}}
+\newcommand{\pml}{{\scriptscriptstyle PML}}
+\newcommand{\fll}{{\scriptscriptstyle FILL}}
+\newcommand{\bfepsilon}{\mbox{\boldmath$ \epsilon \, $\unboldmath } }
+\newcommand{\bfbeta}{\mbox{\boldmath$ \beta $\unboldmath } \,}
+\newcommand{\bfM}{\mbox{\boldmath$ M $\unboldmath } \,}
+\newcommand{\bfQ}{\mbox{\boldmath$ Q $\unboldmath } \,}
+\newcommand{\bfmu}{\mbox{\boldmath$ \mu $\unboldmath} \,}
+\newcommand{\bftheta}{\mbox{\boldmath$ \theta $\unboldmath} \,}
+\newcommand{\bfalpha}{\mbox{\boldmath$ \alpha $\unboldmath} \,}
+\newcommand{\bfomega}{\mbox{\boldmath$ \omega $\unboldmath} \,}
+\newcommand{\bfrho}{\mbox{\boldmath$ \rho $\unboldmath} \,}
+\newcommand{\bfr}{\mbox{\boldmath$ r $\unboldmath} \,}
+\newcommand{\bfpi}{\mbox{\boldmath$ \pi $\unboldmath} \,}
+\newcommand{\bfSigma}{\mbox{\boldmath$ \Sigma $\unboldmath} \,}
+\newcommand{\bfgamma}{\mbox{\boldmath$ \gamma $\unboldmath} \,}
+\newcommand{\bfDelta}{\mbox{\boldmath$ \Delta $\unboldmath} \,}
+\newcommand{\bflambda}{\mbox{\boldmath$ \lambda $\unboldmath} \,}
+\newcommand{\bfeta}{\mbox{\boldmath$ \eta $\unboldmath} \,}
+\newcommand{\bfdelta}{\mbox{\boldmath$ \delta $\unboldmath} \,}
+
+\newtheorem{bemerkung}{Bemerkung}[chapter]
+\newtheorem{defn}{Definition}[chapter]
+\newtheorem{satz}{Satz}[chapter]
+\newenvironment{sat}{\begin{satz}\rm
+                       }{\end{satz}}
+\newenvironment{example}{\vs
+           \refstepcounter{beisp} \mbox{{\bf
+           Beispiel \arabic{chapter}.\arabic{beisp}:}}  \rm \small
+                      }{\normalsize
+                        \vs}
+\newenvironment{define}{\begin{defn}\rm
+                       }{\end{defn}}
+
+%%% hyperref-Paket, PDF-Eigenschaften
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+    pdftitle={Statistische Analysen zu Training und Leistung im Skisprung},
+    pdfauthor={Valentin Wimmer},
+    pdfsubject={Masterarbeit},
+    pdfkeywords={Skisprung, Leistungsdiagnostik, Multivariate Verfahren, Faktorenanalyse},
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+%%% Metadaten
+\title{Vorlesungsskript zu Statistische Methoden\\[1em]
+{\Large Technische Universität München\\Wissenschaftzentrum Weihenstephan\\
+Lehrstuhl für Pflanzenzüchtung}}
+\author{ \Large Prof. Dr. Chris-Carolin Schön und Valentin Wimmer, M.Sc}
+\date{ \Large \today}
+
+
+
+\begin{document}
+
+%--- TITELSEITE ---
+
+\pagenumbering{roman}
+\maketitle
+
+%--- VORWORT ---
+
+\include{Vorwort}
+\cleardoublepage
+
+
+%--- INHALTSVERZEICHNIS ---
+
+\tableofcontents
+\cleardoublepage
+
+%--- HAUPTTEIL ---
+
+% Format der Seitenzahlen
+\pagenumbering{arabic}
+\pagestyle{scrheadings}
+
+\include{Einführung}
+\include{StatistischeMasszahlen}
+\include{Anova}
+\include{Regression}
+\include{Matrixalgebra}
+\include{MultipleRegression}
+\include{Versuchsdesigns}
+\include{MultiplesTesten}
+\include{GemischteModelle}
+\include{GeneralisierteRegression}
+
+\bibliographystyle{natdin}
+\bibliography{Master}
+
+\end{document}
