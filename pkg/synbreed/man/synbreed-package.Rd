@@ -4,8 +4,7 @@
 \alias{synbreed}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+A package containing methods for plant and animal breeding
 }
 \description{
 More about what it does (maybe more than one line)
@@ -24,10 +23,8 @@ LazyLoad: \tab yes\cr
 ~~ functions ~~
 }
 \author{
-Who wrote it
-
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Valentin Wimmer
+Valentin.Wimmer@wzw.tum.de
 }
 \references{
 ~~ Literature or other references for background information ~~
@@ -39,6 +36,4 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 ~~ Optional links to other man pages, e.g. ~~
 ~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
-\examples{
-f(2)
-}
+

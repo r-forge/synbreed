@@ -27,22 +27,15 @@ A numeric vector with the id's for the second parent (father)
 \details{
 Note that this function allows inbreeds where the mother is identical to the father.
 }
+
 \value{
 The numerator relationship matrix (A-matrix in the aninmal model) derived by the pedigree structure.
 }
-\references{
 
-}
 \author{
-Hans-Jürgen Auinger and Valentin Wimmer
-}
-\note{
+Hans-Juergen Auinger and Valentin Wimmer
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-}
 \examples{
 pedigree <- matrix(c(1,  0,   0,   1, 0,
                  2,  0,   0,   1, 0,
@@ -57,7 +50,7 @@ pedigree <- matrix(c(1,  0,   0,   1, 0,
                  11, 5,   1,   3, 0),byrow=TRUE,ncol=5)
 colnames(pedigree) <- c("ID", "P1", "P2", "gener", "line")
 
-A <- kinshipPlants(pedigree[, 1], pedigree[, 5], pedigee[, 2], pedigree[,3])
+A <- kinshipPlants(pedigree[, 1], pedigree[, 5], pedigree[, 2], pedigree[,3])
                  
                   
 
