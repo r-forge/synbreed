@@ -26,7 +26,7 @@ A numeric or character vector of length \code{nrow(data)} giving the population 
 \details{
 Imputing of missing values is done in the following way:
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k}, 
-the value is sampled from the allele distibution of population \eqn{k}. If there are no oberservations for a population no imputing is performed and a message is printed.
+the value is sampled from the allele distibution of population \eqn{k}. 
 }
 \value{
 A \code{data.frame} of the same dimension as \code{data} containg the recoded marker data.
@@ -36,7 +36,7 @@ A \code{data.frame} of the same dimension as \code{data} containg the recoded ma
 Valentin Wimmer
 }
 \note{
-
+If there are no oberservations for a population no imputing is performed and a error message is printed but computation is continued.
 }
 
 \seealso{

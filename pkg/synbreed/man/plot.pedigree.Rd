@@ -1,0 +1,57 @@
+\name{plot.pedigree}
+\alias{plot.pedigree}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Visualisaton of pedigree
+}
+\description{
+A function to visualize pedigree structure by a graph. Each genotype is represented as vertex and direct offsprings are linked by an edge. 
+}
+\usage{
+plot.pedigree(pedigree, effect = NULL)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{pedigree}{
+An object of class \code{pedigree}
+}
+  \item{effect}{
+An vector of length \code{nrow(pedigree)} with an effect to be drawn
+}
+}                                                                    
+\details{
+ The pedigree is structured top-bottom. In the first line the first generation is printed. Links over more than one generation are possible as well as genotypes with only one (known) parent. Usually, no structure in one generation is plotted. If an \code{effect} is given, the genotypes are ordered by this effect and an labeled axis is drawn.
+}                                
+\value{
+rA named graph visualising the pedigree structure
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+Valentin Wimmer
+}
+\note{
+This function uses the plotting method for graphs in the libaray \code{igraph}
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+\code{create.pedigree}, \code{simul.pedigree}
+}
+\examples{
+ped.raw <- matrix(c(1,  0,   0,   1, 
+                 2,  0,   0,   1,
+                 3,  0,   0,   1,
+                 4,  0,   0,   1,
+                5,  1,   2,   2, 
+                 6,  1,   3,   2,
+                 7,  1,   2,   2,
+                 8,  1,   2,   2) ,
+                 byrow = TRUE, ncol = 4)
+ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
+plot(ped)                 
+}
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
