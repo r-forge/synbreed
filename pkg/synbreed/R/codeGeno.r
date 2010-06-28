@@ -78,5 +78,6 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL){
   }  
   # code again if allele frequeny chanched to to imputing
   if(any(colMeans(res,na.rm=TRUE)>1)) res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)] 
+  res <- as.matrix(res,nrow=nrow(x))
   return(res)
 }
