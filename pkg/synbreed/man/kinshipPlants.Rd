@@ -30,6 +30,9 @@ The numerator relationship matrix (A-matrix in the aninmal model) derived by the
 \author{
 Hans-Juergen Auinger and Valentin Wimmer
 }
+\seealso{
+\code{\link{plot.relationshipMatrix}}
+}
 
 \examples{
 ped.raw <- matrix(c(1,  0,   0,   1, 
@@ -47,7 +50,6 @@ ped.raw <- matrix(c(1,  0,   0,   1,
 ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
 
 A <- kinshipPlants(ped)
-                 
-                  
-
 }
+\keyword{relationshipMatrix}
+\keyword{pedigree}

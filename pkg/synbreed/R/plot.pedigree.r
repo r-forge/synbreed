@@ -27,7 +27,8 @@ plot.pedigree <- function(pedigree,effect=NULL,...){
 
 
   # plot
-  plot(ped.graph,rescale=TRUE,vertex.label=pedigree$ID,layout=pos,edge.color=1,edge.width=0.5,edge.arrow.size=0.5,...)
+  # ps.options(family="serif")
+  plot(ped.graph,rescale=TRUE,vertex.label=pedigree$ID,layout=pos,edge.color=1,edge.width=0.5,edge.arrow.size=0.5,vertex.label.family="Helvetica",...)
   if (!is.null(effect)) axis(side=1,at=seq(-1,1,length=10),labels=round(seq(min(pos[,1]),max(pos[,1]),length=10),0))
 }
 

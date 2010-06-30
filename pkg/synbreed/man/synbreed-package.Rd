@@ -7,24 +7,22 @@
 A package containing methods for plant and animal breeding
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
-}
+Simulation, analysis and descriptive funtions for genotypic and phenotypic data in plants and animal breeding.
+}                                                                                                                                        
 \details{
 \tabular{ll}{
-Package: \tab synbreed\cr
+Package: \tab synbreed\cr                           
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2010-03-05\cr
 License: \tab What license is it under?\cr
 LazyLoad: \tab yes\cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+
 }
 \author{
 Valentin Wimmer
-Valentin.Wimmer@wzw.tum.de
+\email{Valentin.Wimmer@wzw.tum.de}
 }
 \references{
 ~~ Literature or other references for background information ~~

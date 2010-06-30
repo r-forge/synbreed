@@ -22,12 +22,12 @@ Use \code{"Hayes"} for transformation of rogers distance into kinship coefficien
 \details{
 Roger's distance is computed as
 \deqn{d=\frac{1}{m}\sum_{i=1}^m \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}}{d=1/m \sum sqrt(\sum(pij-qij)^2)}
-where \eqn{m} is the number of markers and \eqn{n_i} the number of alleles for marker \eqn{i}. \eqn{p_{ij}} and \eqn{q_{ij}} are the allele frequencies of allele \eqn{j} for marker \eqn{i}. Transformation to kinship coefficient according to Hayes and Goddard (2008)
+where \eqn{m} is the number of markers and \eqn{n_i} the number of alleles for marker \eqn{i}. \eqn{p_{ij}}{pij} and \eqn{q_{ij}}{qij} are the allele frequencies of allele \eqn{j} for marker \eqn{i}. Transformation to kinship coefficient according to Hayes and Goddard (2008)
 \deqn{f = \frac{s-s_{min}}{1-s_{min}}}{f= s-smin/(1-smin)}
 where \eqn{s=1-d}.
 
 Transformation according to Melchinger (1991) is
-\deqn{f=1-\frac{d}{\bar{d}}}{1-d/dquer}
+\deqn{f=1-\frac{d}{\bar{d}}}{f=1-d/dquer}
 }
 \value{
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{nxn} matrix containing the relationship coefficients (two times the kinship coefficient).
@@ -42,15 +42,19 @@ J. Anim. Sci. 86:2089–2092.
 \author{
 Valentin Wimmer
 }
-
-
+\note{
+Transformation according to Melchinger is still experimental.
+}                       
 \seealso{
-\link{vanRaden}, \link{codeGeno}
+\code{\link{vanRaden}}, \code{\link{codeGeno}}
 }
 \examples{
 M<- matrix(c(2,2,0,0,0,0,0,2,0,0,0,0,2,2,0,2,2,0,0,0),nrow=5)
+colnames(M) <- paste("M",1:4,sep="")
+rownames(M) <- 1:5
 M
 rogers(M,correction="Hayes")
 rogers(M,correction="Melchinger")
 }
+\keyword{relationshipMatrix}
 

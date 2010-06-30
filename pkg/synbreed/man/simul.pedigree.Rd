@@ -38,7 +38,7 @@ in developement
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\link{simul.phenotype}, \link{create.pedigree},\link{plot.pedigree}
+\code{\link{simul.phenotype}}, \code{\link{create.pedigree}}, \code{\link{plot.pedigree}}
 }
 \examples{
 p <- simul.pedigree(gener=4,ids=c(3,5,8,8))
@@ -46,5 +46,5 @@ plot(p)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{pedigree}
+\keyword{simulation}

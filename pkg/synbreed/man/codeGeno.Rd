@@ -20,13 +20,17 @@ A \code{data.frame} or a \code{matrix} containing the  marker data. Each column 
 A logical specifing whether imputing of missing values should be done.
 }
   \item{popStruc}{
-A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype. \code{popStruc} is needed if \code{impute=TRUE}. 
+A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype. 
 }
 }
 \details{
 Imputing of missing values is done in the following way:
+\describe{
+\item{with population structure}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k}, 
-the value is sampled from the allele distibution of population \eqn{k}. 
+the value is 0 with probability 0.5 and 1 with probability 0.5.}
+\item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the allele distribution of marker \eqn{j}.} 
+}
 }
 \value{
 A \code{data.frame} of the same dimension as \code{data} containg the recoded marker data.
@@ -39,8 +43,6 @@ Valentin Wimmer
 If there are no oberservations for a population no imputing is performed and a error message is printed but computation is continued.
 }
 
-\seealso{
-}
 \examples{
 snp9 <- matrix(c(
   "gua",   "ade",   "gua",   "cyt",   "ade",   "thy",   "cyt",   "gua",  NA,
@@ -58,4 +60,32 @@ snp9 <- data.frame(snp9)
 pop <- c(rep("A",7),rep("B",2))
 
 codeGeno(snp9,TRUE,pop)
+                               
+# example with maize data
+data(maize)
+# set 200 random choosen values to NA
+marker <- maize.geno[,-1]
+# coding without imputation
+marker <- codeGeno(marker)
+set.seed(123)
+ind1 <- sample(1:nrow(marker),200)
+ind2 <- sample(1:ncol(marker),200)
+original <- marker[cbind(ind1,ind2)]
+
+marker[cbind(ind1,ind2)] <- NA
+# 25 populations
+pop <- rep(1:25,each=50)
+marker1 <- codeGeno(marker,impute=TRUE,pop)
+# compare in crosstable
+(t1 <- table(original,marker1[cbind(ind1,ind2)]) )
+# sum of correct replacements
+sum(diag(t1))/sum(t1)
+
+# compare with wrong familiy information
+pop2 <- sample(1:25,size=1250,replace=TRUE)
+marker2 <- codeGeno(marker,impute=TRUE,pop2)
+(t2 <- table(original,marker2[cbind(ind1,ind2)]) )
+# sum of correct replacements
+sum(diag(t2))/sum(t2)
 }
+\keyword{genotypic data}

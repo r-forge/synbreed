@@ -44,7 +44,7 @@ Valentin Wimmer
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{plot.pedigree}
+\code{\link{plot.pedigree}}
 }
 \examples{
 # example with given generation
@@ -73,3 +73,4 @@ ped.raw2 <- matrix(c(1,  0,   0,
 ped2 <- create.pedigree(ped.raw2[,1],ped.raw2[,2],ped.raw2[,3])
 ped2
 }
+\keyword{pedigree}

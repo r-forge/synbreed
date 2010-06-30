@@ -9,8 +9,8 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
      if(is.null(gener)){  
           gener <- rep(0,n)  
           for(i in 1:n){
-            if(all(c(Par1[i],Par2[i]) == 0,na.rm=TRUE) | (is.na(Par1[i]) & is.na(Par2[i])) ) a <- 1# gener[i] <- 0 
-             else {
+            if(all(c(Par1[i],Par2[i]) == 0,na.rm=TRUE) | (is.na(Par1[i]) & is.na(Par2[i])) ) gener[i] <- 0 
+            else {
              
              gener[i] <- max(gener[ID==Par1[i]],gener[ID==Par2[i]])+1
              }
@@ -35,8 +35,3 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
      
      return(pedigree)
 }
-
-
-ped <- read.table("M:\\Projekte\\SYNBREED\\Research\\pre_synbreed\\Goettingen\\reducedPedigree-2.txt",head=TRUE,stringsAsFactors=FALSE,sep="",strip.white=TRUE)
-ped[ped=="   0"] <- NA
-ped2 <- create.pedigree(ped$ID,ped$Par1,ped$Par2)

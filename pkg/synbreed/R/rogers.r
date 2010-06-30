@@ -2,10 +2,9 @@
 # relationship coefficient  according to formula of Melchinger (1991) or
 # Hayes and Goddard (2008)
 
-# only for biallelic marker?
 
 rogers <- function(marker,correction=c("Hayes","Melchinger")){
-
+          if(!is.matrix(marker)) marker <- as.matrix(marker)
           correction <- match.arg(correction,c("Hayes","Melchinger"))
           # code marker to -1/1
           marker <- marker - 1
@@ -23,4 +22,5 @@ rogers <- function(marker,correction=c("Hayes","Melchinger")){
 
 
 }
+
 
