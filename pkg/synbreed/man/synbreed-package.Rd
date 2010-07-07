@@ -13,9 +13,9 @@ Simulation, analysis and descriptive funtions for genotypic and phenotypic data 
 \tabular{ll}{
 Package: \tab synbreed\cr                           
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2010-03-05\cr
-License: \tab What license is it under?\cr
+Version: \tab 0.1-2\cr
+Date: \tab 2010-02-07\cr
+License: \tab GPL-2 \cr
 LazyLoad: \tab yes\cr
 }
 
@@ -25,7 +25,7 @@ Valentin Wimmer
 \email{Valentin.Wimmer@wzw.tum.de}
 }
 \references{
-~~ Literature or other references for background information ~~
+
 }
 
 \keyword{ package }

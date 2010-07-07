@@ -6,10 +6,10 @@ A function to code biallelic marker data
 }
 \description{
 This function could be used to code biallelic marker data in character format (e.g. alleles coded with "ade","gua",...) into numeric format. The minor allele is coded as 2, the major allele is coded as 0.
-Imputing of missing values can be done with the population structure for the data (see details).                                       
+Imputing of missing values can be done with the population structure for the data (see details).  Selection of markers can be done according to the minor allele frequency and fraction of missing values.                                     
 }
 \usage{
-codeGeno(data, impute = FALSE, popStruc = NULL)
+codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,12 @@ A logical specifing whether imputing of missing values should be done.
 }
   \item{popStruc}{
 A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype. 
+}
+  \item{maf}{
+A numeric. Markers with minor allele frequency < \code{maf} are discarded.
+}
+  \item{nmiss}{
+A numeric. Markers with more than \code{nmiss} missing values are discarded.
 }
 }
 \details{
@@ -60,6 +66,8 @@ snp9 <- data.frame(snp9)
 pop <- c(rep("A",7),rep("B",2))
 
 codeGeno(snp9,TRUE,pop)
+# use only markers with less than 20% missing values
+codeGeno(snp9,TRUE,pop,nmiss=0.2)
                                
 # example with maize data
 data(maize)

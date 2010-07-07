@@ -8,7 +8,7 @@ Heatmap for relationship Matrix
 Visualistion for objects of class \code{relationshipMatrix}.  
 }
 \usage{
-\method{plot}{relationshipMatrix}(relationshipMatrix, \ldots)
+\method{plot}{relationshipMatrix}(relationshipMatrix, \ldots) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

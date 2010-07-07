@@ -15,7 +15,7 @@ This datatset contains genotypic data, phenotypic data and pedigree data for a s
     \item{\code{maize.pheno}}{A \code{data.frame} containing the phenotypic data with two columns \code{ID} and \code{Trait}.}
     \item{\code{maize.ped}}{A \code{data.frame} containing the pedigree data for the 1250 genotypes and 51 individuals for pedigree \describe{
     \item{\code{ID}}{Identification number for the genotypes. Note that the first 51 rows are not genotyped and phenotype and the last 1250 rows are the genotyped and phenotype individuals.}
-    \item{\code{Par1}}{Parent 1 in pedigree. Zero if unknown parent 1}\item{\code{Par2}}{Parent 2 in pedigree. Zero if unknown parent 1} \item{\code{DH}}{logical. \code{TRUE} if the genotype is a DH line}}}
+    \item{\code{Par1}}{Parent 1 in pedigree. Zero if unknown parent 1}\item{\code{Par2}}{Parent 2 in pedigree. Zero if unknown parent 2} \item{\code{DH}}{logical. \code{TRUE} if the genotype is a DH line}}}
     \item{\code{maize.marker.pos}}{A \code{data.frame} with two columns for the physical positions of the 696 marker \describe{ \item{\code{chr}}{A numeric giving the chromosome of the marker} \item{\code{pos}}{A numeric giving the position on the chromosome in cM}  }}
   }
 }

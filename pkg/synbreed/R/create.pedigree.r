@@ -2,7 +2,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
 
      # only unique IDs
      n <- length(ID)
-     if(length(unique(ID))!=n) step("ID is not unique")
+     if(length(unique(ID))!=n) stop("ID is not unique")
  
      
      # add gener if NULL
