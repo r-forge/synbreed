@@ -21,9 +21,9 @@ Use \code{"Hayes"} for transformation of rogers distance into kinship coefficien
 }
 \details{
 Roger's distance is computed as
-\deqn{d=\frac{1}{m}\sum_{i=1}^m \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}}{d=1/m \sum sqrt(\sum(pij-qij)^2)}
-where \eqn{m} is the number of markers and \eqn{n_i} the number of alleles for marker \eqn{i}. \eqn{p_{ij}}{pij} and \eqn{q_{ij}}{qij} are the allele frequencies of allele \eqn{j} for marker \eqn{i}. Transformation to kinship coefficient according to Hayes and Goddard (2008)
-\deqn{f = \frac{s-s_{min}}{1-s_{min}}}{f= s-smin/(1-smin)}
+\deqn{d=\frac{1}{m}\sum_{i=1}^m \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}}{d=1/m \sum sqrt(\sum(pij-qij)2)}
+where \eqn{m} is the number of markers and \eqn{n_i}{ni} the number of alleles for marker \eqn{i}. \eqn{p_{ij}}{pij} and \eqn{q_{ij}}{qij} are the allele frequencies of allele \eqn{j} for marker \eqn{i}. Transformation to kinship coefficient according to Hayes and Goddard (2008)
+\deqn{f = \frac{s-s_{min}}{1-s_{min}}}{f=s-smin/(1-smin)}
 where \eqn{s=1-d}.
 
 Transformation according to Melchinger (1991) is
@@ -33,8 +33,8 @@ Transformation according to Melchinger (1991) is
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{nxn} matrix containing the relationship coefficients (two times the kinship coefficient).
 }
 \references{
-Diversity and relationships among U.S. maize inbreds revealed by restriction fragment length polymorphisms
-Melchinger, A.E., M.M. Messmer, M. Lee, W.L. Woodman, and K.R. Lamkey; Crop Sci. 31: 669-678 
+Melchinger, A.E., M.M. Messmer, M. Lee, W.L. Woodman, and K.R. Lamkey: Diversity and relationships among U.S. maize inbreds revealed by restriction fragment length polymorphisms
+; Crop Sci. 31: 669-678 
 
 Hayes, B. J., and M. E. Goddard. 2008. Technical note: Prediction of breeding values using marker derived relationship matrices.
 J. Anim. Sci. 86:2089–2092.

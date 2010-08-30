@@ -30,8 +30,13 @@ The numerator relationship matrix (A-matrix in the aninmal model) derived by the
 \author{
 Hans-Juergen Auinger and Valentin Wimmer
 }
+
+\note{ 
+This function is obsolete and only available due to downward  compatibility. Better use the new function \code{kinship} with more possibilities.  
+}
+
 \seealso{
-\code{\link{plot.relationshipMatrix}}
+\code{\link{plot.relationshipMatrix}} ,\code{\link{kinship}}
 }
 
 \examples{

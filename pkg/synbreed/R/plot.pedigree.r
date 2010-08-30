@@ -16,19 +16,30 @@ plot.pedigree <- function(pedigree,effect=NULL,...){
     
   relations <- rbind(as.matrix(pedigree[pedigree$Par1!=0,c("Par1","ID")],ncol=2),as.matrix(pedigree[pedigree$Par2!=0,c("Par2","ID")],ncol=2))
   ped.graph <- graph.data.frame(relations,directed=TRUE,pedigree)
+
   # define x-y positions
-  pos <- matrix(data=NA,nrow=nrow(pedigree),ncol=2)
- 
-  
+  n <- nrow(pedigree)
+  pos <- matrix(data=NA,nrow=n,ncol=2)
   pos[,2] <- max(gener)-gener
-  if (is.null(effect)) pos[,1] <- order(gener,partial=order(pedigree$Par1)) - cumsum(c(0,table(gener)))[gener+1]   
+  if (is.null(effect)) pos[,1] <- order(gener,partial=order(pedigree$Par1,decreasing=FALSE)) - cumsum(c(0,table(gener)))[gener+1]   
   else pos[,1] <- effect
 
+  # nice format
+  myscale <- function(x){
+    if (length(x)==1) x <- 0
+    else {
+      x <- unlist(scale(x))
+    }
+    return(x)
+  }
 
+  pos[n:1,1] <- unlist(tapply(pos[,1],pos[,2],myscale))
 
+  cols <- rep("lightblue",n)
+  if (!is.null(pedigree$sex)) cols[pedigree$sex==0] <- "palevioletred1"
   # plot
   # ps.options(family="serif")
-  plot(ped.graph,rescale=TRUE,vertex.label=pedigree$ID,layout=pos,edge.color=1,edge.width=0.5,edge.arrow.size=0.5,vertex.label.family="Helvetica",...)
+  plot(ped.graph,rescale=TRUE,vertex.label=pedigree$ID,layout=pos,edge.color=1,edge.width=0.5,edge.arrow.size=0.5,vertex.label.family="Helvetica",vertex.color=cols,...)
   if (!is.null(effect)) axis(side=1,at=seq(-1,1,length=10),labels=round(seq(min(pos[,1]),max(pos[,1]),length=10),0))
 }
 

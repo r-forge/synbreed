@@ -13,7 +13,7 @@ Simulation, analysis and descriptive funtions for genotypic and phenotypic data 
 \tabular{ll}{
 Package: \tab synbreed\cr                           
 Type: \tab Package\cr
-Version: \tab 0.1-2\cr
+Version: \tab 0.1-4\cr
 Date: \tab 2010-02-07\cr
 License: \tab GPL-2 \cr
 LazyLoad: \tab yes\cr

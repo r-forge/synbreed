@@ -16,10 +16,10 @@ create.pedigree(ID, Par1, Par2, gener=NULL)
 vector of unique IDs identifying e.g. each genotype. Should be numeric.
 }
   \item{Par1}{
-vector of IDs identifying parent 1 (father)
+vector of IDs identifying parent 1 (with animals: father) 
 }
   \item{Par2}{
-vector of IDs identifying parent 1 (mother)
+vector of IDs identifying parent 2 (with animals: mother)
 }
   \item{gener}{
 vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 otherwise.
@@ -29,8 +29,8 @@ vector identifying the generation. If \code{NULL} gener will be 0 for unknown pa
 Missing values for pedigree should be coded with 0 for numeric ID or \code{NA} for character ID. 
 }
 \value{
-An object of class \code{pedigree} with the same contents as above. Note that gener starts from 0.
-}
+An object of class \code{pedigree} with the same contents as above. Note that \code{gener} starts from 0 and pedigree is sorted by generation.
+}                                                                             
 \references{
 %% ~put references to the literature/web site here ~
 }

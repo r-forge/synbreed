@@ -2,14 +2,14 @@
 \alias{codeGeno}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-A function to code biallelic marker data  
+Code biallelic marker data and select markers  
 }
 \description{
-This function could be used to code biallelic marker data in character format (e.g. alleles coded with "ade","gua",...) into numeric format. The minor allele is coded as 2, the major allele is coded as 0.
+This function could be used to code biallelic marker data in character format (e.g. alleles coded with "ade","gua", ... , or "A", "B", ...) into numeric format. The minor allele is coded as 2, the major allele is coded as 0.
 Imputing of missing values can be done with the population structure for the data (see details).  Selection of markers can be done according to the minor allele frequency and fraction of missing values.                                     
 }
 \usage{
-codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL)
+codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL,replace.value=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,6 +28,9 @@ A numeric. Markers with minor allele frequency < \code{maf} are discarded.
   \item{nmiss}{
 A numeric. Markers with more than \code{nmiss} missing values are discarded.
 }
+  \item{replace.value}{
+A numeric value assigned to missing values in data. .Only specified if no impution is done 
+}
 }
 \details{
 Imputing of missing values is done in the following way:
@@ -39,7 +42,7 @@ the value is 0 with probability 0.5 and 1 with probability 0.5.}
 }
 }
 \value{
-A \code{data.frame} of the same dimension as \code{data} containg the recoded marker data.
+A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.
 }
 
 \author{
@@ -75,6 +78,7 @@ data(maize)
 marker <- maize.geno[,-1]
 # coding without imputation
 marker <- codeGeno(marker)
+marker <- as.matrix(marker)
 set.seed(123)
 ind1 <- sample(1:nrow(marker),200)
 ind2 <- sample(1:ncol(marker),200)

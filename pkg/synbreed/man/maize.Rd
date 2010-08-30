@@ -5,8 +5,8 @@
 Simulated maize data
 }
 \description{
-This datatset contains genotypic data, phenotypic data and pedigree data for a simulated dataset of 1250 Double-Haploid lines of maize.  
-}
+This datatset contains genotypic data, phenotypic data and pedigree data for a simulated dataset of 1250 doubled haploid (DH) lines of maize.  The DH lines derived on 25 crosses with 50 DHs for each cross. Pedigree information is available for up to three generations.
+}                                                                                                                                                                                                                 
 \usage{data(maize)}
 \format{
   4 datasets
@@ -32,7 +32,7 @@ This datatset contains genotypic data, phenotypic data and pedigree data for a s
 data(maize)
 # create.pedigree
 ped <- create.pedigree(maize.ped$ID,maize.ped$Par1,maize.ped$Par2)
-#  plotsmall part of the pedigree
+#  plot small part of the pedigree
 plot(ped[c(7,10,27,55:58,8,29,190:195),])
 # compute relationship matrix according to kinship
 Akin <- kinshipPlants(ped,inbreed=maize.ped$DH)

@@ -1,0 +1,364 @@
+%\VignetteIndexEntry{Getting started with the package}
+%\VignetteKeywords{getting started}
+%\VignettePackage{synbreed}
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{natbib}
+\bibliographystyle{apalike}
+
+% Preabmle parts
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{times}
+
+%PSTricks
+\usepackage{pdftricks}
+\begin{psinputs}
+  \usepackage{pst-all}
+\end{psinputs}
+
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{verbatim}
+\usepackage{epsfig}
+\usepackage{comment}
+\usepackage{pdfpages}
+\usepackage{algorithm2e}
+
+\usepackage{Sweave}
+\usepackage{fancyvrb}
+\definecolor{Sinput}{rgb}{0.56,0,0}
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{formatcom={\color{Sinput}},fontsize=\small,fontshape=sl}
+\definecolor{Soutput}{rgb}{0,0,0.56}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{formatcom={\color{Soutput}},fontsize=\small,fontshape=sl}
+
+
+\title{The R-Package 'synbreed'}
+\author{
+Valentin Wimmer\thanks{Author of correspondance: Institute for plant breeding, Technical University of Munich, Germany, Email: \texttt{Valentin.Wimmer@wzw.tum.de}}\\
+} \date{\today}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Sweave
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Put all in another directory
+\SweaveOpts{prefix.string=figs/vignette}
+ \setkeys{Gin}{width=0.9\textwidth}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initial R code
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+<<echo=F,results=hide>>=
+library(surveillance)
+options(SweaveHooks=list(fig=function() par(mar=c(5,4,4,0),cex.axis=1,cex.lab=1,cex.main=1)))
+options(width=70)
+set.seed(1234)
+@
+
+
+\maketitle
+
+
+\begin{abstract}
+  \noindent This document gives an introduction to the R-Package
+  'synbreed' which contains tools and methods for plant and animal breeding. The goal is the creation of an analysis pipeline for genomic selection. This comprises tools
+  for genotypic, phenotypic and pedigree data. The steps of a typical analysis are presented in this document. This starts with the coding of the marker data, followed by the construction of relationship matrizes according
+  to pedigree or genomic relationship matrizes, i.e. according to \citet{vanRaden2008}.\\
+
+  \noindent{\bf Keywords:} synergistic plant and animal breeding, kinship, pedigree, marker data, animal model
+  
+
+  
+\end{abstract}
+
+
+\section{Introduction}
+
+In this document the steps of an analysis pipline for genotypic and phenotypic data in plant or animal breeding with the R-package 'synbreed' are presented. As in illustration, a simulated data set for maize called \texttt{maize} which is part of the package is used. To load \texttt{maize}  data set, use
+<<results=hide>>=
+library(synbreed)
+data(maize)
+@
+This data set contains genotypic and phenotypic data for \Sexpr{ nrow(maize.pheno)} genotpes of maize. When loading the \texttt{maize} data set, in fact the following
+data sets are loaded in the workspace
+\begin{description}
+\item[maize.geno]  This is a \texttt{data.frame} containing the marker data of \Sexpr{ ncol(maize.geno)-1} biallelic SNP-markers for the \Sexpr{ nrow(maize.pheno)} genotypes. The first column of the data set contains the \texttt{ID} for the identification of the genotypes. This variable should be used for the merge with the phenotypic data. The marker data is coded with 0/1 and because of simulated data no missing values are present.  Note that the coding does not contain any information if an allels is the minor or major allele at one locus.
+\item[maize.pheno] This is a \texttt{data.frame} with one column \texttt{ID} and a column \texttt{Trait} containing the measured phenotypic trait. The order of the genotypes is the same as the order of rows in \texttt{maize.geno}.
+\item[maize.ped] This  \texttt{data.frame} contains the pedigree information of 1301 genotypes. 
+\item[maize.marker.pos]  This  \texttt{data.frame} contains additional information for the SNP markers. The first column \texttt{pos} gives the position of the marker on the chromosome in cM. The second column \texttt{chr} sepecifies the chromosome (linkage group) the marker belongs to. The order of the markers is the same as the order of columns in \texttt{maize.geno}.
+\end{description}
+
+\section{Marker data}
+
+In the first step the marker data has to be coded in a way that it could be used for the construction of genomic relationship matrices. For biallelic marker data, the minor allele should be coded as 2 and the major allele as 0.
+This task is done by the function \texttt{codeGeno}. If no missing values are present and all markers should be used in the following analyses, this function does the simply the recoding of the alleles.
+For the \texttt{maize} data, use
+<<>>=
+marker <- codeGeno(maize.geno[,-1])
+@
+to obtain a object \texttt{marker} which contains the recoded marker data. Note that the first column is not used because it contains the \texttt{ID}. Now, the minor allele frequencies are easily obtained by dividing the column means of \texttt{marker} by 2. A histogramm of the minor allele frequencies is shown in Figure \ref{fig:histmaf}.
+
+\begin{figure}[h]
+\centering
+<<fig=TRUE,echo=FALSE,results=hide,width=12,height=8>>=
+hist(colMeans(marker)/2,xlab="minor allele frequency",main="",nclass=20)
+@
+\caption{Histogramm of the minor allele frequency of the \Sexpr{ ncol(maize.geno)-1} SNP markers in \texttt{maize} data.}
+\label{fig:histmaf}
+\end{figure}
+
+In real data usually missing values occour in genotypic data due to different reasons (i.e. heterozygous genotypes for one locus in homozygous lines).  The function \texttt{codeGeno} provides the possibility to impute missing values by chance or according to family structure by the following rules:
+\begin{description}
+\item[with population structure]
+Suppose an observation $i$ is missing (NA) for a marker $j$ in population $k$. If marker $j$ is fixed in population $k$, the imputed value will be the fixed allele. If marker $j$ is segregating for the population $k$, 
+the value is 0 with probability 0.5 and 2 with probability 0.5.
+\item[without population structure] The missing values for a marker $j$ are sampeled from the allele distribution of marker $j$.
+\end{description}           
+For illustration, 200 entries of the marker matrix are selected, the values saved and these entries are coded as \texttt{NA}. 
+<<>>=
+marker <- as.matrix(marker)
+ind1 <- sample(1:nrow(marker),200)                                            
+ind2 <- sample(1:ncol(marker),200)
+original <- marker[cbind(ind1,ind2)]
+marker[cbind(ind1,ind2)] <- NA
+@                                                                                                                                                                                            
+The number of  \Sexpr{ nrow(maize.pheno)} genotypes in the \texttt{maize} data consist of 25 \textit{half sib} families with 50 genotypes in each family. The genotypes are ordered according to the family structure. Recoding of the marker data and imputing of the missing  values is done as follows
+<<>>=
+pop <- rep(1:25,each=50)
+marker1 <- codeGeno(marker,impute=TRUE,pop)
+@                                                                                                                                              
+A report is printed on the screen which informs about the number of imputations performed according to family structure $n_F$ or chance $n_R$. The approximative fraction of correct imputations is $\frac{n_F + 0.5n_R}{n_F+n_R}$. For the simulated data the 
+original values are known. With the following commands the quality of the classification of the missing values is judged: 
+<<>>=
+# compare in crosstable
+imputed <- marker1[cbind(ind1,ind2)]
+(t1 <- table(original,imputed))
+@
+The fraction of correct replacements is
+<<>>=
+sum(diag(t1))/sum(t1)
+@ 
+In an analysis of genotypic data it is common to discard marker with a small minor allele frequency and/or many missing values. There are two additional arguments \texttt{maf} and \texttt{nmiss} for function \texttt{codeGeno}. Before recoding the data all marker with more than
+\texttt{nmiss}$\cdot 100\%$ missing values are discarded. After recoding the maker data only markers with a minor allele frequency $>$ \texttt{maf} are returned by the function. By default, no markers are selected by one of both criteria.
+                                       
+%To summarize, the steps presented in Algorithm \ref{alg:codeGeno} are performed.
+
+%\begin{algorithm}[H]
+%\SetAlgoLined
+%\KwData{\texttt{data.frame} or \texttt{matrix} with $M$ biallelic marker data coded arbitrarily and missing data for $n$ genotypes $g_{ij}$.}
+%\KwResult{Marker data without missing vaules with minor allele coded as 2 and major allele coded as 0.}
+%\For{$j=$1 to $M$ }{
+%\lIf{\% missings $>$ nmiss$\cdot 100\%$} discard marker $j$\;
+%\lElse{}{
+%Create frequency table for allele $A_1$ and $A_2$ for marker $j$\;
+%Order alleles decreasingby their frequencies $f(A_{(1)}) > f(A_{(2)})$\;
+%}
+%\For{$i=1$ to $n$}{
+%\lIf{$g_{ij}$ = $A_{(1)}$}{
+%$g_{ij}$ = 0\;
+%}
+%\lIf{$g_{ij}$ = $A_{(2)}$}{
+%$g_{ij}$ = 2\;
+%}
+%\lElse{}{
+%\lIf{$\bs{g}_i$ is segregating in family of genotype $i$}{
+%$g_{ij} = \left\{ \begin{array}{ll} 0 & p=0.5 \\ 2 & p=0.5 \end{array} \right. $\;
+%}
+%\lElse{}{
+%$g_{ij}$ = fixed allele in family of genotype $i$\;
+%}}
+%}
+%}
+%Recode alleles if minor allele changed due to imputing of missing values\;
+%Reject markers with minor allele frequency $<$ \texttt{maf}\;
+%\caption{Umkodieren der Allele und Ersetzen von fehlenden Werten}
+%\label{alg:codeGeno}
+%\end{algorithm}     
+
+Note that missing values in the marker data must be coded as \texttt{NA}. Instead of imputing the values \texttt{codeGeno} provides the possibility to replace the missing values by a certain value, i.e. 1 which is the expection for the missing values. Different codings of the alleles could easily obtained with simple operations of the resulting data.
+
+
+\section{Pedigree}      
+                               
+An important source of information in breeding programs is pedigree information. Especially in plant breeding pedigree is recorded over many generations. The pedigree usually consists 
+of a list of individuals (animals or plants) of the current generation which is the suubject of analysis and their ancestors (for which usually no additional data is available). The pedigree is sorted the generation, beginning with the individuals with unknown parents. An example for an pedigree with five individuals belonging to 4 generations is given below.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{cccc}
+\hline
+ID & Par1 & Par2 & gener \\
+\hline
+A & - & - & 0 \\
+B & - & - & 0 \\
+C & A & B & 1 \\
+D & A & C & 2 \\
+E & D & B & 3 \\
+\hline
+\end{tabular}
+\end{table}
+
+Note that unknown parents are coded as "0" in \texttt{synbreed} package and generation starts with 0. In \texttt{synbreed} exists the class "pedigree", which 
+should be used for handling pedigree information. An object of class "pedigree" consists of a \texttt{data.frame} with at least variables \texttt{ID}, \texttt{Par1}, \texttt{Par2} and \texttt{gener}.
+The function \texttt{create.pedigree} creates an object of class  "pedigree" for a given set of individuals and their parents. The generation can be specified by the user or otherwise is computed by the function.
+
+Suppose we have the pedigree struture of the example. This structure is carried into \texttt{synbreed} package with the following command:
+<<>>=
+id <- c("A","B","C","D","E")
+par1 <- c(0,0,"A","A","D")
+par2 <- c(0,0,"B","C","B") 
+ped <- create.pedigree(id,par1,par2)
+ped
+@  
+An object of class "pedigree" could be visualised with generic plotting function for S3 class "pedigree".
+ 
+\begin{figure}[h] 
+<<fig=TRUE>>=
+plot(ped)
+@   
+\end{figure}    
+      
+It is possible to simulate a pedigree structure with function \texttt{simul.pedigree}. As arguments,
+the number of generations to simulate and the number of individuals in each generation has to be specified. By default, random mating 
+is assumed in each generation. As their are no further restrictions, it is possible that inbreeds could be generated when parent 1 equals parent 2.
+To simulate a pedigree with 6 generations and 4, 6, 7, 9, 10 and 10 individuals in each generation, use
+<<>>=
+set.seed(123)
+ped.simul <- simul.pedigree(gener=6,ids=c(4, 6, 7, 9, 10,10))
+@ 
+The resulting pedigree is visualized in Figure \ref{fig:simupedi}.
+\begin{figure}[!h]
+<<fig=TRUE>>=
+plot(ped.simul)
+@
+\caption{Simulated pedigree structure}
+\label{fig:simupedi}
+\end{figure}
+
+  
+
+\section{Relationship matrices}
+
+Pedigree information is usually used to set up relationship matrices of a number of individuals. The relationship is constructed by the \textit{expected} fraction of alleles that are identical by descent (IBD) between relatives. Another possibility to set up a relationship is the use of marker data to compute the genomic relationship. This gives the \textit{observed} relationship of individuals.
+
+\subsection{Based on Pedigree}
+
+The computation of the pedigree based relationship in \texttt{synbreed} starts with the gametic relationship. A gamet is the genetic unit that an individual passes to its offspring. Thus the genetic value of an individual at one locus consists of two allelels. Suppose there is an individual C with the parents A and B. Individual C has to allels C1 and C2. The source of allele C1 is Parent A, thus allele C1 could either equal A1 or A2. Allele C2 was inherited of parent B, thus it could be B1 or B2. 
+To compute the gametic relationship start with an expanded table with two alleles for each individual. 
+ 
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc}
+\hline
+ID & Allele & Par1 & Par2 \\
+\hline
+A & A1 & - & - \\
+A & A2 & - & - \\
+B & B1 & - & - \\
+B & B1 & - & - \\
+C & C1 & A1 & A2 \\
+C & C2 & B1 & B2 \\
+D & D1 & A1 & A2 \\
+D & D2 & C1 & C2 \\
+E & E1 & D1 & D2 \\
+E & E2 & B1 & B2 \\
+\hline
+\end{tabular}
+\end{table}
+
+This table is converted into the gametic relationship $\bf G$ matrix which is of order $2n$, if the number of individuals is $n$. The diagonal values of $\bf G$ are always 1. The off-diagonal values give the probabilty that the two allelse are identical by
+descent (IBD). If the parents are unknown, it is assumed that they are progeny of a random mating population. In this case the off-diagonals are zero. The other values of the gametic relations are filled in rowwise. The four  values which describe the relationship of progeny A with parent C are computed as follows
+$$ (A1,C1) = 0.5 \cdot [(A1,A1) + (A1,A2)] $$
+$$ (A1,C2) = 0.5 \cdot [(A1,B1) + (A1,B2)] $$
+$$ (A2,C1) = 0.5 \cdot [(A2,A1) + (A2,A2)] $$
+$$ (A2,C2) = 0.5 \cdot [(A2,B1) + (A2,B2)] $$
+The gametic relationship for a given pedigree is obtained as follows
+<<>>=
+G <- kinship(ped,ret="gam")
+G
+@
+The resulting object \texttt{G} is of class "relationshipMatrix" which is the general class for all kinds of relationship matrices (gametic relationship, additive and dominance relationship, kinship). An object of class "relationshipMatrix" is basically a symmetric matrix containing the relationship coefficient of two individuals.
+Note that the entry of allele 1 and allele 2 of an individual $i$ equals his inbreeding coefficient $F_i$. For example, the inbreeding coefficent of individual D is
+<<>>=
+G["D_1","D_2"] 
+@
+which is nonzero because individuals A and C which are the parents of D are relatives. Once the gametic relationship is computed, it could be converted in the additive numerator relationship matrix $\bf A$ or the dominance relationship matrix $\bf D$. The additive relationship between the individuals A and B is given by
+$$ 0.5 \cdot (G[A1,B1]+ G[A1,B2] + G[A2,B1] + G[A2,B2]),$$
+where $G[.,.]$ denotes the corresponding value of the gametic relationship matrix $\bf G$. The additive numerator relationship matrix descripes the relationship between individuals and is of order $n$. It is typically used in the animal model
+$$ y_i = \mu + a_i + e_i,$$
+where $a_i$ is the additive genetic effect and $\bf a \sim \text{N}(0,\bf{A} \sigma^2_a)$ is assumed. The additive numerator relationship matrix for a given pedigree is obtained as follows
+<<>>=
+A <- kinship(ped,ret="add")
+A
+@
+Note that the diagonals of $\bf A$ are $1+F_i$. Sometimes the kinship matrix is required which is half of the additive numerator relationship matrix. It is obtained by
+<<>>=
+K <- kinship(ped,ret="kin")
+@
+
+Additionally it is possible to derive the dominance relationship matrix $\bf D$ out of $\bf G$. The dominance is needed in the non-additive animal model
+$$ y = \mu + a_i + a_j + d_{ij} + e_i,$$
+where $a_i$ and $a_j$ are the additive genetic effects of alleles $i$ and $j$ and $d_{ij}$ is the dominance (interaction) effect of alleles $i$ and $j$ with $\bf d  \sim  \text{N}(0,\bf{D} \sigma_d^2)$. The dominance relationship matrix
+for the example is obtained as
+<<>>=
+D <- kinship(ped,ret="dom")
+D
+@
+Heigher order interactions in the non-additive animal modal as addidive-additive, additive-dominance or dominance-dominance variance-covariance matrices can be computes as
+<<>>=
+(AA <- A*A)
+(AD <- A*D)
+(DD <- D*D)
+@
+ 
+
+
+\subsection{Based on marker data}
+
+\subsection{Doubled haploid (DH)- lines}
+
+In plant breeding doubled haploid lines are common. DH lines are fully inbreed and thus have an inbreeding coefficient of 1. This has to be taken into account, when the relationship matrix in a pedigree with DH lines is computed.  As an example the \texttt{maize} data is taken.
+<<>>=
+data(maize)
+head(maize.ped)
+@
+First, the additive numerator relationship matrix is computed. There are \Sexpr{table(maize.ped$DH)[2]} DH lines and \Sexpr{table(maize.ped$DH)[1]} non DH lines in the pedigree. For DH lines, it is necassary to set the inbreeding coefficient on 1. An argument \texttt{DH} is available for function \texttt{kinship} where
+for each individual in the pedigree it specified whether this is a DH line or not. This information is available for the \texttt{maize} data. To obtain the addtive numerator relationship matrix of the first 100 genotypes, use 
+<<>>=
+ped.maize <- create.pedigree(maize.ped$ID,maize.ped$Par1,maize.ped$Par2)
+A.maize100 <- kinship(ped.maize[1:100,],DH=maize.ped$DH[1:100],ret="add") 
+@
+
+\subsection{Visualisation of relationship matrices}
+
+As in most cases a relationship matrix is to big to print it on the screen. Thus there are two possibilites for visualisation of an object of class "relationshipMatrix" in \texttt{synbreed} package. A \texttt{summary} method is defined which gives the important characteristics of an relationship matrix. Use
+<<>>=
+summary(A.maize100)
+@
+to get the summary for the pedigree based additive relationship matrix of the \texttt{maize} data. Another possibility is the \texttt{plot} method which could be applied
+to an object of class "relationshipMatrix". This gives a heatmap of the entries of the relationship matrix
+%\begin{figure}
+%<<fig=TRUE>>=
+%plot(A.maize100)
+%@
+%\caption{Heatmap of pedigree based additive relationship matrix for \texttt{maize} data.}
+%\label{fig:heatpedi}
+%\end{figure}
+%In Figure \ref{fig:heatpedi} one can see the family  structure in the data which is consiting of 25 families.
+
+
+\section{Acknowledgements}
+
+This research was funded by the German Federal Ministry of Education and
+Research (BMBF) within the AgroClustEr \textit{Synbreed}  \textit{Synergistic plant and
+animal breeding}.
+
+  \bibliography{references}
+
+\end{document}                                                                                                                                                       

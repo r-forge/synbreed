@@ -1,8 +1,9 @@
 # coding alles in 0 (major) and 2 (minor)
 
-codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL){
+codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,replace.value=NULL){
 
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
+  if(impute & !is.null(replace.value)) stop("No replacing of values in case of imputing")
 
     # number of genotypes
     n <- nrow(data)
@@ -37,9 +38,16 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL){
   
   # number of missin values
   nmv <- sum(is.na(res))
+   
    # initialize counter  
-          cnt1 <- 0    # for nr. of imputations with family structure
-          cnt2 <- 0    # for nr. of random imputations
+   cnt1 <- 0    # for nr. of imputations with family structure
+   cnt2 <- 0    # for nr. of random imputations
+
+  # if no  imputation should be performed, replace missing values
+  # accorind to specified value
+  if(!impute & !is.null(replace.value)){
+     res[is.na(res)] <- replace.value
+  } 
 
   # impute missing values according to population structure
   if(impute & !is.null(popStruc)){
@@ -108,12 +116,15 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL){
    }    
   
   
-  # code again if allele frequeny chanched to to imputing
-  if(any(colMeans(res,na.rm=TRUE)>1)) res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)] 
-  res <- as.matrix(res,nrow=nrow(x))
-  
+  # code again if allele frequeny changed to to imputing
+  if(impute){
+    if(any(colMeans(res,na.rm=TRUE)>1)){
+      res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)] 
+      res <- as.matrix(res,nrow=nrow(x))
+    }
+  }
   # remove markers with minor allele frequency < maf
-  if(!is.null(maf)) res <- res[,apply(res,2,mean,na.rm=TRUE)>maf]
+  if(!is.null(maf)) res <- res[,apply(res,2,mean,na.rm=TRUE)>2*maf]
 
   
   # print summary of imputation
