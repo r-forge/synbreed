@@ -1,56 +1,53 @@
-simul.phenotype <- function(pedigree,h2,loc=1,repl=1,seed=123,genotypeEff=NULL,locEff=NULL){
+simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1,seed=123){
 
-        # read information from data
-        gener <- pedigree$gener
-        N <- nrow(pedigree)
-        n <- N*loc*repl
-                                       
+        if(is.null(A) & is.null(pedigree)) step("Either 'pedigree' or 'A' must be given")
+        # create A matrix if missing
+        if (is.null(A)) A <- kinship(pedigree,ret="add")
+       
         
+        # read data out of arguments
+        N <- nrow(A)         
+        n <- N*Nloc*Nrepl
+        sigmae <- sqrt(vc$sigma2e)
+        sigmaa <- sqrt(vc$sigma2a)
+        sigmal <- sqrt(vc$sigma2l)
+        sigmab <- sqrt(vc$sigma2b)
+        namesA <- rownames(A) 
+        if(is.null(rownames(A))) namesA <- 1:N  
+                                     
         # initialize data
-        Trait <- rep(0,n)
-        ID <- rep(pedigree$ID,length.out=n,each=repl)
-        Loc <- rep(1:loc,length.out=n,each=N*repl)
-                       
-        # set values for first generation
-        gener1 <- pedigree$ID[gener==min(gener)]
 
+        ID <- rep(namesA,each=Nrepl*Nloc)
+        Loc <- rep(1:Nloc,length.out=n,each=Nrepl)
+        Block <- rep(1:Nrepl,lengt.out=n)
         
-        # set starting value
+         # as matrix
+        A <- matrix(A,nrow=N)  
+                       
+        # set starting value for simulation
         set.seed(seed)
         
+        # simulate data for contribution parts of phenotypic values
         
+        # true breeding values
+        tbv <- rmvnorm(1,rep(0,N),A*sigmaa^2)
+        tbv <- rep(tbv,each=Nloc*Nrepl)
+        # location effect
+        locEff <- rnorm(Nloc,0,sigmal)
+        locEff <- rep(locEff,length.out=n,each=Nrepl)
+        # block effects 
+        blockEff <- rnorm(Nrepl,0,sigmab)
+        blockEff <- rep(blockEff,length.out=n)
+        # residual
+        residual <- rnorm(n,0,sigmae)
         
-        # simulate data by
-        
-        # adding effect of genotype
-        if (is.null(genotypeEff)){ 
-          genotypeEff <- rep(100,times=n)
-        }
-        else genotypeEff <- rep(genotypeEff,length.out=n,each=repl)
-        
-        Trait <-  rnorm(n,mean=rep(genotypeEff),sd=0.2*N)
-        
-        
-         # adding effect of pedigree              
-        for (i in 1:n){
-            if(ID[i] %in% gener1)    Trait[i] <- Trait[i]
-            
-            else {
-              p1 <- pedigree[pedigree$ID==ID[i],"Par1"]
-              p2 <- pedigree[pedigree$ID==ID[i],"Par2"]  
-              # mixing infromation: h(0.5*Par1 + 0.5*Par2) + 1-h(N(mean(gener1),sd(gener1))                      
-              Trait[i] <-  h2*(0.5 * mean(Trait[ID == p1]) + 0.5 * mean(Trait[ID == p2])) + (1-h2)*rnorm(1,mean(Trait[ID %in% gener1],na.rm=TRUE),sd=sd(Trait[ID %in% gener1],na.rm=TRUE))
-            } 
-        } 
-        
-        #  adding effect of location
-        Trait <- Trait + rnorm(length(Trait),mean=Loc*2,sd=0.5*loc)
-        
-        ret <- data.frame(ID=ID,Trait=Trait,Loc=Loc)
-        # sort by ID                                         
-        ret <- ret[order(ID),]
-        class(ret) <- c("phenoData","data.frame")
+        # simulate phenotypic value
+        Trait <- mu + tbv + locEff + blockEff + residual
+
+        # combine to a data.frame
+        ret <- data.frame(ID=factor(ID),Loc=factor(Loc),Block=factor(Block),Trait=Trait,TBV=tbv+mu)
         return(ret)
 
 
 }
+

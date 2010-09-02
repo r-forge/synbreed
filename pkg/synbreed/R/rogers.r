@@ -6,8 +6,8 @@
 rogers <- function(marker,correction=c("Hayes","Melchinger")){
           if(!is.matrix(marker)) marker <- as.matrix(marker)
           correction <- match.arg(correction,c("Hayes","Melchinger"))
-          # code marker to -1/1
-          marker <- marker - 1
+          # code marker to -1/0/1
+          marker <- marker - (max(marker,na.rm=TRUE)+1)
           m <- ncol(marker)
           d <- 1- (tcrossprod(marker) + m)/(2*m)
           if(correction=="Melchinger") f <- 1-d/mean(d,na.rm=TRUE)

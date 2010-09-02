@@ -1,69 +1,75 @@
-\name{simul.phenotype}                                                                                                                   
+\name{simul.phenotype}
+\Rdversion{1.1}
 \alias{simul.phenotype}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Simulation of field trial
+Simulation of a field trial with single trait
 }
-\description{                                                                                                                             
-This function could be used to simulate for a given pedigree results of a quantitative trait in a field trial with several replications of each genotype and several locations.
+\description{
+Simulation of a records of a field trial for given pedigree or relationship structure.
+The field trial consists of multiple locations and randomized complete block design within locations. 
+A single quantitative trait is simulated according to the specified contribution of relationship among individual, location and block effects to the phenotypic values.
 }
 \usage{
-simul.phenotype(pedigree, h2, loc = 1, repl = 1, seed = 123, genotypeEff = NULL, locEff = NULL)
+simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL, Nloc = 1, Nrepl = 1, seed = 123)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pedigree}{
-An object of class \code{pedigree} given the pedigree structure
+An object of class "pedigree" 
 }
-  \item{h2}{    
-Numeric: heretability of the trait  
+  \item{A}{
+An object of class "relationshipMatrix"
 }
-  \item{loc}{
-Numeric: number of locations 
+  \item{mu}{
+Numeric; Overall mean of the trait.
 }
-  \item{repl}{
-Numeric: number of replications in each location 
+  \item{vc}{
+List containing the variance components. \code{vc} consists of elements \code{sigma2e}, \code{sigma2a}, \code{sigma2l}, \code{sigma2b} with the varianve components of the residual, the additive genetic effect,
+the location effect and the block effect.
+}
+  \item{Nloc}{
+Numeric; Number of locations in the field trial.
+}
+  \item{Nrepl}{
+Numeric; Number of complete blocks within location.
 }
   \item{seed}{
-Numeric: starting value for use in \link{set.seed}
-}
-  \item{genotypeEff}{
-Numeric vector of length N containing the base level in simulation for each genotype in the order given by \code{pedigree}. If \code{NULL}, the same value 100 is used for every genotype in pedigree.
-}
-  \item{locEff}{
-Numeric vector of length \code{loc} containg the effect in simulation for each location. If \code{NULL}, the effects will be drawn from a normal distribution.
+Seed value used in simulation and passed to \code{set.seed}
 }
 }
 \details{
-Simulation will be done for the whole pedigree, not only the last generation.
+Either \code{pedigree} or \code{A} must be specified. If \code{pedigree} is given, pedigree information is used to set up numerator relationship matrix with function \code{kinship}. If unrelated individuals should be used for simulation,
+use identity matrix for \code{A}. True breeding values for $N$ individuals is  simulated according to following distribution
+\deqn{tbv \sim N(0,\bf A \sigma_a^2}{tbv = rmvnorm(1,0,A)*sigma2a}
+If now location or block effects should appear, set  \code{sigma2l} or \code{sigma2b} to zero.
 }
 \value{
-A \code{data.frame} with one column for the \code{ID} of pedigree, one with simulated values of the trait and one column with the number of the location
+A \code{data.frame} with containing the simulated values for trait and the following variables
+\item{ID}{Factor identifying the individuals. Names are extracted from \code{pedigree} or rownames of \code{A}}
+\item{Loc}{Factor for Location}
+\item{Block}{Factor for Block within Location}
+\item{Trait}{Numeric values for trait}
+\item{TBV}{Simulated values for true breeding values of individuals}
+Result is sorted for locations within individuals.
 }
 \author{
 Valentin Wimmer
 }
 \note{
-in developement 
+In Future multiple trait model will be implemented
 }
-
-
 \seealso{
 \code{\link{simul.pedigree}}
 }
 \examples{
-# simulation of pedigree
-p <- simul.pedigree()
-
-# same effect for each genotype
-dat1 <- simul.phenotype(p,h2=0.5,loc=2,repl=2)
-head(dat1)
-
-# different effect for each genotype
-dat2 <- simul.phenotype(p,h2=0.5,loc=2,repl=2,genotypeEff=1:nrow(p))
-head(dat2)
-
+ped <- simul.pedigree(gener=5)
+varcom <- list(sigma2e=25,sigma2a=36,sigma2l=9,sigma2b=4)
+# field trial with 3 locations and 2 blocks within locations
+data.simul <- simul.phenotype(ped,mu=10,vc=varcom,Nloc=3,Nrepl=2)
+head(data.simul)
+# analysis of variance
+anova(lm(Trait~ID+Loc+Loc:Block,data=data.simul))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{simulation}
+

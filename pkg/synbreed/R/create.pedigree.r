@@ -3,7 +3,10 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
      # only unique IDs
      n <- length(ID)
      if(length(unique(ID))!=n) stop("ID is not unique")
- 
+     if(length(Par1)!=n) stop("Par1 must have same length as ID") 
+     if(length(Par2)!=n) stop("Par2 must have same length as ID") 
+    
+     if(!any(Par1 %in% ID) & is.null(gener)) stop("gener must be specified if pedigree is not complete")  
      # NA for unkonwn pedigree
      Par1[Par1=="0"] <- NA
      Par2[Par2=="0"] <- NA

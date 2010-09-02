@@ -31,17 +31,9 @@ Missing values for pedigree should be coded with 0 for numeric ID or \code{NA} f
 \value{
 An object of class \code{pedigree} with the same contents as above. Note that \code{gener} starts from 0 and pedigree is sorted by generation.
 }                                                                             
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Valentin Wimmer
 }
-\note{
-
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{plot.pedigree}}

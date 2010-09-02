@@ -22,7 +22,7 @@ logical. Should the generalized inverse be used?
 path for writing the result. 
 }
   \item{digits}{
-numeric. The results is rounded to \code{digits}.
+numeric. The result is rounded to \code{digits}.
 }
 }
 \details{

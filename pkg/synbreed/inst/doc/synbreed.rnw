@@ -38,7 +38,8 @@
 
 \title{The R-Package 'synbreed'}
 \author{
-Valentin Wimmer\thanks{Author of correspondance: Institute for plant breeding, Technical University of Munich, Germany, Email: \texttt{Valentin.Wimmer@wzw.tum.de}}\\
+Valentin Wimmer\thanks{Author of correspondance: Institute for plant breeding, Technical University of Munich, Emil-Ramann-Str. 4,
+	85354 Freising, Germany, Email: \texttt{Valentin.Wimmer@wzw.tum.de}}\\
 } \date{\today}
 
 \begin{document}
@@ -113,7 +114,7 @@ hist(colMeans(marker)/2,xlab="minor allele frequency",main="",nclass=20)
 \label{fig:histmaf}
 \end{figure}
 
-In real data usually missing values occour in genotypic data due to different reasons (i.e. heterozygous genotypes for one locus in homozygous lines).  The function \texttt{codeGeno} provides the possibility to impute missing values by chance or according to family structure by the following rules:
+In experimental data usually missing values occour in genotypic data due to different reasons (i.e. heterozygous genotypes for one locus in homozygous lines).  The function \texttt{codeGeno} provides the possibility to impute missing values by chance or according to family structure by the following rules:
 \begin{description}
 \item[with population structure]
 Suppose an observation $i$ is missing (NA) for a marker $j$ in population $k$. If marker $j$ is fixed in population $k$, the imputed value will be the fixed allele. If marker $j$ is segregating for the population $k$, 
@@ -321,6 +322,74 @@ Heigher order interactions in the non-additive animal modal as addidive-additive
 
 \subsection{Based on marker data}
 
+                 
+
+The relationship matrix based on marker data or genomic relationship matrix data represents the true relationship between relatives
+more precise than the numerator relationship based on pedigree, as it takes into account that relationship may deviate from the expected average relationship due to
+Mendelian sampling effect.  Two methods for the construction of a relationship matrix based on marker data are implemented in the \texttt{synbreed} package: genomic relationship according to vanRaden \citep{vanRaden2008} and according to Roger's distance. 
+
+For vanRaden, the SNP genotypes are coded as the number of copies of one of the SNP alleles, i.e., 0, 1 or 2 (any linear transformations of these avlues are valid too). Thus the marker data could be the result of a call of \texttt{codeGeno} when imputing for the missing values was performed or the missing values were replaced with the value 1.
+The genomic relationship matrix according to vanRaden is computed as
+\begin{equation}
+\frac{\bf{Z}\bf{Z}'}{2\sum_{i=1}^p p_i(1-p_i)},
+\end{equation}
+where $\bf{Z}=\bf{M}-\bf{P}$ and $\bf{M}$ is the marker matrix and $\bf{P}$ contains the allele frequencies multiplied by 2. $p_i$ is the allele frequency of marker $i$.  As an example we look at the marker data of 6 individuals genotyped with 8 SNP markers. Let
+$$ \bf M = \begin{pmatrix}  2 & 0 & 0 & 2 & 2 & 0 & 0 & 0 \\ 
+   2 & 0 & 2 & 2 & 2 & 0 & 2 & 2 \\ 
+   2 & 0 & 2 & 2 & 0 & 0 & 2 & 0 \\ 
+   0 & 0 & 2 & 2 & 0 & 0 & 2 & 0 \\ 
+   0 & 0 & 2 & 0 & 0 & 0 & 2 & 0 \\ 
+   2 & 2 & 2 & 2 & 0 & 0 & 0 & 2 \\  
+   \end{pmatrix}, $$
+then it holds that
+$$ \bf P = \begin{pmatrix}  1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\ 
+   1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\ 
+   1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\  
+   1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\ 
+   1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\  
+   1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67 \\   
+   \end{pmatrix} $$
+ $$    \bf Z = \begin{pmatrix}   0.67 & -0.33 & -1.67 & 0.33 & 1.33 & 0.00 & -1.33 & -0.67 \\ 
+  0.67 & -0.33 & 0.33 & 0.33 & 1.33 & 0.00 & 0.67 & 1.33 \\ 
+   0.67 & -0.33 & 0.33 & 0.33 & -0.67 & 0.00 & 0.67 & -0.67 \\ 
+  -1.33 & -0.33 & 0.33 & 0.33 & -0.67 & 0.00 & 0.67 & -0.67 \\ 
+   -1.33 & -0.33 & 0.33 & -1.67 & -0.67 & 0.00 & 0.67 & -0.67 \\ 
+   0.67 & 1.67 & 0.33 & 0.33 & -0.67 & 0.00 & -1.33 & 1.33 \\ 
+   \end{pmatrix}
+  $$  
+  and 
+  $$ \bf Z \bf Z ' = \begin{pmatrix}  
+   7.44 & 0.11 & -1.22 & -2.56 & -3.22 & -0.56 \\ 
+   0.11 & 4.78 & -0.56 & -1.89 & -2.56 & 0.11 \\ 
+   -1.22 & -0.56 & 2.11 & 0.78 & 0.11 & -1.22 \\ 
+   -2.56 & -1.89 & 0.78 & 3.44 & 2.78 & -2.56 \\ 
+   -3.22 & -2.56 & 0.11 & 2.78 & 6.11 & -3.22 \\ 
+   -0.56 & 0.11 & -1.22 & -2.56 & -3.22 & 7.44 \\
+     \end{pmatrix}
+  $$  
+with the denominator $2\sum_{i=1}^p p_i(1-p_i)=2.611$. To compute the genomic relationship according to vanRaden, matrix $\bf M$ is passed to the funtion \texttt{vanRaden}  
+<<>>=
+M <- matrix(data=c(2,0,0,2,2,0,0,0,
+                   2,0,2,2,2,0,2,2,
+                   2,0,2,2,0,0,2,0,
+                   0,0,2,2,0,0,2,0,
+                   0,0,2,0,0,0,2,0,
+                   2,2,2,2,0,0,0,2),
+                   nrow=6,byrow=TRUE)
+vR <- vanRaden(M) 
+vR                  
+@
+Note the object \texttt{vR} is again of class "relationshipMatrix".    
+
+Another possibility is to compute the genomic relationship matrix according to Roger's distance \citep{Rogers1972}. Roger's distance is computed as 
+\begin{equation}
+d=\frac{1}{p}\sum_{i=1}^p \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}
+\end{equation}
+where $p$ is the number of markers and $n_i$ is the number of alleles for marker $i$. Let $p_{ij}$ and $q_{ij}$ denote the allele frequencies of allele $j$ for marker $i$ respectively. Note that marker data should be coded $-1$ and $1$ for homozygous genotypes and 0 for heterozygous. If marker data is code 0/1/2 data is transformed automatically
+when funtion \texttt{rogers} is used, which computes Roger's distance.  
+
+
+
 \subsection{Doubled haploid (DH)- lines}
 
 In plant breeding doubled haploid lines are common. DH lines are fully inbreed and thus have an inbreeding coefficient of 1. This has to be taken into account, when the relationship matrix in a pedigree with DH lines is computed.  As an example the \texttt{maize} data is taken.
@@ -352,11 +421,13 @@ to an object of class "relationshipMatrix". This gives a heatmap of the entries 
 %\end{figure}
 %In Figure \ref{fig:heatpedi} one can see the family  structure in the data which is consiting of 25 families.
 
+Note that objects of class "relationshipMatrix" can be writen two input files apprpriate for \texttt{WOMBAT} \citep{Meyer2006} or \texttt{ASReml} \citep{Gilmour2000}.
+
 
 \section{Acknowledgements}
 
 This research was funded by the German Federal Ministry of Education and
-Research (BMBF) within the AgroClustEr \textit{Synbreed}  \textit{Synergistic plant and
+Research (BMBF) within the AgroClustEr \textit{Synbreed} $-$  \textit{Synergistic plant and
 animal breeding}.
 
   \bibliography{references}
