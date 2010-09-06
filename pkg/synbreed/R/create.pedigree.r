@@ -23,7 +23,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
             if(is.na(Par1[i]) & is.na(Par2[i])) gener[i] <- 0 
             else {
              
-             gener[i] <- max(c(gener[ID==Par1[i]],gener[ID==Par2[i]]))+1
+             gener[i] <- max(c(gener[ID==Par1[i]],gener[ID==Par2[i]]),na.rm=TRUE)+1
              }
           }
 

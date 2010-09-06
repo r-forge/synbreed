@@ -30,7 +30,8 @@ simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1,s
         # simulate data for contribution parts of phenotypic values
         
         # true breeding values
-        tbv <- rmvnorm(1,rep(0,N),A*sigmaa^2)
+        #tbv <- rmvnorm(1,rep(0,N),A*sigmaa^2)
+        tbv <- chol(A)%*%rnorm(N,0,sigmaa)
         tbv <- rep(tbv,each=Nloc*Nrepl)
         # location effect
         locEff <- rnorm(Nloc,0,sigmal)

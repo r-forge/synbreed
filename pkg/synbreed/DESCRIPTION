@@ -4,7 +4,7 @@ Title: Collection of methods developed for the synbreed project for synergistic 
 Version: 0.2-2
 Date: 2010-30-06
 Author: Valentin Wimmer
-Depends: RColorBrewer, lattice, igraph, MASS, LDheatmap, mvtnorm
+Depends: RColorBrewer, lattice, igraph, MASS, LDheatmap
 Suggests: kinship, regress
 Maintainer: Valentin Wimmer <Valentin.Wimmer@wzw.tum.de>                                                 
 Description: A package containing tools for plant and animal breeding. All steps of an analysis pipeline for genomic selection are part of this package: Methods for coding marker data, functions to set up pedigree and compute relationship matrices based on marker data or based on pedigree. 
