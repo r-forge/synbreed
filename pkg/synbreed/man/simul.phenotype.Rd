@@ -41,7 +41,7 @@ Seed value used in simulation and passed to \code{set.seed}
 \details{
 Either \code{pedigree} or \code{A} must be specified. If \code{pedigree} is given, pedigree information is used to set up numerator relationship matrix with function \code{kinship}. If unrelated individuals should be used for simulation,
 use identity matrix for \code{A}. True breeding values for $N$ individuals is  simulated according to following distribution
-\deqn{tbv \sim N(0,\bf A \sigma_a^2}{tbv = chol(A)*sigma2a*rnorm(N,0,1)}
+\deqn{tbv \sim N(0,\bf A \sigma_a^2)}{tbv = chol(A)*sigma2a*rnorm(N,0,1)}
 If now location or block effects should appear, set  \code{sigma2l} or \code{sigma2b} to zero.
 }
 \value{
@@ -57,7 +57,7 @@ Result is sorted for locations within individuals.
 Valentin Wimmer
 }
 \note{
-In Future multiple trait model will be implemented
+In future multiple trait model will be implemented
 }
 \seealso{
 \code{\link{simul.pedigree}}

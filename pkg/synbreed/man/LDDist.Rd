@@ -40,7 +40,7 @@ LD is computed as coefficient of determination \eqn{R^2}.  Matrix of \eqn{R^2} o
 \code{\link{codeGeno}}, \code{\link{LDMap}}
 }
 \examples{
-# simulated data without LD with 1000 eqal spaced markers on 4 chromosomes
+# simulated data without LD with 1000 equal spaced markers on 4 chromosomes
 M<- matrix(sample(c(0,2),size=50000,replace=TRUE,prob=c(0.65,0.35)),nrow=50,ncol=1000)
 colnames(M) <- paste("M",1:1000,sep="")
 lgd <- rep(1:4,each=250)

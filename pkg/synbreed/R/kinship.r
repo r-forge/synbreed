@@ -67,7 +67,6 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
 
      
       # initialize inbreeding coefficients
-      Fi <- DH
 
    # loop over individuals
       for(i in 1:n){
@@ -80,22 +79,21 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
             # A[j,k] = 1 + F_j, j=k
             # A[j,k] = 2f_jk  , j!=k
             A[i,j] <- A[j,i] <- 2*fab
-            # calculate inbreeding coefficient
-            Fi[j] <- A[j,j]-1
+       
             # set up dominance relationship matrix
             # pedigree (Y,Z) -> j, (U,V) -> k
             # (Oakley et al, 2007)
             # D[j,k] = 1-F_j, j=k
             # D[j,k] = (f_YU f_ZV + f_YV f_ZU (1-F_j)(1-F_k), j!=k 
-            dab <- G[ka,kb]*G[ka+1,kb+1] + G[ka+1,kb]*G[ka,kb+1]
+            dab <- (G[ka,kb]*G[ka+1,kb+1] + G[ka+1,kb]*G[ka,kb+1])*(1-G[ka,ka+1])*(1-G[kb,kb+1])
             # acoount for inbreeding
             # dominance = 0 if Fi=1
-            D[i,j] <- D[j,i] <- dab*(1-Fi[i])*(1-Fi[j])
-            diag(D) <- 1- Fi
+            D[i,j] <- D[j,i] <- dab
+            diag(D) <- 1-(1-G[ka,ka+1]) 
         }
       } # end of loop over individuals
     }  # end of if
-    
+
     # set return matrices
     if(what == "add") kmat <- A
     if(what == "dom") kmat <- D
