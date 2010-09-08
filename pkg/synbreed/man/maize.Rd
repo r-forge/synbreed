@@ -20,13 +20,10 @@ This datatset contains genotypic data, phenotypic data and pedigree data for a s
   }
 }
 \details{
-%%  ~~ If necessary, more details than the __description__ above ~~
 }
 \source{
-%%  ~~ reference to a publication or URL from which the data were obtained ~~
 }
 \references{
-%%  ~~ possibly secondary sources and usages ~~
 }                                  
 \examples{
 data(maize)

@@ -6,7 +6,7 @@
 LD Heatmap
 }
 \description{
-Computation of pairwise LD for marker data and plotting LD heatmaps for each linkage group (chromosome)
+Computation of pairwise LD as \eqn{R^2} for marker data and plot of LD heatmap for each linkage group (chromosome)
 }
 \usage{
 LDMap(marker, linkageGroup, pos, file = NULL, ...)
@@ -20,26 +20,29 @@ A \code{data.frame} of \code{matrix} containing the marker data. Could be the re
 A numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
 }
   \item{pos}{
-A numeric vector of length \code{nrow(marker)} with physical position of the marker on the chromosome.
+A numeric vector of length \code{nrow(marker)} with physical position of each marker on the chromosome.
 }
   \item{file}{
-Optional a file were the plot is saved as \code{pdf}.
+Optionally a path were the plot is saved as \code{pdf}.
 }
   \item{\dots}{
 Further arguments that could be passed to function \code{LDheatmap}.
 }
 }
 \details{
-LD is computed as coefficient of determination \eqn{R^2}. The plot is simply a call of function \code{LDheatmap} in package  \code{LDheatmap}.
+LD is computed as coefficient of determination \eqn{R^2}. The plot is simply a call of function \code{LDheatmap} in package  \code{LDheatmap}.  
+}
+\value{
+A \code{matrix} containing all pairwise values of \eqn{R^2} for all markers across linkage groups. 
 }
 
 \seealso{
-\code{\link{codeGeno}}, \code{\link{LDheatmap}}
+\code{\link{codeGeno}}, \code{\link{LDheatmap}}, \code{\link{LDDist}}
 }
 \examples{
 data(maize)
 LDMap(maize.geno[,-1],maize.marker.pos$chr,maize.marker.pos$pos)
 }
 
-\keyword{plotting}
+\keyword{LD}
 \keyword{genotypic data}% __ONLY ONE__ keyword per line

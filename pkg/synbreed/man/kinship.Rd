@@ -29,7 +29,7 @@ The gametic relationship matrix can be used to set up other types of relationshi
 \deqn{0.5\cdot \left[(A1,C1) + (A1,C2) + (A2,C1) + (A2,C2)\right],}{0.5*[(A1,C1) + (A1,C2) + (A2,C1) + (A2,C2)],}
 where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix. If \code{ret="kin"}, the kinship matrix is returned which is half of the additive relationship matrix.
 
-If \code{ret="dom"}, the dominance relationship matrix is returned. The dominance relationship matrix between individuals A (\eqn{A1,A2}) and B (\eqn{B1,B2}) is given by 
+If \code{ret="dom"}, the dominance relationship matrix is returned. The dominance relationship matrix between individuals A (\eqn{A1,A2}) and B (\eqn{B1,B2}) in case of no inbreeding is given by 
 \deqn{\left[(A1,C1) \cdot (A2,C2) + (A1,C2) \cdot (A2,C1)\right],}{[(A1,C1) * (A2,C2) + (A1,C2) * (A2,C1)],} 
 where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix.
 }

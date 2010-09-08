@@ -27,7 +27,7 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
            gamMat[j,3] <- (par1gam - 1)*2 + 2
         }
         #  parents of female genome contribution
-        if(par1gam > 0){
+        if(par2gam > 0){
            gamMat[k,2] <- (par2gam - 1)*2 + 1
            gamMat[k,3] <- (par2gam - 1)*2 + 2
         }
@@ -40,7 +40,6 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
     dimnames(G) <- list(paste(rep(ped$ID,each=2),rep(1:2,times=n),sep="_"), paste(rep(ped$ID,each=2),rep(1:2,times=n),sep="_"))
 
     # set inbreed coefficients of DHs on 1
-
     G[cbind((1:ngam)*DHgam,((1:ngam)+c(1,-1))*DHgam)] <- 1
 
     # caluclate gametic relationship
@@ -66,18 +65,36 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
       A <- D <- matrix(data=NA,nrow=n,ncol=n)
       dimnames(A) <-  dimnames(D) <- list(ped$ID, ped$ID)
 
-      # loop over individuals
+     
+      # initialize inbreeding coefficients
+      Fi <- DH
+
+   # loop over individuals
       for(i in 1:n){
          ka <- (i-1)*2 + 1
          for(j in i:n){
             kb <- (j-1)*2 + 1
-            fab <- 0.5*(G[ka,kb]+G[ka,kb+1]+G[ka+1,kb]+G[ka+1,kb+1])
-            A[i,j] <- A[j,i] <- fab
+            fab <- 0.25*(G[ka,kb]+G[ka,kb+1]+G[ka+1,kb]+G[ka+1,kb+1])
+            # set up numerator relationship matrix
+            # (Oakley et al, 2007)
+            # A[j,k] = 1 + F_j, j=k
+            # A[j,k] = 2f_jk  , j!=k
+            A[i,j] <- A[j,i] <- 2*fab
+            # calculate inbreeding coefficient
+            Fi[j] <- A[j,j]-1
+            # set up dominance relationship matrix
+            # pedigree (Y,Z) -> j, (U,V) -> k
+            # (Oakley et al, 2007)
+            # D[j,k] = 1-F_j, j=k
+            # D[j,k] = (f_YU f_ZV + f_YV f_ZU (1-F_j)(1-F_k), j!=k 
             dab <- G[ka,kb]*G[ka+1,kb+1] + G[ka+1,kb]*G[ka,kb+1]
-            D[i,j] <- D[j,i] <- dab
+            # acoount for inbreeding
+            # dominance = 0 if Fi=1
+            D[i,j] <- D[j,i] <- dab*(1-Fi[i])*(1-Fi[j])
+            diag(D) <- 1- Fi
         }
       } # end of loop over individuals
-    }
+    }  # end of if
     
     # set return matrices
     if(what == "add") kmat <- A
@@ -89,4 +106,5 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
 
     return(kmat)
 }
+
 

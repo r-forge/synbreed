@@ -94,7 +94,7 @@ The idea of \textit{genomic selection} is that some of the markers are linked to
 use of the markers an regress the phenotype on the genotype. The esimated could be used to select the genotypes which a favourable set of genes and select the for the next breeding scheme.
 
 The remainder of the document is structured as follows. In section \ref{sec:ExampleData} a simulated data set is presented which is used to illustrate the methods throughout the document. Section \ref{sec:MarkerData} describes the formatting of marker data  and section \ref{sec:Pedigree} shows how to utilize pedigree information.
-In section \ref{sec:RelationshipMatrices} several methods to set up relationship matrices are presented.
+In section \ref{sec:RelationshipMatrices} several methods to set up relationship matrices are presented. Section \ref{sec:LinkageDisequilibrium} shows how Linkage Disequilibrium between markers could be expoited using \texttt{synbreed} package.
 
 
 
@@ -475,6 +475,36 @@ to an object of class "relationshipMatrix". This gives a heatmap of the entries 
 %In Figure \ref{fig:heatpedi} one can see the family  structure in the data which is consiting of 25 families.
 
 Note that objects of class "relationshipMatrix" can be writen two input files appropriate for Mixed Model software as \texttt{WOMBAT} \citep{Meyer2006} or \texttt{ASReml} \citep{Gilmour2000}.
+
+
+\section{Linkage Disequilibrium}\label{sec:LinkageDisequilibrium}
+
+\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms at two or more loci. 
+It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
+is computed as coefficient of determination $R^2$ between the data of the genotypes $\bf x_i$ and $\bf x_j$ at both loci. $\bf x_i$ is an $n$-dimensional vector containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
+$$  LD_{ij} = r(\bf x_i,\bf x_j)^2 .$$
+Usually the the overall amount of LD of markers inbetween each linkage groups is of interest as well as the decline of LD when physical distance of markers on chromosome is increasing. To plot the distance versus the LD for each linkage group, use function \texttt{LDDist}, to make a LD Heatmap for values of $R^2$, use function \texttt{LDMap}.
+For \texttt{maize} we plot the LD for the first chromosome
+
+\begin{figure}[!h]
+<<fig=TRUE>>=
+data(maize)
+marker <- codeGeno(maize.geno[,-1])
+chr1 <- maize.marker.pos$chr == 1 
+LDDist(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
+@ 
+\caption{LD versus distance plot for first chromosome of \texttt{maize} data.}
+\label{fig:LDDist}
+\end{figure}
+
+LD heatmap for pairwise LD of markers on the first chromosome is obtained as 
+\begin{figure}[!h]
+<<fig=TRUE>>=
+LDMap(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
+@ 
+\caption{LD heatmap for markers on first chromosome of \texttt{maize} data.}
+\label{fig:LDDist}
+\end{figure} 
 
 
 \section{Acknowledgements}
