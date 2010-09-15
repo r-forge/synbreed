@@ -93,9 +93,7 @@ the package deals only with two different alleles for each locus which hold if b
 The idea of \textit{genomic selection} is that some of the markers are linked to a \textit{quantitative trait loci} (QTL) with an effect on a quantitative phenotypic values. \citet{Meuwissen2001} proposed to make
 use of the markers an regress the phenotype on the genotype. The esimated could be used to select the genotypes which a favourable set of genes and select the for the next breeding scheme.
 
-The remainder of the document is structured as follows. In section \ref{sec:ExampleData} a simulated data set is presented which is used to illustrate the methods throughout the document. Section \ref{sec:MarkerData} describes the formatting of marker data  and section \ref{sec:Pedigree} shows how to utilize pedigree information.
-In section \ref{sec:RelationshipMatrices} several methods to set up relationship matrices are presented. Section \ref{sec:LinkageDisequilibrium} shows how Linkage Disequilibrium between markers could be expoited using \texttt{synbreed} package.
-
+The remainder of this document is structured as follows. In section \ref{sec:ExampleData} a simulated data set is presented which is used to illustrate the methods throughout the document. Section \ref{sec:MarkerData} describes the formatting of marker data  and section \ref{sec:Pedigree} shows how to utilize pedigree information. Section \ref{sec:LinkageDisequilibrium} shows how Linkage Disequilibrium between markers could be expoited using \texttt{synbreed} package. In section \ref{sec:RelationshipMatrices} several methods to set up relationship matrices are presented. 
 
 
 
@@ -226,6 +224,36 @@ By default, no markers are selected by one of both criteria, thus \texttt{maf}=\
 
 Note that missing values in the marker data must be coded as \texttt{NA}. Instead of imputing the values \texttt{codeGeno} provides the possibility to replace the missing values by a certain value, i.e. 1 which is the expection for the missing values. Different codings of the alleles could easily be obtained with simple operations of the resulting data.
 
+\section{Linkage Disequilibrium}\label{sec:LinkageDisequilibrium}
+
+\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms at two or more loci. 
+It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
+is computed as coefficient of determination $R^2$ between the data of the genotypes $\bf x_i$ and $\bf x_j$ at both loci. $\bf x_i$ is an $n$-dimensional vector containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
+$$  LD_{ij} = r(\bf x_i,\bf x_j)^2 .$$
+Usually the the overall amount of LD of markers inbetween each linkage groups is of interest as well as the decline of LD when physical distance of markers on chromosome is increasing. To plot the distance versus the LD for each linkage group, use function \texttt{LDDist}, to make a LD Heatmap for values of $R^2$, use function \texttt{LDMap}.
+For \texttt{maize} we plot the LD for the first chromosome
+
+\begin{figure}[!h]
+<<fig=TRUE>>=
+data(maize)
+marker <- codeGeno(maize.geno[,-1])
+chr1 <- maize.marker.pos$chr == 1 
+LDDist(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
+@ 
+\caption{LD versus distance plot for first chromosome of \texttt{maize} data.}
+\label{fig:LDDist}
+\end{figure}
+
+LD heatmap for pairwise LD of markers on the first chromosome is obtained as 
+\begin{figure}[!h]
+<<fig=TRUE>>=
+LDMap(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
+@ 
+\caption{LD heatmap for markers on first chromosome of \texttt{maize} data.}
+\label{fig:LDDist}
+\end{figure} 
+
+
 
 \section{Pedigree}\label{sec:Pedigree}     
                                
@@ -316,54 +344,61 @@ E & E2 & B1 & B2 \\
 \end{tabular}
 \end{table}
 
-This table is converted into the gametic relationship $\bf G$ matrix which is of order $2n$, if the number of individuals is $n$. The diagonal values of $\bf G$ are always 1. The off-diagonal values give the probabilty that the two allelse are identical by
-descent (IBD). If the parents are unknown, it is assumed that they are progeny of a random mating population. In this case the off-diagonals are zero. The other values of the gametic relations are filled in rowwise. 
-The combination of $2^2=4$ alleles which describe the relationship of progeny A with parent C are computed as follows
-$$ (A1,C1) = 0.5 \cdot [(A1,A1) + (A1,A2)] $$
-$$ (A1,C2) = 0.5 \cdot [(A1,B1) + (A1,B2)] $$
-$$ (A2,C1) = 0.5 \cdot [(A2,A1) + (A2,A2)] $$
-$$ (A2,C2) = 0.5 \cdot [(A2,B1) + (A2,B2)] $$
+This table is converted into the gametic relationship $\bf G$ matrix which is of order $2n$, if the number of individuals is $n$. The diagonal values of $\bf G$ are always 1. The off-diagonal values give the probabilty that two alleles $A_1$ and $A_2$ are identical by
+descent (IBD), denoted as $P(A_1 \equiv A_2)$. If the parents are unknown, it is assumed that they are progeny of a random mating population. In this case the off-diagonals are zero. The gametic relationsship matrix is constructed recursively, starting with the first 
+generation in pedigree. 
+The combination of $2^2=4$ alleles that describe the relationship of progeny A with parent C are computed as follows
+\begin{eqnarray*} 
+P(A_1 \equiv C_1) &=& 0.5 \cdot \left[P(A_1 \equiv A_1) + P(A_1 \equiv A_2)\right]  \\
+P(A_1 \equiv C_2) &=& 0.5 \cdot \left[P(A_1 \equiv B_1) + P(A_1 \equiv B_2)\right]  \\
+P(A_2 \equiv C_1) &=& 0.5 \cdot \left[P(A_2 \equiv A_1) + P(A_2 \equiv A_2)\right]  \\
+P(A_2 \equiv C_2) &=& 0.5 \cdot \left[P(A_2 \equiv B_1) + P(A_2 \equiv B_2)\right]   
+\end{eqnarray*}
 The gametic relationship for a given pedigree is obtained as follows
 <<>>=
 G <- kinship(ped,ret="gam")
 G
 @
 The resulting object \texttt{G} is of class "relationshipMatrix" which is the general class for all kinds of relationship matrices (gametic relationship, additive and dominance relationship, kinship). An object of class "relationshipMatrix" is basically a symmetric matrix containing the relationship coefficient of two individuals.
-Note that the entry of allele 1 and allele 2 of an individual $i$ equals his inbreeding coefficient $F_i$. For example, the inbreeding coefficent of individual D is
+Note that the entry in \texttt{G} of allele $x_1$ and allele $x_2$ of an individual $X$ equals his inbreeding coefficient $$F_X=P(x_1 \equiv x_2).$$ For example, the inbreeding coefficent of individual D is
 <<>>=
-G["D_1","D_2"] 
+as.numeric(G["D_1","D_2"]) 
 @
-which is nonzero because individuals A and C, which are the parents of D, are relatives. Once the gametic relationship is computed, it could be converted in the additive numerator relationship matrix $\bf A$ or the dominance relationship matrix $\bf D$. The additive relationship between the individuals A and B is given by
-$$ 0.5 \cdot (G[A1,B1]+ G[A1,B2] + G[A2,B1] + G[A2,B2]),$$
-where $G[.,.]$ denotes the corresponding value of the gametic relationship matrix $\bf G$. 
-
+which is nonzero because individuals A and C, which are the parents of D, are relatives. Once the gametic relationship is computed, it could be converted in the additive numerator relationship matrix $\bf A$ or the dominance relationship matrix $\bf D$.
+ The additive relationship between tindividuals $X$ and $Y$ is given by
+$$ A_{XY} = \begin{cases} 1+F_X, & X=Y \\ 2f_{XY}, & X\neq Y \end{cases}$$
+where $f_{XY}$ is the \textit{coefficient of coancestry} \citep{Wright1922} which is defined as
+\begin{equation}
+f_{XY} = P(X \equiv Y) = \frac{1}{4}\left[ P(x_1 \equiv y_1) + P(x_1 \equiv y_2) + P(x_2 \equiv y_1) + P(x_2 \equiv y_2)\right].
+\end{equation} 
 The additive numerator relationship matrix descripes the additive relationship between individuals and is of order $n$. 
-It is typically used in the animal model to estimate breeding values (additive genetic effects)
-\begin{equation}\label{eq:animalmodel}
- y_i = \mu + a_i + e_i,
-\end{equation}                                        
-where $y_i$ is the phenotypic value for individual $i$, $\mu$ the mean and $a_i$ is the additive genetic effect and $\bf a = (a_1,...,a_n)' \sim \text{N}(0,\bf{A} \sigma^2_a)$ is assumed.  For the residual,
-$\bf e \sim \text{N}(0,\bf I \sigma^2)$ is assumeed. The additive numerator relationship matrix for a given pedigree is obtained as follows
+It is typically used in the animal model to estimate breeding values (additive genetic effects), see Section \ref{sec:Models}
+ The additive numerator relationship matrix for a given pedigree is obtained as follows
 <<>>=
 A <- kinship(ped,ret="add")
 A
 @
-Note that the diagonals of $\bf A$ are $1+F_i$. Sometimes the kinship matrix is required, which is half of the additive numerator relationship matrix. It is obtained by
+Note that the diagonals of $\bf A$ are $1+F_i$ for $i=1,...,n$. Sometimes the kinship matrix is required, which is half of the additive numerator relationship matrix. It is obtained by
 <<>>=
 K <- kinship(ped,ret="kin")
 @
 
-Additionally it is possible to derive the dominance relationship matrix $\bf D$ out of $\bf G$. The dominance is needed in the non-additive animal model
-\begin{equation}\label{eq:nonaddmodel}
- y = \mu + a_i + d_{i} + e_i,
-\end{equation}
-with the same notation as in \eqref{eq:animalmodel} and $d_i$ being the dominance effect of individual $i$ with $\bf d  = (d_1,...,d_n)' \sim  \text{N}(0,\bf{D} \sigma_d^2)$. The dominance relationship matrix
+Additionally it is possible to derive the dominance relationship matrix $\bf D$ out of $\bf G$. The dominance is needed in the non-additive animal model. The dominance relationship between individuals $X$ and $Y$ is given by
+is defined as \citep{Oakey2006}  
+$$ D_{XY} = \begin{cases} 1-F_X, & X=Y \\ t_{XY}, & X\neq Y \end{cases}$$
+with $t_{XY}$ being the coefficient of dominance coaviance which is defined as
+\begin{eqnarray*}
+t_{XY} &=& P(x_1 \equiv y_1 \neq x_2 \equiv y_2) +  P(x_1 \equiv y_2 \neq x_2 \equiv y_1) \\
+&=&  P(x_1 \neq x_2)P(y_1 \neq y_2)\left[ P(x_1 \equiv y_1)P(x_2 \equiv y_2)+P(x_2 \equiv y_1)P(x_1 \equiv y_2) \right] \\
+&=& (1-F_X)(1-F_Y)\left[ P(x_1 \equiv y_1)P(x_2 \equiv y_2)+P(x_2 \equiv y_1)P(x_1 \equiv y_2) \right].
+\end{eqnarray*}
+Note that for a completely homozygous line $X$ dominance is zero because $F_X=1$. Dominance relationship matrix 
 for the example pedigree is obtained  by
 <<>>=
 D <- kinship(ped,ret="dom")
 D
 @
-Variance-covariance matrices for effects of heigher order interactions in the non-additive animal model as addidive-additive (AA), additive-dominance (AD) or dominance-dominance (DD) variance-covariance matrices can be computes as
+Variance-covariance matrices for effects of heigher order interactions in the non-additive animal model as additive-additive (AA), additive-dominance (AD) or dominance-dominance (DD) variance-covariance matrices can be computes as
 <<>>= 
 (AA <- A*A)
 (AD <- A*D)
@@ -450,18 +485,18 @@ data(maize)
 head(maize.ped)
 @
 First, the additive numerator relationship matrix is computed. There are \Sexpr{table(maize.ped$DH)[2]} DH lines and \Sexpr{table(maize.ped$DH)[1]} non DH lines in the pedigree. For DH lines special treatment is necassary, as the inbreeding coefficient must be 1. An argument \texttt{DH} is available for function \texttt{kinship} where
-for each individual in the pedigree it specified whether this is a DH line or not. This information is available for the \texttt{maize} data. To obtain the addtive numerator relationship matrix of the first 100 genotypes, use 
+for each individual in the pedigree it specified whether this is a DH line or not. This information is available for the \texttt{maize} data. To obtain the addtive numerator relationship matrix, use 
 <<>>=
 ped.maize <- create.pedigree(maize.ped$ID,maize.ped$Par1,maize.ped$Par2)
-A.maize100 <- kinship(ped.maize[1:100,],DH=maize.ped$DH[1:100],ret="add")
-dim(A.maize100) 
+A.maize <- kinship(ped.maize,DH=maize.ped$DH,ret="add")
+dim(A.maize) 
 @
 
 \subsection{Visualisation of relationship matrices}
 
 As in most cases a relationship matrix is to big to print it on the screen. Thus there are two possibilites for visualisation of an object of class "relationshipMatrix" in \texttt{synbreed} package. A \texttt{summary} method is defined which gives the important characteristics of a relationship matrix. Use
 <<>>=
-summary(A.maize100)
+summary(A.maize)
 @
 to get the summary for the pedigree based additive relationship matrix of the \texttt{maize} data. Another possibility is the \texttt{plot} method which could be applied
 to an object of class "relationshipMatrix". This gives a heatmap of the entries of the relationship matrix
@@ -476,40 +511,75 @@ to an object of class "relationshipMatrix". This gives a heatmap of the entries 
 
 Note that objects of class "relationshipMatrix" can be writen two input files appropriate for Mixed Model software as \texttt{WOMBAT} \citep{Meyer2006} or \texttt{ASReml} \citep{Gilmour2000}.
 
+\section{Models}\label{sec:Models}
 
-\section{Linkage Disequilibrium}\label{sec:LinkageDisequilibrium}
+The ultimate aim in the analysis of a breeding programm is the estimation of breeding values (additive genetic effects). The basic statistical model for this purpose is a linear mixed model
+\begin{equation}\label{eq:mm}
+\bf y = \bf X \bf b + \bf Z \bf u + \bf e,
+\end{equation}
+where $\bf y$ is the $n \times 1$ vector of phenotypic records, $\bf b$ a $t \times 1$ vector of fixed effects and $\bf u$ a  $m \times 1$ vector of random effects. $\bf X$ and $\bf Z$ are the corresponding design matrices with dimension $n \times t$  and $n \times m$ respectively. For the random effect, it is assumend that
+$$ \bf u \sim \text{N}( \bf 0, \bf G \sigma^2_g)$$
+where $\bf G$ is a variance-covariance matrix. $\bf e$ denotes the $n \times 1$ vector of residuals with $ \bf e \sim \text{N}( \bf 0, \bf I_n \sigma^2)$ and $\bf I_n$ is the $n$-dimensional identity matrix.
+                                                                                                                                                    
+If $\bf G$ equals the additive numerator relationship matrix $\bf A$, model \eqref{eq:mm} is called \textit{animal model}. Here the random effect is usually denote as $\bf a$ and $ \bf a \sim \text{N}( \bf 0, \bf A \sigma^2_a)$.  This model is used to estimate breeding values based on phenotypic records and pedigree information. As an example we will consider simulate plant breeding data. A pedigree with 5 generations and 20 individuals in each generation. Phenotypic data was measured in a field trial consiting of 5 locations with two replications (blocks) within locations for each of the $n=100$ genotypes.
 
-\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms at two or more loci. 
-It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
-is computed as coefficient of determination $R^2$ between the data of the genotypes $\bf x_i$ and $\bf x_j$ at both loci. $\bf x_i$ is an $n$-dimensional vector containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
-$$  LD_{ij} = r(\bf x_i,\bf x_j)^2 .$$
-Usually the the overall amount of LD of markers inbetween each linkage groups is of interest as well as the decline of LD when physical distance of markers on chromosome is increasing. To plot the distance versus the LD for each linkage group, use function \texttt{LDDist}, to make a LD Heatmap for values of $R^2$, use function \texttt{LDMap}.
-For \texttt{maize} we plot the LD for the first chromosome
+The simulation of phenotypes is done with the function \texttt{simul.phenotpe} which simulates records based on model \eqref{eq:mm} with an overall mean as fixed effects and random effects for genotype, location and block. Random effects for location and block nested in location are i.i.d. normal. Random effect for genotype is simulated according to multivariate normal distribution $\text{N}( \bf 0, \bf A \sigma^2_a)$, where $\bf A$ is the numerator relationship matrix obtained be pedigree information. $\sigma^2_a$ and variance components for the other effects are specified by the user. Simulated data is obtained as follows
+<<>>=                                      
+ped <- simul.pedigree(5,20)
+vc <-  list(sigma2e=15,sigma2a=10,sigma2l=0,sigma2b=0)
+dat <- simul.phenotype(ped,Nloc=5,Nrepl=2,vc=vc)
+str(dat)
+@
+Variance components for location and block are zero as only additive genetic effects should be considered in this example. The simulated random effects for 
+genotype are called true breeding values (TBV).
 
-\begin{figure}[!h]
-<<fig=TRUE>>=
+Estimation of variance components with REML and prediction of random effects in model \eqref{eq:mm} could be done with the R package \texttt{regress}. This package allows for arbitrary variance-covariance matrizes of random effects. Solutions for animal model with overall mean as fixed effect is obtained as 
+<<>>=
+library(regress)
+A <- kinship(ped,ret="add")
+A <- A %x% matrix(1,10,10)
+mod <- regress(Trait ~ 1, Vformula=~A,data=dat)
+summary(mod)           
+@
+Note that variance-covariance matrix must be of same dimenson as $y$. This could easily be obtained by using the Kronecker product as data is sorted by individuals. As the fitted model only contains one random effect, estimated breeding values are 
+<<>>=
+ebv <- mod$predicted - mod$fitted
+@
+as \texttt{predicted} equals $\bf \hat y$ and \texttt{fitted} contains estimated overall mean. Correlation between observed and estimated phenotypes (also called \textit{predictive ability} of the model, see \citet{Legarra2008}) is
+<<>>=
+cor(ebv,dat$Trait)
+@  
+and correlation between estimated and true genetic effect (called \textit{accuracy} of the model) is
+<<>>=
+cor(ebv,dat$TBV)
+@
+
+At the end of one cycle of a breeding sheme the individuals with highest breeding values are selected for the next breeding cycle. The term \textit{genomic selection} refers to the situation where genotypic data is used to estimate genetic effects of the individuals. This is the case if a genomic relationship matrix is used as varianance-covariance matrix in the animal model. In \texttt{maize} data genotypic data is available for all phenotyped individuals. This is used to set up genomic relationship according to vanRanden  and passed to \texttt{regress}
+<<>>=
 data(maize)
-marker <- codeGeno(maize.geno[,-1])
-chr1 <- maize.marker.pos$chr == 1 
-LDDist(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
-@ 
-\caption{LD versus distance plot for first chromosome of \texttt{maize} data.}
-\label{fig:LDDist}
-\end{figure}
+marker <- codeGeno(maize.geno[, -1])
+vR <- vanRaden(marker)    
+y <- maize.pheno$Trait
+mod.maize <- regress(y~1,Vformula=~vR)
+summary(mod.maize)
+@
+Note that we have only one phenotypic record for each genotype Predictive ability of this model is
+<<>>=                                                  
+yhat <- mod.maize$predicted
+cor(yhat,y)
+@
+Genomic selection is done by choosing the, e.g. 20\% genotypes with highest values for $\bf \hat y $.
 
-LD heatmap for pairwise LD of markers on the first chromosome is obtained as 
-\begin{figure}[!h]
-<<fig=TRUE>>=
-LDMap(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
-@ 
-\caption{LD heatmap for markers on first chromosome of \texttt{maize} data.}
-\label{fig:LDDist}
-\end{figure} 
+
+ 
+                                                                                                                                                      
+
+ 
 
 
 \section{Acknowledgements}
 
-This research was funded by the German Federal Ministry of Education and
+This research was funded by the German Federal Ministry of Education and                                                                                    
 Research (BMBF) within the AgroClustEr \textit{Synbreed} $-$  \textit{Synergistic plant and
 animal breeding}.
 

@@ -89,9 +89,12 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
             # acoount for inbreeding
             # dominance = 0 if Fi=1
             D[i,j] <- D[j,i] <- dab
-            diag(D) <- 1-(1-G[ka,ka+1]) 
+            
         }
       } # end of loop over individuals
+
+      diag(D) <- 1 - (diag(A)-1)
+      
     }  # end of if
 
     # set return matrices

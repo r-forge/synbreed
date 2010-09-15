@@ -5,11 +5,11 @@
 Code biallelic marker data and select markers  
 }
 \description{
-This function could be used to code biallelic marker data in character format (e.g. alleles coded with "ade","gua", ... , or "A", "B", ...) into numeric format. The minor allele is coded as 2, the major allele is coded as 0.
+This function could be used to code biallelic marker data in character format (e.g. alleles coded with "ade","gua", ... , or "A", "B", ...) into numeric format. Heterozygous genotypes could be code arbitrary, e.g. "ade/gua".
 Imputing of missing values can be done with the population structure for the data (see details).  Selection of markers can be done according to the minor allele frequency and fraction of missing values.                                     
 }
 \usage{
-codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL,replace.value=NULL)
+codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL, label.heter=NULL, replace.value=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,8 +28,11 @@ A numeric. Markers with minor allele frequency < \code{maf} are discarded.
   \item{nmiss}{
 A numeric. Markers with more than \code{nmiss} missing values are discarded.
 }
+  \item{label.heter}{
+This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype.
+}
   \item{replace.value}{
-A numeric value assigned to missing values in data. .Only specified if no impution is done 
+A numeric value assigned to missing values in data. Only specified if no impution is done 
 }
 }
 \details{
@@ -42,14 +45,14 @@ the value is 0 with probability 0.5 and 1 with probability 0.5.}
 }
 }
 \value{
-A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.
+A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.  The genotype which is homozygousfor the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.
 }
 
 \author{
 Valentin Wimmer
 }
 \note{
-If there are no oberservations for a population no imputing is performed and a error message is printed but computation is continued.
+Information about imputing is printed on the screen (approximative run time, number of imputations by family structure and number of random imputations).
 }
 
 \examples{
@@ -61,7 +64,7 @@ snp9 <- matrix(c(
   "ade",   "ade",   "gua",   "cyt",   "ade",   NA,      "cyt",   "ade",  NA,
   "gua",   "ade",   "gua",   "cyt",   "gua",   "thy",   "cyt",   "gua",  NA,
   "ade",   "ade",   NA,      "cyt",      NA,   "thy",   "gua",   "ade",  "ade",
-  "ade",   NA,      NA,      "cyt",   "gua",   "thy",   "cyt",   "gua",  "ade",
+  "ade",   NA,      NA,      "cyt",    "gua",   "thy",   "cyt",   "gua",  "ade",
   "ade",   NA,      "ade",   "cyt",   "gua",   "thy",   "gua",   "ade",  NA),ncol=9,byrow=TRUE)
   
 colnames(snp9) <- paste("SNP",1:9,sep="")
@@ -71,6 +74,24 @@ pop <- c(rep("A",7),rep("B",2))
 codeGeno(snp9,TRUE,pop)
 # use only markers with less than 20% missing values
 codeGeno(snp9,TRUE,pop,nmiss=0.2)
+
+# example with heterozygous values
+snp6 <- matrix(c(
+  "gua",   "ade",   "gua",   "cyt",   "ade",   "thy",   
+  "gua",   "ade",   "gua",   "cyt",   "ade",   "thy",  
+  "ade/gua",   "ade",   "gua",   "cyt",   "ade",   "thy/gua",   
+  "ade",   "ade",   "gua",   "cyt",   "ade",   "gua",  
+  "ade/gua",   "ade",   "gua",   "cyt",   "ade",   NA,     
+  "gua",   "ade",   "gua",   "cyt",   "gua",   "thy",
+  "ade",   "ade",   NA,      "cyt",      NA,   "thy",
+  "ade",   NA,      NA,      "cyt",   "gua",   "thy",
+  "ade",   NA,      "ade",   "cyt",   "gua",   "thy"),ncol=6,byrow=TRUE)
+colnames(snp6) <- paste("SNP",1:6,sep="")
+snp6 <- data.frame(snp6)  
+  
+# two equivalent solutions
+codeGeno(snp6,FALSE,label.heter="/")     
+codeGeno(snp6,FALSE,label.heter=function(x) nchar(x)>3)   
                                
 # example with maize data
 data(maize)

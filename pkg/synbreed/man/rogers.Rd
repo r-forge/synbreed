@@ -5,7 +5,7 @@
 Genomic relationship matrix based on Roger's distance
 }
 \description{
-This function computes the genomic relationship matrix with marker information from genotypic data with \eqn{n} genotypes and \eqn{m} biallelic markers.
+This function computes the genomic relationship matrix with marker information from genotypic data with \eqn{n} genotypes and \eqn{m} biallelic markers. Kinship is reciprocal to Rogers's distance
 }
 \usage{
 rogers(marker, correction = c("Hayes", "Melchinger"))
@@ -20,7 +20,9 @@ Use \code{"Hayes"} for transformation of rogers distance into kinship coefficien
 }
 }
 \details{
-Roger's distance is computed as
+Relationship coefficient is computed according to Roger's distance 
+\deqn{f=1-d}
+where \eqn{d} is Roger's distance which is computed as
 \deqn{d=\frac{1}{m}\sum_{i=1}^m \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}}{d=1/m \sum sqrt(\sum(pij-qij)2)}
 where \eqn{m} is the number of markers and \eqn{n_i}{ni} the number of alleles for marker \eqn{i}. \eqn{p_{ij}}{pij} and \eqn{q_{ij}}{qij} are the allele frequencies of allele \eqn{j} for marker \eqn{i}. Transformation to kinship coefficient according to Hayes and Goddard (2008)
 \deqn{f = \frac{s-s_{min}}{1-s_{min}}}{f=s-smin/(1-smin)}
@@ -30,7 +32,7 @@ Transformation according to Melchinger (1991) is
 \deqn{f=1-\frac{d}{\bar{d}}}{f=1-d/dquer}
 }
 \value{
-An object of class \code{relationshipMatrix} which is a symmetric \eqn{nxn} matrix containing the relationship coefficients (two times the kinship coefficient).
+An object of class \code{relationshipMatrix} which is a symmetric \eqn{n \times n}{n x n} matrix containing the relationship coefficients (two times the kinship coefficient).
 }
 \references{
 ROGERS, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
