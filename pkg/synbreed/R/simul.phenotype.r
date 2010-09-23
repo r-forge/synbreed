@@ -1,4 +1,4 @@
-simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1,seed=123){
+simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1){
 
         if(is.null(A) & is.null(pedigree)) step("Either 'pedigree' or 'A' must be given")
         # create A matrix if missing
@@ -24,9 +24,7 @@ simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1,s
          # as matrix
         A <- matrix(A,nrow=N)  
                        
-        # set starting value for simulation
-        set.seed(seed)
-        
+
         # simulate data for contribution parts of phenotypic values
         
         # true breeding values

@@ -30,6 +30,5 @@ A <- kinshipPlants(ped)
 summary(A)
 }
 
-\keyword{plotting}
 \keyword{relationshipMatrix}
 

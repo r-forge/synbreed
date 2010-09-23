@@ -11,7 +11,7 @@ The field trial consists of multiple locations and randomized complete block des
 A single quantitative trait is simulated according to the specified contribution of relationship among individual, location and block effects to the phenotypic values.
 }
 \usage{
-simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL, Nloc = 1, Nrepl = 1, seed = 123)
+simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL, Nloc = 1, Nrepl = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,9 +33,6 @@ Numeric; Number of locations in the field trial.
 }
   \item{Nrepl}{
 Numeric; Number of complete blocks within location.
-}
-  \item{seed}{
-Seed value used in simulation and passed to \code{set.seed}
 }
 }
 \details{

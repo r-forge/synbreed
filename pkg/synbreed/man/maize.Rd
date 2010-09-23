@@ -19,12 +19,7 @@ This datatset contains genotypic data, phenotypic data and pedigree data for a s
     \item{\code{maize.marker.pos}}{A \code{data.frame} with two columns for the physical positions of the 696 marker \describe{ \item{\code{chr}}{A numeric giving the chromosome of the marker} \item{\code{pos}}{A numeric giving the position on the chromosome in cM}  }}
   }
 }
-\details{
-}
-\source{
-}
-\references{
-}                                  
+                                
 \examples{
 data(maize)
 # create.pedigree

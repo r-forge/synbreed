@@ -142,7 +142,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
              if(j==1) ptm <- proc.time()[3]
               if (length(table(res[,j]))==1)   res[is.na(res[,j]),j] <- 0
               else res[is.na(res[,j]),j] <- sample(c(0,2),size=sum(is.na(res[,j])),prob=table(res[,j])/n,replace=TRUE)
-             if(j==1) cat("Approximative run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
+             if(j==1) cat("approximate run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
         }   
    }    
   
@@ -185,10 +185,10 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
 
   # print summary of imputation
   if(impute){
-    cat(paste("Total number of missing values                :",nmv,"\n"))
-    cat(paste("Number of imputations by family structure     :",cnt1,"\n"))
-    cat(paste("Number of random imputations                  :",cnt2,"\n"))
-    cat(paste("Approximative fraction of correct imputations :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
+    cat(paste("total number of missing values                :",nmv,"\n"))
+    cat(paste("number of imputations by family structure     :",cnt1,"\n"))
+    cat(paste("number of random imputations                  :",cnt2,"\n"))
+    cat(paste("approximate fraction of correct imputations :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
   }
   
   return(res)
