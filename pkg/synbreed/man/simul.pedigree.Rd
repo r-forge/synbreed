@@ -28,9 +28,6 @@ If \code{animals=FALSE} the parents for the F1 will be randomly choosen out of t
 \value{
 An object of class \code{pedigree} with N=sum(ids) genotypes.
 }
-\references{                                                                                                                                                                     
-%% ~put references to the literature/web site here ~
-}
 \author{
 Valentin Wimmer
 }

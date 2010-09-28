@@ -19,6 +19,8 @@ simul.pedigree <- function(generations=2,ids=4,animals=FALSE){
         # define sire and dams for animals (no inbreeds)
         else{
            # define sex for 1st generation
+           # 0 = female
+           # 1 = male
            sex <- rep(0,length(ID))
            sex[gener==1] <- sample(rep(c(0,1),length=sum(gener==1)),sum(gener==1),replace=FALSE) 
            

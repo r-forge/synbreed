@@ -20,7 +20,7 @@ A \code{data.frame} or a \code{matrix} containing the  marker data. Each column 
 A logical specifing whether imputing of missing values should be done.
 }
   \item{popStruc}{
-A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype. 
+A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype with no missing values.
 }
   \item{maf}{
 A numeric. Markers with minor allele frequency < \code{maf} are discarded.

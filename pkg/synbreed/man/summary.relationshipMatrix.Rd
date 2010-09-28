@@ -13,15 +13,13 @@ Summarizing relationship matrices
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{relationshipMatrix}{
-object of class \code{relationshipMatrix}
+object of class ''relationshipMatrix''
 }
 
 }
 
 \author{
 Valentin Wimmer
-}
-\note{
 }
 
 \examples{

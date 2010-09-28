@@ -31,9 +31,7 @@ The results is ordered in the format for ASReml inverse numerator relationship m
 \value{
 Result is writen to \code{file} or returned if \code{file=NULL}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Valentin Wimmer
 }

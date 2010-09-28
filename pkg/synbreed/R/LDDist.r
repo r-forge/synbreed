@@ -1,9 +1,14 @@
-LDDist <- function(marker,linkageGroup,pos,file=NULL,fit=FALSE,...){
+LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NULL,...){
 
     if (length(linkageGroup)!=ncol(marker)) stop("'linkageGroup' must be of length ncol(marker)")
     if (length(pos)!=ncol(marker)) stop("'pos' must be of length ncol(marker)")
     
+    
     lg <- unique(linkageGroup)
+    if(!is.null(chr)){ 
+        lg <- chr
+        if(chr=="all") linkageGroup <- rep("all",length(linkageGroup))
+    }
     
     # function for fit according to ...
     smooth.fit <- function(overallDist,overallr2,n){
@@ -43,14 +48,35 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,fit=FALSE,...){
 
        ret[[i]] <- data.frame(marker1=mn[rowi],marker2=mn[coli],r2=ld.r2i,dist=disti)
 
-       plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",i),...)
-       if(fit) smooth.fit(ret[[i]][,4],ret[[i]][,3],n=nrow(markeri)) 
+       if(type=="p") plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",lg[i]),...)
+       if(type=="nls"){
+               plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",lg[i]),...) 
+               smooth.fit(ret[[i]][,4],ret[[i]][,3],n=nrow(markeri))
+       }
+       if(type=="bars"){
+          if(is.null(breaks)){
+             breaks.dist <- seq(from=min(ret[[i]]$dist),to=max(ret[[i]]$dist),length=6)
+             breaks.r2 <- seq(from=1,to=0,by=-0.2) 
+          }
+          else{
+             breaks.dist <- breaks$dist
+             breaks.r2 <- breaks$r2
+          }
+          cut.dist <- cut(ret[[i]]$dist,breaks=breaks.dist)
+          cut.r2 <- cut(ret[[i]]$r2,breaks=breaks.r2)
+          
+          tab.abs <- table(cut.r2,cut.dist)
+          colSum <- matrix(rep(colSums(tab.abs),nrow(tab.abs)),nrow=nrow(tab.abs),byrow=TRUE)
+          barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs)),space=c(.2),main=paste("Linkage Group",lg[i]),xlim=c(0,ncol(tab.abs)+2.8),...)
+          legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r²)",cex=1)
+
+
+}
 
     }
      if(!is.null(file)) dev.off()
     
     invisible(ret)
-
 }
 
 

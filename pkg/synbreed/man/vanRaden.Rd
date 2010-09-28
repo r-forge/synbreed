@@ -24,7 +24,8 @@ The computation is the same for homozygous and heterozygous loci. The formula fo
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{nxn} matrix containing the relationship coefficients.
 }
 \references{
-%% ~put references to the literature/web site here ~
+vanRaden, P. (2008). Ecient methods to compute genomic predictions.
+Journal of Dairy Science, 91:4414--4423.
 }                                                      
 \author{
 Valentin Wimmer and Theresa Albrecht

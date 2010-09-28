@@ -23,8 +23,6 @@ further graphical arguments
 \author{
 Valentin Wimmer
 }
-\note{
-}
 
 \examples{
 ped <- simul.pedigree(gener=4,7)
