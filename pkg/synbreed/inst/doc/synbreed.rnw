@@ -26,7 +26,8 @@
 \usepackage{epsfig}
 \usepackage{comment}
 \usepackage{pdfpages}
-\usepackage{algorithm2e}
+%\usepackage{algorithm2e}
+\usepackage{subfigure}
 
 \usepackage{Sweave}
 \usepackage{fancyvrb}
@@ -69,9 +70,10 @@ set.seed(1234)
 
 \begin{abstract}
   \noindent This document gives an introduction to the R-package
-  'synbreed' which contains tools and methods for plant and animal breeding. The goal is to create an analysis pipeline for genomic selection. This comprises tools
-  for genotypic, phenotypic and pedigree data. The steps of a typical analysis are presented in this document. This starts with the coding of the marker data, followed by the construction of relationship matrices according
-  to pedigree or genomic relationship matrices based on marker data, e.g. according to \citet{vanRaden2008}. Finally the estimation of breeding values for genomic selection using mixed models is described. \\
+  'synbreed'. The package contains tools and methods for plant and animal breeding. The goal is to create an analysis pipeline for genomic selection. This comprises tools
+  for genotypic, phenotypic and pedigree data. The steps of a typical analysis are presented in this document. This starts with the coding of the marker data, followed by the estimation of relatdness according
+  to pedigree or molecular marker data, e.g. according to \citet{vanRaden2008}. Finally the estimation of breeding values and estimation of variance components using mixed models is described. 
+  All steps are illustrated using simulated data for maize.\\
 
   \noindent{\bf Keywords:} synergistic plant and animal breeding, simulation, pedigree, genomic marker data, mixed models, genomic selection
   
@@ -82,22 +84,24 @@ set.seed(1234)
 
 \section{Introduction}\label{sec:Introduction}
 
-The R-package 'synbreed' aims to provide the tools that are necessary to analyze data of breeding programs and estimate breeding values. Of course,
+The R-package 'synbreed' aims to provide the tools that are necessary to analyze data of breeding programs and estimate (genomic) breeding values. Of course,
 there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003} and package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}.  The idea of this package is to collect the methods in one package, so that analysis can be performed in one software with just a few steps as described in this document. 
 Additional, this package takes care of special problems of modern breeding programs as the use of doubled haploid (DH) lines in plant breeding.  To our knowledge, there is no package in R which provides comparable features. Most of packages source code is written in R, so that methods could 
 easily be adopted for own purposes. Package \texttt{synbreed} makes no stringent restriction concerning input data format to allow for a wide range of possible data sources.
 
-Modern breeding programs make use available genomic information of individuals. On the genomic level, individuals could be distinguished by \textit{alleles} which are different states at a particular gene loci. In diploid species, every individuals has two sets of chromosomes and thus two copies of each allele at a locus. If both alleles are the same, the individual is homozygous for this locus, otherwise it heterozygous. For many species  \textit{molecular markers} are available and used to detect SNP (single nucleotide polymorphism) variation which occurs when a single nucleotide (\texttt{A}, \texttt{T}, \texttt{C}, or \texttt{G}) differs between individuals. In this document, the term \textit{genotype} refers to an individual's set of alleles read by molecular markers and is used as a synonym for an individual. On the other hand, \textit{phenotype} denotes the observed and measured value of an genotype, i.e. a trait
+Modern breeding programs use genomic information of individuals. On the genomic level, individuals could be distinguished by \textit{alleles} which are different states at a particular gene locus. In diploid species, every individuals has two sets of chromosomes and thus two copies of each allele at a locus. 
+If both alleles are the same, the individual is homozygous for this locus, otherwise it heterozygous. For many species  \textit{molecular markers} are available and used to detect SNP (single nucleotide polymorphism) variation which occurs when a single nucleotide (\texttt{A}, \texttt{T}, \texttt{C}, or \texttt{G}) differs between individuals.
+ In this document, the term \textit{genotype} refers to an individual's set of alleles read by molecular markers and is used as a synonym for an individual. On the other hand, \textit{phenotype} denotes the observed and measured value of a genotype, i.e. a trait
 of commercial interest. It is assumed that the phenotype is determined by a certain degree the genotype and by the environment.
 
-The idea to use molecular markers in breeding is to predict genetic breeding values for the individuals based on  marker information. If a dense marker map is available, all quantitative
-trait loci (QTL) are in linkage disequilibrium with at least one
-marker. To obtain genetic breeding values, \citet{Meuwissen2001} proposed to regress the phenotype on the markers (genotype). Once the model is available, individuals with a favorable set of genes are selected for the next cycle in breeding scheme. This is called \textit{genomic selection}.
+The idea to use molecular markers in breeding is to predict genomic breeding values for the individuals based on  marker information. In case a dense marker map is available, all quantitative
+trait loci (QTL) are assumed to be in linkage with at least one
+marker. To obtain genetic breeding values, \citet{Meuwissen2001} proposed to regress the phenotype on the markers (genotype). Once the model is available, individuals with a favorable set of genes are selected for the next cycle in breeding program. This is called \textit{genomic selection}.
 
 The remainder of this document is structured as follows. In section \ref{sec:ExampleData} a simulated data set is presented which is used to illustrate the methods in this document. Section \ref{sec:MarkerData} describes the coding of marker data and imputing for missing genotypic data. 
-In Section \ref{sec:LinkageDisequilibrium} shows how Linkage Disequilibrium between markers could be computed and visualized using \texttt{synbreed} package.  
-Section \ref{sec:Pedigree} shows how to utilize pedigree information. In Section \ref{sec:theory} introduces to basic concepts of quantitative genetics. Section \ref{sec:RelationshipMatrices} presents several methods to estimate relatedness between individuals. 
-In section \ref{sec:Models} the use of mixed models to estimate variance components and breeding values is illustrated. Section \ref{sec:genomicSelection} presents full analysis pipeline for genomic selection comparing different models and using simulated data.
+In Section \ref{sec:LinkageDisequilibrium} is shown how Linkage Disequilibrium (LD) between markers could be computed and visualized using \texttt{synbreed} package.  
+Section \ref{sec:Pedigree} shows how to utilize pedigree information. In Section \ref{sec:theory} basic concepts of quantitative genetics are introduced. Section \ref{sec:RelationshipMatrices} presents several methods to estimate relatedness between individuals. 
+In section \ref{sec:Models} the use of mixed models to estimate variance components and breeding values is illustrated. Section \ref{sec:genomicSelection} presents full analysis pipeline for genomic selection comparing different models  using simulated data.
 
 
 \section{Example data}\label{sec:ExampleData}
@@ -108,23 +112,24 @@ To load \texttt{maize} data, use
 library(synbreed)
 data(maize)
 @
-This data set contains genotypic and phenotypic data, as well as pedigree information up to grandparents for \Sexpr{ nrow(maize.pheno)} doubled haploid (DH) lines of maize. Performance of DH lines was evaluated in test crosses with a common tester. When loading \texttt{maize} data, the following
+This data set contains genotypic and phenotypic data, as well as pedigree information up to grandparents for \Sexpr{ nrow(maize.pheno)} doubled haploid (DH) lines of maize. Performance of DH lines was evaluated in test crosses with a common single cross tester. When loading \texttt{maize} data, the following
 four data sets are loaded into workspace
 \begin{description}
-\item[maize.geno]  This is a \texttt{data.frame} containing the marker data of \Sexpr{ ncol(maize.geno)-1} biallelic SNP-markers for the \Sexpr{ nrow(maize.pheno)} genotypes. 
+\item[maize.geno]  This is a \texttt{data.frame} containing the marker data of \Sexpr{ ncol(maize.geno)-1} biallelic SNP markers for the \Sexpr{ nrow(maize.pheno)} genotypes. 
 The first column contains the \texttt{ID} to identify the genotypes.
-This variable should be used for the merge with the phenotypic data. 
+This variable should be used for the merge with the phenotypic data. The following columns contain data for each SNP.
 The marker data is coded with 0/1 with no missing values. Note that the coding does not contain any information about allele frequencies, thus 1 could be minor or major allele. As all genotyped individuals are fully inbred, no heterozygous genotypes are present.
 \item[maize.pheno] This is a \texttt{data.frame} with column \texttt{ID} and column \texttt{Trait} containing the measured phenotypic trait (higher values indicate better performance). The order of the genotypes is the same as the order of rows in \texttt{maize.geno}.
 \item[maize.ped] This  \texttt{data.frame} contains the pedigree information of  1301 genotypes (1250 lines and 51 ancestors). 
-\item[maize.marker.pos]  This  \texttt{data.frame} contains additional information for the SNP markers. The first column \texttt{pos} gives the position of the marker on the chromosome in cM. Markers are order by their position with one chromosome. The second column \texttt{chr} sepecifies to which of the 10 chromosomes of maize (linkage group) the marker belongs (every marker is assigned to one linkage group).  The order of the markers are the same as the order of columns in \texttt{maize.geno}.
+\item[maize.marker.pos]  This  \texttt{data.frame} contains additional information for the SNP markers. The first column \texttt{pos} gives the position of the marker on the chromosome in cM. Markers are order by their position within one chromosome. 
+The second column \texttt{chr} sepecifies to which of the 10 chromosomes of maize (linkage group) the marker belongs (every marker is assigned to one linkage group).  The order of the markers is the same as the order of columns in \texttt{maize.geno}.
 \end{description}
 
 \section{Marker data}\label{sec:MarkerData}
 
-In the first step, marker data has to be coded in a way that it could be used for the construction of genomic relationship matrices. For biallelic marker data, the minor allele should be coded as 2 and the major allele as 0.
+In the first step, genotypes have to be coded in a way that it could be used for the construction of genomic relationship matrices. The convention used in this package is to code genotypes by their number of minor alleles, i.e. 0 for one homozygous genotypes and 2 for the other and 1 for heterozygous.
 This task is done by the function \texttt{codeGeno}. If no missing values and no heterozygous genotypes for any loci are present 
-and all markers should be used in the following analyses, this function does simply recode the alleles as mentioned above.
+and all markers should be used in the following analyses, this function does simply recode the alleles to 0 (major) and 2 (minor) as mentioned above.
 For the \texttt{maize} data, use
 <<>>=
 marker <- codeGeno(maize.geno[,-1])
@@ -132,14 +137,14 @@ marker <- codeGeno(maize.geno[,-1])
 to obtain an object \texttt{marker} which contains the recoded marker data. 
 Note that the first column is not used because it contains the \texttt{ID}. 
 Now, the minor allele frequencies are easily obtained by dividing the column means of \texttt{marker} by 2. 
-A histogram of minor allele frequencies is shown in Figure \ref{fig:histmaf}.
+A kernel density estimate of minor allele frequency (MAF) is shown in Figure \ref{fig:histmaf}.
 
 \begin{figure}[h]
 \centering
-<<fig=TRUE,echo=FALSE,results=hide,width=12,height=8>>=
-hist(colMeans(marker)/2,xlab="minor allele frequency",main="",nclass=20)
+<<fig=TRUE,width=10,height=6>>=
+plot(density(colMeans(marker)/2),xlab="MAF",main="")
 @
-\caption{Histogram of the minor allele frequency of the \Sexpr{ ncol(maize.geno)-1} SNP markers in \texttt{maize} data.}
+\caption{Kernel density estimate of the minor allele frequency of the \Sexpr{ ncol(maize.geno)-1} SNP markers in \texttt{maize} data.}
 \label{fig:histmaf}
 \end{figure}
 
@@ -151,9 +156,10 @@ Suppose an observation $i$ is missing (NA) for a marker $j$ in population $k$. I
 the imputed value will be the fixed allele. If marker $j$ is segregating in population $k$, 
 the value is 0 with probability 0.5 and 2 with probability 0.5.
 \item[without population structure] The missing values for a marker $j$ are sampled from the allele distribution of marker $j$.
-\end{description}           
+\end{description}   
+An alternative is to treat missing values as heteroyzgous genotypes using argument \texttt{replace.value} of function \texttt{codeGeno}.      
 A complete data set of genotypes is important if marker data should be used to estimate relatedness between individuals.
-To illustrate the difference in classification of missing values, 200 entries of the marker matrix are selected, the values saved and these entries are coded as \texttt{NA}. 
+To illustrate imputing of missing values, 200 entries of the marker matrix are selected, the values saved and these entries are coded as \texttt{NA}. 
 <<>>=
 marker <- as.matrix(marker)
 ind1 <- sample(1:nrow(marker),200)                                            
@@ -161,17 +167,18 @@ ind2 <- sample(1:ncol(marker),200)
 posNA <- cbind(ind1,ind2)
 original <- marker[posNA]
 marker[posNA] <- NA
-@                                                                                                                                                                                            
+@
+Note that missing values in the marker data must be coded as \texttt{NA}.                                                                                                                                                                                    
 The  \Sexpr{ nrow(maize.pheno)} genotypes in the \texttt{maize} data comprise 25 \textit{half sib} families with 50 genotypes in each family. The genotypes are ordered by family, thus population structure simply is
 <<>>=
 pop <- rep(1:25,each=50)
 @
-Recoding of the marker data and imputing of the missing  values is done as follows
+Recoding of the marker data and imputing of the missing  values using population structure is done as follows
 <<>>=
 marker1 <- codeGeno(marker,impute=TRUE,pop)
 @                                                                                                                                              
 A report is printed on the screen which informs about the number of imputations performed either according to family structure $n_F$ or chance $n_R$. The approximate fraction of correct imputations is $\frac{n_F + 0.5n_R}{n_F+n_R}$. For simulated data  
-original values are known. The quality of the classification of the missing values is judged in the following cross-table 
+original values are known. The quality of the classification of the missing values is judged in the following cross-table of imputed and original values
 <<>>=
 # compare in crosstable
 imputed <- marker1[posNA]
@@ -181,7 +188,7 @@ The fraction of correct replacements is
 <<>>=
 sum(diag(t1))/sum(t1)
 @      
-Note that expected fraction of correct imputations without family structure equals 0.5.
+which is much higher than the expected fraction of correct imputations without family structure which equals 0.5. At the moment there is no possibility to impute missing values using information of other (flanking) markers. This is the best alternative if no population structure is given. For this purpose, package function \texttt{fill.geno} of package \texttt{qtl} could be used. 
 
 In an analysis of genotypic data molecular markers with a small minor allele frequency and/or many missing values are discarded using arguments \texttt{maf} and \texttt{nmiss} of function \texttt{codeGeno}. 
 In this case all markers with more than
@@ -222,31 +229,46 @@ By default, no markers are selected by one of both criteria, thus \texttt{maf}=\
 %\label{alg:codeGeno}
 %\end{algorithm}     
 
-Note that missing values in the marker data must be coded as \texttt{NA}. Instead of imputing the values \texttt{codeGeno} provides the possibility to replace the missing values by a certain value, i.e. 1 which is the expectation. Different codings of the alleles could easily be obtained by linear transformations of the marker matrix.
 
 \section{Linkage Disequilibrium}\label{sec:LinkageDisequilibrium}
 
-\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms at two or more molecular markers (usually of the same linkage group). 
-It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
-is computed as coefficient of determination $R^2$ between the data of the genotypes $\bf x_i$ and $\bf x_j$ at both loci. $\bf x_i$ is a $n$-dimensional vector containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
+\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms of two or more molecular markers (usually part of same linkage group). Average LD over the whole genome is important as it influences prospects of genomic selection. 
+It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data, see \citet{Foulkes2009} using \texttt{genetics} package. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
+is computed as coefficient of determination $R^2$ of a regression of $\bf x_i$ on $\bf x_j$, where $\bf x_i$ and $\bf x_j$ are a $n$-dimensional vectors containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
 $$  LD_{ij} = r(\bf x_i,\bf x_j)^2 .$$
-Usually the overall amount of LD of markers in-between each linkage groups is of interest as well as the decline of LD when physical distance of markers is increasing. To plot the distance versus the LD for each linkage group, use function \texttt{LDDist}, to make a LD Heatmap for values of $R^2$, use function \texttt{LDMap}.
-For \texttt{maize} we plot the LD for the marker located on the first (out of 10) chromosomes
-
-\begin{figure}[!h]
-<<fig=TRUE>>=
+Relationship between markers is assumed to decrease as their distance on chromosome increases. To visualize this decline, the LD is plotted against the distance on the chromosome. 
+For \texttt{maize} we plot the LD for the marker located on the first (out of 10) chromosomes using function \texttt{LDDist}. This function provides several possibilities for graphical visualisation. To visualize LD decay on first chromosome of \texttt{maize} data, use
+<<eval=FALSE>>=
 data(maize)
 marker <- codeGeno(maize.geno[,-1])
-chr1 <- maize.marker.pos$chr == 1 
-LDDist(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
-@ 
-\caption{LD versus distance plot for first chromosome of \texttt{maize} data.}
-\label{fig:LDDist}
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,chr=1)
+@
+Figure \ref{fig:subfig1} and  \ref{fig:subfig2} present two possibilites for graphical visulisation using different values for argument \texttt{type}.
+
+\begin{figure}[!ht]
+\centering
+\subfigure[Scatterplot using \texttt{type="p"}]{
+<<fig=TRUE,echo=FALSE,results=hide>>=
+data(maize)
+marker <- codeGeno(maize.geno[,-1])
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="p",chr=1)
+@
+\label{fig:subfig1}
+}\qquad
+\subfigure[Stacked histogram using \texttt{type="bars"}]{
+<<fig=TRUE,echo=FALSE,results=hide>>=
+chr1 <- maize.marker.pos$chr == 1
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.2,0.1)),chr=1,xlab="dist")
+@
+\label{fig:subfig2}
+}
+\caption{LD  vs distance for first chromosome of \texttt{maize} data. }
 \end{figure}
 
-As genotypes are effected by selection due in simulation progress for many generations, LD is observable up to a distance of 50 cM for the first chromosome. Another type of graphic is a heatmap of LD for markers located on the same chromosome. LD heatmap for pairwise LD of markers on the first chromosome is obtained by function \texttt{LDMap} which is simply a wrapper for funtion \texttt{LDheatmap} of package \texttt{LDheatmap}.
+As genotypes are effected by selection due in simulation progress for many generations, LD above 0.6 is only observable up to a distance of 10 cM for the first chromosome, see Figure \ref{fig:subfig2} . Another type of graphic is a heatmap of LD for markers located on the same chromosome. LD heatmap for pairwise LD of markers on the first chromosome is obtained by function \texttt{LDMap} which is simply a wrapper for funtion \texttt{LDheatmap} of package \texttt{LDheatmap}.
 
-\begin{figure}[!h]
+
+\begin{figure}[!ht]
 <<fig=TRUE>>=
 LDMap(marker[,chr1],maize.marker.pos$chr[chr1],maize.marker.pos$pos[chr1])
 @ 
@@ -261,9 +283,9 @@ Strong LD could be observed between the markers on the ''left'' margin of Chromo
 \section{Pedigree}\label{sec:Pedigree}     
                                
 An important source of information in breeding programs is pedigree information. Especially in animal breeding, pedigree is recorded over many generations. The pedigree usually consists 
-of a list of individuals (animals or plants) of the current generation which is the subject of analysis and their ancestors (for which usually no phenotypic data is available). The pedigree is sorted the generation, beginning with the individuals with unknown parents. An example for a pedigree with five individuals belonging to 4 generations is given below.
+of a list of individuals (animals or plants) of the current generation which is the subject of analysis and their ancestors (for which often no phenotypic data is available). The pedigree is sorted by generation, beginning with the individuals with unknown parents. An example for a pedigree with five individuals belonging to 4 generations is given below. Parents of A and B are unknown.
 
-\begin{table}[!h]
+\begin{table}[!ht]
 \centering
 \begin{tabular}{cccc}
 \hline
@@ -278,11 +300,10 @@ E & D & B & 3 \\
 \end{tabular}
 \end{table}
 
-Note that unknown parents are coded as "0" in \texttt{synbreed} package and generation starts with 0. In \texttt{synbreed} exists the class "pedigree", which 
-should be used for handling pedigree information. An object of class "pedigree" consists of a \texttt{data.frame} with at least variables \texttt{ID}, \texttt{Par1}, \texttt{Par2} and \texttt{gener}.
-The function \texttt{create.pedigree} creates an object of class  "pedigree" for a given set of individuals and the pair of parents. The generation can be specified by the user or optional computed by the function.
+ In \texttt{synbreed} class "pedigree" should be used for handling pedigree information. An object of class "pedigree" consists of a \texttt{data.frame} with at least variables \texttt{ID}, \texttt{Par1}, \texttt{Par2} and \texttt{gener}.
+The function \texttt{create.pedigree} creates an object of class  "pedigree" for a given set of individuals and the pair of parents. Note that unknown parents are coded as "0" in \texttt{synbreed} package and generation starts with 0. The generation can be specified by the user or optional computed by the function.
 
-Suppose we have the pedigree structure of the example. This structure is carried into \texttt{synbreed} package with the following command:
+Suppose we have the pedigree structure of the example. This structure is carried into \texttt{synbreed} package with the following commands
 <<>>=
 id <- c("A","B","C","D","E")
 par1 <- c(0,0,"A","A","D")
@@ -292,7 +313,7 @@ ped
 @  
 An object of class "pedigree" could be visualized with generic plotting function for S3 class "pedigree".
  
-\begin{figure}[!h] 
+\begin{figure}[!ht] 
 <<fig=TRUE>>=
 plot(ped)
 @   
@@ -311,7 +332,7 @@ The resulting pedigree is visualized in Figure \ref{fig:simupedi}. A basic summa
 summary(ped.simul)
 @
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 <<fig=TRUE>>=
 plot(ped.simul)
 @
@@ -324,19 +345,20 @@ plot(ped.simul)
 This section summarazies some theory of quantitative genetics which is necessarry for the following sections. Those readers who are familiar with the concepts of genetics as presented in \citet{Falconer1996} or \citet{Bernardo2002}
 may skip this section. All formulas are presented for the one-locus model in a breeding population.
 
-We consider a single locus with two alleles $A_1$ and $A_2$ so that genotypes $A_1A_1$, $A_1A_2$ and $A_2A_2$ are possible. The phenotypic value $_{ij}$ of individuals having the $A_iA_j$ genotype can be expressed as
+We consider a single locus with two alleles $A_1$ and $A_2$ so that genotypes $A_1A_1$, $A_1A_2$ and $A_2A_2$ are possible. The phenotypic mean $G_{ij}$ of individuals having the $A_iA_j$ genotype can be expressed as
 $$ P_{ij} = G_{ij} + e_{ij}$$
 where  $G_{ij}$ is the genotypic value of $A_iA_j$ and $e_{ij}$ is the nongenetic residual which is assumed to be unrelated to genotypic value. The genotypic value can be further divided into
 $$ G_{ij} = \mu + \alpha_i + \alpha_j + \delta_{ij}$$
-where $\mu$ is the population mean. $\alpha_i$ is the effect of the $A_i$ allele which is defined as the average effect of an allele. This is the difference of the mean of those individuals who received $A_i$ allele
-from one parent and the other allele comes at random from the population. The breeding value of the $A_iA_j$ genotype is defined as the sum of $\alpha_i$ and $\alpha_j$. The term $\delta_{ij}$ is the    dominance deviation of the $A_iA_j$ genotype. Dominance deviation is due to the interaction of both alleles at one locus.   
+where $\mu$ is the population mean, $\alpha_i$ is the effect of the $A_i$ allele which is defined as the average effect of an allele. This is the difference of the mean of those individuals who received $A_i$ allele
+from one parent and the other allele at random from the population. The effect $\alpha_j$ is defined in a similar way. The breeding value of the $A_iA_j$ genotype is defined as the sum of $\alpha_i$ and $\alpha_j$. The term $\delta_{ij}$ is the    dominance deviation of the $A_iA_j$ genotype. Dominance deviation is due to the interaction of both alleles at one locus.   
 
 On a population level, we consider the variance of the effects mentioned above. Phenotypic variance $V_P$ can be partioned into genotypic variance $V_G$ and non genetic variance $V_E$. The genetic variance within one locus is divided into addtive variance and dominance variance, thus $V_G=V_A+V_D$. If more than one locus
-is considered, additional epistatic variance $V_I$ occurs which is due to interactions between different loci. Epistatic variance consists in two locus model of additive-additive variance $V_{AA}$, additive-dominace variance $V_{AD}$ and dominance-dominace variance $V_{DD}$.
+is considered, additional epistatic variance $V_I$ occurs which is due to interactions between different loci. Epistatic variance consists in two locus model of additive-additive variance $V_{AA}$, additive-dominace variance $V_{AD}$ and dominance-dominance variance $V_{DD}$ due to the two-way interactions of additive and dominance effects.
 
-An important concept in breeding is the covariance between relatives which is a function of the probability that two alleles are identical by descent and genetic variance components. Suppose we have the pedigree structure as shown in Figure \ref{fig:pedigree}
+An important concept in breeding is the covariance between relatives which is a function of the probability that two alleles are identical by descent and genetic variance components. Suppose we have the pedigree structure as shown in Figure \ref{fig:pedigree}.
+
 \setlength{\unitlength}{1cm}
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \begin{picture}(4.5,4.5)
 \put(1,4){A}
@@ -355,6 +377,7 @@ An important concept in breeding is the covariance between relatives which is a 
 \caption{Pedigree of X and Y.}
 \label{fig:pedigree}
 \end{figure}
+
 Covariance between relatives is due to alleles that are identical by descent (IBD), denoted by the $\equiv$ symbol. There are four possibilities that two alleles in X and Y are IBD and covariance due to breeding values is given by
 \begin{eqnarray*}
 \Cov_{\alpha} &=& P(A_i \equiv A_k)\Cov(\alpha_i,\alpha_k)+ P(A_i \equiv A_l)\Cov(\alpha_i,\alpha_l)\\
@@ -362,9 +385,10 @@ Covariance between relatives is due to alleles that are identical by descent (IB
 &=& 2f_{XY}V_A
 \end{eqnarray*}
 where $f_{XY}$ is the coefficient of coancestry \citep{Wright1922} which is defined as
-\begin{equation}
-f_{XY} = P(X \equiv Y) = \frac{1}{4}\left[ P(x_1 \equiv y_1) + P(x_1 \equiv y_2) + P(x_2 \equiv y_1) + P(x_2 \equiv y_2)\right].
-\end{equation}
+\begin{eqnarray}
+f_{XY} &=& P(X \equiv Y) \nonumber \\
+&=& \frac{1}{4}\left[ P(x_1 \equiv y_1) + P(x_1 \equiv y_2) + P(x_2 \equiv y_1) + P(x_2 \equiv y_2)\right].
+\end{eqnarray}
 Covariance between relatives according to dominance and epistatic variances can be derived in a similar way, see \citet{Bernardo2002} and next section. 
  
 
@@ -375,15 +399,15 @@ Covariance between relatives according to dominance and epistatic variances can 
 \section{Estimation of Relatedness}\label{sec:RelationshipMatrices}  
 
 This section presents methods to estimate relatedness between a set of individuals. The goal is to set up a variance-covariance matrix for the individuals. Relatedness between individuals refers to their covariance due to some kind of genetic effect.
-In classical breeding programs, pedigree information is used to compute relatedness. Thus the entries of the variance-covariance matrix are derived by the formulas of the previous section.   If molecular markers are available, \textit{observed} relatedness between individuals could be estimated using similarity measures for genotypic data.
+In classical breeding programs, pedigree information is used to compute \textit{expected} relatedness. Thus the entries of the variance-covariance matrix are derived by the formulas of the previous section.   If molecular markers are available, \textit{observed} relatedness between individuals could be estimated using similarity measures for genotypic data.
 
 \subsection{Based on Pedigree}
 
 The computation of the pedigree based relatedness in \texttt{synbreed} starts with the gametic relationship. A gamete is the genetic unit that an individual passes to its offspring. The genotype of an individual at one locus consists of two alleles. 
-Suppose there is an individual C with parents A and B. Individual C has to alleles $C_1$ and $C_2$. The source of allele $C_1$ is Parent A, thus allele $C_1$ could either be IBD to $A_1$ or $A_2$. Allele $C_2$ was inherited of parent B, thus it could be IBD to $B_1$ or $B_2$. 
+Suppose there is an individual C with parents A and B. Individual C has to alleles $C_1$ and $C_2$. The source of allele $C_1$ is Parent A, thus allele $C_1$ could either be IBD to $A_1$ or $A_2$ which are the alleles (and possible gametes) of A. Allele $C_2$ was inherited of parent B, thus it could be IBD to $B_1$ or $B_2$ which are the alleles of B. 
 To compute the gametic relationship start with an expanded table with two alleles for each individual. 
  
-\begin{table}[!h]
+\begin{table}[!ht]
 \centering
 \begin{tabular}{cccc}
 \hline
@@ -403,8 +427,8 @@ E & $E_2$ & $B_1$ & $B_2$ \\
 \end{tabular}
 \end{table}
 
-This table is converted into the gametic relationship $\bf G$ matrix which is of order $2n$, if the number of individuals is $n$. The diagonal values of $\bf G$ are always 1. The off-diagonal values give the probability that two alleles $A_1$ and $A_2$ are identical by
-descent (IBD), denoted as $P(A_1 \equiv A_2)$. If parents are unknown, they are assumed as progeny of a random mating population. In this case the off-diagonals are zero. The gametic relationsship matrix is constructed recursively, starting with the first 
+This table is converted into the gametic relationship $\bf G$ matrix which is of order $2n$, if the number of individuals is $n$. The entires of $\bf G$ are the probability that two alleles $A_1$ and $A_2$ are identical by
+descent (IBD), denoted as $P(A_1 \equiv A_2)$. Thus diagonal values are always 1. If parents are unknown, they are assumed as progeny of a random mating population. In this case the off-diagonals are zero. The gametic relationsship matrix is constructed recursively, starting with the first 
 generation in pedigree. 
 The combination of $2^2=4$ alleles that describe the relationship of progeny A with parent C are computed as follows
 \begin{eqnarray*} 
@@ -413,13 +437,13 @@ P(A_1 \equiv C_2) &=& 0.5 \cdot \left[P(A_1 \equiv B_1) + P(A_1 \equiv B_2)\righ
 P(A_2 \equiv C_1) &=& 0.5 \cdot \left[P(A_2 \equiv A_1) + P(A_2 \equiv A_2)\right]  \\
 P(A_2 \equiv C_2) &=& 0.5 \cdot \left[P(A_2 \equiv B_1) + P(A_2 \equiv B_2)\right]   
 \end{eqnarray*}
-The gametic relationship for a given pedigree is obtained as follows
+The only nonzero probability in the equations above is $P(A_1 \equiv A_1)$ which is 1. The gametic relationship for all individuals of a given pedigree is obtained as follows
 <<>>=
 G <- kinship(ped,ret="gam")
 G
 @
-The resulting object \texttt{G} is of class "relationshipMatrix" which is the general class for all genetic effects (additive, dominance and epistatic). To derive the variance-covariance matrix due to an genetic effect,
-one has to multiply this matrix with the corresponding variance component ($V_A$, $V_D$ or $V_I$). Once the gametic relationship is computed, it could be converted in the additive numerator relationship matrix $\bf A$ which is due to additive genetic effects (breeding values) or the dominance relationship matrix $\bf D$ which is due to dominance effects.  
+The resulting object \texttt{G} is of class "relationshipMatrix" which is the general class for all variance-covariance matrices due to genetic effects (additive, dominance or epistatic). To derive the variance-covariance matrix due to an genetic effect,
+one has to multiply this matrix with the corresponding variance component ($V_A$, $V_D$ or $V_I$) as shown below. Once the gametic relationship is computed, it could be converted in the additive numerator relationship matrix $\bf A$ which is due to additive genetic effects (breeding values) or the dominance relationship matrix $\bf D$ which is due to dominance effects.  
 
 In case of inbreeding, the entry in \texttt{G} of allele $A_1$ and allele $A_2$ of an individual X equals his inbreeding coefficient $$F_X=P(A_1 \equiv A_2).$$ For example, the inbreeding coefficent of individual D is
 <<>>=
@@ -434,7 +458,12 @@ where $f_{XY}$ is the coefficient of coancastry between X and Y. The additive nu
 A <- kinship(ped,ret="add")
 A
 @
-Note that the diagonals of $\bf A$ are $1+F_i$ for $i=1,...,n$. Sometimes the kinship matrix is required, which is half of the additive numerator relationship matrix. It is obtained by
+The relationship between individuals A and C is 0.5 which is the expected value for parent-offspring relation \citep{Bernardo2002}. Note that the diagonals of $\bf A$ are $1+F_i$ for $i=1,...,n$. 
+Inbreeding coefficients could easily be obtained as
+<<>>=
+diag(A)-1
+@
+Sometimes the kinship matrix is required, which is half of the additive numerator relationship matrix. It is obtained by
 <<>>=
 K <- kinship(ped,ret="kin")
 @
@@ -453,7 +482,7 @@ K <- kinship(ped,ret="kin")
 %D <- kinship(ped,ret="dom")
 %D
 %@
-Dominance covariance matrix is computed if argument \texttt{ret="dom"} is used. Variance-covariance matrices for epistatic effects as additive-additive (AA), additive-dominance (AD) or dominance-dominance (DD) as products of the corresponding variance-covariance matrices.                               
+Dominance covariance matrix is computed if argument \texttt{ret="dom"} is used. Variance-covariance matrices for epistatic effects as additive-additive (AA), additive-dominance (AD) or dominance-dominance (DD) are the products of the corresponding variance-covariance matrices for additice and dominace effects.                               
 Models for genomic selection can be extended by these effects, but the contribution of three-way or higher interactions is usually small \citep{Bernardo2002}.  
 
 
@@ -461,15 +490,15 @@ Models for genomic selection can be extended by these effects, but the contribut
 
                  
 Relatedness based on marker is an alternative to estimate relationship instead of using additive numerator relationship matrix based on pedigree. Marker data could be used to estimate relationship between relatives
-more precise than the numerator relationship based on pedigree, as it takes into Mendelian sampling effect. Two methods for the construction of a relationship matrix based on marker data are implemented in the \texttt{synbreed} package: genomic relationship according to vanRaden \citep{vanRaden2008} and according to Roger's distance  \citep{Rogers1972}.  Both methods are kinds of similarity measures which compare
+more precise than the numerator relationship based on pedigree as it takes into account the Mendelian sampling effect. Two methods for the construction of a relationship matrix based on marker data are implemented in the \texttt{synbreed} package: genomic relationship according to vanRaden \citep{vanRaden2008} and according to Roger's distance  \citep{Rogers1972}.  Both methods are kinds of similarity measures which compare
 the number of alleles that two individuals share.
 
-For vanRaden, the SNP genotypes are coded as the number of copies of one of the SNP alleles, i.e., 0, 1 or 2 (any linear transformations of these values are valid too). Thus the marker data could be the result of a call of \texttt{codeGeno} when imputing for the missing values was performed or the missing values were replaced with the value 1.
+For vanRaden, the SNP genotypes are coded as the number of copies of one of the minor allele, i.e., 0, 1 or 2 (no missing values allowed). Thus the marker data could be the result of a call of \texttt{codeGeno} when imputing for the missing values was performed or the missing values were replaced with the value 1.
 The genomic relationship matrix according to vanRaden for $n$ individuals and $p$ molecular markers is computed as
-\begin{equation}
+\begin{equation}\label{eq:vanRaden}
 \frac{\bf{Z}\bf{Z}'}{2\sum_{i=1}^p p_i(1-p_i)},
 \end{equation}
-where $\bf{Z}=\bf{M}-\bf{P}$ and $\bf{M}$ is the $n \times p$ marker matrix and $\bf{P}$ contains the allele frequencies multiplied by 2. $p_i$ is the allele frequency of marker $i$.  As an example we look at the marker data of 6 individuals genotyped with 8 SNP markers. Let
+where $\bf{Z}=\bf{M}-\bf{P}$ and $\bf{M}$ is the $n \times p$ marker matrix and $\bf{P}$ contains the allele frequencies multiplied by 2. In \eqref{eq:vanRaden} $p_i$ is the allele frequency of marker $i$.  As an example we look at the marker data of 6 individuals genotyped with 8 SNP markers. Let
 $$ \bf M = \begin{pmatrix}  2 & 0 & 0 & 2 & 2 & 0 & 0 & 0 \\ 
    2 & 0 & 2 & 2 & 2 & 0 & 2 & 2 \\ 
    2 & 0 & 2 & 2 & 0 & 0 & 2 & 0 \\ 
@@ -523,12 +552,12 @@ d=\frac{1}{p}\sum_{i=1}^p \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}
 \end{equation}
 where $p$ is the number of markers and $n_i$ is the number of alleles for marker $i$. Let $p_{ij}$ and $q_{ij}$ denote the allele frequencies of allele $j$ for marker $i$ respectively. Note that marker data should be coded $-1$ and $1$ for homozygous genotypes and 0 for heterozygous. If marker data is coded as 0/1/2, data is transformed by function \texttt{rogers}, which computes relationship based on Roger's distance. Using transformation of \citet{Hayes2008} rogers distance is related to relationship as
 $$ f=\frac{s-s_{min}}{1-s_{min}}, $$
-with $s=1-d$ and $s_{min}$ minimum of all $\frac{n}{2}(n+1)$ values for $s$. Using rogers distance to compute relationship based on marker data gives
+with similarity measure $s=1-d$ and $s_{min}$ minimum of all $\frac{n}{2}(n+1)$ values for $s$. Using rogers distance to compute relationship based on marker data gives
 <<>>=
 ro <- rogers(M,correction="Hayes")
 round(ro,3)
-@ 
-
+@   
+Note that function \texttt{rogers} returns $2f$ which is the relationship between individuals.
 
 
 \subsection{Doubled haploid lines}
@@ -538,17 +567,21 @@ In modern plant breeding programs in maize, doubled haploid (DH) lines are used 
 data(maize)
 head(maize.ped)
 @
-First, the additive numerator relationship matrix is computed. There are \Sexpr{table(maize.ped$DH)[2]} DH lines and \Sexpr{table(maize.ped$DH)[1]} non DH lines in the pedigree. For DH lines special treatment is necessary, as the inbreeding coefficient must be 1. An argument \texttt{DH} is available for function \texttt{kinship} where
+Last column is a logical that indicates DH lines.First, the additive numerator relationship matrix is computed. There are \Sexpr{table(maize.ped$DH)[2]} DH lines and \Sexpr{table(maize.ped$DH)[1]} non DH lines in the pedigree. For DH lines special treatment is necessary, as the inbreeding coefficient must be 1 and no heterozygous genotypes occur.. An argument \texttt{DH} is available for function \texttt{kinship} where
 for each individual in the pedigree it specified whether this is a DH line or not. This information is available for the \texttt{maize} data. To obtain the additive numerator relationship matrix, use 
 <<>>=
 ped.maize <- create.pedigree(maize.ped$ID,maize.ped$Par1,maize.ped$Par2)
 A.maize <- kinship(ped.maize,DH=maize.ped$DH,ret="add")
 dim(A.maize) 
 @
+All inbreeding coefficients of DH lines are now one
+<<>>=
+head(diag(A.maize)-1)
+@
 
 \subsection{Visualization of relationship matrices}
 
-As in most cases a relationship matrix is too big to print on screen. There are two possibilities for visualization of an object of class "relationshipMatrix" in \texttt{synbreed} package. A generic \texttt{summary} method is defined which gives the important characteristics of a relationship matrix. Use
+In most cases a relationship matrix is too big to print on screen. There are two possibilities for visualization of an object of class "relationshipMatrix" in \texttt{synbreed} package. A generic \texttt{summary} method is defined which gives the important characteristics of a relationship matrix. Use
 <<>>=
 summary(A.maize)
 @
@@ -563,8 +596,8 @@ to an object of class "relationshipMatrix". This gives a heatmap of the entries 
 %\end{figure}
 %In Figure \ref{fig:heatpedi} one can see the family  structure in the data which is consiting of 25 families.
 
-Note that objects of class "relationshipMatrix" can be written two input files appropriate for Mixed Model software as \texttt{WOMBAT} \citep{Meyer2006} or \texttt{ASReml} \citep{Gilmour2000} using function 
-\texttt{write.relationshipMatrix}.
+Note that objects of class "relationshipMatrix" can be written to input files appropriate for Mixed Model software as \texttt{WOMBAT} \citep{Meyer2006} or \texttt{ASReml} \citep{Gilmour2000} using function 
+\texttt{write.relationshipMatrix}. File formats are \texttt{*.gin} for \texttt{WOMBAT} and \texttt{*.grm} or \texttt{*.giv} for \texttt{ASReml}.
 
 \section{Mixed Models}\label{sec:Models}
 
@@ -577,10 +610,11 @@ $$ \bf u \sim \text{N}( \bf 0, \bf G \sigma^2_g)$$
 where $\bf G$ is a genetic variance-covariance matrix. In \eqref{eq:mm} $\bf e$ denotes the $n \times 1$ vector of residuals with $ \bf e \sim \text{N}( \bf 0, \bf I_n \sigma^2)$ and $\bf I_n$ is the $n$-dimensional identity matrix.
                                                                                                                                                     
 If $\bf G$ equals the additive numerator relationship matrix $\bf A$, model \eqref{eq:mm} is called \textit{animal model}. Here the random effect is usually denoted as $\bf a$ and $ \bf a \sim \text{N}( \bf 0, \bf A \sigma^2_a)$.  This model is used to estimate additive genetic effects (breeding values) based on phenotypic records and pedigree information.
- As an example we will consider simulate plant breeding data. A pedigree with 5 generations and 20 individuals in each generation is simulated. Phenotypic data was measured in a field trial consisting of 5 locations with two replications (blocks) within locations for each of the $n=100$ genotypes.
+ As an example we will simulate plant breeding data. A pedigree with 5 generations and 20 individuals in each generation is simulated. Phenotypic data was measured in a field trial consisting of 5 locations with two replications (blocks) within locations for each of the $n=100$ genotypes.
 
 The simulation of phenotypes is done with the function \texttt{simul.phenotype} which simulates records based on model \eqref{eq:mm} with an overall mean as fixed effects and random effects for genotype, location and block. Random effects for location, block nested in location and residuals are i.i.d. normal with mean zero and given variance component.
-Random effects for genotype are take from a multivariate normal distribution $\text{N}( \bf 0, \bf A \sigma^2_a)$, where $\bf A$ is the numerator relationship matrix obtained by pedigree information. The additive genetic variance $\sigma^2_a$ and variance components for location, block and residual are specified by the user. Simulated data is obtained as follows
+Random effects for genotype are taken from a multivariate normal distribution $\text{N}( \bf 0, \bf A \sigma^2_a)$, where $\bf A$ is the numerator relationship matrix obtained by pedigree information. The additive genetic variance $\sigma^2_a$ and variance components for location, block and residual are specified by the user. 
+Variance components are specified in a separate list and values used for simulation are $\sigma^2_a=10$, $\sigma^2=15$ and $0$ for block and location. Simulated data is obtained as follows
 <<>>=                                      
 ped <- simul.pedigree(5,20)
 vc <-  list(sigma2e=15,sigma2a=10,sigma2l=0,sigma2b=0)
@@ -599,17 +633,19 @@ A <- A %x% matrix(1,10,10)
 mod <- regress(Trait ~ 1, Vformula=~A,data=dat)
 summary(mod)           
 @
-Note that variance-covariance matrix must be of same dimension as $y$. This could easily be obtained by using the Kronecker product to enlarge relationship matrix as data is sorted by individuals. As the fitted model only contains one random effect, estimated breeding values are 
+Note that variance-covariance matrix must be of same dimension as $y$. This could easily be obtained by using the Kronecker product to enlarge relationship matrix as data is sorted by individuals. This is shown in the code above. As the fitted model only contains one random effect, estimated breeding values are 
 <<>>=
 ebv <- mod$predicted - mod$fitted
 @
-as \texttt{predicted} equals $\bf \hat y$ and \texttt{fitted} contains estimated overall mean. Correlation between observed and estimated phenotypes (also called \textit{predictive ability} of the model, see \citet{Legarra2008}) is
+as \texttt{predicted} equals $\bf \hat y$ and \texttt{fitted} contains estimated overall mean $\bf \hat mu$ and $\bf \hat a =\bf \hat y - \bf \hat mu$. Correlation between observed and estimated phenotypes (also called \textit{predictive ability} of the model, see \citet{Legarra2008}) is
 <<>>=
-cor(ebv,dat$Trait)
+y <- dat$Trait
+cor(ebv,y)
 @  
-and correlation between estimated and true genetic effect (called \textit{accuracy} of the model) is
+As true breeding values are known in simulate, also correlation between estimated and true genetic effect (called \textit{accuracy} of the model) is available as
 <<>>=
-cor(ebv,dat$TBV)
+tbv <- dat$TBV
+cor(ebv,tbv)
 @
 
 \section{Genomic Selection} \label{sec:genomicSelection}
@@ -624,11 +660,11 @@ ped.maize <- create.pedigree(maize.ped$ID,maize.ped$Par1,maize.ped$Par2)
 A <- kinship(ped.maize,DH=maize.ped$DH,ret="add")
 summary(A)
 @
-Additive relationship matrix was constructed using full pedigree, but first 51 individuals have no phenotypes. For further analysis, only those elements which belong to phenotypes are used.
+Additive relationship matrix was constructed using full pedigree, but first 51 individuals have no phenotypes and should not be used for further analysis, i.e. breeding values for parents are not of interest. For further analysis, only those elements which belong to phenotypes are used.
 <<>>=
 A <- A[-c(1:51),-c(1:51)]
 @
-Marker data is coded by the number of $A_2$ alleles, i.e. 0, 1 and 2 and converted to variance-covariance matrix using method of vanRaden
+Marker data is coded by the number of minor alleles, i.e. 0, 1 and 2. As simulated data contains no missing values no further preparation to estimate variance-covariance matrix using method of vanRaden is necesarry
 <<>>=
 marker <- codeGeno(maize.geno[, -1])
 G <- vanRaden(marker)
@@ -636,9 +672,9 @@ summary(G)
 @
 Both pedigree based and marker based variance-covariance matrices were used in the following models
 \begin{eqnarray*}
-\text{Model 1:} \bf y &=& \bf \mu + \bf Z \bf a + \bf e  \\
-\text{Model 2:} \bf y &=& \bf \mu + \bf Z \bf u + \bf e \\
-\text{Model 3:} \bf y &=& \bf \mu + \bf Z \bf a + \bf Z \bf u + \bf e  
+\text{Model 1 :}\; \bf y &=& \bf \mu + \bf Z \bf a + \bf e  \\
+\text{Model 2 :}\; \bf y &=& \bf \mu + \bf Z \bf u + \bf e \\
+\text{Model 3 :}\; \bf y &=& \bf \mu + \bf Z \bf a + \bf Z \bf u + \bf e  
 \end{eqnarray*}
 Additive genetic effect due to pedigree has distribution  $\bf a \sim \text{N}(0,A\sigma^2_a)$, genetic effect due to marker data hat $ \bf u \sim \text{N}(0,G\sigma^2_g)$ and residual term in all models is $\bf e \sim \text{N}(0,\sigma^2) $. Estimation of breeding values and variance components is performed using function \texttt{regress}
 <<>>=    
@@ -648,7 +684,7 @@ mod1<- regress(y~1,Vformula=~A)
 mod2<- regress(y~1,Vformula=~G)
 mod3<- regress(y~1,Vformula=~A+G)
 @
-Estimates for variance components and fixed effects are shown in the summary of the models. Table \ref{} compares the three models
+Estimates for variance components and fixed effects are shown in the summary of the models. Table \ref{tab:mods} compares the three models
 \begin{table}[h]
 \centering
 \begin{tabular}{lccccc}
@@ -660,6 +696,8 @@ Model & LogL & $\hat \mu $ & $\hat \sigma^2_a$ & $\hat \sigma^2_g$ & $\hat \sigm
 3 & \Sexpr{round(summary(mod3)$llik,1)} & \Sexpr{round(summary(mod3)$beta,1)} & \Sexpr{round(summary(mod3)$sigma[1],1)} & \Sexpr{round(summary(mod3)$sigma[2],1)} & \Sexpr{round(summary(mod3)$sigma[3],1)} \\
 \hline
 \end{tabular}
+\caption{Comparision of Models}
+\label{tab:mods}
 \end{table}
 
 \section{Summary}

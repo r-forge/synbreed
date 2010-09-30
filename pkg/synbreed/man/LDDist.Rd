@@ -47,6 +47,20 @@ in one plot, use \code{chr="all"}. If markers of, e.g. chromosomes 5 to 10 shoul
 \code{\link{codeGeno}}, \code{\link{LDMap}}
 }
 \examples{
+# maize data example
+data(maize)
+marker <- codeGeno(maize.geno[,-1])
+
+# scatterplot for chromosome 1
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="p",chr=1)
+
+# stacked bars for chromosome 1 with default categories
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",chr=1)
+
+# stacked bars for chromosome 1 with specified categories
+LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.2,0.1)),chr=1)
+
+
 # simulated data without LD with 1000 equal spaced markers on 4 chromosomes
 M<- matrix(sample(c(0,2),size=50000,replace=TRUE,prob=c(0.65,0.35)),nrow=50,ncol=1000)
 colnames(M) <- paste("M",1:1000,sep="")
@@ -55,17 +69,6 @@ pos <- sequence(c(250,250,250,250))
 par(mfrow=c(2,2))
 LDDist(M,lgd,pos)
 par(mfrow=c(1,1))
-
-# maize data example
-data(maize)
-marker <- codeGeno(maize.geno[,-1])
-
-# scatterplot for chromosome 1
-LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="p",chr=1)
-
-# stacked bars for chromosome 1
-LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",chr=1)
-
 
 
 }

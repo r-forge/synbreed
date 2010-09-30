@@ -29,7 +29,7 @@ Numeric.  The result is rounded to \code{digits}.
 }
 }
 \details{
-Note that "WOMBAT" only uses the generalized inverse relationship matrix and expects a file with the name "ranef.gin", where 'ranef' is the name of the random effect with option 'GIN_ in the 'MODEL' part of the parameter file.
+Note that "WOMBAT" only uses the generalized inverse relationship matrix and expects a file with the name "ranef.gin", where 'ranef' is the name of the random effect with option 'GIN' in the 'MODEL' part of the parameter file.
 For ASREML, either the relationship could be saved as "*.grm" or its generalized inverse as "*.giv".
   
 }
