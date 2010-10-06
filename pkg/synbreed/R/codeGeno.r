@@ -1,9 +1,16 @@
 # coding alles in 0 (major) and 2 (minor)
 
-codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,replace.value=NULL){
+codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,replace.value=NULL,keep.identical=TRUE){
 
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
   if(impute & !is.null(replace.value)) stop("No replacing of values in case of imputing")
+
+  # discard duplicated markers
+  if(!keep.identical){
+       ncol.orig <- ncol(data)
+       data <- unique(as.matrix(data),MARGIN=2)
+       cat(ncol.orig-ncol(data),"duplicated markers discarded \n")
+  } 
 
     # number of genotypes
     n <- nrow(data)

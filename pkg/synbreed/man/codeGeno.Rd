@@ -9,7 +9,7 @@ This function could be used to code biallelic marker data in character format (e
 Imputing of missing values can be done with the population structure for the data (see details).  Selection of markers can be done according to the minor allele frequency and fraction of missing values.                                     
 }
 \usage{
-codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL, label.heter=NULL, replace.value=NULL)
+codeGeno(data, impute = FALSE, popStruc = NULL, maf=NULL, nmiss=NULL, label.heter=NULL, replace.value=NULL, keep.identical=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,6 +34,9 @@ This is either a character to identify heterozygous genotypes or a function whic
   \item{replace.value}{
 A numeric value assigned to missing values in data. Only specified if no impution is done 
 }
+  \item{keep.identical}{
+Logical. Should duplicated markers be kept? 
+}
 }
 \details{
 Imputing of missing values is done in the following way:
@@ -43,6 +46,7 @@ Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in populatio
 the value is 0 with probability 0.5 and 1 with probability 0.5.}
 \item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the allele distribution of marker \eqn{j}.} 
 }
+Duplicated markers are discarded if \code{keep.identical=FALSE} before imputation. Thus after imputation identical markers may occur.
 }
 \value{
 A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.  The genotype which is homozygousfor the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.
