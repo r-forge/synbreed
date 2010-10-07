@@ -8,8 +8,8 @@ Extract or replace part of relationship matrix
 Extract or replace part of an object of class \code{relationshipMatrix}.
 }
 \usage{
-\method{[i,j]}{relationshipMatrix}(relationshipMatrix,i,j)
-\method{[i,j]<-}{relationshipMatrix}(relationshipMatrix,,i,j)
+\method{[}{relationshipMatrix}(x,\dots)
+\method{[}{relationshipMatrix}(x,\dots) <- value
 }
 
 \examples{

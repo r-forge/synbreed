@@ -1,4 +1,4 @@
-summary.relationshipMatrix <- function(relationshipMatrix){
+summary.relationshipMatrix <- function(relationshipMatrix,...){
       relMat <- relationshipMatrix
      cat("Dimension         :",nrow(relMat),"x",ncol(relMat),"\n")
      cat("Rank              :",qr(relMat)$rank,"\n")

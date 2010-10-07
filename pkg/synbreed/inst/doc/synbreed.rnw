@@ -85,9 +85,9 @@ set.seed(1234)
 \section{Introduction}\label{sec:Introduction}
 
 The R-package 'synbreed' aims to provide the tools that are necessary to analyze data of breeding programs and estimate (genomic) breeding values. Of course,
-there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003} and package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}.  The idea of this package is to collect the methods in one package, so that analysis can be performed in one software with just a few steps as described in this document. 
-Additional, this package takes care of special problems of modern breeding programs as the use of doubled haploid (DH) lines in plant breeding.  To our knowledge, there is no package in R which provides comparable features. Most of packages source code is written in R, so that methods could 
-easily be adopted for own purposes. Package \texttt{synbreed} makes no stringent restriction concerning input data format to allow for a wide range of possible data sources.
+there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003} and package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}. Library \texttt{GenABEL} is designed for genome-wide association analysis and effective SNP data storage and manipulation \citep{Aulchenko2007}.
+
+ The idea of this package is to collect the methods in one package, so that analysis can be performed in one software with just a few steps as described in this document.  Additional, this package takes care of special problems of modern breeding programs as the use of doubled haploid (DH) lines in plant breeding.  To our knowledge, there is no package in R which provides comparable features. Most of packages source code is written in R, so that methods could easily be adopted for own purposes. Package \texttt{synbreed} makes no stringent restriction concerning input data format to allow for a wide range of possible data sources.
 
 Modern breeding programs use genomic information of individuals. On the genomic level, individuals could be distinguished by \textit{alleles} which are different states at a particular gene locus. In diploid species, every individuals has two sets of chromosomes and thus two copies of each allele at a locus. 
 If both alleles are the same, the individual is homozygous for this locus, otherwise it heterozygous. For many species  \textit{molecular markers} are available and used to detect SNP (single nucleotide polymorphism) variation which occurs when a single nucleotide (\texttt{A}, \texttt{T}, \texttt{C}, or \texttt{G}) differs between individuals.
@@ -127,7 +127,7 @@ The second column \texttt{chr} sepecifies to which of the 10 chromosomes of maiz
 
 \section{Marker data}\label{sec:MarkerData}
 
-In the first step, genotypes have to be coded in a way that it could be used for the construction of genomic relationship matrices. The convention used in this package is to code genotypes by their number of minor alleles, i.e. 0 for one homozygous genotypes and 2 for the other and 1 for heterozygous.
+In the first step, genotypes have to be coded in a way that it could be used for the construction of genomic relationship matrices. The convention used in this package is to code genotypes by the number of minor alleles, i.e. 0 for one homozygous genotypes and 2 for the other and 1 for heterozygous.
 This task is done by the function \texttt{codeGeno}. If no missing values and no heterozygous genotypes for any loci are present 
 and all markers should be used in the following analyses, this function does simply recode the alleles to 0 (major) and 2 (minor) as mentioned above.
 For the \texttt{maize} data, use
@@ -232,7 +232,7 @@ By default, no markers are selected by one of both criteria, thus \texttt{maf}=\
 
 \section{Linkage Disequilibrium}\label{sec:LinkageDisequilibrium}
 
-\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms of two or more molecular markers (usually part of same linkage group). Average LD over the whole genome is important as it influences prospects of genomic selection. 
+\textit{Linkage Disequilibrium} (LD) is defined as a non-random association between polymorphisms of two or more molecular markers (usually part of same linkage group). It appears because many individuals can inherit a linked allele pair from an ancestor without any recombination event.  Average LD over the whole genome is important as it influences prospects of genomic selection. 
 It is calculated as the difference between observed and expected (assuming random distributions) allelic frequencies. There are many possibilities to compute LD from genotypic data, see \citet{Foulkes2009} using \texttt{genetics} package. In \texttt{synbreed} package, LD between two loci $i$ and $j$ denoted as $LD_{ij}$
 is computed as coefficient of determination $R^2$ of a regression of $\bf x_i$ on $\bf x_j$, where $\bf x_i$ and $\bf x_j$ are a $n$-dimensional vectors containing marker data of $n$ individuals. This equals squared correlation coefficient of both data vectors, thus
 $$  LD_{ij} = r(\bf x_i,\bf x_j)^2 .$$
@@ -403,7 +403,7 @@ In classical breeding programs, pedigree information is used to compute \textit{
 
 \subsection{Based on Pedigree}
 
-The computation of the pedigree based relatedness in \texttt{synbreed} starts with the gametic relationship. A gamete is the genetic unit that an individual passes to its offspring. The genotype of an individual at one locus consists of two alleles. 
+The computation of the pedigree based relatedness in \texttt{synbreed} starts with the gametic relationship. A gamete is the genetic unit that an individual passes to its offspring. The genotype of a diploid individual at one locus consists of two alleles. 
 Suppose there is an individual C with parents A and B. Individual C has to alleles $C_1$ and $C_2$. The source of allele $C_1$ is Parent A, thus allele $C_1$ could either be IBD to $A_1$ or $A_2$ which are the alleles (and possible gametes) of A. Allele $C_2$ was inherited of parent B, thus it could be IBD to $B_1$ or $B_2$ which are the alleles of B. 
 To compute the gametic relationship start with an expanded table with two alleles for each individual. 
  
@@ -493,7 +493,7 @@ Relatedness based on marker is an alternative to estimate relationship instead o
 more precise than the numerator relationship based on pedigree as it takes into account the Mendelian sampling effect. Two methods for the construction of a relationship matrix based on marker data are implemented in the \texttt{synbreed} package: genomic relationship according to vanRaden \citep{vanRaden2008} and according to Roger's distance  \citep{Rogers1972}.  Both methods are kinds of similarity measures which compare
 the number of alleles that two individuals share.
 
-For vanRaden, the SNP genotypes are coded as the number of copies of one of the minor allele, i.e., 0, 1 or 2 (no missing values allowed). Thus the marker data could be the result of a call of \texttt{codeGeno} when imputing for the missing values was performed or the missing values were replaced with the value 1.
+For vanRaden, the SNP genotypes are coded as the number of copies of the minor allele, i.e., 0, 1 or 2 (no missing values allowed). Thus the marker data could be the result of a call of \texttt{codeGeno} when imputing for the missing values was performed or the missing values were replaced with the value 1.
 The genomic relationship matrix according to vanRaden for $n$ individuals and $p$ molecular markers is computed as
 \begin{equation}\label{eq:vanRaden}
 \frac{\bf{Z}\bf{Z}'}{2\sum_{i=1}^p p_i(1-p_i)},
@@ -531,8 +531,8 @@ $$ \bf P = \begin{pmatrix}  1.33 & 0.33 & 1.67 & 1.67  & 0.67 & 0 &  1.33&  0.67
    -3.22 & -2.56 & 0.11 & 2.78 & 6.11 & -3.22 \\ 
    -0.56 & 0.11 & -1.22 & -2.56 & -3.22 & 7.44 \\
      \end{pmatrix}
-  $$  
-with the denominator being $2\sum_{i=1}^p p_i(1-p_i)=2.611$. To compute the genomic relationship according to vanRaden, matrix $\bf M$ is passed to the function \texttt{vanRaden}  
+  $$                                                                                   
+with the denominator being $2\sum_{i=1}^p p_i(1-p_i)=2.611$. Correcting with the allele frequencies gives more weight to individuals that share a rare allele. To compute the genomic relationship according to vanRaden, matrix $\bf M$ is passed to the function \texttt{vanRaden}  
 <<>>=
 M <- matrix(data=c(2,0,0,2,2,0,0,0,
                    2,0,2,2,2,0,2,2,
@@ -544,7 +544,7 @@ M <- matrix(data=c(2,0,0,2,2,0,0,0,
 vR <- vanRaden(M) 
 round(vR,3)                  
 @
-Note the object \texttt{vR} is again of class "relationshipMatrix".    
+Note the object \texttt{vR} is again of class "relationshipMatrix". Negative values indicate pairs of individuals sharing fewer alleles than expected by the allele frequencies.   
 
 Another possibility is to compute the genomic relationship matrix according to Roger's distance. Roger's distance is computed as 
 \begin{equation}
@@ -612,9 +612,9 @@ where $\bf G$ is a genetic variance-covariance matrix. In \eqref{eq:mm} $\bf e$ 
 If $\bf G$ equals the additive numerator relationship matrix $\bf A$, model \eqref{eq:mm} is called \textit{animal model}. Here the random effect is usually denoted as $\bf a$ and $ \bf a \sim \text{N}( \bf 0, \bf A \sigma^2_a)$.  This model is used to estimate additive genetic effects (breeding values) based on phenotypic records and pedigree information.
  As an example we will simulate plant breeding data. A pedigree with 5 generations and 20 individuals in each generation is simulated. Phenotypic data was measured in a field trial consisting of 5 locations with two replications (blocks) within locations for each of the $n=100$ genotypes.
 
-The simulation of phenotypes is done with the function \texttt{simul.phenotype} which simulates records based on model \eqref{eq:mm} with an overall mean as fixed effects and random effects for genotype, location and block. Random effects for location, block nested in location and residuals are i.i.d. normal with mean zero and given variance component.
+The simulation of phenotypes is done with the function \texttt{simul.phenotype} which simulates records based on model \eqref{eq:mm} with an overall mean as fixed effect and random effects for genotype, location and block. Random effects for location, block nested in location and residuals are i.i.d. normal with mean zero and given variance component.
 Random effects for genotype are taken from a multivariate normal distribution $\text{N}( \bf 0, \bf A \sigma^2_a)$, where $\bf A$ is the numerator relationship matrix obtained by pedigree information. The additive genetic variance $\sigma^2_a$ and variance components for location, block and residual are specified by the user. 
-Variance components are specified in a separate list and values used for simulation are $\sigma^2_a=10$, $\sigma^2=15$ and $0$ for block and location. Simulated data is obtained as follows
+Variance components are specified in a separate list and values used for simulation are $\sigma^2_a=10$, $\sigma^2=15$ and $0$ for location and block nested in location. Simulated data is obtained as follows
 <<>>=                                      
 ped <- simul.pedigree(5,20)
 vc <-  list(sigma2e=15,sigma2a=10,sigma2l=0,sigma2b=0)
@@ -622,9 +622,9 @@ dat <- simul.phenotype(ped,Nloc=5,Nrepl=2,vc=vc)
 str(dat)
 @
 Variance components for location and block are set to zero as only additive genetic effects should be considered in this example. The simulated random effects for 
-genotype are called true breeding values (TBV) and returned by function \texttt{simul.phenotype}.
-
-Estimation of variance components with REML and prediction of random effects in model \eqref{eq:mm} could be done with function \texttt{regress} in package \texttt{regress}. 
+genotype are called true breeding values (TBV) and returned by function \texttt{simul.phenotype}. Note that TBV for each \texttt{ID} is the same for all replications across locations and blocks.
+                                                                                                                                   
+Estimation of variance components with REML and prediction of random effects in model \eqref{eq:mm} could be done with function \texttt{regress} in package \texttt{regress} \citep{Clifford2006}. 
 This package allows arbitrary variance-covariance matrices of random effects. Solutions for animal model with overall mean as fixed effect are obtained as 
 <<>>=
 library(regress)
@@ -633,7 +633,9 @@ A <- A %x% matrix(1,10,10)
 mod <- regress(Trait ~ 1, Vformula=~A,data=dat)
 summary(mod)           
 @
-Note that variance-covariance matrix must be of same dimension as $y$. This could easily be obtained by using the Kronecker product to enlarge relationship matrix as data is sorted by individuals. This is shown in the code above. As the fitted model only contains one random effect, estimated breeding values are 
+Note that variance-covariance matrix must be of same dimension as $y$. This could easily be obtained by using the Kronecker product to enlarge relationship matrix as data is sorted by individuals. This is shown in the code above. Estimated variance components could be used to estimate narrow-sense heritability as in \citet{Piepho2007} as
+$$ \hat h^2 = \frac{\hat \sigma_a^2}{\hat \sigma_a^2 + \hat \sigma^2} = \frac{\Sexpr{round(mod$sigma[1],2)}}{\Sexpr{round(mod$sigma[1],2)} + \Sexpr{round(mod$sigma[2],2)}} = \Sexpr{round(mod$sigma[1]/(mod$sigma[1]+mod$sigma[2]),2)}.$$
+The fitted model contains only one random effect, thus estimated breeding values are obtained as
 <<>>=
 ebv <- mod$predicted - mod$fitted
 @
@@ -684,7 +686,8 @@ mod1<- regress(y~1,Vformula=~A)
 mod2<- regress(y~1,Vformula=~G)
 mod3<- regress(y~1,Vformula=~A+G)
 @
-Estimates for variance components and fixed effects are shown in the summary of the models. Table \ref{tab:mods} compares the three models
+Estimates for variance components and fixed effects are shown in the summary of the models. In Table \ref{tab:mods} the three models are compared.
+
 \begin{table}[h]
 \centering
 \begin{tabular}{lccccc}
@@ -695,13 +698,29 @@ Model & LogL & $\hat \mu $ & $\hat \sigma^2_a$ & $\hat \sigma^2_g$ & $\hat \sigm
 2 & \Sexpr{round(summary(mod2)$llik,1)} & \Sexpr{round(summary(mod2)$beta,1)} &  & \Sexpr{round(summary(mod2)$sigma[1],1)} & \Sexpr{round(summary(mod2)$sigma[2],1)} \\
 3 & \Sexpr{round(summary(mod3)$llik,1)} & \Sexpr{round(summary(mod3)$beta,1)} & \Sexpr{round(summary(mod3)$sigma[1],1)} & \Sexpr{round(summary(mod3)$sigma[2],1)} & \Sexpr{round(summary(mod3)$sigma[3],1)} \\
 \hline
-\end{tabular}
-\caption{Comparision of Models}
+\end{tabular}                    
+\caption{Comparision of Models for Genomic Selection in \texttt{maize} data.}
 \label{tab:mods}
 \end{table}
 
+Model 2 results in a better model adaption than Model 1 regarding the Likelihood.  Thus using genomic relationship  instead of additive relationship based on pedigree as covariance matrix for breeding values results in a better model fit.  Combining both information in Model 3 does not further improve model adaption. Correlation between estimated breeding value and phenotype is \Sexpr{round(cor(mod1$predicted,y),3)} for Model 1, \Sexpr{round(cor(mod2$predicted,y),3)} for Model 2 and  \Sexpr{round(cor(mod3$predicted,y),3)} for Model 3 respectively. 
+
+In \texttt{maize} data, each genotype has only one replication. In most breeding programs each genotype is planted in several locations and perhaps replicated in each location. In this case, there are two possibilities to analyze data: 
+\begin{itemize}
+\item Two-stage: Reduce data to one phenotype for each genotype by using adjusted genotypw means. Evalution of adjusted means can be carried out as shown in the example                                                                    
+\item One-stage: Use all observation in one model and extend the mixed model by fixed or random effects for location and block
+\end{itemize}                                                                                                                                           
+
 \section{Summary}
 
+The preceding examples illustrated, how genomic selection could be applied to a breeding program where genotypic and phenotypic data is available. As shown in simulated data, genomic selection is expected to outperform classial selection based on pedigree and phenotypes. The main steps of analysis are as follows
+\begin{enumerate}
+\item Code genotypic data as the number of minor alleles, i.e. 0, 1 and 2 for diploid species and impute missing genotypic data using function \texttt{codeGeno}.
+\item Estimate reletedness based on marker data using functions \texttt{vanRaden} or \texttt{rogers}.
+\item Set uo mixed models and estimate variance components and genomic breeding values using function \texttt{regress}. 
+\end{enumerate}
+Future work comprises mothods for phenotypic analysis and expanded usage, i.e. for animal breeding.
+                                        
                                                                                                                                                       
 
  

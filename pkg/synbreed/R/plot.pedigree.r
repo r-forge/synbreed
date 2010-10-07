@@ -33,7 +33,7 @@ plot.pedigree <- function(pedigree,effect=NULL,...){
     return(x)
   }
 
-  pos[n:1,1] <- unlist(tapply(pos[,1],pos[,2],myscale))
+  if (is.null(effect)) pos[n:1,1] <- unlist(tapply(pos[,1],pos[,2],myscale))
 
   cols <- rep("lightblue",n)
   if (!is.null(pedigree$sex)) cols[pedigree$sex==0] <- "palevioletred1"

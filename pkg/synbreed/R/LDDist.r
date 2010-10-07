@@ -18,7 +18,7 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
       start=list(p=1))
 
       p <- coef(nonlinearoverall)
-
+      x <- NA
       fitcurve <- function(x,p,n) {
         ((10 + p*x)) / ((2+p*x) * (11 + p*x) ) *
         ( 1 + ( (3+ p*x) * (12 + 12 * p + p^2*x^2)) / ( n*(2+p*x) * (11 + p*x)))
@@ -68,7 +68,7 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
           tab.abs <- table(cut.r2,cut.dist)
           colSum <- matrix(rep(colSums(tab.abs),nrow(tab.abs)),nrow=nrow(tab.abs),byrow=TRUE)
           barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs)),space=c(.2),main=paste("Linkage Group",lg[i]),xlim=c(0,ncol(tab.abs)+2.8),...)
-          legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r²)",cex=1)
+          legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r2)",cex=1)
 
 
 }

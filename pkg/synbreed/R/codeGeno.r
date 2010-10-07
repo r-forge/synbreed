@@ -5,12 +5,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
   if(impute & !is.null(replace.value)) stop("No replacing of values in case of imputing")
 
-  # discard duplicated markers
-  if(!keep.identical){
-       ncol.orig <- ncol(data)
-       data <- unique(as.matrix(data),MARGIN=2)
-       cat(ncol.orig-ncol(data),"duplicated markers discarded \n")
-  } 
+
 
     # number of genotypes
     n <- nrow(data)
@@ -78,6 +73,15 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   res <- matrix(res,nrow=n,ncol=M)
   
   # coding of SNPs finished
+  
+    # discard duplicated markers
+  if(!keep.identical){
+       ncol.orig <- ncol(res)
+       which.duplicated <- duplicated(res,MARGIN=2)
+       res <- res[,!which.duplicated]
+       cat(ncol.orig-ncol(res),"duplicated marker(s) discarded \n")
+       if(is.data.frame(data)) cnames <- cnames[!which.duplicated]
+  } 
           
   
   # start imputing of values
@@ -200,3 +204,5 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   
   return(res)
 }
+
+codeGeno(snp9,keep.identical=FALSE)

@@ -46,7 +46,7 @@ Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in populatio
 the value is 0 with probability 0.5 and 1 with probability 0.5.}
 \item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the allele distribution of marker \eqn{j}.} 
 }
-Duplicated markers are discarded if \code{keep.identical=FALSE} before imputation. Thus after imputation identical markers may occur.
+Duplicated markers are discarded after recoding but before imputation. Thus after imputation identical markers may occur.
 }
 \value{
 A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.  The genotype which is homozygousfor the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.

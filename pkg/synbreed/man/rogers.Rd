@@ -30,6 +30,8 @@ where \eqn{s=1-d}.
 
 Transformation according to Melchinger (1991) is
 \deqn{f=1-\frac{d}{\bar{d}}}{f=1-d/dquer}
+
+In both cases the relationship which is \eqn{2f} is returned by the function.
 }
 \value{
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{n \times n}{n x n} matrix containing the relationship coefficients (two times the kinship coefficient).
@@ -38,8 +40,7 @@ An object of class \code{relationshipMatrix} which is a symmetric \eqn{n \times 
 ROGERS, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
 VII, volume 7213. Univ. of Texas, Austin, 145 – 153.
 
-Melchinger, A.E., M.M. Messmer, M. Lee, W.L. Woodman, and K.R. Lamkey: Diversity and relationships among U.S. maize inbreds revealed by restriction fragment length polymorphisms
-; Crop Sci. 31: 669-678 
+Melchinger, A.E., M.M. Messmer, M. Lee, W.L. Woodman, and K.R. Lamkey: Diversity and relationships among U.S. maize inbreds revealed by restriction fragment length polymorphisms; Crop Sci. 31: 669-678 
 
 Hayes, B. J., and M. E. Goddard. 2008. Technical note: Prediction of breeding values using marker derived relationship matrices.
 J. Anim. Sci. 86:2089–2092.

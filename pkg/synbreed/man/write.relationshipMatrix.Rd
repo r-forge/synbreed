@@ -36,7 +36,7 @@ For ASREML, either the relationship could be saved as "*.grm" or its generalized
 \references{
 Meyer, K. (2006) WOMBAT - A tool for mixed model analyses in quantitative genetics by REML, J. Zhejinag Uni SCIENCE B 8: 815-821.
 
-GILMOUR, A., C. BR, W. SJ, and T. R (2000) ASREML. program user manual. NSW
+Gilmour, A., Cullis B., Welham S., and Thompson R. (2000) ASREML. program user manual. NSW
 Agriculture, Orange Agricultural Institute, Forest Road, Orange, Australia .
 GOUESNARD,
 }
