@@ -26,7 +26,7 @@ A numeric or character vector of length \code{nrow(data)} giving the population 
 A numeric. Markers with minor allele frequency < \code{maf} are discarded.
 }
   \item{nmiss}{
-A numeric. Markers with more than \code{nmiss} missing values are discarded.
+A numeric. Markers with more than \code{nmiss} fraction of missing values are discarded.
 }
   \item{label.heter}{
 This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype.
