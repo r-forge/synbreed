@@ -204,5 +204,3 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   
   return(res)
 }
-
-codeGeno(snp9,keep.identical=FALSE)
