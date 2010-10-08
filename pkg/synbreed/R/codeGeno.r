@@ -36,8 +36,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
    else dataRaw <- dataRaw
 
    
-   # number of markers
-   M <- ncol(dataRaw)    
+    
 
    # identify heterozygous
    if(!is.null(label.heter)){
@@ -61,7 +60,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
    
    
    
-   # function to redoce alleles within one locus  
+   # function to recode alleles within one locus  
   codeNumeric <- function(x){
     # names of alleles ordered by allele frequency
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
@@ -70,7 +69,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
    }
 
   res <- apply(dataRaw,2,codeNumeric)
-  res <- matrix(res,nrow=n,ncol=M)
+  res <- matrix(res,nrow=n)
   
   # coding of SNPs finished
   
@@ -82,7 +81,9 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
        cat(ncol.orig-ncol(res),"duplicated marker(s) discarded \n")
        if(is.data.frame(data)) cnames <- cnames[!which.duplicated]
   } 
-          
+   
+  # number of markers
+   M <- ncol(res)          
   
   # start imputing of values
   # number of missin values
@@ -145,7 +146,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
     }
     }
   }  
-  
+
    # impute missing values with no population structure
     if(impute & is.null(popStruc)){
         for (j in 1:M){
