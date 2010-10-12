@@ -4,6 +4,7 @@ write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting="WOMBA
         
         # compute inverse relationship matrix
         if(ginv) rMinv <- ginv(relationshipMatrix)
+	else rMinv <- relationshipMatrix
         
         rMinv <- round(rMinv,digits)
         
