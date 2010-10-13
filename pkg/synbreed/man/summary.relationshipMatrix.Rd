@@ -8,14 +8,16 @@ Summarizing relationship matrices
 \code{summary} method for class ''relationshipMatrix''
 }
 \usage{
-\method{summary}{relationshipMatrix}(relationshipMatrix) 
+\method{summary}{relationshipMatrix}(object,...) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{relationshipMatrix}{
+  \item{object}{
 object of class ''relationshipMatrix''
 }
-
+  \item{...}{
+not used
+}
 }
 
 \author{
@@ -27,6 +29,7 @@ ped <- simul.pedigree(gener=4,7)
 A <- kinshipPlants(ped)
 summary(A)
 }
+\keyword{methods}
 
-\keyword{relationshipMatrix}
+
 

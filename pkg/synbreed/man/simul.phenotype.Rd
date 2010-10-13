@@ -68,5 +68,4 @@ head(data.simul)
 # analysis of variance
 anova(lm(Trait~ID+Loc+Loc:Block,data=data.simul))
 }
-\keyword{simulation}
 

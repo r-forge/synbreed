@@ -72,6 +72,5 @@ par(mfrow=c(1,1))
 
 
 }
+\keyword{hplot}
 
-\keyword{LD}
-\keyword{genotypic data}

@@ -8,15 +8,15 @@ Visualisaton of pedigree
 A function to visualize pedigree structure by a graph. Each genotype is represented as vertex and direct offsprings are linked by an edge. 
 }
 \usage{
-\method{plot}{pedigree}(pedigree, effect = NULL, \dots)
+\method{plot}{pedigree}(x, effect = NULL, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pedigree}{
-An object of class \code{pedigree}
+  \item{x}{
+Object of class \code{pedigree}
 }
   \item{effect}{
-An vector of length \code{nrow(pedigree)} with an effect to be drawn
+Vector of length \code{nrow(pedigree)} with effect to be drawn
 }
   \item{...}{
 Other arguments for function \code{igraph.plotting}
@@ -54,6 +54,5 @@ ped.raw <- matrix(c(1,  0,   0,   1,
 ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
 plot(ped)                 
 }
-\keyword{plotting}
-\keyword{pedigree}
+\keyword{hplot}
 

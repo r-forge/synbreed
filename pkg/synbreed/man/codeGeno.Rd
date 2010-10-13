@@ -125,4 +125,4 @@ marker2 <- codeGeno(marker,impute=TRUE,pop2)
 # sum of correct replacements
 sum(diag(t2))/sum(t2)
 }
-\keyword{genotypic data}
+\keyword{manip}

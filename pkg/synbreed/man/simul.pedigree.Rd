@@ -46,7 +46,3 @@ plot(ped)
 peda <- simul.pedigree(gener=4,ids=c(3,5,8,8),animals=TRUE)
 plot(peda)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{pedigree}
-\keyword{simulation}

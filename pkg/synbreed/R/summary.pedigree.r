@@ -1,4 +1,5 @@
-summary.pedigree <- function(pedigree){
+summary.pedigree <- function(object,...){
+     pedigree <- object 
      n <- nrow(pedigree) 
      cat("# individuals    :",n,"\n")
      cat("# Par1 (sire)    :",length(unique(pedigree$Par1)),"\n")

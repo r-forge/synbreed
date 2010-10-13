@@ -56,5 +56,3 @@ ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
 
 A <- kinshipPlants(ped)
 }
-\keyword{relationshipMatrix}
-\keyword{pedigree}

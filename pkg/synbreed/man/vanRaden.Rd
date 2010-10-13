@@ -40,5 +40,4 @@ M<- matrix(c(2,2,0,0,0,0,0,2,0,0,0,0,2,2,0,2,2,0,0,0),nrow=5)
 M
 vanRaden(M)
 }
-\keyword{relationshipMatrix}
 

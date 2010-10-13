@@ -59,4 +59,4 @@ ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3])
 A <- kinship(ped,ret="add")
 write.relationshipMatrix(A)
 }
-\keyword{relationshipMatrix}
+\keyword{IO}

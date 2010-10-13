@@ -8,12 +8,15 @@ Summarizing pedigree information
 \code{summary} method for class ''pedigree''
 }
 \usage{
-\method{summary}{pedigree}(pedigree) 
+\method{summary}{pedigree}(object,...) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pedigree}{
+  \item{object}{
 object of class ''pedigree''
+}
+\item{...}{
+not used
 }
 }
 
@@ -30,6 +33,5 @@ summary(ped)
 ped <- simul.pedigree(gener=4,7,animals=TRUE)
 summary(ped)
 }
-
-\keyword{pedigreee}
+\keyword{methods}
 

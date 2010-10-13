@@ -64,5 +64,3 @@ kinship(ped2,DH=c(0,1,1,1,0,0),"add")
 kinship(ped2,DH=c(0,1,1,1,0,0),"dom")
 
 }
-\keyword{relationshipMatrix}
-\keyword{pedigree}

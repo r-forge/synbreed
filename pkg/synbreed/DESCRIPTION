@@ -12,4 +12,4 @@ URL: http://synbreed.r-forge.r-project.org/
 License: GPL-2
 LazyLoad: yes
 LazyData: no
-ZipData: no
+ZipData: yes

@@ -37,12 +37,9 @@ A \code{matrix} containing all pairwise values of \eqn{R^2} for all markers acro
 }
 
 \seealso{
-\code{\link{codeGeno}}, \code{\link{LDheatmap}}, \code{\link{LDDist}}
+\code{\link{codeGeno}}, \code{\link[LDheatmap]{LDheatmap}}, \code{\link{LDDist}}
 }
 \examples{
 data(maize)
 LDMap(maize.geno[,-1],maize.marker.pos$chr,maize.marker.pos$pos)
 }
-
-\keyword{LD}
-\keyword{genotypic data}% __ONLY ONE__ keyword per line

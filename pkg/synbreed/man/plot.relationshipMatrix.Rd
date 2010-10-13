@@ -8,12 +8,12 @@ Heatmap for relationship Matrix
 Visualistion for objects of class \code{relationshipMatrix}.  
 }
 \usage{
-\method{plot}{relationshipMatrix}(relationshipMatrix, \ldots) 
+\method{plot}{relationshipMatrix}(x, \ldots) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{relationshipMatrix}{
-object of class \code{relationshipMatrix}
+  \item{x}{
+Object of class \code{relationshipMatrix}
 }
   \item{\dots}{
 further graphical arguments
@@ -30,6 +30,6 @@ A <- kinshipPlants(ped)
 plot(A)
 }
 
-\keyword{plotting}
-\keyword{relationshipMatrix}
+\keyword{hplot}
+
 

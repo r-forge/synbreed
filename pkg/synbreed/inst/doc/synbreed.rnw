@@ -41,7 +41,7 @@
 
 \title{The R-Package 'synbreed'}
 \author{
-Valentin Wimmer\thanks{Author of correspondence. Contact: Institute for plant breeding, Technical University of Munich, Emil-Ramann-Str. 4,
+Valentin Wimmer\thanks{Author of correspondence. Contact: Institute for plant breeding, Technische Universität München, Emil-Ramann-Str. 4,
 	85354 Freising, Germany, Email: \texttt{Valentin.Wimmer@wzw.tum.de}}\\
 } \date{\today}
 
@@ -70,7 +70,7 @@ set.seed(1234)
 
 \begin{abstract}
   \noindent This document gives an introduction to the R-package
-  'synbreed'. The package contains tools and methods for plant and animal breeding. The goal is to create an analysis pipeline for genomic selection. This comprises tools
+  \texttt{synbreed}. The package contains tools for plant and animal breeding utilizing quantitative genetics and statistical methods. The goal is to create an analysis pipeline for genomic selection. This comprises tools
   for genotypic, phenotypic and pedigree data. The steps of a typical analysis are presented in this document. This starts with the coding of the marker data, followed by the estimation of relatdness according
   to pedigree or molecular marker data, e.g. according to \citet{vanRaden2008}. Finally the estimation of breeding values and estimation of variance components using mixed models is described. 
   All steps are illustrated using simulated data for maize.\\
@@ -84,7 +84,7 @@ set.seed(1234)
 
 \section{Introduction}\label{sec:Introduction}
 
-The R-package 'synbreed' aims to provide the tools that are necessary to analyze data of breeding programs and estimate (genomic) breeding values. Of course,
+The R-package \texttt{synbreed} aims to provide the tools that are necessary to analyze data of breeding programs and estimate (genomic) breeding values. Of course,
 there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003} and package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}. Library \texttt{GenABEL} is designed for genome-wide association analysis and effective SNP data storage and manipulation \citep{Aulchenko2007}.
 
  The idea of this package is to collect the methods in one package, so that analysis can be performed in one software with just a few steps as described in this document.  Additional, this package takes care of special problems of modern breeding programs as the use of doubled haploid (DH) lines in plant breeding.  To our knowledge, there is no package in R which provides comparable features. Most of packages source code is written in R, so that methods could easily be adopted for own purposes. Package \texttt{synbreed} makes no stringent restriction concerning input data format to allow for a wide range of possible data sources.
@@ -106,13 +106,13 @@ In section \ref{sec:Models} the use of mixed models to estimate variance compone
 
 \section{Example data}\label{sec:ExampleData}
 
-In this document the steps of an analysis pipeline for genotypic and phenotypic data in plant or animal breeding with the R-package 'synbreed' are presented. For illustration, a the package contains a simulated data set for maize, called \texttt{maize}. This data set could be used to test performance of methods because estimated values could easily be compared with specified parameters of the simulation (position of QTL, size of marker effects, true breeding values for individuals).
+In this document the steps of an analysis pipeline for genotypic and phenotypic data in plant or animal breeding with the R-package \texttt{synbreed} are presented. For illustration, a the package contains a simulated data set for maize, called \texttt{maize}. This data set could be used to test performance of methods because estimated values could easily be compared with specified parameters of the simulation (position of QTL, size of marker effects, true breeding values for individuals).
 To load \texttt{maize} data, use
 <<results=hide>>=
 library(synbreed)
 data(maize)
 @
-This data set contains genotypic and phenotypic data, as well as pedigree information up to grandparents for \Sexpr{ nrow(maize.pheno)} doubled haploid (DH) lines of maize. Performance of DH lines was evaluated in test crosses with a common single cross tester. When loading \texttt{maize} data, the following
+This data set contains genotypic and phenotypic data, as well as pedigree information up to grandparents for \Sexpr{ nrow(maize.pheno)} doubled haploid (DH) lines of maize. Performance of DH lines was evaluated in test crosses with a common single cross tester. All Dh lines were genotyped for \Sexpr{ ncol(maize.geno)-1} single nucleotide polymorphisms (SNP). When loading \texttt{maize} data, the following
 four data sets are loaded into workspace
 \begin{description}
 \item[maize.geno]  This is a \texttt{data.frame} containing the marker data of \Sexpr{ ncol(maize.geno)-1} biallelic SNP markers for the \Sexpr{ nrow(maize.pheno)} genotypes. 
@@ -601,7 +601,7 @@ Note that objects of class "relationshipMatrix" can be written to input files ap
 
 \section{Mixed Models}\label{sec:Models}
 
-The ultimate aim in the analysis of a breeding program is to estimate genetic effects and variance components. The basic statistical model for this purpose is a linear mixed model
+The ultimate aim in the analysis of a breeding program is to estimate genetic effects and variance components. The basic statistical model for this purpose is a linear mixed model \citep{Henderson1984} denoted by
 \begin{equation}\label{eq:mm}
 \bf y = \bf X \bf b + \bf Z \bf u + \bf e,
 \end{equation}
@@ -674,9 +674,9 @@ summary(G)
 @
 Both pedigree based and marker based variance-covariance matrices were used in the following models
 \begin{eqnarray*}
-\text{Model 1 :}\; \bf y &=& \bf \mu + \bf Z \bf a + \bf e  \\
-\text{Model 2 :}\; \bf y &=& \bf \mu + \bf Z \bf u + \bf e \\
-\text{Model 3 :}\; \bf y &=& \bf \mu + \bf Z \bf a + \bf Z \bf u + \bf e  
+\text{Model 1 :}\; \bf y &=& \bf{\mu} + \bf Z \bf a + \bf e  \\
+\text{Model 2 :}\; \bf y &=& \bf{\mu} + \bf Z \bf u + \bf e \\
+\text{Model 3 :}\; \bf y &=& \bf{\mu} + \bf Z \bf a + \bf Z \bf u + \bf e  
 \end{eqnarray*}
 Additive genetic effect due to pedigree has distribution  $\bf a \sim \text{N}(0,A\sigma^2_a)$, genetic effect due to marker data hat $ \bf u \sim \text{N}(0,G\sigma^2_g)$ and residual term in all models is $\bf e \sim \text{N}(0,\sigma^2) $. Estimation of breeding values and variance components is performed using function \texttt{regress}
 <<>>=    

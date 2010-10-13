@@ -2,7 +2,7 @@ simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1){
 
         if(is.null(A) & is.null(pedigree)) step("Either 'pedigree' or 'A' must be given")
         # create A matrix if missing
-        if (is.null(A)) A <- kinship(pedigree,ret="add")
+        if (is.null(A)) A <- synbreed::kinship(pedigree,ret="add")
        
         
         # read data out of arguments

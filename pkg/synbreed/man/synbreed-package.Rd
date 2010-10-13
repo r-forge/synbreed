@@ -25,6 +25,6 @@ Valentin Wimmer
 \email{Valentin.Wimmer@wzw.tum.de}
 }
 
-\keyword{ package }
+\keyword{package}
 
 

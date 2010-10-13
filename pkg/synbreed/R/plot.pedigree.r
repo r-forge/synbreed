@@ -1,5 +1,6 @@
-plot.pedigree <- function(pedigree,effect=NULL,...){
+plot.pedigree <- function(x,effect=NULL,...){
   
+  pedigree <- x
   library(igraph)
   # gener has to start with 0
   
