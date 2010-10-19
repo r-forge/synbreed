@@ -1,10 +1,13 @@
-write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting="WOMBAT",ginv=TRUE,digits=10){
+write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting="WOMBAT",type=c("ginv","inv","none"),digits=10){
         
-        if(sorting=="WOMBAT" & ginv==FALSE) stop("GINV must be specified for WOMBAT")
+        type <- match.arg(type)
+
+        if(sorting=="WOMBAT" & type!="ginv") stop("'type' must be 'ginv' for WOMBAT")
         
-        # compute inverse relationship matrix
-        if(ginv) rMinv <- ginv(relationshipMatrix)
-	else rMinv <- relationshipMatrix
+        # pass (inverse) relationship matrix
+        if(type=="ginv") rMinv <- ginv(relationshipMatrix)
+      	if(type=="inv")  rMinv <- solve(relationshipMatrix)
+        if(type=="none") rMinv <- relationshipMatrix
         
         rMinv <- round(rMinv,digits)
         

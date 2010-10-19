@@ -85,7 +85,8 @@ set.seed(1234)
 \section{Introduction}\label{sec:Introduction}
 
 The R-package \texttt{synbreed} aims to provide the tools that are necessary to analyze data of breeding programs and estimate (genomic) breeding values. Of course,
-there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003} and package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}. Library \texttt{GenABEL} is designed for genome-wide association analysis and effective SNP data storage and manipulation \citep{Aulchenko2007}.
+there exists already software for this purpose. In R, package \texttt{genetics} contains classes and methods for handling genetic data \citep{Warnes2003}. Note that R-Genetics project has developed an set of enhanced genetics
+  packages to replace \texttt{genetics} (\url{http://rgenetics.org}). Package \texttt{qtl} could be used for QTL analysis in experimental crosses \citep{Broman2003}. Library \texttt{GenABEL} is designed for genome-wide association analysis and effective SNP data storage and manipulation \citep{Aulchenko2007}.
 
  The idea of this package is to collect the methods in one package, so that analysis can be performed in one software with just a few steps as described in this document.  Additional, this package takes care of special problems of modern breeding programs as the use of doubled haploid (DH) lines in plant breeding.  To our knowledge, there is no package in R which provides comparable features. Most of packages source code is written in R, so that methods could easily be adopted for own purposes. Package \texttt{synbreed} makes no stringent restriction concerning input data format to allow for a wide range of possible data sources.
 

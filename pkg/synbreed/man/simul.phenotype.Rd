@@ -16,10 +16,10 @@ simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL, Nloc = 1, Nrepl 
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pedigree}{
-An object of class "pedigree" 
+Object of class "pedigree" 
 }
   \item{A}{
-An object of class "relationshipMatrix"
+Object of class "relationshipMatrix"
 }
   \item{mu}{
 Numeric; Overall mean of the trait.

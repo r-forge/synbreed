@@ -23,10 +23,10 @@ A logical specifing whether imputing of missing values should be done.
 A numeric or character vector of length \code{nrow(data)} giving the population id for each genotype with no missing values.
 }
   \item{maf}{
-A numeric. Markers with minor allele frequency < \code{maf} are discarded.
+A numeric. Markers with minor allele frequency < \code{maf} are discarded, thus  \code{maf} in [0,0.5].
 }
   \item{nmiss}{
-A numeric. Markers with more than \code{nmiss} fraction of missing values are discarded.
+A numeric. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1].
 }
   \item{label.heter}{
 This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype.

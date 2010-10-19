@@ -36,7 +36,7 @@ In both cases the relationship which is \eqn{2f} is returned by the function.
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{n \times n}{n x n} matrix containing the relationship coefficients (two times the kinship coefficient).
 }
 \references{
-ROGERS, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
+Rogers, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
 VII, volume 7213. Univ. of Texas, Austin, 
 
 Melchinger, A.E., M.M. Messmer, M. Lee, W.L. Woodman, and K.R. Lamkey: Diversity and relationships among U.S. maize inbreds revealed by restriction fragment length polymorphisms. Crop Sci. 31 

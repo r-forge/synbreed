@@ -14,13 +14,13 @@ LDDist(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NULL,...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{marker}{
-A \code{data.frame} of \code{matrix} containing the marker data. Could be the result of a call of \code{codeGeno}.
+\code{Data.frame} of \code{matrix} containing the marker data. Could be (but not necessarily) the result of a call of \code{codeGeno}.
 }
   \item{linkageGroup}{
-A numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
+Numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
 }
   \item{pos}{
-A numeric vector of length \code{nrow(marker)} with physical position of each marker on the chromosome.
+Numeric vector of length \code{nrow(marker)} with physical position of each marker on the chromosome.
 }
   \item{file}{
 Optionally a path were the plot is saved as \code{pdf}.

@@ -21,8 +21,8 @@ Path were the output should be writen . If \code{NULL} the result is returned in
   \item{sorting}{
 Type of sorting. Use "WOMBAT" for 'row-wise' sorting of the table and "ASReml" for 'column-wise' sorting.
 }
-  \item{ginv}{
-A logical. Should the generalized inverse be computet and saved?
+  \item{type}{
+A character string indicating which form of \code{relationshipMatrix} should be returned. One of "ginv" (Moore-Penrose generalized inverse), "inv" (inverse), or "none" (no inverse). 
 }
   \item{digits}{
 Numeric.  The result is rounded to \code{digits}.
@@ -38,7 +38,6 @@ Meyer, K. (2006) WOMBAT - A tool for mixed model analyses in quantitative geneti
 
 Gilmour, A., Cullis B., Welham S., and Thompson R. (2000) ASREML. program user manual. NSW
 Agriculture, Orange Agricultural Institute, Forest Road, Orange, Australia .
-GOUESNARD,
 }
 \author{
 Valentin Wimmer
@@ -57,6 +56,6 @@ ped.raw <- matrix(c(1,  0,   0,
 ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3])
 
 A <- kinship(ped,ret="add")
-write.relationshipMatrix(A)
+write.relationshipMatrix(A,type="ginv")
 }
 \keyword{IO}

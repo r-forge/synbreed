@@ -32,7 +32,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
     which.miss <- apply(is.na(dataRaw),2,mean,na.rm=TRUE)<nmiss 
     dataRaw <- dataRaw[,which.miss]
-    cat("step 1 :",sum(!which.miss),"markers removed with >=",nmiss*100,"% missing values \n")
+    cat("step 1 :",sum(!which.miss),"marker(s) removed with >=",nmiss*100,"% missing values \n")
     if(is.data.frame(data)) cnames <- cnames[which.miss]
 
     }
@@ -179,7 +179,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     which.maf <- apply(res,2,mean,na.rm=TRUE)>2*maf 
-    cat("step 5 :",sum(!which.maf),"markers removed with maf =<",maf,"\n")
+    cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <=",maf,"\n")
     res <- res[,which.maf]
     if(is.data.frame(data)){
       cnames <- cnames[which.maf]
@@ -194,7 +194,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
        cat("step 6 :",sum(which.duplicated),"duplicated marker(s) discarded \n")
        if(is.data.frame(data)) cnames <- cnames[!which.duplicated]
   }
-  else cat("step 6 : No dupicated markers discarded \n")
+  else cat("step 6 : No duplicated markers discarded \n")
 
     # keep structure for return object
    cat("step 7 : Restoring original data format \n")
