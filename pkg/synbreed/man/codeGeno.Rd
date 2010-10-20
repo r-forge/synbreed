@@ -44,7 +44,7 @@ Imputing of missing values is done in the following way:
 \item{with population structure}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k}, 
 the value is 0 with probability 0.5 and 1 with probability 0.5.}
-\item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the allele distribution of marker \eqn{j}.} 
+\item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}.} 
 }
 Duplicated markers are discarded after recoding but before imputation. Thus after imputation identical markers may occur.
 }

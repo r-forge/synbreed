@@ -43,8 +43,8 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
        p <- ncol(markeri)
        mn <- colnames(markeri)
        posi <- pos[linkageGroup==lg[i]]
-       # compute LD as R2
-       ld.r2i <- cor(markeri,method="spearman")^2
+       # compute LD as R2 (missing values are allowed)
+       ld.r2i <- cor(markeri,method="spearman",use="pairwise.complete.obs")^2
        ld.r2i <- ld.r2i[lower.tri(ld.r2i)] # column-wise
        # index vectors for LD matrix
        rowi <- rep(1:p,times=(p:1)-1)

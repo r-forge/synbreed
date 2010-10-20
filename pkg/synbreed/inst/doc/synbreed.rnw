@@ -70,7 +70,8 @@ set.seed(1234)
 
 \begin{abstract}
   \noindent This document gives an introduction to the R-package
-  \texttt{synbreed}. The package contains tools for plant and animal breeding utilizing quantitative genetics and statistical methods. The goal is to create an analysis pipeline for genomic selection. This comprises tools
+  \texttt{synbreed}. This package implements statistical and genetic methods
+               for plant and animal breeding. The goal is to create an analysis pipeline for genomic selection. This comprises tools
   for genotypic, phenotypic and pedigree data. The steps of a typical analysis are presented in this document. This starts with the coding of the marker data, followed by the estimation of relatdness according
   to pedigree or molecular marker data, e.g. according to \citet{vanRaden2008}. Finally the estimation of breeding values and estimation of variance components using mixed models is described. 
   All steps are illustrated using simulated data for maize.\\
@@ -454,7 +455,7 @@ which is nonzero because individuals A and C, which are the parents of D, are re
 
  The additive relationship between individuals X and Y is given by
 $$ A_{XY} = \begin{cases} 1+F_X, & X=Y \\ 2f_{XY}, & X\neq Y \end{cases}$$
-where $f_{XY}$ is the coefficient of coancastry between X and Y. The additive numerator relationship is of order $n$ and derived for a given pedigree as
+thus off-diagonal entries equal twice teh kinship coefficient. The additive numerator relationship is of order $n$ and derived for a given pedigree as
 <<>>=
 A <- kinship(ped,ret="add")
 A
@@ -477,6 +478,7 @@ K <- kinship(ped,ret="kin")
 %&=&  P(Y_1 \neq X_2)P(Y_1 \neq Y_2)\left[ P(X_1 \equiv Y_1)P(X_2 \equiv Y_2)+P(X_2 \equiv Y_1)P(X_1 \equiv Y_2) \right] \\
 %&=& (1-F_X)(1-F_Y)\left[ P(X_1 \equiv Y_1)P(X_2 \equiv Y_2)+P(X_2 \equiv Y_1)P(X_1 \equiv Y_2) \right].
 %\end{eqnarray*}
+% coefficient of fraternity (Visscher 2006)
 %Note that for a completely homozygous line $X$ dominance is zero because $F_X=1$. Dominance relationship matrix 
 %for the example pedigree is obtained  by
 %<<>>=

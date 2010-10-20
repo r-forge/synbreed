@@ -14,7 +14,7 @@ LDDist(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NULL,...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{marker}{
-\code{Data.frame} of \code{matrix} containing the marker data. Could be (but not necessarily) the result of a call of \code{codeGeno}.
+\code{Data.frame} of \code{matrix} containing the marker data (individuals in rows and markers in columns). Could be (but not necessarily) the result of a call of \code{codeGeno}.
 }
   \item{linkageGroup}{
 Numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
@@ -39,10 +39,13 @@ Further plot arguments
 }
 }
 \details{
-LD is computed as coefficient of determination \eqn{R^2}.  Matrix of \eqn{R^2} of markers is returned. By default, one plot for each linkage group is generated. If markers across all chromosomes should be combined
+LD is computed as coefficient of determination \eqn{R^2}.  Matrix of \eqn{R^2} of markers is returned. Missing values in genotypic data are allowed and pairwise complete observations of two markers are used to compute \eqn{R^2}.  By default, one plot for each linkage group is generated. If markers across all chromosomes should be combined
 in one plot, use \code{chr="all"}. If markers of, e.g. chromosomes 5 to 10 should be combined in one plot, change \code{linkageGroup} indicator manually.
 }
-
+\references{
+For nonlinear regression curve:
+Hill WG, Weir BS (1988) Variances and covariances of squared linkage disequilibria in finite populations. Theor Popul Biol 33:54-78.
+}
 \seealso{
 \code{\link{codeGeno}}, \code{\link{LDMap}}
 }

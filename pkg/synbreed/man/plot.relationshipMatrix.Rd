@@ -16,7 +16,7 @@ Visualistion for objects of class \code{relationshipMatrix}.
 Object of class \code{relationshipMatrix}
 }
   \item{\dots}{
-further graphical arguments
+further graphical arguments passed to function \code{levelplot} in package \code{lattice}
 }
 }
 
