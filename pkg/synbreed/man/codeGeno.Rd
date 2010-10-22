@@ -39,14 +39,21 @@ Logical. Should duplicated markers be kept?
 }
 }
 \details{
-Imputing of missing values is done in the following way:
+Coding of genotypic data is done in the following order (depending on arguments not all steps are done):
+1. Discarding markers due with fraction >= \code{nmiss} of missing values
+2. Recoding alleles from charachter/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
+3. Replace of missing values by \code{replace.value} or imputing.
+Imputing is done as:
 \describe{
 \item{with population structure}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k}, 
 the value is 0 with probability 0.5 and 1 with probability 0.5.}
 \item{without population structure}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}.} 
 }
-Duplicated markers are discarded after recoding but before imputation. Thus after imputation identical markers may occur.
+4. Recoding of alleles after imputation, if necessary due to changes after imputation
+5. Discarding markers with a minor allele frequency of <= \code{maf}
+6. Discarding duplicated markers if \code{keep.identical=FALSE}
+7. Restoring original data format (\code{matrix} or \code{data.frame}) 
 }
 \value{
 A \code{data.frame} of the same dimension as \code{data} containing the recoded marker data.  The genotype which is homozygousfor the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.

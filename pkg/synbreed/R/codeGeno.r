@@ -198,7 +198,7 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
 
     # keep structure for return object
    cat("step 7 : Restoring original data format \n")
-   if(is.matrix(data)) res <- as.matrix(res,nrow=n)
+   if(is.matrix(data)) res <- matrix(res,nrow=n,dimnames=dimnames(data))
    if(is.data.frame(data)){
       res  <- as.data.frame(res)
       colnames(res) <- cnames
