@@ -24,11 +24,11 @@ Relationship coefficient is computed according to Roger's distance
 where \eqn{d} is Roger's distance which is computed as
 \deqn{d=\frac{1}{m}\sum_{i=1}^m \sqrt{1/2 \sum_{j=1}^{n_i}(p_{ij}-q_{ij})^2}}{d=1/m sum(sqrt(\sum(pij-qij)2))}
 where \eqn{m} is the number of markers and \eqn{n_i}{ni} the number of alleles for marker \eqn{i}. \eqn{p_{ij}}{pij} and \eqn{q_{ij}}{qij} are the allele frequencies of allele \eqn{j} for marker \eqn{i}.
-Kinship based on Rogers distance is the simple matching coefficient which is \eqn{f=1-d} (correction = \code{"none"}). 
+Similarity matrix (kinship) based on Rogers distance equtls the simple matching coefficient which is \eqn{f=1-d} (correction = \code{"none"}). 
 
-Transformation to kinship coefficient according to Hayes and Goddard (2008)
+To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) transformed similarity matrix based on marker data according to
 \deqn{f = \frac{s-s_{min}}{1-s_{min}}}{f=s-smin/(1-smin)}
-where \eqn{s=1-d}.
+where \eqn{s=1-d} is the similarity matrix .
 
 Transformation according to Melchinger (1991) is
 \deqn{f=1-\frac{d}{\bar{d}}}{f=1-d/dquer}

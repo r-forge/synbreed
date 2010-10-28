@@ -1,14 +1,22 @@
 summary.pedigree <- function(object,...){
-     pedigree <- object 
-     n <- nrow(pedigree) 
-     cat("# individuals    :",n,"\n")
-     cat("# Par1 (sire)    :",length(unique(pedigree$Par1)),"\n")
-     cat("# Par2 (dam)     :",length(unique(pedigree$Par2)),"\n")
-     cat("# generations    :",length(unique(pedigree$gener)),"\n")
-     cat("# unknow parents :",sum(pedigree$Par1==0)+sum(pedigree$Par2==0),"\n")
-     cat("# inbred         :",sum((pedigree$Par1==pedigree$Par2) & pedigree$Par1 != 0 & pedigree$Par2 !=0 ),"\n")
-     if(!is.null(pedigree$sex)){
-      cat("# male/female    :",n*mean(pedigree$sex),"/",n*(1-mean(pedigree$sex)),"\n")
-     }
-}    
-    
+     ped <- object 
+     n <- nrow(ped) 
+     ans <- list(nID=n,nPar1=length(unique(ped$Par1)),nPar2=length(unique(ped$Par1)),nGener=length(unique(ped$gener)),nUnknownParents=sum(ped$Par1==0)+sum(ped$Par2==0))
+     if(!is.null(ped$sex)) ans$sex <- c(males=sum(ped$sex),females=sum(1-ped$sex))
+     class(ans) <- "summary.pedigree"
+     ans
+}
+
+print.summary.pedigree <- function(x,...){
+    cat("Number of \n")
+    cat("\t individuals ",x$nID,"\n")
+   if(!is.null(x$sex)){
+      cat("\t males : ",x$sex[1],", females : ",x$sex[2],"\n")
+    }
+    cat("\t Par1        ",x$nPar1,"\n")
+    cat("\t Par2        ",x$nPar2,"\n")
+    cat("\t generations ",x$nGener,"\n")
+} 
+
+
+

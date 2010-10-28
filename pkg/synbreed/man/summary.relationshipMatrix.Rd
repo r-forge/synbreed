@@ -1,5 +1,6 @@
 \name{summary.relationshipMatrix}
 \alias{summary.relationshipMatrix}
+\alias{print.summary.relationshipMatrix}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Summarizing relationship matrices
@@ -26,7 +27,7 @@ Valentin Wimmer
 
 \examples{
 ped <- simul.pedigree(gener=4,7)
-A <- kinshipPlants(ped)
+A <- kinship(ped)
 summary(A)
 }
 \keyword{methods}

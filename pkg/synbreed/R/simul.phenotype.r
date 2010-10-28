@@ -47,6 +47,5 @@ simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1){
         ret <- data.frame(ID=factor(ID),Loc=factor(Loc),Block=factor(Block),Trait=Trait,TBV=tbv)
         return(ret)
 
-
 }
 

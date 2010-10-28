@@ -29,10 +29,10 @@ A numeric. Markers with minor allele frequency < \code{maf} are discarded, thus 
 A numeric. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1].
 }
   \item{label.heter}{
-This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype.
+This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype. Note that heterozygus values must be identified unambiguously by \code{label.heter}, e.g. "/" is not valid if genotypes are coded "A/A", "A/B" and "B/B".
 }
   \item{replace.value}{
-A numeric value assigned to missing values in data. Only specified if no impution is done 
+Numeric assigned to missing values in data. Only specified if no impution is done 
 }
   \item{keep.identical}{
 Logical. Should duplicated markers be kept? 

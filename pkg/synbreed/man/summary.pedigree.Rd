@@ -1,5 +1,6 @@
 \name{summary.pedigree}
 \alias{summary.pedigree}
+\alias{print.summary.pedigree}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Summarizing pedigree information
