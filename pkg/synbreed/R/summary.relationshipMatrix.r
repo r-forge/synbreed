@@ -6,9 +6,9 @@ summary.relationshipMatrix <- function(object,...){
 }
 
 print.summary.relationshipMatrix <- function(x,...){
-    cat("\t dimension                   ",x$dim[1],"x",x$dim[2],"\n")
-    cat("\t rank                        ",x$rank,"\n")
-    cat("\t range of off-diagonal values",x$range.off.diagonal[1],"--",x$range.off.diagonal[2],"\n")
-    cat("\t number of unique values     ",x$nUnique,"\n")
-    cat("\t range of inbreeding coef.   ",x$inbr.coef[1],"--",x$inbr.coef[6],"\n")
+    cat(" dimension                   ",x$dim[1],"x",x$dim[2],"\n")
+    cat(" rank                        ",x$rank,"\n")
+    cat(" range of off-diagonal values",x$range.off.diagonal[1],"--",x$range.off.diagonal[2],"\n")
+    cat(" number of unique values     ",x$nUnique,"\n")
+    cat(" range of inbreeding coef.   ",x$inbr.coef[1],"--",x$inbr.coef[6],"\n")
 }

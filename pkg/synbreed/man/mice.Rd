@@ -1,0 +1,28 @@
+\name{mice}
+\alias{mice}
+\docType{data}
+\title{
+Heterogenous stock mice population
+}
+\description{
+Data set comprises public available data of 2527 (993 males and 947 females) heterogenous stock mice derived from eight inbred strains (A/J, AKR/J, BALBc/J, CBA/J, C3H/HeJ, C57BL/6J, DBA/2J and LP/J). Available phenotypes are descibed in Solberg et al. (2006). Genotypic data is available for 1940 individuals with 12545 SNP markers. All SNPs are mapped in a sex-averaged genetic map with distances given in centimorgan (Shifman et al. (2006)). Further covariates as cage density, litter or family are available, too. 
+}                                                                                                                                                                                                                 
+\usage{data(mice)}
+\format{
+Object of class 'gpData'
+}
+\source{Wellcome Trust Centre for Human Genetics, Oxford University, data available from \url{http://gscan.well.ox.ac.uk}}   
+\references{
+Shifman S, Bell JT, Copley RR, Taylor MS, Williams RW, et al. (2006) A High-Resolution Single Nucleotide Polymorphism Genetic Map of the Mouse Genome. PLoS Biol 4(12): e395. doi:10.1371/journal.pbio.0040395
+
+Solberg L.C. et al, A protocol for high-throughput phenotyping, suitable for quantitative trait analysis in mice. Mamm. Genome 17, 129-146 (2006)
+
+Valdar W, Solberg LC, Gauguier D, Burnett S, Klenerman P, Cookson WO, Taylor MS, Rawlins JN, Mott R, Flint J. (2006) Genome-wide genetic association of complex traits in heterogeneous stock mice. Nat Genet. 2006 Aug;38(8):879-87.
+
+Valdar W, Solberg LC, Gauguier D, Cookson WO, Rawlins NJ, Mott R, Flint J.(2006) Genetic and environmental effects on complex traits in mice. Genetics. 2006 Aug 3;
+}                             
+\examples{
+data(mice)
+summary(mice)                                       
+}                                  
+\keyword{datasets}

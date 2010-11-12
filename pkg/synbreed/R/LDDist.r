@@ -1,11 +1,16 @@
-LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NULL,...){
+LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
 
-    # catch errors
-    if (length(linkageGroup)!=ncol(marker)) stop("'linkageGroup' must be of length ncol(marker)")
-    if (length(pos)!=ncol(marker)) stop("'pos' must be of length ncol(marker)")
-    
-    # set marker names if not given
-    if(is.null(colnames(marker)))  colnames(marker) <- paste("M",1:ncol(marker),sep="") 
+    # catch (possible) errors
+    if(is.null(gpData$geno)) stop("no genotypic data available")
+    if(!gpData$info$codeGeno) stop("use function 'codeGeno' before")
+    if(is.null(gpData$map))  stop("no map information available")
+
+    # extract information from gpData 
+    mapped <- !(is.na(gpData$map$chr) & is.na(gpData$map$pos)) 
+    marker <- gpData$geno[,mapped]
+    linkageGroup <- gpData$map$chr[mapped]
+    pos <- gpData$map$pos[mapped]
+
 
     # select chromosomes if 'chr' is specified
     lg <- unique(linkageGroup)
@@ -14,7 +19,8 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
         if(chr=="all") linkageGroup <- rep("all",length(linkageGroup))
     }
     
-    # function for fit according to ...
+    # function for fit according to Hill and Weir (1988)
+    #-------------------------------------------------------
     smooth.fit <- function(overallDist,overallr2,n){
     
       nonlinearoverall <- nls(overallr2 ~ ((10 + p*overallDist)) / ((2+p*overallDist) * (11 + p*overallDist) ) *
@@ -30,7 +36,7 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
 
       curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,...)
     }
-    
+    #-------------------------------------------------------
 
     # initialize return data list
     ret <- list()
@@ -99,6 +105,3 @@ LDDist <- function(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NU
     
     invisible(ret)
 }
-
-
-

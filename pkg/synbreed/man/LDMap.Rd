@@ -9,21 +9,18 @@ LD Heatmap
 Computation of pairwise LD as \eqn{R^2} for marker data and plot of LD heatmap for each linkage group (chromosome)
 }
 \usage{
-LDMap(marker, linkageGroup, pos, file = NULL, ...)
+LDMap(gpData,chr=NULL,file=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{marker}{
-A \code{data.frame} of \code{matrix} containing the marker data. Could be the result of a call of \code{codeGeno}.
+  \item{gpData}{
+Object of class \code{gpData} where \code{geno} and \code{map} are available.
 }
-  \item{linkageGroup}{
-A numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
-}
-  \item{pos}{
-A numeric vector of length \code{nrow(marker)} with physical position of each marker on the chromosome.
+  \item{chr}{
+Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markes across chromosomes is used.  
 }
   \item{file}{
-Optionally a path were the plot is saved as \code{pdf}.
+Optionally a path to a file were plot is saved as \code{pdf}.
 }
   \item{\dots}{
 Further arguments that could be passed to function \code{LDheatmap}.
@@ -41,5 +38,6 @@ A \code{matrix} containing all pairwise values of \eqn{R^2} for all markers acro
 }
 \examples{
 data(maize)
-LDMap(maize.geno[,-1],maize.marker.pos$chr,maize.marker.pos$pos)
+maize <- codeGeno(maize)
+LDMap(maize,chr=1)
 }

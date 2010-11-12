@@ -9,33 +9,27 @@ LD versus distance Plot
 Computation of pairwise LD as \eqn{R^2} for marker data and plot LD versus distance for each linkage group (chromosome)
 }
 \usage{
-LDDist(marker,linkageGroup,pos,file=NULL,type="p",breaks=NULL,chr=NULL,...)
+LDDist(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{marker}{
-\code{Data.frame} of \code{matrix} containing the marker data (individuals in rows and markers in columns). Could be (but not necessarily) the result of a call of \code{codeGeno}.
+  \item{gpData}{
+Object of class \code{gpData} where \code{geno} and \code{map} are available.
 }
-  \item{linkageGroup}{
-Numeric vector of length \code{nrow(marker)} with the linkage group of each marker.
-}
-  \item{pos}{
-Numeric vector of length \code{nrow(marker)} with physical position of each marker on the chromosome.
-}
-  \item{file}{
-Optionally a path were the plot is saved as \code{pdf}.
+  \item{chr}{
+Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markes across chromosomes is used.  
 }
   \item{type}{
-Character string to specify the type of plot. Use \code{"p"} for a scatterplot, \code{"bars"} for stacked bars and \code{"nls"} for scatterplot together with nonlinear regression curve estimated by data. 
+Character string to specify the type of plot. Use \code{"p"} for a scatterplot, \code{"bars"} for stacked bars or \code{"nls"} for scatterplot together with nonlinear regression curve estimated by data. 
 }
   \item{breaks}{
 List containing breaks for stacked bars. Components are \code{dist} with breaks for distance on x-axis and \code{r2} for breaks on for r2 on y-axis. By default, 5 equal spaced categories for dist and r2 are used.  
 }
-  \item{chr}{
-Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created.  
+  \item{file}{
+Optionally a path to a file were plot is saved as \code{pdf}.
 }
   \item{\dots}{
-Further plot arguments
+Further arguments for \code{plot}
 }
 }
 \details{
@@ -52,27 +46,16 @@ Hill WG, Weir BS (1988) Variances and covariances of squared linkage disequilibr
 \examples{
 # maize data example
 data(maize)
-marker <- codeGeno(maize.geno[,-1])
+maize <- codeGeno(maize)
 
 # scatterplot for chromosome 1
-LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="p",chr=1)
+LDDist(maize,type="p",chr=1,pch=19,col=hsv(alpha=0.1,v=0))
 
 # stacked bars for chromosome 1 with default categories
-LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",chr=1)
+LDDist(maize,type="bars",chr=1)
 
 # stacked bars for chromosome 1 with specified categories
-LDDist(marker,maize.marker.pos$chr,maize.marker.pos$pos,type="bars",breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.2,0.1)),chr=1)
-
-
-# simulated data without LD with 1000 equal spaced markers on 4 chromosomes
-M<- matrix(sample(c(0,2),size=50000,replace=TRUE,prob=c(0.65,0.35)),nrow=50,ncol=1000)
-colnames(M) <- paste("M",1:1000,sep="")
-lgd <- rep(1:4,each=250)
-pos <- sequence(c(250,250,250,250))
-par(mfrow=c(2,2))
-LDDist(M,lgd,pos)
-par(mfrow=c(1,1))
-
+LDDist(maize,type="bars",chr=1,breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.2,0.1)))
 
 }
 \keyword{hplot}

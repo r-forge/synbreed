@@ -1,40 +1,71 @@
-# coding alles in 0 (major) and 2 (minor)
 
-codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,replace.value=NULL,keep.identical=TRUE){
+# coding genotypic data
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE){
 
-   # number of genotypes
-   n <- nrow(data)
-
-  #  catch errors 
-  if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
-  if(impute & !is.null(replace.value)) stop("No replacing of values in case of imputing")
-
-
-
-  if(!is.logical(impute)) stop("impute has to be logical")
-  if(impute & !is.null(popStruc)){
-    if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in data")
-    if(any(is.na(popStruc))) stop("no missing values allowd in popStruc")
-   }
-
+  # read information from arguments
   
-   # keep names of data object
-   if(is.data.frame(data)){
-     cnames <- colnames(data)
-     rnames <- row.names(data)
-     dataRaw <- matrix(unlist(data),nrow=n)
-   }
-   else dataRaw <- data
+  # check for class 'gpData'
+  if(class(gpData)=="gpData"){
+    if(is.null(gpData$geno)) stop("no genotypic data available")
+    else data <- gpData$geno
+    # family information (population structure) for genotypic data
+    popStruc <- gpData$covar$family[gpData$covar$genotyped]
+    gpData$info$codeGeno <- TRUE
+  }
+  # atm other formats are supported too
+  else{
+   data <- gpData
+   popStruc <- NULL
+   gpData$map <- NULL
+  }
+  #  catch errors
+  if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
+  
 
+  # number of genotypes
+  n <- nrow(data)
+
+   
+   # keep names of data object
+   cnames <- colnames(data)
+   rnames <- row.names(data)
+   dataRaw <- matrix(unlist(data),nrow=n)
+
+
+  # elements from control list
+  #impute <- control$impute
+  if(impute)  impute.type <- match.arg(impute.type)
+  #maf <- control$maf
+  #nmiss <- control$nmiss
+  #label.heter <- control$label.heter
+  #replace.value <- control$replace.value
+  #keep.identical <- control$keep.identical
+  #print(keep.identical)
+  
+  
+  # catch errors 
+  if (impute){
+  if(!is.logical(impute)) stop("impute has to be logical")
+  if(impute.type=="fix" & is.null(replace.value)) stop("'replace.value' must be given for impute.type='fix'")
+  # imputing with family information
+  if(impute.type=="family" & is.null(popStruc)) stop(paste("family information needed, but '",substitute(gpData),"$covar$family' is empty",sep=""))
+  if(impute.type=="family" & !is.null(popStruc)){
+    if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in genotypic data")
+    if(any(is.na(popStruc))) stop("no missing values allowed for family information")
+  }
+  }
+ 
+   # preparation of genotypic data
   
    # remove makrers with more than nmiss fraction of missing values
    if(!is.null(nmiss)){
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
-    which.miss <- apply(is.na(dataRaw),2,mean,na.rm=TRUE)<nmiss 
+    which.miss <- apply(is.na(dataRaw),2,mean,na.rm=TRUE)<=nmiss 
     dataRaw <- dataRaw[,which.miss]
-    cat("step 1 :",sum(!which.miss),"marker(s) removed with >=",nmiss*100,"% missing values \n")
-    if(is.data.frame(data)) cnames <- cnames[which.miss]
-
+    cat("step 1 :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
+    cnames <- cnames[which.miss]
+    # update map
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
     }
     else{
       dataRaw <- dataRaw
@@ -42,7 +73,8 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
     }
     
 
-   # identify heterozygous
+
+   # identify heterozygous genotypes
    if(!is.null(label.heter)){
     if (is.character(label.heter)) is.heter <- function(x) return(length(grep(label.heter,as.vector(x)))>0)
     else{
@@ -54,14 +86,13 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
    heter.ind <- which(matrix(is.heter(dataRaw),nrow=n),arr.ind=TRUE)
    
    # set values as NA (instead there would be more than two alleles at each locus)
-   # this would cause promblems in recoding
+   # this would cause problems in recoding
    # values are restored after recoding
-   
    dataRaw[heter.ind] <- NA
+   sumNA.heter <- sum(is.na(dataRaw[heter.ind] ))
    }
+   else sumNA.heter <- 0
 
-   
-   
    
    # function to recode alleles within one locus  
   codeNumeric <- function(x){
@@ -76,30 +107,35 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   res <- matrix(res,nrow=n)
   
   # coding of SNPs finished
+
+  # start of imputing
+  if(impute){
   
- 
-   
   # number of markers
    M <- ncol(res)          
   
   # start imputing of values
-  # number of missin values
-  nmv <- sum(is.na(res))
-
-   # initialize counter  
-   cnt1 <- 0    # for nr. of imputations with family structure
+  
+   # number of missing values - number of heterozygous values
+   nmv <- sum(is.na(dataRaw)) - sumNA.heter
+ 
+  # initialize counter  
+   cnt1 <- 0   # for nr. of imputations with family structure
    cnt2 <- 0    # for nr. of random imputations
+   
 
-  # if no  imputation should be performed, replace missing values
-  # accorind to specified value
-  if(!impute & !is.null(replace.value)){
+  # if impute.type="fix", replace missing values according to specified value
+  if(impute.type=="fix"){
      res[is.na(res)] <- replace.value
      cat("step 3 : Replace missing values by",replace.value," \n")
   } 
 
   # impute missing values according to population structure
-  if(impute & !is.null(popStruc)){
+  if(impute.type=="family"){
    cat("step 3 : Imputing of missing values by population structure \n")
+   # initialize counter (- number of heterozygous values) 
+   cnt1 <- - sumNA.heter    # for nr. of imputations with family structure
+   cnt2 <- - sumNA.heter    # for nr. of random imputations
     # loop over all markers
     for (j in 1:M){
     
@@ -146,8 +182,9 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   }  
 
    # impute missing values with no population structure
-    if(impute & is.null(popStruc)){
-     
+    if(impute.type=="random"){
+       # initialize counter (- number of heterozygous values) 
+       cnt2 <- - sumNA.heter    # for nr. of random imputations
         for (j in 1:M){
              cnt2 <- cnt2 + sum(is.na(res[,j]))
              if(j==1) ptm <- proc.time()[3]
@@ -159,31 +196,29 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
   
   
   # code again if allele frequeny changed to to imputing
-   if(impute){
     if(any(colMeans(res,na.rm=TRUE)>1)){
       cat("step 4 : Recode alleles due to imputation \n")
       res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)]     
     }
     else cat("step 4 : No recoding of alleles necessary after imputation \n") 
-  }
   
+  
+  # end of imputing
+  }
   
   # restore heterozygous values
   if(!is.null(label.heter)) res[heter.ind] <- 1
   
-
- 
-
   
   # remove markers with minor allele frequency < maf
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
-    which.maf <- apply(res,2,mean,na.rm=TRUE)>2*maf 
-    cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <=",maf,"\n")
+    which.maf <- apply(res,2,mean,na.rm=TRUE)>=2*maf 
+    cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
-    if(is.data.frame(data)){
-      cnames <- cnames[which.maf]
-    } 
+    cnames <- cnames[which.maf] 
+    # update map
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
   }
   else cat("step 5 : No markers discarded due to minor allele frequency \n")
 
@@ -192,13 +227,19 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
        cat("step 6 :",sum(which.duplicated),"duplicated marker(s) discarded \n")
-       if(is.data.frame(data)) cnames <- cnames[!which.duplicated]
+       cnames <- cnames[!which.duplicated]
+       # update map 
+       if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   }
   else cat("step 6 : No duplicated markers discarded \n")
 
     # keep structure for return object
    cat("step 7 : Restoring original data format \n")
-   if(is.matrix(data)) res <- matrix(res,nrow=n,dimnames=dimnames(data))
+   if(is.matrix(data)){
+     res <- matrix(res,nrow=n)
+     rownames(res) <- rnames
+     colnames(res) <- cnames
+   }
    if(is.data.frame(data)){
       res  <- as.data.frame(res)
       colnames(res) <- cnames
@@ -216,5 +257,9 @@ codeGeno <- function(data,impute=FALSE,popStruc=NULL,maf=NULL,nmiss=NULL,label.h
     cat(paste("  approximate fraction of correct imputations   :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
   }
   
-  return(res)
+  # overwrite original genotypic data
+  if(class(gpData)=="gpData")   gpData$geno <- res
+  else gpData <- res
+
+  return(gpData)
 }

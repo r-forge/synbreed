@@ -12,9 +12,13 @@ print.summary.pedigree <- function(x,...){
     cat("\t individuals ",x$nID,"\n")
    if(!is.null(x$sex)){
       cat("\t males : ",x$sex[1],", females : ",x$sex[2],"\n")
+      cat("\t Par 1 (sire) ",x$nPar1,"\n")
+      cat("\t Par 2 (dam)  ",x$nPar2,"\n")
+      }
+   else{ 
+    cat("\t Par 1       ",x$nPar1,"\n")
+    cat("\t Par 2       ",x$nPar2,"\n")
     }
-    cat("\t Par1        ",x$nPar1,"\n")
-    cat("\t Par2        ",x$nPar2,"\n")
     cat("\t generations ",x$nGener,"\n")
 } 
 
