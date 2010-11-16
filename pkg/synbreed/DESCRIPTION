@@ -1,7 +1,7 @@
 Package: synbreed
 Type: Package
 Title: Collection of methods and tools developed for the synbreed project for synergistic plant and animal breeding
-Version: 0.3-3
+Version: 0.3-4
 Date: 2010-16-11
 Author: Valentin Wimmer
 Depends: lattice, igraph, MASS, LDheatmap, qtl

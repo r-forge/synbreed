@@ -13,10 +13,10 @@ A function to visualize pedigree structure by a graph. Each genotype is represen
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-Object of class \code{pedigree}
+object of class \code{pedigree} or object of class \code{gpData} with filled slot \code{pedigree}
 }
   \item{effect}{
-Vector of length \code{nrow(pedigree)} with effect to be drawn
+vector of length \code{nrow(pedigree)} with effect to be drawn
 }
   \item{...}{
 Other arguments for function \code{igraph.plotting}

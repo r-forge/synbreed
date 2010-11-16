@@ -41,3 +41,4 @@ data(maize)
 maize <- codeGeno(maize)
 LDMap(maize,chr=1)
 }
+\keyword{hplot}

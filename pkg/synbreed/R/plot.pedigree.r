@@ -1,14 +1,14 @@
 plot.pedigree <- function(x,effect=NULL,...){
   
-  pedigree <- x
-  library(igraph)
-  # gener has to start with 0
-  
+  # get data
+  if(class(x)=="gpData") pedigree <- x$pedigree
+  else pedigree <- x
+
+  # catch errors 
   if(min(pedigree$gener) != 0) pedigree$gener <- pedigree$gener-min(pedigree$gener)
-  
   if (!is.null(effect) & length(effect)!=nrow(pedigree)) stop("length of effect does not equal nrow(pedigree)")
   
-
+  # extract generation
   gener <- pedigree$gener
   
   # set parents which are not in pedigree to unknown

@@ -10,13 +10,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     else data <- gpData$geno
     # family information (population structure) for genotypic data
     popStruc <- gpData$covar$family[gpData$covar$genotyped] 
+    if(gpData$info$codeGeno & is.null(label.heter)){
+       warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
+       label.heter <- "1"
+    } 
   }
   # atm other formats are supported too
   else{
    data <- gpData
    popStruc <- NULL
    gpData$map <- NULL
-  }
+  }                                
   #  catch errors
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
   

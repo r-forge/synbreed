@@ -1,5 +1,9 @@
+# summary method for pedigree
 summary.pedigree <- function(object,...){
-     ped <- object 
+
+     if(class(x)=="gpData") ped <- object$pedigree
+     else  ped <- object
+      
      n <- nrow(ped) 
      ans <- list(nID=n,nPar1=length(unique(ped$Par1)),nPar2=length(unique(ped$Par1)),nGener=length(unique(ped$gener)),nUnknownParents=sum(ped$Par1==0)+sum(ped$Par2==0))
      if(!is.null(ped$sex)) ans$sex <- c(males=sum(ped$sex),females=sum(1-ped$sex))
@@ -7,6 +11,7 @@ summary.pedigree <- function(object,...){
      ans
 }
 
+# print method for summary.pedigree
 print.summary.pedigree <- function(x,...){
     cat("Number of \n")
     cat("\t individuals ",x$nID,"\n")
