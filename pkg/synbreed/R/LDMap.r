@@ -21,11 +21,14 @@ LDMap <- function(gpData,chr=NULL,file=NULL,...){
     }
 
      # Calculating LD as r2
-     ld.r2 <- cor(marker,method="spearman")^2
+     ld.r2 <- cor(marker,method="spearman",use="pairwise.complete.obs")^2
 
      if(!is.null(file)) pdf(file)
      for (i in 1:length(lg)){
-      LDheatmap(ld.r2[linkageGroup == lg[i],linkageGroup == lg[i]], LDmeasure="r",title=paste("Pairwise LD r2, Linkage Group ",i,sep=""), color=brewer.pal(9,"OrRd")[9:1], genetic.distances=pos[linkageGroup == lg[i]], geneMapLabelY=0.12, geneMapLabelX=0.35, distances = "genetic",...)
+     # from RColorBrewer
+     color = c("#7F0000","#B30000","#D7301F","#EF6548","#FC8D59","#FDBB84","#FDD49E","#FEE8C8","#FFF7EC")
+     # using function LDheatmap
+      LDheatmap(ld.r2[linkageGroup == lg[i],linkageGroup == lg[i]], LDmeasure="r",title=paste("Pairwise LD r2, Linkage Group ",i,sep=""), color=color, genetic.distances=pos[linkageGroup == lg[i]], geneMapLabelY=0.12, geneMapLabelX=0.35, distances = "genetic",...)
      }
      if(!is.null(file)) dev.off()
      

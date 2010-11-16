@@ -26,7 +26,7 @@ Valentin Wimmer
 
 \examples{
 ped <- simul.pedigree(gener=4,7)
-A <- kinshipPlants(ped)
+A <- kinship(ped)
 plot(A)
 }
 

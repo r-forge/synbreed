@@ -9,8 +9,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     if(is.null(gpData$geno)) stop("no genotypic data available")
     else data <- gpData$geno
     # family information (population structure) for genotypic data
-    popStruc <- gpData$covar$family[gpData$covar$genotyped]
-    gpData$info$codeGeno <- TRUE
+    popStruc <- gpData$covar$family[gpData$covar$genotyped] 
   }
   # atm other formats are supported too
   else{
@@ -125,7 +124,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
    
 
   # if impute.type="fix", replace missing values according to specified value
-  if(impute.type=="fix"){
+  if(impute.type=="fix"){  
      res[is.na(res)] <- replace.value
      cat("step 3 : Replace missing values by",replace.value," \n")
   } 
@@ -258,7 +257,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   }
   
   # overwrite original genotypic data
-  if(class(gpData)=="gpData")   gpData$geno <- res
+  if(class(gpData)=="gpData") {
+    gpData$geno <- res
+    gpData$info$codeGeno <- TRUE
+  }
   else gpData <- res
 
   return(gpData)
