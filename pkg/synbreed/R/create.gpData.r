@@ -61,15 +61,20 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
 
   # return object
+  
   obj <- list(covar=NULL,pheno=pheno,geno=geno,map=map,pedigree=pedigree)
   
   # add information to element covar
   
   # sort all available individuals
-  obj$covar$id <- sort(unique(c(rownames(obj$pheno),rownames(obj$geno),pedigree$ID))) 
+  ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),pedigree$ID)))  
+
+  if(is.null(covar)) obj$covar <- data.frame(id=ids)
+  else obj$covar$id <- ids 
 
   obj$covar$phenotyped <- obj$covar$id %in% rownames(obj$pheno)
   obj$covar$genotyped <- obj$covar$id %in% rownames(obj$geno)
+  
   
   # family information for genotyped indviduals  
   if(!is.null(family)){
