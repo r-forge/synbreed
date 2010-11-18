@@ -15,11 +15,11 @@ crossVal(y, X, Z, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
          varComp = NULL, popStruc = NULL, VC.est = FALSE)
 }
 \arguments{
-  \item{y}{Phenotypic records of class \code{matrix} with one column and rownames representing IDs of individuals.
+  \item{y}{Phenotypic records of class \code{matrix} with two columns, where the first column contains IDs of individuals and the second column contains the phenotypic values.
 }
-  \item{X}{Design matrix for the fixed effects.
+  \item{X}{Design matrix for the fixed effects, where the colnames represents the names of the fixed effects.
 }
-  \item{Z}{Design matrix for the random effects.
+  \item{Z}{Design matrix for the random effects, where the colnames represents the names of the random effects.
 }
   \item{cov.matrix}{A object of class \code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
 If no covariance is given, the identity matrix is used.
