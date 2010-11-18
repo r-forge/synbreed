@@ -104,7 +104,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	if(sampling=="across family"){
 	  which.pop <- unique(popStruc)
 	  y.u <- unique(y[,1])
-	  y2 <- matrix(y.u[order(popStruc),],ncol=1)
+	  y2 <- matrix(y.u[order(popStruc)],ncol=1)
 	  b <- table(popStruc)
 	  modu<-length(which.pop)%%k
 	  val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
@@ -178,7 +178,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 			# for unix
 			if(.Platform$OS.type == "unix"){
-				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=TRUE,quote=FALSE,sep='\t')
+				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 				asreml <- system(paste('asreml -ns10000 cov',m,'.as',sep=''),TRUE)
 				system(paste('asreml -p cov',m,'.pin',sep=''))
 				system(paste('mv cov',m,'.asr ','cov',m,'_rep',i,'_fold',ii,'.asr',sep=''))
@@ -190,7 +190,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 			# for windows
 			if(.Platform$OS.type == "windows"){
-				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=TRUE,quote=FALSE,sep='\t')
+				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 				system(paste('ASReml.exe -ns10000 cov',m,'.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
 				system(paste('ASReml.exe -p cov',m,'.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
 				shell(paste('move cov',m,'.asr ','cov',m,'_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
