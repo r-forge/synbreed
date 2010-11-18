@@ -3,7 +3,8 @@
 crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=FALSE) 
 {
     # number of observations 
-    n <- nrow(y)
+    n <- length(unique(y[,1]))
+    names.eff <- c(colnames(X),colnames(Z))
 
     # catch errors	
     if(is.null(varComp) & !VC.est) stop("Variance components have to be specified")
@@ -23,9 +24,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
     # prepare X,Z design matrices
     X <- as.matrix(X)
-    rownames(X) <- rownames(y)
+    rownames(X) <- y[,1]
     Z <- as.matrix(Z)
-    rownames(Z) <- rownames(y)
+    rownames(Z) <- y[,1]
 
     # prepare covariance matrices
     m <- length(cov.matrix)
@@ -75,18 +76,20 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	# random sampling
 	cat(sampling," sampling \n")
 	if(sampling=="random"){
+	  y.u <- unique(y[,1])
 	  set.seed(seed2[i])
-	  modu<-nrow(y)%%k
-	  val.samp2<-sample(c(rep(1:k,each=(nrow(y)-modu)/k),sample(1:k,modu)),nrow(y),replace=FALSE)
-	  val.samp3 <- as.data.frame(cbind(y,val.samp2))
+	  modu<-n%%k
+	  val.samp2<-sample(c(rep(1:k,each=(n-modu)/k),sample(1:k,modu)),n,replace=FALSE)
+	  val.samp3 <- as.data.frame(cbind(y.u,val.samp2))
 	  }
 
 	# within family sampling
 	if(sampling=="within family"){
 	   which.pop <- unique(popStruc)# nr of families
+	   y.u <- unique(y[,1])
 	   val.samp3<- NULL
 	   for (j in 1:length(which.pop)){
-		y2<-as.matrix(y[popStruc==which.pop[j],])# select each family
+		y2<-matrix(y.u[popStruc==which.pop[j]],ncol=1)# select each family
 		set.seed(seed2[i])
 		modu<-nrow(y2)%%k
 		if(!modu==0) val.samp<-sample(c(rep(1:k,each=(nrow(y2)-modu)/k),sample(1:k,modu)),nrow(y2),replace=FALSE)
@@ -94,19 +97,20 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		val.samp2 <- cbind(y2,val.samp)		
 		val.samp3 <- as.data.frame(rbind(val.samp3,val.samp2))
 	   }
-	   val.samp3 <- val.samp3[order(as.character(rownames(val.samp3))),]
+	   val.samp3 <- val.samp3[order(as.character(val.samp3[,1])),]
 	}
 
 	# across family sampling
 	if(sampling=="across family"){
 	  which.pop <- unique(popStruc)
-	  y2 <- as.matrix(y[order(popStruc),])
+	  y.u <- unique(y[,1])
+	  y2 <- matrix(y.u[order(popStruc),],ncol=1)
 	  b <- table(popStruc)
 	  modu<-length(which.pop)%%k
 	  val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
 	  val.samp2<- rep(val.samp,b)
 	  val.samp3 <- cbind(y2,val.samp2)
-	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(rownames(val.samp3))),])
+	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
 	 }
 
    # CV in R with comitting variance components
@@ -122,9 +126,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	samp.es <- val.samp3[val.samp3[,2]!=ii,] 
 
 	# vectors and matrices for MME
-	y1 <- y[rownames(y) %in% rownames(samp.es),]
-	Z1 <-Z[rownames(Z) %in% rownames(samp.es),]
-	X1 <-X[rownames(X) %in% rownames(samp.es),]
+	y1 <- y[y[,1] %in% samp.es[,1],2]
+	Z1 <-Z[rownames(Z) %in% samp.es[,1],]
+	X1 <-X[rownames(X) %in% samp.es[,1],]
 	# crossproducts
 	XX <- crossprod(X1)
 	XZ <- crossprod(X1,Z1)
@@ -143,10 +147,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
 
 	# TS
-	Z2 <- Z[!(rownames(Z) %in% rownames(samp.es)),]
-	X2 <- X[!(rownames(X) %in% rownames(samp.es)),]
+	Z2 <- Z[!(rownames(Z) %in% samp.es[,1]),]
+	X2 <- X[!(rownames(X) %in% samp.es[,1]),]
 	XZ2 <- cbind(X2,Z2)
-	y2 <- y[!(rownames(y) %in% rownames(samp.es)),1]
+	y2 <- y[!(y[,1] %in% samp.es[,1]),2]
 	y.dach <- XZ2%*%bu
 	# Predicted breeding/testcross values
 	y.TS <- rbind(y.TS,y.dach)
@@ -170,7 +174,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
 			samp.kf<-val.samp3==ii
 			y.samp<-y
-			y.samp[samp.kf[,2]]<-NA # set values of TS to NA
+			y.samp[y.samp[,1] %in% samp.kf[,2],2]<-NA # set values of TS to NA
 
 			# for unix
 			if(.Platform$OS.type == "unix"){
@@ -196,7 +200,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 				shell(paste('move cov',m,'.pvc ','cov',m,'_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
 			}
 
-			samp.es <- val.samp3[val.samp3$val.samp2!=ii,]
+			samp.es <- val.samp3[val.samp3[,2]!=ii,]
 			# read in ASReml solutions
 			asreml.sln<-matrix(scan(paste('cov',m,'_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
 			# solve MME
@@ -205,12 +209,12 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
 
 			# TS
-			Z2 <- Z[!(rownames(Z) %in% rownames(samp.es)),]
-			X2 <- X[!(rownames(X) %in% rownames(samp.es)),]
+			Z2 <- Z[!(rownames(Z) %in% samp.es[,1]),]
+			X2 <- X[!(rownames(X) %in% samp.es[,1]),]
 			XZ2 <- cbind(X2,Z2)
-			y2 <- y[!(rownames(y) %in% rownames(samp.es)),1]
+			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
 			y.dach <- XZ2%*%bu
-			# Predicted breeding/testcross values
+			# Predicted breeding/testcross values of TS
 			y.TS <- rbind(y.TS,y.dach)
 			# predictive ability
 			COR <- round(cor(y2,y.dach),digits=4)
@@ -228,9 +232,13 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     	COR3 <- cbind(COR3,COR2)
     	colnames(COR3)[i] <- paste("rep",i,sep="")
     	bu3 <- cbind(bu3,bu2)
+	rownames(bu3)<-names.eff
     	lm.coeff2 <- cbind(lm.coeff2,lm.coeff)
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
     }
-    return(list(bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2))
+    # return object
+    obj <- list(bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2)
+    class(obj) <- "cvData"
+    return(obj)
 }
 
