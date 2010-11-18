@@ -9,7 +9,7 @@ This is a simulated dataset from breeding sheme for maize. 1250 doubled haploid 
 }                                                                                                                                                                                                                 
 \usage{data(maize)}
 \format{
-Object of class 'gpData"
+Object of class \code{gpData}
 }
                                 
 \examples{

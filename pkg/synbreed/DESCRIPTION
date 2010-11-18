@@ -1,9 +1,9 @@
 Package: synbreed
 Type: Package
 Title: Collection of methods and tools developed for the synbreed project for synergistic plant and animal breeding
-Version: 0.3-4
-Date: 2010-16-11
-Author: Valentin Wimmer
+Version: 0.3-5
+Date: 2010-17-11
+Author: Valentin Wimmer with contributions by Theresa Albrecht
 Depends: lattice, igraph, MASS, LDheatmap, qtl
 Suggests: kinship, regress
 Maintainer: Valentin Wimmer <Valentin.Wimmer@wzw.tum.de>                                                 
