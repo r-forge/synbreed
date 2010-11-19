@@ -84,7 +84,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  set.seed(seed2[i])
 	  modu<-n%%k
 	  val.samp2<-sample(c(rep(1:k,each=(n-modu)/k),sample(1:k,modu)),n,replace=FALSE)
-	  val.samp3 <- as.data.frame(cbind(y.u,val.samp2))
+	  val.samp3 <- data.frame(y.u,val.samp2)
 	  }
 
 	# within family sampling
@@ -98,7 +98,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		modu<-nrow(y2)%%k
 		if(!modu==0) val.samp<-sample(c(rep(1:k,each=(nrow(y2)-modu)/k),sample(1:k,modu)),nrow(y2),replace=FALSE)
 		if(modu==0) val.samp<-sample(rep(1:k,each=(nrow(y2))/k),nrow(y2),replace=FALSE)
-		val.samp2 <- cbind(y2,val.samp)		
+		val.samp2 <- data.frame(y2,val.samp)		
 		val.samp3 <- as.data.frame(rbind(val.samp3,val.samp2))
 	   }
 	   val.samp3 <- val.samp3[order(as.character(val.samp3[,1])),]
@@ -113,7 +113,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  modu<-length(which.pop)%%k
 	  val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
 	  val.samp2<- rep(val.samp,b)
-	  val.samp3 <- cbind(y2,val.samp2)
+	  val.samp3 <- data.frame(y2,val.samp2)
 	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
 	 }
 
