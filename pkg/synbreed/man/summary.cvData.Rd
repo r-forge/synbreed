@@ -15,6 +15,6 @@ Summarizing ptions and results of the cross validation procedure
 \item{object}{object of class "cvData"}
 \item{...}{not used}
 }
-\author(Theresa Albrecht)
+\author{Theresa Albrecht}
 \seealso{\code{\link{crossVal}}}
 \keyword{methods}
