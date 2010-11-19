@@ -23,6 +23,8 @@ LazyLoad: \tab yes\cr
 \author{
 Valentin Wimmer
 \email{Valentin.Wimmer@wzw.tum.de}
+Theresa Albrecht
+\email{theresa.albrecht@wzw.tum.de}
 }
 
 \keyword{package}
