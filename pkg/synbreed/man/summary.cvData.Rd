@@ -16,5 +16,5 @@ Summarizing ptions and results of the cross validation procedure
 \item{...}{not used}
 }
 \author(Theresa Albrecht)
-
+\seealso{\code{\link{crossVal}}}
 \keyword{methods}
