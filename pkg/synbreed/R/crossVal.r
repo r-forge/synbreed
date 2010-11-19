@@ -4,7 +4,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 {
     # number of observations 
     n <- length(unique(y[,1]))
-    names.eff <- c(colnames(X),colnames(Z))
+    if(!is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(colnames(X),colnames(Z))
+    if(!is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(colnames(X),paste("Z",1:ncol(Z),sep=""))
+    if(is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),colnames(Z))
+    if(is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),paste("Z",1:ncol(Z),sep=""))
 
     # catch errors	
     if(is.null(varComp) & !VC.est) stop("Variance components have to be specified")
@@ -70,6 +73,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     bu3 <- NULL
     lm.coeff2 <- NULL
     y.TS2 <- NULL
+    n.TS2<-NULL
     for (i in 1:Rep){ 
 
 	# sampling of k sets
@@ -90,7 +94,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	   val.samp3<- NULL
 	   for (j in 1:length(which.pop)){
 		y2<-matrix(y.u[popStruc==which.pop[j]],ncol=1)# select each family
-		set.seed(seed2[i])
+		set.seed(seed2[i]+j) # in each family a different seed is used to result in more equal TS sizes
 		modu<-nrow(y2)%%k
 		if(!modu==0) val.samp<-sample(c(rep(1:k,each=(nrow(y2)-modu)/k),sample(1:k,modu)),nrow(y2),replace=FALSE)
 		if(modu==0) val.samp<-sample(rep(1:k,each=(nrow(y2))/k),nrow(y2),replace=FALSE)
@@ -120,6 +124,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      bu2 <- NULL
      lm.coeff <- NULL
      y.TS <- NULL
+     n.TS <- NULL
      for (ii in 1:k){
 	cat("Replication: ",i,"\t Fold: ",ii," \n")
 	# select ES, k-times
@@ -152,6 +157,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	XZ2 <- cbind(X2,Z2)
 	y2 <- y[!(y[,1] %in% samp.es[,1]),2]
 	y.dach <- XZ2%*%bu
+	n.TS <- rbind(n.TS,nrow(Z2))
+	rownames(n.TS)[ii]<-paste("fold",ii,sep="")
 	# Predicted breeding/testcross values
 	y.TS <- rbind(y.TS,y.dach)
 	# predictive ability
@@ -170,6 +177,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      		bu2 <- NULL
      		lm.coeff <- NULL
      		y.TS <- NULL
+		n.TS<-NULL
 		for (ii in 1:k){
 			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
 			samp.kf<-val.samp3==ii
@@ -214,6 +222,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			XZ2 <- cbind(X2,Z2)
 			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
 			y.dach <- XZ2%*%bu
+			n.TS <- rbind(n.TS,length(y.dach))
+			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
 			# Predicted breeding/testcross values of TS
 			y.TS <- rbind(y.TS,y.dach)
 			# predictive ability
@@ -226,6 +236,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
 		}
 	}
+	n.TS2<-cbind(n.TS2,n.TS)
+    	colnames(n.TS2)[i] <- paste("rep",i,sep="")
 	y.TS <- y.TS[order(rownames(y.TS)),]
     	y.TS2 <- cbind(y.TS2,y.TS)
     	colnames(y.TS2)[i] <- paste("rep",i,sep="")
@@ -237,7 +249,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
     }
     # return object
-    obj <- list(bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2)
+    if(!(VC.est)) est.method <- "committed" else est.method <- "reestimated with ASReml"
+    obj <- list( n.TS=n.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method)
     class(obj) <- "cvData"
     return(obj)
 }
