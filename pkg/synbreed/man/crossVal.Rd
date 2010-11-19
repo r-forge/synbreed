@@ -83,7 +83,6 @@ Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Meas
 }
 \seealso{
 \code{\link{summary.cvData}}}
-}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \examples{
