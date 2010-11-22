@@ -37,9 +37,6 @@ A \code{data.frame} with phenotypes in the first column(s) and marker matrix in 
 \author{
 Valentin Wimmer
 }
-\note{                                                  
-No implementation for replicated individuals atm
-}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 

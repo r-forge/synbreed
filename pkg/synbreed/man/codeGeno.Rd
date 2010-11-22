@@ -37,9 +37,6 @@ This is either a character to identify heterozygous genotypes or a function whic
   \item{keep.identical}{
 logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
 }
-  \item{keep.identical}{
-logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
-}
  \item{verbose}{
 	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is usefull if selection of markers is performed as in this case information on discarded markers is given.
  }

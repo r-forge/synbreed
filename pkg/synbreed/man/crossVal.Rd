@@ -2,7 +2,6 @@
 \alias{crossVal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Cross validation of different prediction models
-%%  ~~function to do ... ~~
 }
 \description{Function for the application of the cross validation procedure on prediction 
 models with fixed and random effects. Covariance matrices must be commited to the function 

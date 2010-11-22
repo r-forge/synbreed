@@ -12,13 +12,13 @@ kinship(ped, DH = NULL, ret = c("add", "kin", "dom", "gam"))
 }
 \arguments{
   \item{ped}{
-An object of class \code{pedigree} with \eqn{n} individuals
+object of class \code{pedigree} with \eqn{n} individuals
 }
   \item{DH}{
-A vector with logicals of length \eqn{n}. TRUE or 1 if individual is a DH line and FALSE or 0 otherwise.
+vector with logicals of length \eqn{n}. TRUE or 1 if individual is a DH line and FALSE or 0 otherwise.
 }
   \item{ret}{
-A character. The type of relationship matrix to be returned. See 'Details'.
+character. The type of relationship matrix to be returned. See 'Details'.
 }
 }
 \details{

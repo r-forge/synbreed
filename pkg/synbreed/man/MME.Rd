@@ -54,9 +54,6 @@ Breeding. Univ. of Guelph, Guelph, ON, Canada.
 Valentin Wimmer
 }
 \seealso{
-\code{\link[regress]{regress}}
-}
-\examples{
-
+\code{\link[regress]{regress}}, \code{\link{crossVal}}
 }
 
