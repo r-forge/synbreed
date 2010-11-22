@@ -1,8 +1,8 @@
 Package: synbreed
 Type: Package
-Title: Collection of methods and tools developed for the synbreed project for synergistic plant and animal breeding
-Version: 0.3-5
-Date: 2010-17-11
+Title: Analysis pipeline for genomic prediction using R
+Version: 0.3-6
+Date: 2010-22-11
 Author: Valentin Wimmer with contributions by Theresa Albrecht
 Depends: lattice, igraph, MASS, LDheatmap, qtl
 Suggests: kinship, regress

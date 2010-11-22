@@ -55,7 +55,7 @@ LDDist(maize,type="p",chr=1,pch=19,col=hsv(alpha=0.1,v=0))
 LDDist(maize,type="bars",chr=1)
 
 # stacked bars for chromosome 1 with specified categories
-LDDist(maize,type="bars",chr=1,breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.2,0.1)))
+LDDist(maize,type="bars",chr=1,breaks=list(dist=c(0,10,20,40,60,180),r2=c(1,0.6,0.4,0.3,0.1,0)))
 
 }
 \keyword{hplot}

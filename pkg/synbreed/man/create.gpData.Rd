@@ -13,7 +13,7 @@ create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL, family = N
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pheno}{
-\code{data.frame} with individuals in rows and one or more phenotypes in columns. \code{rownames} should identify genotypes and \code{colnames} different phenotypes. If no \code{rownames} are used, default rownames are used. In case of repeated measures for each individual an additional column \code{id} identifying the records is necessary. Note that in this case \code{rownames} are not used to identify individuals as \code{rownames} must be identical. 
+\code{data.frame} with individuals in rows and one or more phenotypes in columns. \code{rownames} should identify genotypes and \code{colnames} different phenotypes. If no \code{rownames} are used, default rownames are used. In case of multiple measures for each individual an additional column for every replication should be added.
 }
   \item{geno}{
 \code{matrix} with individuals in rows and markers in columns. Genotypes could be code arbitrarily. Missing values should be coded as \code{NA}. \code{rownames} should identify genotypes and \code{colnames} markers. If no \code{rownames} are used, it is assumed that genotypes are in the same order as in \code{pheno}.  If no \code{colnames} are used, \code{rownames} of \code{map} are used if dimension matches. If no \code{map} is specified, default marker names are used. 
@@ -58,7 +58,7 @@ In case of missing row names or column names in one item, information is taken f
 }
                                 
 \seealso{
-\code{\link{codeGeno}}, \code{\link{summary.gpData}}
+\code{\link{codeGeno}}, \code{\link{summary.gpData}}, \code{\link{gpData2data.frame}}
 }
 \examples{
 set.seed(123)

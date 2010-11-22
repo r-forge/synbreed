@@ -9,39 +9,44 @@ Function to code genotypic data in an object of class \code{gpData}. Raw genotyp
 Imputing of missing values can be done with a fixed value, random sampling from allele distribution or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE)
+codeGeno(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE,verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-Object of class \code{gpData} with marker matrix with arbitrary coding. Missing values have to be coded as \code{NA}.
+object of class \code{gpData} with marker matrix with arbitrary coding. Missing values have to be coded as \code{NA}.
 }           
   \item{impute}{
-Logical. Should missing value be replaced by imputing?
+logical scalar. Should missing value be replaced by imputing?
 }
   \item{impute.type}{
-Character with one out of "fix", "random", or "family". See details.
+character with one out of "fix", "random", or "family". See details.
 }
   \item{replace.value}{
-Numeric value to replace missing values in case \code{impute.type="fix"}. 
+numeric value to replace missing values in case \code{impute.type="fix"}. 
 }
   \item{maf}{
-Numeric. Markers with minor allele frequency < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
+numeric scalar. Markers with minor allele frequency < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{nmiss}{
-Nnumeric. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
+numeric scalar. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{label.heter}{
 This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype. Note that heterozygus values must be identified unambiguously by \code{label.heter}, e.g. "/" is not valid if genotypes are coded "A/A", "A/B" and "B/B". \code{label.heter} is \code{NULL} if there are only homozygous genotypes, i.e. in DH lines.
 }
-
   \item{keep.identical}{
-Logical. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
+logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
 }
+  \item{keep.identical}{
+logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
+}
+ \item{verbose}{
+	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is usefull if selection of markers is performed as in this case information on discarded markers is given.
+ }
 }
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
-1. Discarding markers due with fraction >= \code{nmiss} of missing values
+1. Discarding markers due with fraction > \code{nmiss} of missing values
 
 2. Recoding alleles from charachter/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
 
@@ -62,7 +67,7 @@ the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with f
 
 6. Discarding duplicated markers if \code{keep.identical=FALSE}
 
-7. Restoring original data format (\code{matrix} or \code{data.frame}) 
+7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame}) 
 }
 \value{
 An object of class \code{gpData} containing the recoded marker matrix. If \code{maf} or \code{nmiss} were specified or \code{keep.identical=FALSE}, dimension od \code{geno} and \code{map} may be reduced due to selection of markers  The genotype which is homozygous for the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.

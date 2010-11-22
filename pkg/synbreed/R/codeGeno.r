@@ -1,6 +1,6 @@
 
 # coding genotypic data
-codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE){
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE,verbose=FALSE){
 
   # read information from arguments
   
@@ -72,7 +72,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     }
     else{
       dataRaw <- dataRaw
-      cat("step 1 : No markers removed due to fraction of missing values \n")
+      if (verbose) cat("step 1 : No markers removed due to fraction of missing values \n")
     }
     
 
@@ -105,7 +105,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     return((as.numeric(factor(x,levels=alleles))-1)*2)
    }
 
-  cat("step 2 : Recoding alleles \n")
+  if (verbose) cat("step 2 : Recoding alleles \n")
   res <- apply(dataRaw,2,codeNumeric)
   res <- matrix(res,nrow=n)
   
@@ -130,12 +130,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   # if impute.type="fix", replace missing values according to specified value
   if(impute.type=="fix"){  
      res[is.na(res)] <- replace.value
-     cat("step 3 : Replace missing values by",replace.value," \n")
+     if (verbose) cat("step 3 : Replace missing values by",replace.value," \n")
   } 
 
   # impute missing values according to population structure
   if(impute.type=="family"){
-   cat("step 3 : Imputing of missing values by population structure \n")
+   if (verbose) cat("step 3 : Imputing of missing values by population structure \n")
    # initialize counter (- number of heterozygous values) 
    cnt1 <- - sumNA.heter    # for nr. of imputations with family structure
    cnt2 <- - sumNA.heter    # for nr. of random imputations
@@ -200,11 +200,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   
   # code again if allele frequeny changed to to imputing
     if(any(colMeans(res,na.rm=TRUE)>1)){
-      cat("step 4 : Recode alleles due to imputation \n")
+      if (verbose) cat("step 4 : Recode alleles due to imputation \n")
       res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)]     
     }
-    else cat("step 4 : No recoding of alleles necessary after imputation \n") 
-  
+    else{
+     if (verbose) cat("step 4 : No recoding of alleles necessary after imputation \n") 
+    }
   
   # end of imputing
   }
@@ -217,14 +218,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     which.maf <- apply(res,2,mean,na.rm=TRUE)>=2*maf 
-    cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
+    if (verbose) cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
     cnames <- cnames[which.maf] 
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
   }
-  else cat("step 5 : No markers discarded due to minor allele frequency \n")
-
+  else {
+   if (verbose) cat("step 5 : No markers discarded due to minor allele frequency \n")
+  }
   # discard duplicated markers
   if(!keep.identical){
        which.duplicated <- duplicated(res,MARGIN=2)
@@ -234,10 +236,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
        # update map 
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   }
-  else cat("step 6 : No duplicated markers discarded \n")
-
+  else{
+  if (verbose) cat("step 6 : No duplicated markers discarded \n")
+     }
+     
     # keep structure for return object
-   cat("step 7 : Restoring original data format \n")
+   if (verbose) cat("step 7 : Restoring original data format \n")
    if(is.matrix(data)){
      res <- matrix(res,nrow=n)
      rownames(res) <- rnames
