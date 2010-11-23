@@ -38,7 +38,7 @@ summary.gpData <- function(object,...){
 
     # summary of 'pedigree'
     if(is.null(obj$pedigree)) ans$pedigree <- NULL
-    else ans$pedigree <- summary(obj$pedigree)
+    else ans$pedigree <- summary.pedigree(obj)
     
     class(ans) <- "summary.gpData"
     ans

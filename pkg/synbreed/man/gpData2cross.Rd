@@ -5,7 +5,7 @@
 Conversion between class 'cross' and 'gpData'
 }
 \description{
-Conversion of object class \code{gpData} to object class \code{cross} (F2 intercross) of package \code{qtl} and vice versa. Function \code{codeGeno} is applied in \code{cross2gpData}. 
+Conversion of object class \code{gpData} to object class \code{cross} (F2 intercross) of package \code{qtl} and vice versa. Function \code{codeGeno} is applied in \code{cross2gpData}, if not done before. 
 }
 \usage{
 gpData2cross(gpData,...)
@@ -14,7 +14,7 @@ cross2gpData(cross,...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-object of class \code{gpData} with non-empty slots for \code{pheno}, \code{geno} and \code{map}.
+object of class \code{gpData} with non-empty slots for \code{pheno}, \code{geno} and \code{map}. 
 }
   \item{cross}{
 object of class \code{cross}.
@@ -25,7 +25,7 @@ further arguments for function \code{codeGeno}. Only used in \code{cross2gpData}
 }
 \details{
 In \code{cross}, genotypic data is splitted into chromosomes while in \code{gpData} genotypic data comprises all chromosomes. 
-Note that coding of genotypic data differs between classes. In \code{gpData}, genotypic data is coded as the number of replicates of the minor allele, i.e. 0,1 and 2. In \code{cross}, coding for F2 intercross is: AA = 1, AB = 2, BB = 3. When using  \code{gpData2cross} or \code{cross2gpData}, resulting genotypic data has correct format.
+Note that coding of genotypic data differs between classes. In \code{gpData}, genotypic data is coded as the number of replicates of the minor allele, i.e. 0,1 and 2. Thus, function \code{codeGeno} should be applied to \code{gpData} before using \code{gpData2cross} to ensure correct coding. In \code{cross}, coding for F2 intercross is: AA = 1, AB = 2, BB = 3. When using  \code{gpData2cross} or \code{cross2gpData}, resulting genotypic data has correct format.
 }
 \value{
 Object of class \code{cross} or \code{gpData} for function  \code{gpData2cross} or \code{cross2gpData}, respectively.

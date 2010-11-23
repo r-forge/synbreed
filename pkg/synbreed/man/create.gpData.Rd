@@ -8,7 +8,9 @@ Create genomic prediction data object
 This function takes a set of data and combines all in one object of class \code{gpData}. Main content of this object are the phenotypic data, the genotypic data (marker data), the genetic map and the pedigree. It is strongly recommended to use this class for further analysis with \code{synbreed} package. Note that not all types of data must be specified.
 }                                                                                                              
 \usage{
-create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL, family = NULL, covar = NULL, rm.unmapped = FALSE, map.unit = "cM")
+create.gpData(pheno = NULL, geno = NULL, map = NULL, 
+pedigree = NULL, family = NULL, covar = NULL,
+rm.unmapped = FALSE, map.unit = "cM")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,7 +69,8 @@ pheno <- data.frame(Yield = rnorm(10,100,5), leaf.damage=rbeta(10,1,1))
 rownames(pheno) <- 1:10
 
 # marker matrix
-geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,prob=c(0.6,0.2,0.1,0.1)),nrow=10)
+geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
+prob=c(0.6,0.2,0.1,0.1)),nrow=10)
 rownames(geno) <-  1:10
 colnames(geno) <- paste("M",1:12,sep="")
 

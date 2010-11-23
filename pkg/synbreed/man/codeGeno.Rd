@@ -9,7 +9,9 @@ Function to code genotypic data in an object of class \code{gpData}. Raw genotyp
 Imputing of missing values can be done with a fixed value, random sampling from allele distribution or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE,verbose=FALSE)
+codeGeno(gpData,impute=FALSE,impute.type=c("fix","random","family"),
+replace.value=NULL,maf=NULL,nmiss=NULL,label.heter="AB",
+keep.identical=TRUE,verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -89,7 +91,8 @@ snp9 <- matrix(c(
   "gua",   "ade",   "gua",   "cyt",   "gua",   "thy",   "cyt",   "gua",  NA,
   "ade",   "ade",   NA,      "cyt",      NA,   "thy",   "gua",   "ade",  "ade",
   "ade",   NA,      NA,      "cyt",    "gua",   "thy",   "cyt",   "gua",  "ade",
-  "ade",   NA,      "ade",   "cyt",   "gua",   "thy",   "gua",   "ade",  NA),ncol=9,byrow=TRUE)
+  "ade",   NA,      "ade",   "cyt",   "gua",   "thy",   "gua",   "ade",  NA),
+  ncol=9,byrow=TRUE)
 
 # set names for markers and individuals
 colnames(snp9) <- paste("SNP",1:9,sep="")  

@@ -11,7 +11,8 @@ The field trial consists of multiple locations and randomized complete block des
 A single quantitative trait is simulated according to the specified contribution of relationship among individual, location and block effects to the phenotypic values.
 }
 \usage{
-simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL, Nloc = 1, Nrepl = 1)
+simul.phenotype(pedigree = NULL, A = NULL, mu = 100, 
+vc = NULL, Nloc = 1, Nrepl = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

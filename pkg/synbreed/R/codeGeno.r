@@ -1,6 +1,6 @@
 
 # coding genotypic data
-codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter=NULL,keep.identical=TRUE,verbose=FALSE){
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE){
 
   # read information from arguments
   

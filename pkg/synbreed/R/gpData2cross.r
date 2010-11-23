@@ -7,8 +7,15 @@ gpData2cross <- function(gpData,...){
      # check on geno and map
      if(is.null(gpData$geno) | is.null(gpData$map)) stop("'geno' and 'map' needed in",substitute(gpData))
      else{
-       geno <- data.frame(gpData$geno)
-       map  <- gpData$map   
+       # use codeGeno if not yet done
+       if(!gpData$info$codeGeno) gpData <- codeGeno(gpData,...)
+     
+       # only use individuals with genotypes and phenotypes
+       genoPheno <- gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped]
+       # read information from gpData
+       geno <- data.frame(gpData$geno[rownames(gpData$geno) %in% genoPheno,])
+       pheno <- gpData$pheno[rownames(gpData$pheno) %in% genoPheno,]
+       map  <- gpData$map
        n <- nrow(geno)
      }
      # split markers (+pos) and genotypes on chromosomes
@@ -37,7 +44,7 @@ gpData2cross <- function(gpData,...){
      # apply function to each list element
      genoList <- lapply(genoList,addData)
      # create object 'cross'
-     cross <- list(geno=genoList,pheno=gpData$pheno)
+     cross <- list(geno=genoList,pheno=pheno)
      class(cross) <- c("f2","cross")
      cross                   
 }

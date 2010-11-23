@@ -8,7 +8,8 @@ Writing relationshipMatrix in table format
 This function could be used to write an object of class "relationshipMatrix" in table format to file in a way that it could be used by other software, i.e. WOMBAT or ASReml.  The table has three columns, the row, the column and the entry of the (inverse) relationshipMatrix.
 }
 \usage{
-write.relationshipMatrix(relationshipMatrix, file = NULL, sorting = "WOMBAT", type=c("ginv", "inv", "none"), digits = 10)
+write.relationshipMatrix(relationshipMatrix, file = NULL, 
+sorting = "WOMBAT", type=c("ginv", "inv", "none"), digits = 10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
