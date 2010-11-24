@@ -61,11 +61,11 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
 
   # return object
-  
+  # geno as matrix
+  geno <- data.matrix(geno,TRUE)
   obj <- list(covar=NULL,pheno=pheno,geno=geno,map=map,pedigree=pedigree)
   
   # add information to element covar
-  
   # sort all available individuals
   ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),pedigree$ID)))  
 
@@ -75,17 +75,20 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   obj$covar$phenotyped <- obj$covar$id %in% rownames(obj$pheno)
   obj$covar$genotyped <- obj$covar$id %in% rownames(obj$geno)
   
-  
   # family information for genotyped indviduals  
   if(!is.null(family)){
     obj$covar$family <- rep(NA,length(obj$covar$id))
     obj$covar$family[which(obj$covar$id %in% rownames(obj$geno))] <- family
   }
   
-  # add covar from arguments 
+  # add covar from arguments, if available 
   if(!is.null(covar)){
-    if(is.null(rownames(covar))) stop("missing rownames in covar")
-    obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0)
+    if(is.null(rownames(covar))) stop("missing rownames in covar")    
+    # do not use any existing columns named 'genotyped', 'phenotyped' or 'id'
+    covar <- covar[,!colnames(covar) %in% c("genotyped","phenotyped","id")]
+    # merge with existing data
+    if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,sort=FALSE)
+    else  obj$covar <- obj$covar
   }
   # further information
   obj$info$map.unit <- map.unit

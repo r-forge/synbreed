@@ -2,9 +2,9 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
 
     # check for 'gpData'
     if(class(ped)=="gpData"){
+      if (!is.null(DH)) DH <- ped$covar[ped$covar$id %in% ped$pedigree$ID ,DH]
       if (is.null(ped$pedigree)) stop("no pedigree found")
       else ped <- ped$pedigree
-      if (!is.null(DH)) DH <- covar[covar$id %in% ped$ID ,DH]
     }  
     
     

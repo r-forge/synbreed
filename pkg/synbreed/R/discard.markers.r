@@ -1,7 +1,6 @@
 # discard markers from class 'gpData'
 
 discard.markers <- function(gpData,which){
-  # which: markers 2 discard
   # update geno
   gpData$geno <- gpData$geno[,!colnames(gpData$geno) %in% which]
   # update map                 

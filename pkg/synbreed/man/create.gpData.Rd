@@ -30,7 +30,7 @@ Object of class \code{pedigree}.
 Vector of length \code{nrow(geno)} assigning genotypes in \code{geno} to families. This information could be used for replacing of missing values with function \code{codeGeno}.
 }
   \item{covar}{
-\code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. 
+\code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
 }
   \item{rm.unmapped}{
 Logical. Should unmapped markers be removed from genotypic data? (Not yet implemented)
@@ -80,7 +80,7 @@ map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
 map  <- map[-5,]
 rownames(map) <- paste("M",c(1:4,6:12),sep="") 
 
-# simualte pedigree
+# simulate pedigree
 ped <- simul.pedigree(3,c(3,3,4))
 
 # combine in one object
