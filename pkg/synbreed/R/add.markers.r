@@ -9,7 +9,7 @@ add.markers <- function(gpData,geno,map){
       geno <- merge(gpData$geno,geno,by.x="row.names",by.y="row.names",sort=FALSE)
       # first column as rownames and delete first column
       rownames(geno) <- geno[,1]
-      geno <- geno[,-1]
+      geno <- data.matrix(geno[,-1],TRUE)
       # merge map
       map <- rbind(gpData$map,map)
     
@@ -34,7 +34,7 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
       # merge pedigree
       pedigree <- rbind(gpData$pedigree)
       # merge covar  (not with first columns)
-      if(any(colnames($covar) %in% c("genotyped","phenotyped","id")])) stop("not specify columns 'genotyped','phenotyped' and 'id' in 'covar' ")
+      if(any(colnames(covar) %in% c("genotyped","phenotyped","id"))) stop("not specify columns 'genotyped','phenotyped' and 'id' in 'covar' ")
       covar <- rbind(gpData$covar[,!colnames(gpData$covar) %in% c("genotyped","phenotyped","id")],covar)
       # create new gpData object
       ret <- create.gpData(pheno=pheno,geno=geno,map=gpData$map,pedigree=pedigree,covar=covar,map.unit=gpData$info$map.unit)

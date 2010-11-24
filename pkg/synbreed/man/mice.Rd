@@ -5,7 +5,11 @@
 Heterogenous stock mice population
 }
 \description{
-Data set comprises public available data of 2527 (993 males and 947 females) heterogenous stock mice derived from eight inbred strains (A/J, AKR/J, BALBc/J, CBA/J, C3H/HeJ, C57BL/6J, DBA/2J and LP/J). Available phenotypes are descibed in Solberg et al. (2006). Genotypic data is available for 1940 individuals with 12545 SNP markers. All SNPs are mapped in a sex-averaged genetic map with distances given in centimorgan (Shifman et al. (2006)). Further covariates as cage density, litter or family are available, too. 
+Data set comprises public available data of 2527 (993 males and 947 females) heterogenous stock mice derived from eight inbred strains (A/J, AKR/J, BALBc/J, CBA/J, C3H/HeJ, C57BL/6J, DBA/2J and LP/J) followed by 50 generations of pseudorandom mating. Pedigree is available on parents of phenotyped individuals. All individuals are labeled with a unique ID, starting with  \code{A048005080}. For all individuals, family, sex (females=0, males=1), month of birth (1-12), birthyear, coat color, cage density and litter is available and stored in \code{covar}. 
+
+ The measured phenotypes are descibed in Solberg et al. (2006). Here, the body weight at age of 6 weeks and growth slope are available. The heritabilities of these traits are 0.74 and 0.30, respectively (Valdar et al, 2006b). 
+ 
+ Genotypic data consists of 12545 biallelic SNP markers and available for 1940 individuals. All SNPs are mapped in a sex-averaged genetic map with distances given in centimorgan (Shifman et al. (2006)). SNPs are mapped across all 19 autosomes and X-chromosome where distances between adjacent markers variied form 0 to 3 cM.  
 }                                                                                                                                                                                                                 
 \usage{data(mice)}
 \format{
@@ -17,9 +21,9 @@ Shifman S, Bell JT, Copley RR, Taylor MS, Williams RW, et al. (2006) A High-Reso
 
 Solberg L.C. et al, A protocol for high-throughput phenotyping, suitable for quantitative trait analysis in mice. Mamm. Genome 17, 129-146 (2006)
 
-Valdar W, Solberg LC, Gauguier D, Burnett S, Klenerman P, Cookson WO, Taylor MS, Rawlins JN, Mott R, Flint J. (2006) Genome-wide genetic association of complex traits in heterogeneous stock mice. Nat Genet. 2006 Aug;38(8):879-87.
+Valdar W, Solberg LC, Gauguier D, Burnett S, Klenerman P, Cookson WO, Taylor MS, Rawlins JN, Mott R, Flint J. (2006a) Genome-wide genetic association of complex traits in heterogeneous stock mice. Nat Genet. 2006 Aug;38(8):879-87.
 
-Valdar W, Solberg LC, Gauguier D, Cookson WO, Rawlins NJ, Mott R, Flint J.(2006) Genetic and environmental effects on complex traits in mice. Genetics. 2006 Aug 3;
+Valdar W, Solberg LC, Gauguier D, Cookson WO, Rawlins NJ, Mott R, Flint J.(2006b) Genetic and environmental effects on complex traits in mice. Genetics. 2006 Aug 3;
 }                             
 \examples{
 data(mice)
