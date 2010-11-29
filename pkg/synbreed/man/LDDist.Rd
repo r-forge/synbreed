@@ -6,7 +6,7 @@
 LD versus distance Plot
 }
 \description{
-Computation of pairwise LD as \eqn{R^2} for marker data and plot LD versus distance for each linkage group (chromosome)
+Computation of pairwise LD as \eqn{R^2} for mapped markers and plot of LD versus distance with possible division in linkage groups (chromosomes).
 }
 \usage{
 LDDist(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...)

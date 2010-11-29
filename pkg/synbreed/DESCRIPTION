@@ -1,10 +1,10 @@
 Package: synbreed
 Type: Package
 Title: Analysis pipeline for genomic prediction using R
-Version: 0.3-7
-Date: 2010-24-11
+Version: 0.3-8
+Date: 2010-29-11
 Author: Valentin Wimmer with contributions by Theresa Albrecht
-Depends: lattice, igraph, MASS, LDheatmap, qtl
+Depends: lattice, igraph, MASS, LDheatmap, qtl, doBy
 Suggests: kinship, regress
 Maintainer: Valentin Wimmer <Valentin.Wimmer@wzw.tum.de>                                                 
 Description: This package implements statistical and genetic methods for plant and animal breeding. All steps of an analysis pipeline for genomic selection are part of this package: Methods for coding marker data, functions to set up pedigree and compute relatedness based on marker data or pedigree. 

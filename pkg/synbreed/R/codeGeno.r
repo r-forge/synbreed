@@ -65,7 +65,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
     which.miss <- apply(is.na(dataRaw),2,mean,na.rm=TRUE)<=nmiss 
     dataRaw <- dataRaw[,which.miss]
-    cat("step 1 :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
+    if (verbose) cat("step 1 :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
@@ -135,7 +135,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
   # impute missing values according to population structure
   if(impute.type=="family"){
-   if (verbose) cat("step 3 : Imputing of missing values by population structure \n")
+   if (verbose) cat("step 3 : Imputing of missing values by family information \n")
    # initialize counter (- number of heterozygous values) 
    cnt1 <- - sumNA.heter    # for nr. of imputations with family structure
    cnt2 <- - sumNA.heter    # for nr. of random imputations

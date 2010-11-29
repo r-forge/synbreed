@@ -3,6 +3,14 @@
 
 create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,rm.unmapped=FALSE,map.unit="cM"){
   # some checks on data
+  
+  if(!is.null(geno)){
+     if(class(geno) == "data.frame"){
+        geno <- matrix(unlist(geno),nrow=nrow(geno),ncol=ncol(geno),dimnames=dimnames(geno))
+     
+     
+     }
+  }
 
   # match geno and map
   if(!is.null(geno) & !is.null(map)){
@@ -51,12 +59,14 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     }
   }
 
-  # match pedigree and pheno
-  #if(!is.null(pheno) & !is.null(pedigree)){
-  #   if(nrow(pheno) == nrow(pedigree)){
-  #      if(is.null(rownames(pheno)) & !is.null(rownames(pedigree))) 
-  #
-  #}
+  # sort markers by chromosome and position within chromosome
+  if(!is.null(map)){
+    if(any(colnames(map) != c("chr","pos"))) stop("colnames of 'map' must be 'chr' and 'pos'")
+    map <- orderBy(~chr+pos,data=map)
+    # sort  columns in geno, too
+    geno <- geno[,rownames(map)]
+  
+  }
 
 
 
@@ -77,8 +87,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   
   # family information for genotyped indviduals  
   if(!is.null(family)){
-    obj$covar$family <- rep(NA,length(obj$covar$id))
-    obj$covar$family[which(obj$covar$id %in% rownames(obj$geno))] <- family
+    obj$covar <- merge(obj$covar,family,by.x=1,by.y=0,all=TRUE)
   }
   
   # add covar from arguments, if available 

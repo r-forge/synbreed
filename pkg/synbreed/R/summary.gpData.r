@@ -17,15 +17,16 @@ summary.gpData <- function(object,...){
     if(is.null(obj$geno)) ans$geno <- NULL
     else{
       geno <- obj$geno
+      nobs <- ncol(geno)*nrow(geno)
       # table is very time consuming
       if(ncol(geno)*nrow(geno)<4e+06){
-        ans$geno <- list(nMarkers=ncol(geno),genotypes=table(geno)/(ncol(geno)*nrow(geno)),nNA=sum(is.na(geno)))
+        ans$geno <- list(nMarkers=ncol(geno),genotypes=table(geno)/nobs,nNA=sum(is.na(geno))/nobs)
       }
       else{
          genotypes <- unique(as.vector(geno))
          frequencies <- rep(NA,length(genotypes))
          names(frequencies) <- genotypes
-         ans$geno <- list(nMarkers=ncol(geno),genotypes=frequencies,nNA=sum(is.na(geno)))
+         ans$geno <- list(nMarkers=ncol(geno),genotypes=frequencies,nNA=sum(is.na(geno))/nobs)
       } 
       if(!is.null(obj$map)){
          ans$geno$markerChr <- table(obj$map$chr)
@@ -60,7 +61,7 @@ print.summary.gpData <- function(x,...){
     cat("\t No. of markers",x$geno$nMarkers,"\n")
     cat("\t genotypes",names(x$geno$genotypes),"\n")
     cat("\t frequencies",x$geno$genotypes,"\n")
-    cat("\t NA's",x$geno$nNA,"\n")
+    cat("\t NA's",x$geno$nNA*100," %\n")
     cat("map \n")
     cat("\t No. of mapped markers ",x$geno$mappedMarkers,"\n")
     cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n")

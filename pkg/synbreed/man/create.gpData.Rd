@@ -26,8 +26,8 @@ rm.unmapped = FALSE, map.unit = "cM")
   \item{pedigree}{
 Object of class \code{pedigree}.
 }
-  \item{family}{
-Vector of length \code{nrow(geno)} assigning genotypes in \code{geno} to families. This information could be used for replacing of missing values with function \code{codeGeno}.
+  \item{family}{                                        
+\code{data.frame} assigning individuals to families with names of individuals in \code{rownames} This information could be used for replacing of missing values with function \code{codeGeno}.
 }
   \item{covar}{
 \code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
@@ -40,7 +40,7 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 }
 }
 \details{
-The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used forpo other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
+The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used for other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
 
 In an object of class \code{gpData} different individuals in \code{geno} and \code{pheno} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{geno} or \code{pheno}. Two addtional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
 }
@@ -48,8 +48,8 @@ In an object of class \code{gpData} different individuals in \code{geno} and \co
 Object of class \code{gpData} which is a list with the following items
 \item{covar}{\code{list} with information on individuals}
 \item{pheno}{\code{data.frame} with phenotypic data}
-\item{geno}{\code{matrix} marker matrix containing genotypic data}
-\item{map}{\code{data.frame} with columns 'chr' and 'pos'}
+\item{geno}{\code{matrix} marker matrix containing genotypic data. Markers are in the same order as in \code{map}}
+\item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
 \item{info}{\code{list} with addtional information on data}
 }
 \author{
