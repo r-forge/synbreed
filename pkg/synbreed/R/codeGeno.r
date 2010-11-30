@@ -54,7 +54,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   if(impute.type=="family" & is.null(popStruc)) stop(paste("family information needed, but '",substitute(gpData),"$covar$family' is empty",sep=""))
   if(impute.type=="family" & !is.null(popStruc)){
     if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in genotypic data")
-    if(any(is.na(popStruc))) stop("no missing values allowed for family information")
+    if(any(is.na(popStruc))) warning("missing values in family information, imputation is likely to be incomplete")
   }
   }
  

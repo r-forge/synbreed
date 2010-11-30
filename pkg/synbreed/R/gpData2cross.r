@@ -14,7 +14,7 @@ gpData2cross <- function(gpData,...){
        genoPheno <- gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped]
        # read information from gpData
        geno <- data.frame(gpData$geno[rownames(gpData$geno) %in% genoPheno,])
-       pheno <- gpData$pheno[rownames(gpData$pheno) %in% genoPheno,]
+       pheno <- data.frame(gpData$pheno[rownames(gpData$pheno) %in% genoPheno,])
        map  <- gpData$map
        n <- nrow(geno)
      }

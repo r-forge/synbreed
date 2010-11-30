@@ -15,7 +15,8 @@ kinship(ped, DH = NULL, ret = c("add", "kin", "dom", "gam"))
 object of class \code{pedigree} with \eqn{n} individuals or object of class \code{gpData}
 }
   \item{DH}{
-vector with logicals of length \eqn{n}. TRUE or 1 if individual is a DH line and FALSE or 0 otherwise. If \code{ped} is of class \code{gpData}, \code{DH} is a character giving the name of a variable in \code{covar} that contains this information for every individual.
+vector with logicals of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line and \code{FALSE} or 0 otherwise. 
+%If \code{ped} is of class \code{gpData}, \code{DH} is a character giving the name of a variable in \code{covar} that contains this information for every individual.
 }
   \item{ret}{
 character. The type of relationship matrix to be returned. See 'Details'.

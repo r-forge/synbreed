@@ -4,7 +4,7 @@ vanRaden <- function(marker){
     
     # extract information from arguments
           if(class(marker)=="gpData"){
-             if(!marker$info$codeGeno) stop("use function 'codeGeno' before using 'rogers'") 
+             if(!marker$info$codeGeno) stop("use function 'codeGeno' before using 'vanRaden'") 
              marker <- marker$geno
           }
           else marker <- marker

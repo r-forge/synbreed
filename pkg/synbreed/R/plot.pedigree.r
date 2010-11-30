@@ -1,7 +1,7 @@
 plot.pedigree <- function(x,effect=NULL,...){
   
   # get data
-  if(class(x)=="gpData") pedigree <- x$pedigree
+  if(any(class(x)=="gpData")) pedigree <- x$pedigree
   else pedigree <- x
 
   # catch errors 

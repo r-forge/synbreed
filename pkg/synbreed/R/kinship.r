@@ -2,16 +2,15 @@ kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
 
     # check for 'gpData'
     if(class(ped)=="gpData"){
-      if (!is.null(DH)) DH <- ped$covar[ped$covar$id %in% ped$pedigree$ID ,DH]
       if (is.null(ped$pedigree)) stop("no pedigree found")
-      else ped <- ped$pedigree
+      else ped <- ped$pedigree 
     }  
     
     
     # number of ids
     n <- nrow(ped)
     if(is.null(DH)) DH <- rep(0,n)
-    if(!is.null(DH) & length(DH) != n) stop("DH must have same length as ped")
+    if(!is.null(DH) & (length(DH) != n)) stop("DH must have same length as pedigree")
 
 
     # set up extended pedigree

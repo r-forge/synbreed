@@ -100,7 +100,10 @@ rownames(snp9) <- paste("ID",1:10,sep="")
 
 # create object of class 'gpData'
 # two families A and B
-gp <- create.gpData(geno=snp9,family=c(rep("A",7),rep("B",3)))  
+fam <- data.frame(family=c(rep("A",7),rep("B",3)))
+rownames(fam) <- paste("ID",1:10,sep="")
+
+gp <- create.gpData(geno=snp9,family=fam)  
 
 # code genotypic data  
 gp.coded <- codeGeno(gp)

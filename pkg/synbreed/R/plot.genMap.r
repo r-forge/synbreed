@@ -4,7 +4,9 @@ plot.genMap <- function(map,dense=FALSE,nMarker=TRUE,...){
    
     # extract chromosomes
     chr <- unique(map$chr)
-
+    # without NA
+    chr <- chr[!is.na(chr)]
+    
     
     # initialize map
     if(dense)layout(matrix(1:2,ncol=2),width=c(0.82,0.18))
@@ -14,7 +16,7 @@ plot.genMap <- function(map,dense=FALSE,nMarker=TRUE,...){
     # loop over chromosomes
     for (i in seq(along=chr)){
     
-        n <- sum(map$chr==chr[i]) 
+        n <- sum(map$chr==chr[i],na.rm=TRUE) 
         start <- min(map$pos[map$chr==chr[i]],na.rm=TRUE)
         end <- max(map$pos[map$chr==chr[i]],na.rm=TRUE)
   
