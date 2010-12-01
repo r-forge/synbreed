@@ -21,7 +21,7 @@ cross2gpData <- function(cross,...){
     # combine pheno, geno, and map  in class 'gpData'
     ret <- create.gpData(pheno=pheno,geno=geno,map=map)
     # use codeGeno
-    # cat("using function 'codeGeno'\n")
-    ret <- codeGeno(ret,label.heter="1",...)
+    # coding in cross: 1 = AA, 2 = AB, 3 = BB,
+    ret <- codeGeno(ret,label.heter="2",...)
     return(ret)
 } 

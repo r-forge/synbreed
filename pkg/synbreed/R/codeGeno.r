@@ -19,7 +19,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   else{
    data <- gpData
    popStruc <- NULL
-   gpData$map <- NULL
+   suppressWarnings(gpData$map <- NULL)
   }                                
   #  catch errors
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
@@ -191,8 +191,18 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
         for (j in 1:M){
              cnt2 <- cnt2 + sum(is.na(res[,j]))
              if(j==1) ptm <- proc.time()[3]
-              if (length(table(res[,j]))==1)   res[is.na(res[,j]),j] <- 0
-              else res[is.na(res[,j]),j] <- as.numeric(sample(names(table(res[,j])),size=sum(is.na(res[,j])),prob=table(res[,j])/n,replace=TRUE))
+              # old:
+              #if (length(table(res[,j]))==1)   res[is.na(res[,j]),j] <- 0
+              #else res[is.na(res[,j]),j] <- as.numeric(sample(names(table(res[,j])),size=sum(is.na(res[,j])),prob=table(res[,j])/n,replace=TRUE))
+             
+              # new
+              p <- mean(res[,j],na.rm=TRUE)/2  # minor allele frequency
+              if(is.null(label.heter)){        # assuming only 2 homozygous genotypes
+                  res[is.na(res[,j]),j] <- sample(c(0,2),size=sum(is.na(res[,j])),prob=c(1-p,p),replace=TRUE)
+              }
+              else{                            # assuming 3 genotypes
+                  res[is.na(res[,j]),j] <- sample(c(0,1,2),size=sum(is.na(res[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
+              }
              if(j==1) cat("approximate run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
         }   
    }    

@@ -8,7 +8,7 @@ Plot genetic map
 A function to visualize high-density genetic maps.
 }
 \usage{
-plot.genMap(map, dense = FALSE, nMarker = TRUE, ...)
+plotGenMap(map, dense = FALSE, nMarker = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

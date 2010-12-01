@@ -1,4 +1,4 @@
-plot.genMap <- function(map,dense=FALSE,nMarker=TRUE,...){
+plotGenMap <- function(map,dense=FALSE,nMarker=TRUE,...){
    
     if(class(map)=="gpData") map <- map$map
    
