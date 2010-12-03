@@ -54,9 +54,13 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         else rownames(geno) <- rownames(pheno)
         if(is.null(rownames(pheno)) & is.null(rownames(geno))) rownames(pheno) <- rownames(geno) <- paste("ID",1:nrow(geno),sep="")
     }
-
+    # now geno and pheno have rownames
     else stop("missing rownames for 'pheno' or 'geno'")
     }
+    # sort geno and pheno by rownames
+    geno <- geno[order(row.names(geno)),]
+    pheno <- pheno[order(row.names(pheno)),]
+
   }
 
   # sort markers by chromosome and position within chromosome
@@ -94,9 +98,9 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   if(!is.null(covar)){
     if(is.null(rownames(covar))) stop("missing rownames in covar")    
     # do not use any existing columns named 'genotyped', 'phenotyped' or 'id'
-    covar <- covar[,!colnames(covar) %in% c("genotyped","phenotyped","id")]
+    covar <- covar[!colnames(covar) %in% c("genotyped","phenotyped","id")]
     # merge with existing data
-    if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,sort=FALSE)
+    if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0)
     else  obj$covar <- obj$covar
   }
   # further information

@@ -23,6 +23,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   }                                
   #  catch errors
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
+  if (any(colMeans(is.na(data))==1)) warning("markers with no nonmissing values in data")
   
 
   # number of genotypes

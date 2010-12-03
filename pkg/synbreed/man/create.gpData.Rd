@@ -42,15 +42,15 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 \details{
 The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used for other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
 
-In an object of class \code{gpData} different individuals in \code{geno} and \code{pheno} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{geno} or \code{pheno}. Two addtional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
+In an object of class \code{gpData} different individuals in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two addtional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
 }
 \value{
 Object of class \code{gpData} which is a list with the following items
 \item{covar}{\code{list} with information on individuals}
-\item{pheno}{\code{data.frame} with phenotypic data}
-\item{geno}{\code{matrix} marker matrix containing genotypic data. Markers are in the same order as in \code{map}}
+\item{pheno}{\code{data.frame} with phenotypic data ordered by \code{row.names(pheno)}}
+\item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map}. Rows  ordered by \code{row.names(geno)}}
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
-\item{info}{\code{list} with addtional information on data}
+\item{info}{\code{list} with addtional information on data (coding of data, unit in \code{map})}
 }
 \author{
 Valentin Wimmer
@@ -66,12 +66,12 @@ In case of missing row names or column names in one item, information is taken f
 set.seed(123)
 # 10 plants with 2 phenotypes 
 pheno <- data.frame(Yield = rnorm(10,100,5), leaf.damage=rbeta(10,1,1))
-rownames(pheno) <- 1:10
+rownames(pheno) <- sample(1:10)
 
 # marker matrix
 geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=10)
-rownames(geno) <-  1:10
+rownames(geno) <-  sample(1:10)
 colnames(geno) <- paste("M",1:12,sep="")
 
 # genetic map

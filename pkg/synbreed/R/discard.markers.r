@@ -5,7 +5,6 @@ discard.markers <- function(gpData,which){
   gpData$geno <- gpData$geno[,!colnames(gpData$geno) %in% which]
   # update map                 
   gpData$map <- gpData$map[!rownames(gpData$map) %in% which,]
-
   return(gpData)
 }
                      
@@ -17,7 +16,7 @@ discard.individuals <- function(gpData,which){
    # update geno
    gpData$geno <- gpData$geno[!rownames(gpData$geno) %in% which,] 
    # update pedigree 
-   gpData$pedigree <- gpData$pedigree[!rownames(gpData$pedigre) %in% which,] 
+   gpData$pedigree <- gpData$pedigree[!gpData$pedigree$ID %in% which,] 
    # update covar
    gpData$covar <- gpData$covar[!gpData$covar$id %in% which,]
    return(gpData)

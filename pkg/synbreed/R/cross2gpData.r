@@ -8,14 +8,14 @@ cross2gpData <- function(cross,...){
     chr <- names(cross$geno)
     # extract informations from first chromosome
     geno <- cross$geno[[chr[1]]]$data
-    map <- data.frame(pos=cross$geno[[chr[1]]]$map,chr=chr[1])
+    map <- data.frame(chr=chr[1],pos=cross$geno[[chr[1]]]$map)
     # loop over chromosomes 2:n
     if (length(chr)>1){
        for(i in chr[-1]){
           # add new genotypes
           geno <- cbind(geno,cross$geno[[i]]$data)
           # add new map info
-          map <- rbind(map,data.frame(pos=cross$geno[[i]]$map,chr=i))
+          map <- rbind(map,data.frame(chr=i,pos=cross$geno[[i]]$map))
        }
     }
     # combine pheno, geno, and map  in class 'gpData'
