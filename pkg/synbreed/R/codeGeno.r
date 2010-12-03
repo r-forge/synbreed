@@ -242,7 +242,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   if(!keep.identical){
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
-       cat("step 6 :",sum(which.duplicated),"duplicated marker(s) discarded \n")
+       if (verbose) cat("step 6 :",sum(which.duplicated),"duplicated marker(s) discarded \n")
        cnames <- cnames[!which.duplicated]
        # update map 
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]

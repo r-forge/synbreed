@@ -16,7 +16,7 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
     lg <- unique(linkageGroup)
     if(!is.null(chr)){ 
         lg <- chr
-        if(chr=="all") linkageGroup <- rep("all",length(linkageGroup))
+        if(any(chr=="all")) linkageGroup <- rep("all",length(linkageGroup))
     }
     
     # function for fit according to Hill and Weir (1988)
@@ -38,8 +38,8 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
       curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,...)
     }
     
-    # initialize return data list
-    ret <- list()
+
+
 
     if(!is.null(file)) pdf(file)
     # compute distances within each linkage group
@@ -68,19 +68,19 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
 
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",lg[i]),...)
+       if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...)
 
        # scatterplot with nls curve
        if(type=="nls"){
-               plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",lg[i]),...) 
-               smooth.fit(ret[[i]][,4],ret[[i]][,3],n=nrow(markeri))
+               plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...) 
+               smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=nrow(markeri))
        }
 
        # stacked histogramm
        if(type=="bars"){
           # use default breaks
           if(is.null(breaks)){
-             breaks.dist <- seq(from=min(ret[[i]]$dist),to=max(ret[[i]]$dist),length=6)
+             breaks.dist <- seq(from=min(ret[[lg[i]]]$dist),to=max(ret[[lg[i]]]$dist),length=6)
              breaks.r2 <- seq(from=1,to=0,by=-0.2) 
           }
           # use user- specified breaks
@@ -88,8 +88,8 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
              breaks.dist <- breaks$dist
              breaks.r2 <- breaks$r2
           }
-          cut.dist <- cut(ret[[i]]$dist,breaks=breaks.dist)
-          cut.r2 <- cut(ret[[i]]$r2,breaks=breaks.r2)
+          cut.dist <- cut(ret[[lg[i]]]$dist,breaks=breaks.dist)
+          cut.r2 <- cut(ret[[lg[i]]]$r2,breaks=breaks.r2)
           
           # create matrix with relative frequencies
           tab.abs <- table(cut.r2,cut.dist)

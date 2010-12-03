@@ -59,8 +59,10 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     }
     # sort geno and pheno by rownames
     geno <- geno[order(row.names(geno)),]
-    pheno <- pheno[order(row.names(pheno)),]
-
+    phenonames <- colnames(pheno)
+    phenodf <- pheno[order(row.names(pheno)),]
+    pheno <- data.frame(phenodf,row.names= row.names(pheno)[order(row.names(pheno))])
+    colnames(pheno) <- phenonames
   }
 
   # sort markers by chromosome and position within chromosome

@@ -1,7 +1,7 @@
 # summary method for pedigree
 summary.pedigree <- function(object,...){
 
-     if(class(object)=="gpData") ped <- object$pedigree
+     if(any(class(object)=="gpData")) ped <- object$pedigree
      else  ped <- object
       
      n <- nrow(ped) 
