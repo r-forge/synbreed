@@ -34,7 +34,7 @@ numeric scalar. Markers with minor allele frequency < \code{maf} are discarded, 
 numeric scalar. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{label.heter}{
-This is either a character to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype. Note that heterozygus values must be identified unambiguously by \code{label.heter}, e.g. "/" is not valid if genotypes are coded "A/A", "A/B" and "B/B". \code{label.heter} is \code{NULL} if there are only homozygous genotypes, i.e. in DH lines.
+This is either a scalar or vector of characters to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is high, i.e. if genotypes are coded by alleles. Note that heterozygus values must be identified unambiguously by \code{label.heter}, e.g. "/" is not valid if genotypes are coded "A/A", "A/B" and "B/B". Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation.
 }
   \item{keep.identical}{
 logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
@@ -47,9 +47,9 @@ logical scalar. Should duplicated markers be kept, i.e. markers which have a LD 
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
 1. Discarding markers due with fraction > \code{nmiss} of missing values
 
-2. Recoding alleles from charachter/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
+2. Recoding alleles from character/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
 
-3. Replace of missing values by \code{replace.value} or imputing.
+3. Replace of missing values by \code{replace.value}  or impute missing values according to one of the following methods:
 
 Imputing is done according to \code{impute.type}
 \describe{

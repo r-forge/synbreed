@@ -19,7 +19,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   else{
    data <- gpData
    popStruc <- NULL
-   suppressWarnings(gpData$map <- NULL)
+   gpData <- list(geno=data)
+   gpData$map <- NULL
   }                                
   #  catch errors
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
@@ -32,7 +33,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
    
    # keep names of data object
    cnames <- colnames(data)
-   rnames <- row.names(data)
+   rnames <- rownames(data)
    dataRaw <- matrix(unlist(data),nrow=n)
 
 
@@ -80,35 +81,33 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
    # identify heterozygous genotypes
    if(!is.null(label.heter)){
-    if (is.character(label.heter)) is.heter <- function(x) return(length(grep(label.heter,as.vector(x)))>0)
+    if (is.character(label.heter)) dataRaw[dataRaw %in% label.heter] <- 1 # 1 label for heterozygous
     else{
-      if (is.function(label.heter))  is.heter <- label.heter
+      if (is.function(label.heter)){                                    # multiple labels for heterozygous values
+          is.heter <- label.heter
+          label.heter <- unique(dataRaw)[is.heter(unique(dataRaw))]
+          dataRaw[dataRaw %in% label.heter] <- 1 
+
+      }
       else stop("label.heter must be a character or a function")
       } 
-   
-   is.heter <- Vectorize(is.heter,USE.NAMES = FALSE)
-   heter.ind <- which(matrix(is.heter(dataRaw),nrow=n),arr.ind=TRUE)
-   
-   # set values as NA (instead there would be more than two alleles at each locus)
-   # this would cause problems in recoding
-   # values are restored after recoding
-   dataRaw[heter.ind] <- NA
-   sumNA.heter <- sum(is.na(dataRaw[heter.ind] ))
    }
-   else sumNA.heter <- 0
 
    
-   # function to recode alleles within one locus  
-  codeNumeric <- function(x){
+   # function to recode alleles within one locus : 0 = major, 2 = minor 
+   codeNumeric <- function(x){
     # names of alleles ordered by allele frequency
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
+    # do not use heterozygous values
+    alleles <- alleles[!alleles %in% c(1,"1")]
     if (length(alleles)>2) stop("only biallelic marker allowed (check for heterozygous genotypes)")
-    return((as.numeric(factor(x,levels=alleles))-1)*2)
+    x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
+    return(x)
    }
 
   if (verbose) cat("step 2 : Recoding alleles \n")
   res <- apply(dataRaw,2,codeNumeric)
-  res <- matrix(res,nrow=n)
+  res <- matrix(as.numeric(res),nrow=n)
   
   # coding of SNPs finished
 
@@ -120,8 +119,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   
   # start imputing of values
   
-   # number of missing values - number of heterozygous values
-   nmv <- sum(is.na(dataRaw)) - sumNA.heter
+   # number of missing values
+   nmv <- sum(is.na(dataRaw))
  
   # initialize counter  
    cnt1 <- 0   # for nr. of imputations with family structure
@@ -220,9 +219,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   
   # end of imputing
   }
-  
-  # restore heterozygous values
-  if(!is.null(label.heter)) res[heter.ind] <- 1
   
   
   # remove markers with minor allele frequency < maf
