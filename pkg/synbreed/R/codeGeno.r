@@ -137,8 +137,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   if(impute.type=="family"){
    if (verbose) cat("step 3 : Imputing of missing values by family information \n")
    # initialize counter (- number of heterozygous values) 
-   cnt1 <- - sumNA.heter    # for nr. of imputations with family structure
-   cnt2 <- - sumNA.heter    # for nr. of random imputations
     # loop over all markers
     for (j in 1:M){
     
@@ -187,7 +185,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
    # impute missing values with no population structure
     if(impute.type=="random"){
        # initialize counter (- number of heterozygous values) 
-       cnt2 <- - sumNA.heter    # for nr. of random imputations
         for (j in 1:M){
              cnt2 <- cnt2 + sum(is.na(res[,j]))
              if(j==1) ptm <- proc.time()[3]

@@ -38,7 +38,8 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
       curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,...)
     }
     
-
+    # initialize return value
+    ret <- list()
 
 
     if(!is.null(file)) pdf(file)

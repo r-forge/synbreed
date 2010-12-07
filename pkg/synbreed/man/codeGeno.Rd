@@ -2,10 +2,10 @@
 \alias{codeGeno}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{                                            
-Imputing and recoding of genotypic data  
+Recoding of genotypic data, imputing of missing values and preselection of markers 
 }
 \description{
-Function to code genotypic data in an object of class \code{gpData}. Raw genotypic data could be in any format (e.g. alleles coded with "ade","gua", ... , or "A", "B", ...), but only biallelic markers are allowed. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
+Function to code genotypic data in an object of class \code{gpData}. Raw genotypic data could be in any format (e.g. alleles coded by alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is suitable for biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
 Imputing of missing values can be done with a fixed value, random sampling from allele distribution or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
@@ -42,7 +42,7 @@ logical scalar. Should duplicated markers be kept, i.e. markers which have a LD 
  \item{verbose}{
 	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is usefull if selection of markers is performed as in this case information on discarded markers is given.
  }
-}
+}                                         
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
 1. Discarding markers due with fraction > \code{nmiss} of missing values
@@ -53,8 +53,8 @@ Coding of genotypic data is done in the following order (depending on choice of 
 
 Imputing is done according to \code{impute.type}
 \describe{
-\item{"fix"}{All missing values are imputed by \code{replace.value}}.
-\item{"random"}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes, i.e. 0 and 2, values are sampled from distribution with probabilites \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. In case of 3 genotypes, values are sampled from \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}}. 
+\item{"fix"}{All missing values are imputed by \code{replace.value}}. Note that in most cases only value 1 should be choosen.
+\item{"random"}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes, i.e. 0 and 2, values are sampled from distribution with probabilites \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}}. 
 \item{"family"}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},                                          
 the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with family information, a column named "family" in element \code{covar} of \code{gpData} is necessary. This column should contain a \code{charater} or \code{numeric} to identify family of all genotyped individuals. Family information for nongenotyped individuals is not used an could be set to any value, i.e. NA}                          
