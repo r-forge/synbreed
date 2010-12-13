@@ -57,13 +57,15 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     # now geno and pheno have rownames
     else stop("missing rownames for 'pheno' or 'geno'")
     }
+   } 
     # sort geno and pheno by rownames
-    geno <- geno[order(row.names(geno)),]
-    phenonames <- colnames(pheno)
-    phenodf <- pheno[order(row.names(pheno)),]
-    pheno <- data.frame(phenodf,row.names= row.names(pheno)[order(row.names(pheno))])
-    colnames(pheno) <- phenonames
-  }
+    if(!is.null(geno)) geno <- geno[order(row.names(geno)),]
+    if(!is.null(pheno)){
+      phenonames <- colnames(pheno)
+      phenodf <- pheno[order(row.names(pheno)),]
+      pheno <- data.frame(phenodf,row.names= row.names(pheno)[order(row.names(pheno))])
+      colnames(pheno) <- phenonames
+    }
 
   # sort markers by chromosome and position within chromosome
   if(!is.null(map)){

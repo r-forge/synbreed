@@ -18,6 +18,7 @@ gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),
         mergeData <- mergeData[,-1]
        }
       else mergeData <- pheno
+
      }
      
      # for repeated measures
@@ -39,10 +40,12 @@ gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),
        }
        else  mergeData <- pheno
        
+     # sort by ID
+     mergeData <- orderBy(~id,data=mergeData)   
      
      
-     }   
-     
+     }
+    
      return(mergeData)
 }           
 

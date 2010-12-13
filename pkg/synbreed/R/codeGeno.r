@@ -3,7 +3,7 @@
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE){
 
   # read information from arguments
-  
+
   # check for class 'gpData'
   if(class(gpData)=="gpData"){
     if(is.null(gpData$geno)) stop("no genotypic data available")
@@ -30,24 +30,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   # number of genotypes
   n <- nrow(data)
 
-   
-   # keep names of data object
-   cnames <- colnames(data)
-   rnames <- rownames(data)
-   dataRaw <- matrix(unlist(data),nrow=n)
 
+  # keep names of data object
+  cnames <- colnames(data)
+  rnames <- rownames(data)
+  dataRaw <- matrix(unlist(data),nrow=n)
 
   # elements from control list
-  #impute <- control$impute
   if(impute)  impute.type <- match.arg(impute.type)
-  #maf <- control$maf
-  #nmiss <- control$nmiss
-  #label.heter <- control$label.heter
-  #replace.value <- control$replace.value
-  #keep.identical <- control$keep.identical
-  #print(keep.identical)
-  
-  
+ 
   # catch errors 
   if (impute){
   if(!is.logical(impute)) stop("impute has to be logical")
@@ -81,13 +72,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
    # identify heterozygous genotypes
    if(!is.null(label.heter)){
-    if (is.character(label.heter)) dataRaw[dataRaw %in% label.heter] <- 1 # 1 label for heterozygous
+    if (is.character(label.heter)) label.heter <- label.heter # 1 label for heterozygous
     else{
-      if (is.function(label.heter)){                                    # multiple labels for heterozygous values
+      if (is.function(label.heter)){                          # multiple labels for heterozygous values
           is.heter <- label.heter
           label.heter <- unique(dataRaw)[is.heter(unique(dataRaw))]
-          dataRaw[dataRaw %in% label.heter] <- 1 
-
       }
       else stop("label.heter must be a character or a function")
       } 
@@ -99,16 +88,20 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     # names of alleles ordered by allele frequency
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
     # do not use heterozygous values
-    alleles <- alleles[!alleles %in% c(1,"1")]
+    alleles <- alleles[!alleles %in% label.heter]
     if (length(alleles)>2) stop("only biallelic marker allowed (check for heterozygous genotypes)")
     x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
     return(x)
    }
 
   if (verbose) cat("step 2 : Recoding alleles \n")
+  # apply function on whole genotypic data
   res <- apply(dataRaw,2,codeNumeric)
-  res <- matrix(as.numeric(res),nrow=n)
-  
+ 
+   # set heterozygous genotypes as 1
+   res[res %in% label.heter] <- 1
+   res <- matrix(as.numeric(res),nrow=n)
+               
   # coding of SNPs finished
 
   # start of imputing

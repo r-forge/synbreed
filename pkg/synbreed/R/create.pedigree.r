@@ -1,8 +1,11 @@
 create.pedigree <- function(ID,Par1,Par2,gener=NULL){
 
-     # only unique IDs
+     
      n <- length(ID)
-     if(length(unique(ID))!=n) stop("ID is not unique")
+     # only unique IDs
+     if(length(unique(ID))!=n)  warning("ID is not unique, removing duplicated individuals")
+     
+     # further checks  
      if(length(Par1)!=n) stop("Par1 must have same length as ID") 
      if(length(Par2)!=n) stop("Par2 must have same length as ID") 
      if(!any(Par1 %in% ID) & is.null(gener)) stop("gener must be specified if pedigree is not complete")
@@ -28,6 +31,10 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
      
      # gener starts from 0
      pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,stringsAsFactors=FALSE)
+     
+     # removing duplicated entries
+     pedigree <- pedigree[!duplicated(pedigree), ]
+                                                 
      # sort by generation
      pedigree <- pedigree[order(gener,partial=ID),]
      colnames(pedigree) <- c("ID","Par1","Par2","gener")
