@@ -29,7 +29,7 @@ LDMap <- function(gpData,chr=NULL,file=NULL,...){
         # from RColorBrewer
         color = c("#7F0000","#B30000","#D7301F","#EF6548","#FC8D59","#FDBB84","#FDD49E","#FEE8C8","#FFF7EC")
         #   using function LDheatmap
-        LDheatmap(ld.r2, LDmeasure="r",title=paste("Pairwise LD r2, Linkage Group ",i,sep=""), color=color, genetic.distances=pos[linkageGroup == lg[i]],   geneMapLabelY=0.12, geneMapLabelX=0.35, distances = "genetic",...)
+        LDheatmap(ld.r2, LDmeasure="r", color=color, genetic.distances=pos[linkageGroup == lg[i]],   geneMapLabelY=0.12, geneMapLabelX=0.35,...)
          
         # return  namesmatrix of r2
         colnames(ld.r2) <- rownames(ld.r2) <- colnames(marker)[linkageGroup == lg[i]]

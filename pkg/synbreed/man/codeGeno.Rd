@@ -82,26 +82,26 @@ Information about imputing is printed on the screen (approximative run time, num
 \examples{
 # create marker data for 9 SNPs and 10 homozygous individuals 
 snp9 <- matrix(c(
-  "gua",   "ade",   "ade",   "cyt",   "ade",   "thy",   "cyt",   "gua",  NA,
-  "gua",   "ade",   "gua",   "cyt",   "ade",   "thy",   "cyt",   "gua",  NA,
-  "gua",   "ade",   "gua",   "cyt",   "ade",   "thy",   "gua",   "ade",  NA,
-  "ade",   "ade",   "gua",   "cyt",   "ade",   "thy",   "gua",   "ade",  NA,
-  "ade",   "ade",   "gua",   "cyt",   "ade",   "gua",   "cyt",   "gua",  NA,
-  "ade",   "ade",   "gua",   "cyt",   "ade",   NA,      "cyt",   "ade",  NA,
-  "gua",   "ade",   "gua",   "cyt",   "gua",   "thy",   "cyt",   "gua",  NA,
-  "ade",   "ade",   NA,      "cyt",      NA,   "thy",   "gua",   "ade",  "ade",
-  "ade",   NA,      NA,      "cyt",    "gua",   "thy",   "cyt",   "gua",  "ade",
-  "ade",   NA,      "ade",   "cyt",   "gua",   "thy",   "gua",   "ade",  NA),
+  "AA",   "AA",   "AA",   "BB",   "AA",   "AA",   "AA",   "AA",  NA,
+  "AA",   "AA",   "BB",   "BB",   "AA",   "AA",   "BB",   "AA",  NA,
+  "AA",   "AA",   "BB",   "BB",   "AA",   "AA",   "AA",   "BB",  NA,
+  "AA",   "AA",   "BB",   "BB",   "AA",   "AA",   "AA",   "AA",  NA,
+  "AA",   "AA",   "BB",   "BB",   "AA",   "BB",   "BB",   "BB",  NA,
+  "AA",   "AA",   "BB",   "BB",   "AA",   NA,     "BB",   "AA",  NA,
+  "BB",   "AA",   "BB",   "BB",   "BB",   "AA",   "BB",   "BB",  NA,
+  "AA",   "AA",    NA,    "BB",    NA,    "AA",   "AA",   "AA",  "AA",
+  "AA",    NA,     NA,    "BB",   "BB",   "BB",   "BB",   "BB",  "AA",
+  "AA",    NA,    "AA",   "BB",   "BB",   "BB",   "AA",   "AA",  NA),
   ncol=9,byrow=TRUE)
 
 # set names for markers and individuals
 colnames(snp9) <- paste("SNP",1:9,sep="")  
-rownames(snp9) <- paste("ID",1:10,sep="")
+rownames(snp9) <- paste("ID",1:10+100,sep="")
 
 # create object of class 'gpData'
 # two families A and B
 fam <- data.frame(family=c(rep("A",7),rep("B",3)))
-rownames(fam) <- paste("ID",1:10,sep="")
+rownames(fam) <- paste("ID",1:10+100,sep="")
 
 gp <- create.gpData(geno=snp9,family=fam)  
 

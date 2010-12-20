@@ -64,14 +64,15 @@ In case of missing row names or column names in one item, information is taken f
 }
 \examples{
 set.seed(123)
-# 10 plants with 2 phenotypes 
-pheno <- data.frame(Yield = rnorm(10,100,5), leaf.damage=rbeta(10,1,1))
-rownames(pheno) <- sample(1:10)
+# 9 plants with 2 phenotypes 
+n <- 9  # only for n > 6
+pheno <- data.frame(Yield = rnorm(n,100,5), leaf.damage=rbeta(n,1,1))
+rownames(pheno) <- sample(1:n)
 
 # marker matrix
-geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
-prob=c(0.6,0.2,0.1,0.1)),nrow=10)
-rownames(geno) <-  sample(1:10)
+geno <- matrix(sample(c("AA","AB","BB",NA),size=n*12,replace=TRUE,
+prob=c(0.6,0.2,0.1,0.1)),nrow=n)
+rownames(geno) <-  sample(1:n)
 colnames(geno) <- paste("M",1:12,sep="")
 
 # genetic map
@@ -81,7 +82,7 @@ map  <- map[-5,]
 rownames(map) <- paste("M",c(1:4,6:12),sep="") 
 
 # simulate pedigree
-ped <- simul.pedigree(3,c(3,3,4))
+ped <- simul.pedigree(3,c(3,3,n-6))
 
 # combine in one object
 gp <- create.gpData(pheno,geno,map,ped)

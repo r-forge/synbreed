@@ -23,7 +23,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
        }
        }
     else{
-      #cat("note: all markers in 'geno' mapped in 'map' \n")
+      # missing colnames in geno
       if(is.null(colnames(geno))){
         if(!is.null(rownames(map))){
           colnames(geno) <- rownames(map)
@@ -34,7 +34,8 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         }
       }
       else{
-         if(!is.null(colnames(geno))){
+      # missing rownames in map
+         if(is.null(rownames(map)) & !is.null(colnames(geno))){
            rownames(map) <- colnames(geno)
            warning("missing rownames in 'map': assuming to be identical as colnames in 'geno' \n")  
          }

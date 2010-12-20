@@ -76,12 +76,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     else{
       if (is.function(label.heter)){                          # multiple labels for heterozygous values
           is.heter <- label.heter
-          label.heter <- unique(dataRaw)[is.heter(unique(dataRaw))]
+          label.heter <- unique(dataRaw[is.heter(unique(dataRaw))]) 
+          
+      
       }
-      else stop("label.heter must be a character or a function")
+      else stop("label.heter must be a character string or a function")
       } 
    }
-
+   # make sure that NA is not in label.heter
+   # otherwise missing values would be masked
+   label.heter <- label.heter[!is.na(label.heter)]
+   
    
    # function to recode alleles within one locus : 0 = major, 2 = minor 
    codeNumeric <- function(x){
@@ -138,11 +143,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
         try({
         # compute population structure  as counts
         poptab <- table(popStruc,res[,j])
-        rS <- rowSums(poptab)
-        #if(any(rS==0)) warning(paste("Note: No data for at least one population in column",j,"\n",sep=" "))
-
-        # and as frequencies
-        #poptabF <- poptab/rS       
+        rS <- rowSums(poptab)     
          
         # continue only if there are missing values
         if(sum(is.na(res[,j]))>0 ){
@@ -159,7 +160,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
           names(major.allele) <- names(polymorph)
           
           # loop over all families          
-          for ( i in row.names(poptab)[nmissfam>0] ){
+          for ( i in rownames(poptab)[nmissfam>0] ){
             # impute values
             res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(ifelse(polymorph[i],sample(c(0,2),size=nmissfam[i],prob=c(0.5,0.5),replace=TRUE),rep(major.allele[i],nmissfam[i])))
             # update counter
@@ -169,7 +170,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
         
         }
         
-        if(j==ceiling(M/100)) cat("... approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep=" ")
+        if(j==ceiling(M/100)) cat("         approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep=" ")
      })
     }
     }
@@ -177,6 +178,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
    # impute missing values with no population structure
     if(impute.type=="random"){
+    if (verbose) cat("step 3 : Random imputing of missing values \n")
        # initialize counter (- number of heterozygous values) 
         for (j in 1:M){
              cnt2 <- cnt2 + sum(is.na(res[,j]))
@@ -193,7 +195,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
               else{                            # assuming 3 genotypes
                   res[is.na(res[,j]),j] <- sample(c(0,1,2),size=sum(is.na(res[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
               }
-             if(j==1) cat("approximate run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
+             if(j==1) cat("         approximate run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
         }   
    }    
   
