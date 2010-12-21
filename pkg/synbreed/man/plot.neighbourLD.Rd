@@ -22,7 +22,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{logical}. Add number of markers?
 }
   \item{dense}{
-\code{logical}. Should visualization for LD between high-density markers be used?
+\code{logical}. Should visualization for LD between dense markers be used?
 }
   \item{\dots}{
 further graphical arguments for function \code{plot}
