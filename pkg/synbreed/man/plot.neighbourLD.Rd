@@ -32,7 +32,7 @@ further graphical arguments for function \code{plot}
 The graph is similar to \code{plotGenMap} with the option \code{dense=TRUE}, but here the LD between adjacent markers is plotted along the chromosomes. 
 }
 \value{
-Plot of smoothed neighbour LD along each chromosome. One chromosome is displayed from the first to the last marker.
+Plot of neighbour LD along each chromosome. One chromosome is displayed from the first to the last marker. The number of chromosomes depends one the number of \code{list} entries in LD.
 }
 
 \author{
