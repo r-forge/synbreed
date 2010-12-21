@@ -31,11 +31,21 @@ LDMap <- function(gpData,chr=NULL,file=NULL,...){
         #   using function LDheatmap
         LDheatmap(ld.r2, LDmeasure="r", color=color, genetic.distances=pos[linkageGroup == lg[i]],   geneMapLabelY=0.12, geneMapLabelX=0.35,...)
          
-        # return  namesmatrix of r2
+        # return  matrix of LD (r2)
         colnames(ld.r2) <- rownames(ld.r2) <- colnames(marker)[linkageGroup == lg[i]]
-        ret[[lg[i]]] <-ld.r2
+        ret$LD[[lg[i]]] <- ld.r2  
+        
+        # return matrix of distances
+        distance <- as.matrix(dist(pos[linkageGroup == lg[i]],diag=FALSE,upper=FALSE))
+        colnames(distance) <- rownames(distance) <- colnames(marker)[linkageGroup == lg[i]]
+        ret$distance[[lg[i]]] <- distance 
+        
       
       }
+    
+     # assign names to return object
+     names(ret$LD) <- names(ret$distance) <- lg 
+      
      if(!is.null(file)) dev.off()
      
     # return values (list of chromosomes)

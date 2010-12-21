@@ -30,7 +30,7 @@ gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),
       pheno <- gpData$pheno[Rep[[1]]]
          
       # reshape from long to wide data format
-      pheno <- reshape(pheno,varying=Rep[[1]],timevar=names(Rep)[1],v.names="trait",direction="long",...)
+      pheno <- reshape(pheno,varying=Rep[[1]],idvar="id",timevar=names(Rep)[1],v.names="trait",direction="long",...)
       
       # merge with genotypic data 
        if(!onlyPheno){

@@ -30,9 +30,10 @@ Further arguments that could be passed to function \code{LDheatmap}.
 LD is computed as coefficient of determination \eqn{R^2}. The plot is simply a call of function \code{LDheatmap} in package  \code{LDheatmap}.  
 }
 \value{
-A \code{matrix} containing all pairwise values of \eqn{R^2} for all markers across linkage groups. 
+A list with elements 
+\item{LD}{list with a \code{matrix} containing all pairwise values of \eqn{R^2} or markers for each element of \code{chr}}
+\item{ditance}{list with a \code{matrix} containing all pairwise euclidian distances of markers for each element of \code{chr}}
 }
-
 \seealso{
 \code{\link{codeGeno}}, \code{\link[LDheatmap]{LDheatmap}}, \code{\link{LDDist}}
 }

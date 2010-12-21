@@ -8,7 +8,8 @@ Adding new individuals to 'gpData' object
 This function adds new data for individuals to a \code{gpData} object by adding new phenotypes, genotypes and pedigree.
 }
 \usage{
-add.individuals(gpData, pheno = NULL, geno = NULL, pedigree = NULL, covar = NULL)
+add.individuals(gpData, pheno = NULL, geno = NULL,
+ pedigree = NULL, covar = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

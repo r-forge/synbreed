@@ -5,7 +5,7 @@
 Recoding of genotypic data, imputing of missing values and preselection of markers 
 }
 \description{
-Function to code genotypic data in an object of class \code{gpData}. Raw genotypic data could be in any format (e.g. alleles coded by alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is suitable for biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
+Function to code genotypic data in an object of class \code{gpData}. Raw genotypic data could be in any format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is suitable for biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
 Imputing of missing values can be done with a fixed value, random sampling from allele distribution or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{

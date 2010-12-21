@@ -103,6 +103,10 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
         }
      # close graphic device
      if(!is.null(file)) dev.off()
+     
+      # assign names to return object
+     names(ret) <-  lg 
+      
         
     # return values (list of chromosomes)
     invisible(ret)
