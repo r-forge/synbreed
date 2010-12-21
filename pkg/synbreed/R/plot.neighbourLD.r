@@ -20,22 +20,22 @@ plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,...){
         end <- max(map$pos[map$chr==chr[i]],na.rm=TRUE)
 
         # from RColorBrewer, brewer.pal(11,"RdYlGn")
-        cols <- c("#A50026","#D73027","#F46D43","#FDAE61","#FEE08B","#FFFFBF","#D9EF8B","#A6D96A","#66BD63","#1A9850","#006837")[11:1]
+        cols <- c("#A50026","#D73027","#F46D43","#FDAE61","#FEE08B","#FFFFBF","#D9EF8B","#A6D96A","#66BD63","#1A9850","#006837")[11:1] 
 
 	if(dense){  # calculating smoothed LD
 
         	smoothLD <- smooth(diag(LD$LD[[i]][-nrow(LD$LD[[i]]),-1]))
-                     
+
+ 
+   
         	# visualisation of map
         	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==chr[i]],matrix(rep(smoothLD,20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
 
 	}  # end of if,  smooth LD calculation
 	else{  # using LD directly
-
 		# visualisation of map
-        	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==chr[i]],matrix(rep(diag(LD$LD[[i]]),20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
+        	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==chr[i]],matrix(rep(diag(LD$LD[[i]][-nrow(LD$LD[[i]]),-1]),20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
 	}
-
       if(nMarker) text(i,max(map$pos)*1.05,sum(map$chr==chr[i]))
  
       } # end chromosome loop
