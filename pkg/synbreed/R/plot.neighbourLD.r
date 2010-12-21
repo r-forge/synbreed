@@ -33,7 +33,7 @@ plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,...){
 	else{  # using LD directly
 
 		# visualisation of map
-        	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==chr[i]],matrix(rep(diag(LD$LD[[i]],20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
+        	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==chr[i]],matrix(rep(diag(LD$LD[[i]]),20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
 	}
 
       if(nMarker) text(i,max(map$pos)*1.05,sum(map$chr==chr[i]))
