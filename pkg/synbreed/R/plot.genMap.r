@@ -6,10 +6,18 @@ plotGenMap <- function(map,dense=FALSE,nMarker=TRUE,...){
     chr <- unique(map$chr)
     # without NA
     chr <- chr[!is.na(chr)]
+
+    # add legend for high density plot
+    if (dense){
+      par(mar=c(5,0,4,3.8)+0.1)
+      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=11),matrix(rep(seq(from=0,to=1,length=11),20),nrow=20,byrow=TRUE),col=cols,axes=FALSE,xlab="")
+      axis(side=4,at=round(seq(from=0,to=1,length=11),4),las=1)
+      par(mar=c(5,4,4,1)+0.1)
+    }
     
     
     # initialize map
-    if(dense)layout(matrix(1:2,ncol=2),width=c(0.82,0.18))
+    if(dense) layout(matrix(2:1,ncol=2),width=c(0.82,0.18))
     plot(map,type="n",xaxt="n",xlim=c(0.5,length(chr)+0.5),ylim=c(min(map$pos,na.rm=TRUE),max(map$pos,na.rm=TRUE)*1.1),...) 
     axis(side=1,at=seq(along=chr),labels=chr)
     
@@ -49,12 +57,6 @@ plotGenMap <- function(map,dense=FALSE,nMarker=TRUE,...){
  
       } # end chromosome loop
     
-    # add legend
-    if (dense){
-      par(mar=c(5,0,4,3.8)+0.1)
-      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=11),matrix(rep(seq(from=0,to=1,length=11),20),nrow=20,byrow=TRUE),col=cols,axes=FALSE,xlab="")
-      axis(side=4,at=round(seq(from=0,to=1,length=11),4),las=1)
-      par(mar=c(5,4,4,1)+0.1)
-    }
+   
 }
 
