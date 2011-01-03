@@ -3,7 +3,7 @@
 vanRaden <- function(marker){
     
     # extract information from arguments
-          if(class(marker)=="gpData"){
+          if(any(class(marker)=="gpData")){
              if(!marker$info$codeGeno) stop("use function 'codeGeno' before using 'vanRaden'") 
              marker <- marker$geno
           }

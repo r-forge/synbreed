@@ -1,7 +1,7 @@
 kinship <- function(ped,DH=NULL,ret=c("add","kin","dom","gam")){
 
     # check for 'gpData'
-    if(class(ped)=="gpData"){
+    if(any(class(ped)=="gpData")){
       if (is.null(ped$pedigree)) stop("no pedigree found")
       else ped <- ped$pedigree 
     }  

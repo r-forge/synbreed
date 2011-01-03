@@ -1,6 +1,5 @@
 \name{plotNeighbourLD}
 \alias{plotNeighbourLD}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Plot neighbour linkage disequilibrium (\eqn{r^2})
 }
@@ -52,5 +51,5 @@ plotNeighbourLD(LD,maize2,nMarker=FALSE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ LD }
-\keyword{ neighbourLD }
+\keyword{hplot}
+

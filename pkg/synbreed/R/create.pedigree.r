@@ -36,7 +36,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
      pedigree <- pedigree[!duplicated(pedigree), ]
                                                  
      # sort by generation
-     pedigree <- pedigree[order(gener,partial=ID),]
+     pedigree <- pedigree[order(pedigree$gener,partial=pedigree$ID),]
      colnames(pedigree) <- c("ID","Par1","Par2","gener")
      class(pedigree) <- c("pedigree","data.frame")
      
