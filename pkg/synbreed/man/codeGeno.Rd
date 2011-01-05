@@ -115,8 +115,8 @@ gp.imputed <- codeGeno(gp,impute=TRUE,impute.type="family")
 # example with heterogenous stock mice
 data(mice)
 summary(mice)
-# heterozygous values must be labeled  (takes some minutes)
-# mice.coded <- codeGeno(mice,label.heter=function(x) substr(x,1,1)!=substr(x,3,3)) 
+# heterozygous values must be labeled  (may run some seconds)
+mice.coded <- codeGeno(mice,label.heter=function(x) substr(x,1,1)!=substr(x,3,3)) 
 
                                
 # example with maize data and imputing by family

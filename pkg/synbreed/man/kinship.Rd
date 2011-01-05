@@ -32,7 +32,7 @@ where \eqn{(A1,B1)} denotes the element [A1,B1] in the gametic relationship matr
 
 If \code{ret="dom"}, the dominance relationship matrix is returned. The dominance relationship matrix between individuals A (\eqn{A1,A2}) and B (\eqn{B1,B2}) in case of no inbreeding is given by 
 \deqn{\left[(A1,B1) \cdot (A2,B2) + (A1,B2) \cdot (A2,B1)\right],}{[(A1,B1) * (A2,B2) + (A1,B2) * (A2,B1)],} 
-where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix.  See the vignette for the formulas in case of inbreeding.
+where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix. 
 }
 \value{
 An object of class "relationshipMatrix".

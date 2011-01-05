@@ -86,7 +86,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   
   # add information to element covar
   # sort all available individuals
-  ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),pedigree$ID)))  
+  ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),obj$pedigree$ID))) 
 
   if(is.null(covar)) obj$covar <- data.frame(id=ids)
   else obj$covar$id <- ids 
@@ -105,7 +105,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     # do not use any existing columns named 'genotyped', 'phenotyped' or 'id'
     covar <- covar[!colnames(covar) %in% c("genotyped","phenotyped","id")]
     # merge with existing data
-    if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0)
+    if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,all=TRUE)
     else  obj$covar <- obj$covar
   }
   # further information

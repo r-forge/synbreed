@@ -7,7 +7,7 @@ Plot neighbour linkage disequilibrium (\eqn{r^2})
 A function to visualize LD between adjacent markers.
 }
 \usage{
-plotNeighbourLD(LD, map, nMarker = TRUE, ...)
+plotNeighbourLD(LD, map, nMarker = TRUE, dense=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,10 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
   \item{nMarker}{
 \code{logical}. Add number of markers?
 }
+  \item{dense}{                                       
+\code{logical}. Should visualization for high-density visualization be used?
+}
+
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }

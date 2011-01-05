@@ -1,7 +1,6 @@
 synbreedRref <- bibentry(
    bibtype = "Unpublished",
-   title = "Analysis Pipeline for Genomic Prediction Data
-Using R and synbreed Package",
+   title = "Analysis Pipeline for Genomic Prediction Data Using R and synbreed Package",
    author = "Valentin Wimmer and Theresa Albrecht and Hans-Juergen Auinger and Chris-Carolin Schoen",
    organization = "Technische Universitaet Muenchen",
    address = "Freising, Germany",

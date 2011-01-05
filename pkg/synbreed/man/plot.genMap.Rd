@@ -21,6 +21,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
   \item{nMarker}{
 \code{logical}. Add number of markers?
 }
+
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
