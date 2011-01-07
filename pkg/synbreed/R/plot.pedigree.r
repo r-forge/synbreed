@@ -22,7 +22,7 @@ plot.pedigree <- function(x,effect=NULL,...){
   n <- nrow(pedigree)
   pos <- matrix(data=NA,nrow=n,ncol=2)
   pos[,2] <- max(gener)-gener
-  if (is.null(effect)) pos[,1] <- order(gener,partial=order(pedigree$Par1,decreasing=FALSE)) - cumsum(c(0,table(gener)))[gener+1]   
+  if (is.null(effect)) pos[,1] <- order(gener,partial=order(pedigree$ID,decreasing=TRUE)) - cumsum(c(0,table(gener)))[gener+1]   
   else pos[,1] <- effect
 
   # nice format

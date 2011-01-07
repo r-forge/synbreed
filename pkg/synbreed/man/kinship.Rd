@@ -49,19 +49,27 @@ This is a new version of function \code{kinshipPlants}.
 }
 \examples{
 
-# Animal Example
-ped1 <- create.pedigree(c("A","B","C","D","E"),c(0,0,"A","A","D"),c(0,0,"B","C","B"))
-kinship(ped1,DH=rep(0,5),"add")
+## Animal Example for Legarra et al. (2009), J. Dairy Sci. 92: p. 4660
+id <- 1:17
+par1 <- c(0,0,0,0,0,0,0,0,1,3,5,7,9,11,4,13,13)
+par2 <- c(0,0,0,0,0,0,0,0,2,4,6,8,10,12,11,15,14)
 
-# Plants Example with DH lines
+ped <- create.pedigree(id,par1,par2)
+plot(ped)
+
+# additive relationship
+A <- kinship(ped,ret="add")
+
+
+## Plants Example with DH lines
 id <- c("A","T","DHa","DHb","TCa","TCb")
 par1 <- c(0,0,"A","A","DHa","DHb")
 par2 <- c(0,0,"A","A","T","T")
 ped2 <- create.pedigree(id,par1,par2)
 ped2
+# gametic relationshio
+kinship(ped2,DH=c(0,1,1,1,0,0),"gam")
 # additive relationship
 kinship(ped2,DH=c(0,1,1,1,0,0),"add")
-# dominance relationship
-kinship(ped2,DH=c(0,1,1,1,0,0),"dom")
 
 }

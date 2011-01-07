@@ -1,14 +1,13 @@
 # read genomic prediction data
 
 
-create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,rm.unmapped=FALSE,map.unit="cM"){
+create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,reorderMap=TRUE,map.unit="cM"){
   # some checks on data
   
+  # geno as matrix but not data.frame (storage) 
   if(!is.null(geno)){
      if(class(geno) == "data.frame"){
         geno <- matrix(unlist(geno),nrow=nrow(geno),ncol=ncol(geno),dimnames=dimnames(geno))
-     
-     
      }
   }
 
@@ -71,7 +70,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   # sort markers by chromosome and position within chromosome
   if(!is.null(map)){
     if(any(colnames(map) != c("chr","pos"))) stop("colnames of 'map' must be 'chr' and 'pos'")
-    map <- orderBy(~chr+pos,data=map)
+    if (reorderMap) map <- orderBy(~chr+pos,data=map)
     # sort  columns in geno, too
     geno <- geno[,rownames(map)]
   
@@ -108,6 +107,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,all=TRUE)
     else  obj$covar <- obj$covar
   }
+  
   # further information
   obj$info$map.unit <- map.unit
   obj$info$codeGeno <- FALSE

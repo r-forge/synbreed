@@ -10,7 +10,7 @@ This function takes a set of data and combines all in one object of class \code{
 \usage{
 create.gpData(pheno = NULL, geno = NULL, map = NULL, 
 pedigree = NULL, family = NULL, covar = NULL,
-rm.unmapped = FALSE, map.unit = "cM")
+reorderMap = TRUE, map.unit = "cM")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,8 +32,8 @@ Object of class \code{pedigree}.
   \item{covar}{
 \code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
 }
-  \item{rm.unmapped}{
-Logical. Should unmapped markers be removed from genotypic data? (Not yet implemented)
+  \item{reorderMap}{
+Logical. Should map be reordered by chromosome number and position within chromosome? 
 }
   \item{map.unit}{
 Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp' for physical distance.
