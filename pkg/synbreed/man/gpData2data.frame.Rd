@@ -76,7 +76,7 @@ pheno <- data.frame(loc1=rnorm(10,1,2),loc2=rnorm(10,2,0.2),loc3=rbeta(10,2,4))
 geno <- matrix(rep(c(1,0,2),10),nrow=10)
 colnames(geno) <- c("M1","M2","M3")
 
-# creatin 'gpData' obbject
+# creating 'gpData' obbject
 gp <- create.gpData(pheno=pheno,geno=geno)
 
 # reshape of phenotypic data and merge of genotypic data,

@@ -35,7 +35,7 @@ Valentin Wimmer
 }
 
 \seealso{
-\code{\link{add.individuals}}, \code{\link{create.gpData}}
+\code{\link{add.individuals}}, \code{\link{discard.markers}}
 }
 \examples{
 # creating gpData object

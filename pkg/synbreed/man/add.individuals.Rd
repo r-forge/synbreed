@@ -40,7 +40,7 @@ Valentin Wimmer
 }
 
 \seealso{
-\code{\link{add.markers}}, \code{\link{create.gpData}}
+\code{\link{add.markers}}, \code{\link{discard.individuals}}
 }
 \examples{
 # adding one new DH line to maize data

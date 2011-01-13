@@ -1,7 +1,7 @@
 \name{plotNeighbourLD}
 \alias{plotNeighbourLD}
 \title{
-Plot neighbour linkage disequilibrium (\eqn{r^2})
+Plot neighbour linkage disequilibrium
 }
 \description{
 A function to visualize LD between adjacent markers.
