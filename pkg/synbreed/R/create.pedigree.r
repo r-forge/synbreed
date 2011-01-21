@@ -1,4 +1,4 @@
-create.pedigree <- function(ID,Par1,Par2,gener=NULL){
+create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL){
 
      
      n <- length(ID)
@@ -30,14 +30,14 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL){
  
      
      # gener starts from 0
-     pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,stringsAsFactors=FALSE)
+     if(!is.null(sex)) pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,sex=sex,stringsAsFactors=FALSE)
+     else pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,stringsAsFactors=FALSE)
      
      # removing duplicated entries
      pedigree <- pedigree[!duplicated(pedigree), ]
                                                  
      # sort by generation
      pedigree <- pedigree[order(pedigree$gener,partial=pedigree$ID),]
-     colnames(pedigree) <- c("ID","Par1","Par2","gener")
      class(pedigree) <- c("pedigree","data.frame")
      
      # missing values as 0

@@ -8,7 +8,7 @@ Create pedigree object
 This function can be used to create a \code{pedigree} object. This function allows inlcuding inbreeds in the pedigree.
 }
 \usage{
-create.pedigree(ID, Par1, Par2, gener=NULL)
+create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,9 @@ vector of IDs identifying parent 2 (with animals: mother)
 }
   \item{gener}{
 vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 otherwise.
+}
+  \item{gener}{
+vector identifying the sex (female=0 and male=1). 
 }
 }
 \details{
