@@ -39,7 +39,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
            warning("missing rownames in 'map': assuming to be identical as colnames in 'geno' \n")  
          }
          else{
-          colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
+          #colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
         } 
       }
     }

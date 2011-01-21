@@ -62,14 +62,14 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
        coli <- coli[length(coli):1]
 
        # distance between markers
-       disti <- abs(posi[rowi] - pos[coli])
+       disti <- abs(posi[rowi] - posi[coli])
 
        # create dataset with information from above
        ret[[lg[i]]] <- data.frame(marker1=mn[rowi],marker2=mn[coli],r2=ld.r2i,dist=disti)
 
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...)
+       if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("chromosome",lg[i]),...)
 
        # scatterplot with nls curve
        if(type=="nls"){
@@ -97,7 +97,7 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
           colSum <- matrix(rep(colSums(tab.abs),nrow(tab.abs)),nrow=nrow(tab.abs),byrow=TRUE)
 
           # baplot out of frequency matrix
-          barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs)),space=c(.2),main=paste("Linkage Group",lg[i]),xlim=c(0,ncol(tab.abs)+2.8),ylab="fraction of SNP pairs",...)
+          barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs)),space=c(.2),main=paste("chromosome",lg[i]),xlim=c(0,ncol(tab.abs)+2.8),ylab="fraction of SNP pairs",...)
           legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r2)",cex=1)
          }
         }
