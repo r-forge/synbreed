@@ -6,7 +6,7 @@ LDMap <- function(gpData,chr=NULL,file=NULL,...){
     if(is.null(gpData$map))  stop("no map information available")
 
     # extract information from gpData 
-    mapped <- !(is.na(gpData$map$chr) & is.na(gpData$map$pos)) 
+    mapped <- !(is.na(gpData$map$chr) | is.na(gpData$map$pos))
     marker <- gpData$geno[,mapped]
     linkageGroup <- gpData$map$chr[mapped]
     pos <- gpData$map$pos[mapped]
@@ -29,7 +29,8 @@ LDMap <- function(gpData,chr=NULL,file=NULL,...){
         # from RColorBrewer
         color = c("#7F0000","#B30000","#D7301F","#EF6548","#FC8D59","#FDBB84","#FDD49E","#FEE8C8","#FFF7EC")
         #   using function LDheatmap
-        LDheatmap(ld.r2, LDmeasure="r", color=color, genetic.distances=pos[linkageGroup == lg[i]],   geneMapLabelY=0.12, geneMapLabelX=0.35,...)
+        MapUnit <- ifelse(gpData$info$map.unit=="cM","genetics","physical")
+        LDheatmap(ld.r2, LDmeasure="r", color=color, genetic.distances=pos[linkageGroup == lg[i]],distances=MapUnit,   geneMapLabelY=0.12, geneMapLabelX=0.35,...)
          
         # return  matrix of LD (r2)
         colnames(ld.r2) <- rownames(ld.r2) <- colnames(marker)[linkageGroup == lg[i]]

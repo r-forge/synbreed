@@ -46,9 +46,9 @@ rownames(pheno) <- 1:10
 geno <- matrix(sample(c(1,0,2,NA),size=120,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=10)
 rownames(geno) <-  1:10
-colnames(geno) <- paste("M",1:12,sep="")
 # genetic map
 map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
+colnames(geno) <- rownames(map) <-  paste("M",1:12,sep="")
 # as gpData object
 gp <- create.gpData(pheno,geno,map)
 

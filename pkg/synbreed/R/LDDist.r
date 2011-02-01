@@ -35,7 +35,7 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
         ( 1 + ( (3+ p*x) * (12 + 12 * p + p^2*x^2)) / ( n*(2+p*x) * (11 + p*x)))
       }
       # fit curve to data
-      curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,...)
+      curve(fitcurve(x,p=p,n=n), from=min(overallDist,na.rm=TRUE), to = max(overallDist,na.rm=TRUE), add=TRUE,col=2,lwd=2,...)
     }
     
     # initialize return value
@@ -69,19 +69,17 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
 
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("chromosome",lg[i]),...)
+       if(type=="p" | type=="nls") plot(r2~dist,data=ret[[lg[i]]],main=paste("chromosome",lg[i]),...)
 
        # scatterplot with nls curve
-       if(type=="nls"){
-               plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...) 
-               smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=nrow(markeri))
-       }
+       if(type=="nls") smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=nrow(markeri))
+
 
        # stacked histogramm
        if(type=="bars"){
           # use default breaks
           if(is.null(breaks)){
-             breaks.dist <- seq(from=min(ret[[lg[i]]]$dist),to=max(ret[[lg[i]]]$dist),length=6)
+             breaks.dist <- seq(from=min(ret[[lg[i]]]$dist,na.rm=TRUE),to=max(ret[[lg[i]]]$dist,na.rm=TRUE),length=6)
              breaks.r2 <- seq(from=1,to=0,by=-0.2) 
           }
           # use user- specified breaks

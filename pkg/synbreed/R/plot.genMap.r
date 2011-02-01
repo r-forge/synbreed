@@ -57,7 +57,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, ...)
         }
         # add nr. of markers
         if (nMarker)
-            text(i, max(map$pos) * 1.05, sum(map$chr == chr[i],na.rm=TRUE))
+            text(i, max(map$pos,na.rm=TRUE) * 1.05, sum(map$chr == chr[i],na.rm=TRUE))
     }
 
 }

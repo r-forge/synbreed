@@ -1,5 +1,5 @@
-\name{summary.map}
-\alias{summary.map}
+\name{summaryGenMap}
+\alias{summaryGenMap}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Summarizing marker map information
@@ -8,7 +8,7 @@ Summarizing marker map information
 This function could be used to summarize information from a marker map and returns a \code{data.frame} with one row for each chromosome.
 }
 \usage{
-summary.map(map)
+summaryGenMap(map)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,5 +35,5 @@ Valentin Wimmer
 }
 \examples{
 data(maize)
-summary.map(maize)
+summaryGenMap(maize)
 }

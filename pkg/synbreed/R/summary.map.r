@@ -1,6 +1,6 @@
 # summary for maker maps
 
-summary.map <- function(map){
+summaryGenMap <- function(map){
 
      # information from arguments
      if(class(map)=="gpData") map <- map$map
