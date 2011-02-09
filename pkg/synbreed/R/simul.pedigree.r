@@ -1,4 +1,4 @@
-simul.pedigree <- function(generations=2,ids=4,animals=FALSE){
+simul.pedigree <- function(generations=2,ids=4,animals=FALSE,familySize=1){
 
         # if only one value is given, set samenumber for all generations
         if(length(ids)==1) ids <- rep(ids,times=generations)
@@ -14,7 +14,7 @@ simul.pedigree <- function(generations=2,ids=4,animals=FALSE){
             Par1[gener==i] <- ID[sample(ID[gener==i-1],size=ids[i],replace=TRUE)]
             Par2[gener==i] <- ID[sample(ID[gener==i-1],size=ids[i],replace=TRUE)]
           }
-          ped <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener-1) 
+          ped <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener-1,sex=NA) 
         }
         # define sire and dams for animals (no inbreeds)
         else{
@@ -31,9 +31,21 @@ simul.pedigree <- function(generations=2,ids=4,animals=FALSE){
             Par2[gener==i] <- ID[sample(ID[(gener==i-1) & sex==0],size=ids[i],replace=TRUE)]
           }
            ped <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener-1,sex=sex) 
-        } 
+        }
+        
+        # create full-sib families in the last generation
+        pedTemp <- ped[ped$gener==generations-1,]
+        ped <- ped[ped$gener<generations-1,]
+        pedFamily <- data.frame(ID=rep(1:(nrow(pedTemp)*familySize)+pedTemp$ID[1]-1),
+                                Par1=rep(pedTemp$Par1,each=familySize),
+                                Par2=rep(pedTemp$Par2,each=familySize),
+                                gener=rep(pedTemp$gener,each=familySize),
+                                sex=rep(pedTemp$sex,each=familySize)) 
+        ped <- rbind(ped,pedFamily)
         
         
         class(ped) <- c("pedigree","data.frame") 
         return(ped)
 }
+
+simul.pedigree()

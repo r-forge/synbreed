@@ -1,17 +1,22 @@
 simul.phenotype <- function(pedigree=NULL,A=NULL,mu=100,vc=NULL,Nloc=1,Nrepl=1){
 
-        if(is.null(A) & is.null(pedigree)) step("Either 'pedigree' or 'A' must be given")
+        if(is.null(A) & is.null(pedigree)) step("either 'pedigree' or 'A' must be given")
         # create A matrix if missing
         if (is.null(A)) A <- synbreed::kinship(pedigree,ret="add")
-       
+        if (is.null(vc)) stop("missing variance components")
         
         # read data out of arguments
         N <- nrow(A)         
         n <- N*Nloc*Nrepl
-        sigmae <- sqrt(vc$sigma2e)
-        sigmaa <- sqrt(vc$sigma2a)
-        sigmal <- sqrt(vc$sigma2l)
-        sigmab <- sqrt(vc$sigma2b)
+        if(!is.null(vc$sigma2e)) sigmae <- sqrt(vc$sigma2e)
+        else sigmae <- 1
+        if(!is.null(vc$sigma2a)) sigmaa <- sqrt(vc$sigma2a)
+        else sigmaa <- 0
+        if(!is.null(vc$sigma2l)) sigmal <- sqrt(vc$sigma2l)
+        else sigmal <- 0
+        if(!is.null(vc$sigma2b)) sigmab <- sqrt(vc$sigma2b)
+        else sigmab <- 0
+        
         namesA <- rownames(A) 
         if(is.null(rownames(A))) namesA <- 1:N  
                                      
