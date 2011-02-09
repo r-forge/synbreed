@@ -18,7 +18,7 @@ discard.individuals(gpData, which)
 object of class \code{gpData}
 }
   \item{which}{
-character vector either identifying the \code{colnames} of markers in \code{geno} to discard (in \code{discard.markers})or the \code{rownames} of individuals to discard (in \code{discard.individuals}).
+character vector either identifying the \code{colnames} of markers in \code{geno} to discard (in \code{discard.markers}) or the \code{rownames} of individuals to discard (in \code{discard.individuals}).
 }
 }
 \value{
