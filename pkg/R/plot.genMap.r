@@ -1,24 +1,46 @@
-plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, ...)
+plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
 {
-    if (class(map) == "gpData") map <- map$map
+    if (class(map) == "gpData"){
+       map.unit <- map$info$map.unit
+       map <- map$map
+    }
+    else map.unit <- "unit"
     chr <- unique(map$chr)
     chr <- chr[!is.na(chr)]
 
     # add legend to the left side
-    if (dense)  layout(matrix(2:1, ncol = 2), width = c(0.82, 0.18))
+    if (dense)  layout(matrix(2:1, ncol = 2), width = c(0.82, 0.25))
 
-    if (dense) {
     # colors from RColorBrewer red - green
-    cols <- c("#A50026", "#D73027", "#F46D43", "#FDAE61",
-                "#FEE08B", "#FFFFBF", "#D9EF8B", "#A6D96A", "#66BD63",
-                "#1A9850", "#006837")[11:1]
-        par(mar = c(5, 0, 4, 3.8) + 0.1)
-        image(seq(-0.4, 0.4, length = 20), seq(from = 0, to = 1,
-            length = 11), matrix(rep(seq(from = 0, to = 1, length = 11),
+    cols <- c( "#FFFFBF","#FEE08B","#FDAE61","#F46D43","#D73027","#A50026")
+
+    # compute density for a grid of values
+    # cpmpute in advanve to use maxDens for legend
+    if (dense) {
+    x.grid <- y.grid <- list()
+    maxDens <- 0
+    for (i in seq(along = chr)) {
+        start <- min(map$pos[map$chr == chr[i]], na.rm = TRUE)
+        end <- max(map$pos[map$chr == chr[i]], na.rm = TRUE)
+        x.grid[[i]] <- seq(from=start,to=end,by=bw)
+        y.grid[[i]] <- rep(NA,length(x.grid))
+        for(j in seq(along=x.grid[[i]])){
+           y.grid[[i]][j] <- sum(map$pos[map$chr == chr[i]] >= x.grid[[i]][j]-bw/2 & map$pos[map$chr == chr[i]] <= x.grid[[i]][j]+bw/2)
+           if (y.grid[[i]][j]>maxDens) maxDens <- y.grid[[i]][j]
+        }
+      }
+    }
+
+    # add legend to the left margin of the plot
+    if (dense) {
+
+        par(mar = c(5, 1, 4, 3.8) + 0.1)
+        image(seq(-0.3, 0.3, length = 20), seq(from = 0, to =  maxDens,
+            length = 6), matrix(rep(seq(from = 0, to = maxDens, length = 6),
             20), nrow = 20, byrow = TRUE), col = cols, axes = FALSE,
-            xlab = "")
-        axis(side = 4, at = round(seq(from = 0, to = 1, length = 11),
-            4), las = 1)
+            xlab = "",main=paste("Nr. of SNPs \n within",bw,map.unit),xlim=c(-0.6,0.6))
+        axis(side = 4, at = seq(from = 0, to = maxDens, length = 6)
+            , labels=round(seq(from = 0, to = maxDens, length = 6),0),las = 1)
         par(mar = c(5, 4, 4, 1) + 0.1)
     }
 
@@ -33,22 +55,16 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, ...)
 
    # plot each chromosome
     for (i in seq(along = chr)) {
-        n <- sum(map$chr == chr[i], na.rm = TRUE)
-        start <- min(map$pos[map$chr == chr[i]], na.rm = TRUE)
-        end <- max(map$pos[map$chr == chr[i]], na.rm = TRUE)
-        if (dense) {
-            bw <- (end - start)/n
-            densEst <- density(map$pos[map$chr == chr[i]], kernel = "rectangular",
-                from = min(map$pos[map$chr == chr[i]], na.rm = TRUE),
-                to = max(map$pos[map$chr == chr[i]], na.rm = TRUE),
-                cut = TRUE, bw = bw, na.rm=TRUE)
-            densEst$y <- densEst$y/max(densEst$y)
 
-            image(seq(i - 0.4, i + 0.4, length = 20), densEst$x,
-                matrix(rep(densEst$y, 20), nrow = 20, byrow = TRUE),
+        if (dense) {
+                image(seq(i - 0.35, i + 0.35, length = 20), x.grid[[i]],
+                matrix(rep(y.grid[[i]], 20), nrow = 20, byrow = TRUE),
                 col = cols, add = TRUE)
         }
         else {
+            n <- sum(map$chr == chr[i], na.rm = TRUE)
+            start <- min(map$pos[map$chr == chr[i]], na.rm = TRUE)
+            end <- max(map$pos[map$chr == chr[i]], na.rm = TRUE)
             lines(x = c(i, i), y = c(start, end))
             for (j in 1:n) {
                 lines(x = c(i - 0.4, i + 0.4), y = rep(map$pos[map$chr ==
@@ -62,3 +78,5 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, ...)
 
 }
 
+
+plotGenMap(maize,dense=TRUE)

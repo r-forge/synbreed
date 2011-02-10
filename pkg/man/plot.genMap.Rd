@@ -8,7 +8,7 @@ Plot marker map
 A function to visualize high-density marker maps.
 }
 \usage{
-plotGenMap(map, dense = FALSE, nMarker = TRUE, ...)
+plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,13 +21,16 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
   \item{nMarker}{
 \code{logical}. Add number of markers?
 }
+  \item{bw}{
+\code{numeric}. Bandwith to use for  \code{dense=TRUE}
+}
 
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
 }
 \details{
-In low density plot, single position of markers are drawn. In high-density plot, the distribution of the markers is visualized as a heatmap of density estimation. In this case, 0 is lowest observed density for single chromosome and 1 highest. A colorkey is added. 
+In low density plot, single position of markers are drawn. In high-density plot, the distribution of the markers is visualized as a heatmap of density estimation together with a color key. In this case, the number of markers within a intervall of length \code{bw} is counted.
 }
 \value{
 Plot of the marker positions within  each chromosome. One chromosome is displayed from the first to the last marker.
