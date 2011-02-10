@@ -1,1 +1,0 @@
-load("maize.Rdata")

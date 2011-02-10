@@ -1,1 +1,0 @@
-load("mice.Rdata")
