@@ -22,7 +22,7 @@ object of class \code{gpData} with marker matrix with arbitrary coding. Missing 
 logical scalar. Should missing value be replaced by imputing?
 }
   \item{impute.type}{
-character with one out of "fix", "random", or "family". See details.
+character with one out of \code{"fix"}, \code{"random"} or \code{"family"}. See details.
 }
   \item{replace.value}{
 numeric value to replace missing values in case \code{impute.type="fix"}. 
@@ -40,7 +40,7 @@ This is either a scalar or vector of characters to identify heterozygous genotyp
 logical scalar. Should duplicated markers be kept, i.e. markers which have a LD of 1? 
 }
  \item{verbose}{
-	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is usefull if selection of markers is performed as in this case information on discarded markers is given.
+	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is useful to obtain numbers of discarded markers due to different criteria.
  }
 }                                         
 \details{
@@ -53,8 +53,8 @@ Coding of genotypic data is done in the following order (depending on choice of 
 
 Imputing is done according to \code{impute.type}
 \describe{
-\item{"fix"}{All missing values are imputed by \code{replace.value}}. Note that in most cases only value 1 should be choosen.
-\item{"random"}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes, i.e. 0 and 2, values are sampled from distribution with probabilites \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}}. 
+\item{"fix"}{All missing values are imputed by \code{replace.value}. Note that in most cases only value 1 should be choosen.}
+\item{"random"}{The missing values for a marker \eqn{j} are sampeled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes, i.e. 0 and 2, values are sampled from distribution with probabilites \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}.}
 \item{"family"}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in population \eqn{k}. If marker \eqn{j} is fixed in population \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},                                          
 the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with family information, a column named "family" in element \code{covar} of \code{gpData} is necessary. This column should contain a \code{charater} or \code{numeric} to identify family of all genotyped individuals. Family information for nongenotyped individuals is not used an could be set to any value, i.e. NA}                          
@@ -66,7 +66,10 @@ the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with f
 
 6. Discarding duplicated markers if \code{keep.identical=FALSE}
 
-7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame}) 
+7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
+
+Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations for random imputation is given by \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_F + 0.5n_R}{n_F + n_R}}{(nF + 0.5nR)/(nF+nR)} where \eqn{n_F}{nF} is the number of imputations within monomorphic families and \eqn{n_R}{nR} polymorphic families.
+
 }
 \value{
 An object of class \code{gpData} containing the recoded marker matrix. If \code{maf} or \code{nmiss} were specified or \code{keep.identical=FALSE}, dimension od \code{geno} and \code{map} may be reduced due to selection of markers  The genotype which is homozygous for the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.
@@ -75,9 +78,7 @@ An object of class \code{gpData} containing the recoded marker matrix. If \code{
 \author{
 Valentin Wimmer
 }
-\note{
-Information about imputing is printed on the screen (approximative run time, number of imputations by family structure and number of random imputations).
-}
+
 
 \examples{
 # create marker data for 9 SNPs and 10 homozygous individuals 

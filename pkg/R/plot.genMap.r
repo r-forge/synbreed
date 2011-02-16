@@ -46,8 +46,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
 
    # make an empty plot 
     plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
-        0.5), ylim = c(min(map$pos, na.rm = TRUE), max(map$pos,
-        na.rm = TRUE) * 1.1), ...)
+        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
         
    # x-axis     
     axis(side = 1, at = seq(along = chr), labels = chr)
@@ -77,6 +76,3 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
     }
 
 }
-
-
-plotGenMap(maize,dense=TRUE)

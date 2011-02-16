@@ -122,8 +122,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
  
   # initialize counter  
    cnt1 <- 0   # for nr. of imputations with family structure
-   cnt2 <- 0    # for nr. of random imputations
-   
+   cnt2 <- 0   # for nr. of random imputations
+   cnt3 <- 0   # for expected fractions of correct omputations by family structure = p^2 + (1-p)^2
 
   # if impute.type="fix", replace missing values according to specified value
   if(impute.type=="fix"){  
@@ -182,13 +182,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
        # initialize counter (- number of heterozygous values) 
         for (j in 1:M){
              cnt2 <- cnt2 + sum(is.na(res[,j]))
+             # estimation of running time after the first iteration
              if(j==1) ptm <- proc.time()[3]
-              # old:
-              #if (length(table(res[,j]))==1)   res[is.na(res[,j]),j] <- 0
-              #else res[is.na(res[,j]),j] <- as.numeric(sample(names(table(res[,j])),size=sum(is.na(res[,j])),prob=table(res[,j])/n,replace=TRUE))
-             
-              # new
+
               p <- mean(res[,j],na.rm=TRUE)/2  # minor allele frequency
+              cnt3 <- cnt3 + sum(is.na(res[,j])) * (p^2+(1-p)^2)
               if(is.null(label.heter)){        # assuming only 2 homozygous genotypes
                   res[is.na(res[,j]),j] <- sample(c(0,2),size=sum(is.na(res[,j])),prob=c(1-p,p),replace=TRUE)
               }
@@ -258,9 +256,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
     cat("\n")
     cat("Summary of imputation \n")
     cat(paste("  total number of missing values                :",nmv,"\n"))
-    cat(paste("  number of imputations by family structure     :",cnt1,"\n"))
+    if(impute.type=="family") cat(paste("  number of imputations by family structure     :",cnt1,"\n"))
     cat(paste("  number of random imputations                  :",cnt2,"\n"))
-    cat(paste("  approximate fraction of correct imputations   :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
+    if(impute.type=="family") cat(paste("  approximate fraction of correct imputations   :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
+    if(impute.type=="random") cat(paste("  approximate fraction of correct imputations   :",round((cnt3)/cnt2,3),"\n"))
   }
   
   # overwrite original genotypic data
