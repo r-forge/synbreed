@@ -37,10 +37,10 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
         par(mar = c(5, 1, 4, 3.8) + 0.1)
         image(seq(-0.3, 0.3, length = 20), seq(from = 0, to =  maxDens,
             length = 6), matrix(rep(seq(from = 0, to = maxDens, length = 6),
-            20), nrow = 20, byrow = TRUE), col = cols, axes = FALSE,
+            20), nrow = 20, byrow = TRUE), col = cols, breaks=round(seq(0,maxDens,length=7)), axes = FALSE,
             xlab = "",main=paste("Nr. of SNPs \n within",bw,map.unit),xlim=c(-0.6,0.6))
-        axis(side = 4, at = seq(from = 0, to = maxDens, length = 6)
-            , labels=round(seq(from = 0, to = maxDens, length = 6),0),las = 1)
+        axis(side = 4, at = round(seq(from = 0, to = maxDens, length = 6))
+            , labels=round(seq(from = 0, to = maxDens, length = 6)),las = 1)
         par(mar = c(5, 4, 4, 1) + 0.1)
     }
 
@@ -58,7 +58,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
         if (dense) {
                 image(seq(i - 0.35, i + 0.35, length = 20), x.grid[[i]],
                 matrix(rep(y.grid[[i]], 20), nrow = 20, byrow = TRUE),
-                col = cols, add = TRUE)
+                col = cols, breaks=round(seq(0,maxDens,length=7)), add = TRUE)
         }
         else {
             n <- sum(map$chr == chr[i], na.rm = TRUE)
