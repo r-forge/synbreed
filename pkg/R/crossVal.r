@@ -1,6 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=FALSE) 
+crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BLR","BLR2"),prior=NULL) 
 {
     # number of observations 
     n <- length(unique(y[,1]))
@@ -10,8 +10,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     if(is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),paste("Z",1:ncol(Z),sep=""))
 
     # catch errors	
-    if(is.null(varComp) & !VC.est) stop("Variance components have to be specified")
-    if(!VC.est & length(varComp)<2) stop("Variance components should be at least two, one for the random effect and one residual variance")
+    if(is.null(varComp) & VC.est=="commit") stop("Variance components have to be specified")
+    if(VC.est=="commit" & length(varComp)<2) stop("Variance components should be at least two, one for the random effect and one residual variance")
     if(sampling!="random" & is.null(popStruc)) stop("popStruc has to be given")
     if(sampling!="random" & !is.null(popStruc)){
       if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in data")
@@ -21,9 +21,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     if ( k > n) stop("folds should be equal or less than the number of observations")
     if (is.null(cov.matrix)){
 	warning("no covariance matrix is given, assuming one iid random effect")
-	cov.matrix <- list(diag(ncol(Z)))
+	if(VC.est!="BLR")cov.matrix <- list(diag(ncol(Z)))
     }
-    if (!VC.est & length(cov.matrix)!=(length(varComp)-1)) stop("number of variance components does not match given covariance matrices")
+    if (VC.est=="commit" & length(cov.matrix)!=(length(varComp)-1)) stop("number of variance components does not match given covariance matrices")
 
     # prepare X,Z design matrices
     X <- as.matrix(X)
@@ -34,7 +34,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     # prepare covariance matrices
     m <- length(cov.matrix)
     cat("Model with ",m," covariance matrix/ces \n")
-    if (VC.est==FALSE){
+    if (VC.est=="commit"){
 	# function for constructing GI
 	rmat<-NULL
    	for( i in 1:length(cov.matrix)){
@@ -53,6 +53,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
       }
      # covariance matrices for ASReml
      else { 
+	if(VC.est=="ASReml"){
       	for ( i in 1:length(cov.matrix)){
 	relMatASReml(as.matrix(cov.matrix[[i]]),ginv=FALSE,file=paste("ID",i,".giv",sep=""),digits=10)
 	}
@@ -62,6 +63,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	cat("",file="cov1.pin")
 	cat("",file="cov2.pin")
 	cat("",file="cov3.pin")
+	}
      }
 
     # set seed for replications
@@ -111,14 +113,16 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  y2 <- matrix(y.u[order(popStruc)],ncol=1)
 	  b <- table(popStruc)
 	  modu<-length(which.pop)%%k
+	  set.seed(seed2[i])
 	  val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
 	  val.samp2<- rep(val.samp,b)
 	  val.samp3 <- data.frame(y2,val.samp2)
 	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
+	print(head(val.samp3))
 	 }
 
    # CV in R with comitting variance components
-   if (!VC.est){
+   if (VC.est=="commit"){
      # start k folds
      COR2 <- NULL
      bu2 <- NULL
@@ -167,11 +171,13 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	rownames(COR2)[ii]<-paste("fold",ii,sep="")
 	# regression = bias
 	lm1 <- lm(y2~y.dach)
+	#print(lm1)
+	#print(y.dach)
 	lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
 	rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
 	}
     }
-    if (VC.est){# estimation of variance components with ASReml for every ES
+    if (VC.est=="ASReml"){# estimation of variance components with ASReml for every ES
 		# start k folds
      		COR2 <- NULL
      		bu2 <- NULL
@@ -180,9 +186,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		n.TS<-NULL
 		for (ii in 1:k){
 			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
-			samp.kf<-val.samp3==ii
+			samp.kf<-val.samp3[,2]==ii
 			y.samp<-y
-			y.samp[y.samp[,1] %in% samp.kf[,2],2]<-NA # set values of TS to NA
+			y.samp[samp.kf,2]<-NA # set values of TS to NA
+			print(head(y.samp))
 
 			# for unix
 			if(.Platform$OS.type == "unix"){
@@ -236,6 +243,100 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
 		}
 	}
+   	if (VC.est=="BLR"){# estimation of variance components with BLR for every ES
+		# start k folds
+     		COR2 <- NULL
+     		bu2 <- NULL
+     		lm.coeff <- NULL
+     		y.TS <- NULL
+		n.TS<-NULL
+		for (ii in 1:k){
+			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
+			samp.kf<-val.samp3[,2]==ii
+			y.samp<-y
+			y.samp[samp.kf,2]<-NA # set values of TS to NA
+			print(head(y.samp))
+
+			# choosing priors
+			SbR <-  prior[1]
+			SE <- prior[2]
+
+			mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BLR/50k_rep",i,"_fold",ii,sep=""))
+			samp.es <- val.samp3[val.samp3[,2]!=ii,]
+
+			# solve MME
+			bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+			bu2 <- cbind(bu2,bu)
+			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
+
+			# TS
+			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
+			print(length(y2))
+			y.dach <- data.frame(mod50k$yHat[samp.kf])
+			rownames(y.dach) <- y[samp.kf ,1]
+			print(head(y.dach))
+			print(dim(y.dach))
+			n.TS <- rbind(n.TS,nrow(y.dach))
+			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
+			# Predicted breeding/testcross values of TS
+			y.TS <- rbind(y.TS,y.dach)
+			# predictive ability
+			COR <- round(cor(y2,y.dach[ ,1]),digits=4)
+			COR2 <- rbind(COR2,COR)
+			rownames(COR2)[ii]<-paste("fold",ii,sep="")
+			# regression = bias
+			lm1 <- lm(y2~y.dach[ ,1])
+			lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
+			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+		}
+	}
+   	if (VC.est=="BLR2"){# estimation of variance components with Baysian Lasso for every ES
+		# start k folds
+     		COR2 <- NULL
+     		bu2 <- NULL
+     		lm.coeff <- NULL
+     		y.TS <- NULL
+		n.TS<-NULL
+		for (ii in 1:k){
+			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
+			samp.kf<-val.samp3[,2]==ii
+			y.samp<-y
+			y.samp[samp.kf,2]<-NA # set values of TS to NA
+			print(head(y.samp))
+
+			# choosing priors
+			SE <- prior[1]
+
+			mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BLR/50k_rep",i,"_fold",ii,sep=""))
+			samp.es <- val.samp3[val.samp3[,2]!=ii,]
+
+			# solve MME
+			bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+			bu2 <- cbind(bu2,bu)
+			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
+
+			# TS
+			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
+			print(length(y2))
+			y.dach <- data.frame(mod50k$yHat[samp.kf])
+			rownames(y.dach) <- y[samp.kf ,1]
+			print(head(y.dach))
+			print(dim(y.dach))
+			n.TS <- rbind(n.TS,nrow(y.dach))
+			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
+			# Predicted breeding/testcross values of TS
+			y.TS <- rbind(y.TS,y.dach)
+			# predictive ability
+			COR <- round(cor(y2,y.dach[ ,1]),digits=4)
+			COR2 <- rbind(COR2,COR)
+			rownames(COR2)[ii]<-paste("fold",ii,sep="")
+			# regression = bias
+			lm1 <- lm(y2~y.dach[ ,1])
+			lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
+			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+		}
+	}
+
 	n.TS2<-cbind(n.TS2,n.TS)
     	colnames(n.TS2)[i] <- paste("rep",i,sep="")
 	y.TS <- y.TS[order(rownames(y.TS)),]
@@ -249,7 +350,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
     }
     # return object
-    if(!(VC.est)) est.method <- "committed" else est.method <- "reestimated with ASReml"
+    if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
     obj <- list( n.TS=n.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method)
     class(obj) <- "cvData"
     return(obj)
