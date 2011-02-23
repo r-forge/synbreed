@@ -11,7 +11,8 @@ and variance components can be commited or reestimated with ASReml.
 \usage{
 crossVal(y, X, Z, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL, 
          sampling = c("random", "within family", "across family"), 
-         varComp = NULL, popStruc = NULL, VC.est = FALSE)
+         varComp = NULL, popStruc = NULL, VC.est = c("commit",
+         "ASReml","BRR","BL"),prior=NULL,verbose=TRUE)
 }
 \arguments{
   \item{y}{Phenotypic records of class \code{matrix} with two columns, where the first column contains IDs of individuals and the second column contains the phenotypic values.
@@ -31,15 +32,17 @@ If no covariance is given, the identity matrix is used.
 }
   \item{sampling}{Different sampling strategies can be "\code{random}", "\code{within family}" or "\code{across family}".
 }
-  \item{varComp}{A \code{vector} of variance components for the random effects, which has to be specified if \code{VC.est=FALSE}. The first variance components should be 
+  \item{varComp}{A \code{vector} of variance components for the random effects, which has to be specified if \code{VC.est="commit"}. The first variance components should be 
 the same order as the given covariance matrices, the last given variance component is for the residuals.
 }
   \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to families.
 }
-  \item{VC.est}{Logical. Should variance components be reestimated within the estimation set of each fold in the cross validation? Default is 
-\code{FALSE} and the variance components have to be defined in \code{varComp}. If \code{TRUE}, up to three variance components and the residual variance are reestimated with ASReml 
-(have to be installed on the system). 
+  \item{VC.est}{Should variance components be reestimated with "\code{"ASReml"}" or with a Bayesian approach "\code{"BRR"}" and "\code{"BL"}" within the estimation set of each fold in the cross validation? If
+\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For "\code{ASReml}", ASReml software have to be installed on the system. 
 }
+  \item{prior}{A vector with prior for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
+}
+
 }
 \details{
 In cross validation the data set is splitted into an estimation (ES) and a test set (TS). The effects are estimated with the ES to predict observations in the TS.
@@ -50,7 +53,7 @@ To account for the family structure, \code{sampling} can be defined as:
 \item{random}{ Does not account for family structure, random sampling within the complete data set}
 \item{within family}{ Accounts for within family information, each family is splitted into k subsets}
 \item{across family}{ Accounts for across family information, ES and TS contains a set of complete families}}
-The following mixed model equation is used:
+The following mixed model equation is used for \code{VC.est="commit"}:
 
 \deqn{\bf y=\bf{Xb}+\bf{Zu}+\bf e}{y=Xb+Zu+e} with \deqn{\bf u \sim N(0,G\sigma^2_u)}{u=N(0,Gsigma2u)}
 
@@ -69,7 +72,8 @@ A regression coefficient \eqn{< 1} implies extreme high (low) values of the pred
 \item{Seed}{Seed for \code{set.seed()}}
 \item{rep.seed}{Calculated seeds for each replication}
 \item{nr.ranEff}{Number of random effects} 
-\item{VC.est.method}{Method for the variance components ("\code{committed}" or "\code{reestimated with ASReml}")}}
+\item{VC.est.method}{Method for the variance components ("\code{committed}" or "\code{reestimated with ASReml/BRR/BL}")}
+}
 \references{
 Legarra A, Robert-Granie C, Manfredi E, Elsen J (2008) Performance of genomic selection in mice. Genetics 180:611-618
 
@@ -96,9 +100,9 @@ X <- matrix(rep(1,nrow(maize2$pheno)),ncol=1)
 Z <- diag(nrow(maize2$pheno))
 # cross validation
 cv.maize <- crossVal(maize2$pheno,X,Z,cov.matrix=list(rad),k=5,Rep=1,
-            Seed=123,sampling="random",varComp=c(26.5282,48.5785))
+            Seed=123,sampling="random",varComp=c(26.5282,48.5785),VC.est="commit")
 cv.maize2 <- crossVal(maize2$pheno,X,Z=maize2$geno,k=5,Rep=1,
-             Seed=123,sampling="random",varComp=c(0.0704447,48.5785))
+             Seed=123,sampling="random",varComp=c(0.0704447,48.5785),VC.est="commit")
 # comparing results, both are equal!
 cv.maize$PredAbi
 cv.maize2$PredAbi
