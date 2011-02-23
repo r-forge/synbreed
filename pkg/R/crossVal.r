@@ -1,6 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BLR","BLR2"),prior=NULL,verbose=TRUE) 
+crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),prior=NULL,verbose=TRUE) 
 {
     # number of observations 
     n <- length(unique(y[,1]))
@@ -191,9 +191,11 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 			# for unix
 			if(.Platform$OS.type == "unix"){
+				ASTest <- system(paste("ls"),intern=TRUE)
+				if (!(is.null(ASTest[ASTest=="ASReml"]))) system(paste("mkdir ASReml"))
 				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 				asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
-				system(paste('asreml -p cov',m,'.pin',sep=''))
+				system(paste('asreml -p Model.pin',sep=''))
 				system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
 				system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
 				system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
@@ -204,8 +206,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			# for windows
 			if(.Platform$OS.type == "windows"){
 				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
-				system(paste('ASReml.exe -ns10000 cov',m,'.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
-				system(paste('ASReml.exe -p cov',m,'.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
+				system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
+				system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
 				shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
 				shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
 				shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
@@ -241,7 +243,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
 		}
 	}
-   	if (VC.est=="BLR"){# estimation of variance components with BLR for every ES
+   	if (VC.est=="BRR"){# estimation of variance components with BLR for every ES
 		# start k folds
      		COR2 <- NULL
      		bu2 <- NULL
@@ -259,7 +261,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			SbR <-  prior[1]
 			SE <- prior[2]
 
-			mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BLR/50k_rep",i,"_fold",ii,sep=""))
+			BRRTest <- system(paste("ls"),intern=TRUE)
+			if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
+
+			mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
 			samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 			# solve MME
@@ -288,7 +293,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
 		}
 	}
-   	if (VC.est=="BLR2"){# estimation of variance components with Baysian Lasso for every ES
+   	if (VC.est=="BL"){# estimation of variance components with Baysian Lasso for every ES
 		# start k folds
      		COR2 <- NULL
      		bu2 <- NULL
@@ -305,7 +310,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			# choosing priors
 			SE <- prior[1]
 
-			mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BLR/50k_rep",i,"_fold",ii,sep=""))
+			BLTest <- system(paste("ls"),intern=TRUE)
+			if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
+
+			mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
 			samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 			# solve MME
