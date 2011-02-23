@@ -1,6 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BLR","BLR2"),prior=NULL) 
+crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BLR","BLR2"),prior=NULL,verbose=TRUE) 
 {
     # number of observations 
     n <- length(unique(y[,1]))
@@ -57,12 +57,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
       	for ( i in 1:length(cov.matrix)){
 	relMatASReml(as.matrix(cov.matrix[[i]]),ginv=FALSE,file=paste("ID",i,".giv",sep=""),digits=10)
 	}
-	cat(paste("Model \n"," ID      	  !A \n"," Yield  	  !D* \n","ID1.giv \n","Pheno.txt !skip 1 !AISING !maxit 11\n","!MVINCLUDE \n \n","Yield  ~ mu !r giv(ID,1)",sep=""),file="cov1.as")
-	cat(paste("Model \n"," ID      	  !A \n"," Yield  	  !D* \n","ID1.giv \n","ID2.giv \n","Pheno.txt !skip 1 !AISING !maxit 11\n","!MVINCLUDE \n \n","Yield  ~ mu !r giv(ID,1) giv(ID,2)",sep=""),file="cov2.as")
-	cat(paste("Model \n"," ID      	  !A \n"," Yield  	  !D* \n","ID1.giv \n","ID2.giv \n","ID3.giv \n","Pheno.txt !skip 1 !AISING !maxit 11\n","!MVINCLUDE \n \n","Yield  ~ mu !r giv(ID,1) giv(ID,2) giv(ID,3)",sep=""),file="cov3.as")
-	cat("",file="cov1.pin")
-	cat("",file="cov2.pin")
-	cat("",file="cov3.pin")
+	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
+	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
+	cat(paste("Model \n ID     	  !A \n Yield  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nYield  ~ mu !r ",ID2,sep=""),file="Model.as")
+	cat("",file="Model.pin")
 	}
      }
 
@@ -130,7 +128,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      y.TS <- NULL
      n.TS <- NULL
      for (ii in 1:k){
-	cat("Replication: ",i,"\t Fold: ",ii," \n")
+	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
 	# select ES, k-times
 	samp.es <- val.samp3[val.samp3[,2]!=ii,] 
 
@@ -194,13 +192,13 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			# for unix
 			if(.Platform$OS.type == "unix"){
 				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
-				asreml <- system(paste('asreml -ns10000 cov',m,'.as',sep=''),TRUE)
+				asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
 				system(paste('asreml -p cov',m,'.pin',sep=''))
-				system(paste('mv cov',m,'.asr ','cov',m,'_rep',i,'_fold',ii,'.asr',sep=''))
-				system(paste('mv cov',m,'.sln ','cov',m,'_rep',i,'_fold',ii,'.sln',sep=''))
-				system(paste('mv cov',m,'.vvp ','cov',m,'_rep',i,'_fold',ii,'.vvp',sep=''))
-				system(paste('mv cov',m,'.yht ','cov',m,'_rep',i,'_fold',ii,'.vht',sep=''))
-				system(paste('mv cov',m,'.pvc ','cov',m,'_rep',i,'_fold',ii,'.pvc',sep=''))				
+				system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
+				system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
+				system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
+				system(paste('mv Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''))
+				system(paste('mv Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''))				
 			}
 
 			# for windows
@@ -208,16 +206,16 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 				system(paste('ASReml.exe -ns10000 cov',m,'.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
 				system(paste('ASReml.exe -p cov',m,'.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
-				shell(paste('move cov',m,'.asr ','cov',m,'_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move cov',m,'.sln ','cov',m,'_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move cov',m,'.vvp ','cov',m,'_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move cov',m,'.yht ','cov',m,'_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move cov',m,'.pvc ','cov',m,'_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
+				shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+				shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+				shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+				shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+				shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
 			}
 
 			samp.es <- val.samp3[val.samp3[,2]!=ii,]
 			# read in ASReml solutions
-			asreml.sln<-matrix(scan(paste('cov',m,'_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
+			asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
 			# solve MME
 			bu <-  as.numeric(asreml.sln[,3])
 			bu2 <- cbind(bu2,bu)
