@@ -4,15 +4,16 @@
 \title{Cross validation of different prediction models
 }
 \description{Function for the application of the cross validation procedure on prediction 
-models with fixed and random effects. Covariance matrices must be commited to the function 
-and variance components can be commited or reestimated with ASReml.
+models with fixed and random effects. Covariance matrices must be committed to the function 
+and variance components can be committed or reestimated with ASReml or the BLR function.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 crossVal(y, X, Z, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL, 
          sampling = c("random", "within family", "across family"), 
          varComp = NULL, popStruc = NULL, VC.est = c("commit",
-         "ASReml","BRR","BL"),prior=NULL,verbose=TRUE)
+         "ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,
+	 burnIn=1000,thin=10)
 }
 \arguments{
   \item{y}{Phenotypic records of class \code{matrix} with two columns, where the first column contains IDs of individuals and the second column contains the phenotypic values.
@@ -40,9 +41,12 @@ the same order as the given covariance matrices, the last given variance compone
   \item{VC.est}{Should variance components be reestimated with "\code{"ASReml"}" or with a Bayesian approach "\code{"BRR"}" and "\code{"BL"}" within the estimation set of each fold in the cross validation? If
 \code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For "\code{ASReml}", ASReml software have to be installed on the system. 
 }
-  \item{prior}{A vector with prior for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
+  \item{priorBLR}{A vector with priors for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
 }
-
+  \item{verbose}{Logical. Wether output shows replications and folds.
+}
+  \item{nIter, burnIn, thin}{Number of iterations, burn-in and thinning for \code{VC.est="BRR"} and \code{VC.est="BL"} in the BLR-function
+}
 }
 \details{
 In cross validation the data set is splitted into an estimation (ES) and a test set (TS). The effects are estimated with the ES to predict observations in the TS.
@@ -80,6 +84,8 @@ Legarra A, Robert-Granie C, Manfredi E, Elsen J (2008) Performance of genomic se
 Luan T, Wooliams JA, Lien, S, Kent M, Svendsen M, Meuwissen THE (2009) The accuracy of genomic selection in Norwegia red cattle assessed by crosss-validation. Genetics 183:1119-1126
 
 Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Measurement 11:5-11
+
+Crossa J, de los Campos G, Perez P, Gianola D, Burgueno J, et al. (2010) Prediction of genetic values of quantitative traits in plant breeding using pedigree and molecular markers, Genetics 186:713-724
 
 }
 \author{Theresa Albrecht
