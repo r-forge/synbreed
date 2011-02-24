@@ -1,6 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE) 
+crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,burnIn=1000,thin=10) 
 {
     # number of observations 
     n <- length(unique(y[,1]))
@@ -19,11 +19,15 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     }
     if ( k < 2) stop("folds should be equal or greater than 2")
     if ( k > n) stop("folds should be equal or less than the number of observations")
+    # checking covariance matrices
+    if(VC.est=="BL")cov.matrix <- list(diag(ncol(Z)))
+    if(VC.est=="BRR")cov.matrix <- list(diag(ncol(Z)))
     if (is.null(cov.matrix)){
 	warning("no covariance matrix is given, assuming one iid random effect")
-	if(VC.est!="BLR")cov.matrix <- list(diag(ncol(Z)))
     }
     if (VC.est=="commit" & length(cov.matrix)!=(length(varComp)-1)) stop("number of variance components does not match given covariance matrices")
+    if(VC.est=="BL" & priorBLR=NULL) stop("prior for varE has to be specified")
+    if(VC.est=="BRR" & priorBLR=NULL) stop("prior for varBR and varE have to be specified")
 
     # prepare X,Z design matrices
     X <- as.matrix(X)
@@ -215,7 +219,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
 
 		# BRR function
-		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
+		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 		# solution
@@ -237,7 +241,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
 
 		# BL function
-		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
+		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
@@ -277,7 +281,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     	colnames(n.TS2)[i] <- paste("rep",i,sep="")
 	y.TS <- y.TS[sort.list(rownames(y.TS)),]
     	y.TS2 <- cbind(y.TS2,y.TS)
-	print(dim(y.TS2))
+	#print(dim(y.TS2))
     	colnames(y.TS2)[i] <- paste("rep",i,sep="")
     	COR3 <- cbind(COR3,COR2)
     	colnames(COR3)[i] <- paste("rep",i,sep="")
