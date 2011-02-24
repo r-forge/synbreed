@@ -34,7 +34,7 @@ summary.gpData <- function(object,...){
       } 
       if(!is.null(obj$map)){
          ans$geno$markerChr <- table(obj$map$chr)
-         mapped <- !(is.na(obj$map$chr) & is.na(obj$map$pos)) 
+         mapped <- !(is.na(obj$map$chr) | is.na(obj$map$pos))
          ans$geno$mappedMarkers <- sum(mapped)
       }
 
