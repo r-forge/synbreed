@@ -1,6 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),prior=NULL,verbose=TRUE) 
+crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE) 
 {
     # number of observations 
     n <- length(unique(y[,1]))
@@ -116,11 +116,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  val.samp2<- rep(val.samp,b)
 	  val.samp3 <- data.frame(y2,val.samp2)
 	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
-	print(head(val.samp3))
+	 #print(head(val.samp3))
 	 }
 
-   # CV in R with comitting variance components
-   if (VC.est=="commit"){
      # start k folds
      COR2 <- NULL
      bu2 <- NULL
@@ -129,224 +127,157 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      n.TS <- NULL
      for (ii in 1:k){
 	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
-	# select ES, k-times
-	samp.es <- val.samp3[val.samp3[,2]!=ii,] 
 
-	# vectors and matrices for MME
-	y1 <- y[y[,1] %in% samp.es[,1],2]
-	Z1 <-Z[rownames(Z) %in% samp.es[,1],]
-	X1 <-X[rownames(X) %in% samp.es[,1],]
-	# crossproducts
-	XX <- crossprod(X1)
-	XZ <- crossprod(X1,Z1)
-	ZX <- crossprod(Z1,X1)
-	ZZGI <-  crossprod(Z1)+ GI
-	Xy <- crossprod(X1,y1)
-	Zy <- crossprod(Z1,y1)
-	# Left hand side	
-	LHS <- rbind(cbind(XX, XZ),cbind(ZX,ZZGI))
-	# Right hand side
-	RHS <- rbind(Xy,Zy)
+	   # CV in R with comitting variance components
+	   if (VC.est=="commit"){
+		# select ES, k-times
+		samp.es <- val.samp3[val.samp3[,2]!=ii,] 
 	
-	# solve MME
-	bu <-  as.vector(ginv(LHS)%*%RHS)
-	bu2 <- cbind(bu2,bu)
-	colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
-
-	# TS
-	Z2 <- Z[!(rownames(Z) %in% samp.es[,1]),]
-	X2 <- X[!(rownames(X) %in% samp.es[,1]),]
-	XZ2 <- cbind(X2,Z2)
-	y2 <- y[!(y[,1] %in% samp.es[,1]),2]
-	y.dach <- XZ2%*%bu
-	n.TS <- rbind(n.TS,nrow(Z2))
-	rownames(n.TS)[ii]<-paste("fold",ii,sep="")
-	# Predicted breeding/testcross values
-	y.TS <- rbind(y.TS,y.dach)
-	# predictive ability
-	COR <- round(cor(y2,y.dach),digits=4)
-	COR2 <- rbind(COR2,COR)
-	rownames(COR2)[ii]<-paste("fold",ii,sep="")
-	# regression = bias
-	lm1 <- lm(y2~y.dach)
-	#print(lm1)
-	#print(y.dach)
-	lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
-	rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
-	}
-    }
-    if (VC.est=="ASReml"){# estimation of variance components with ASReml for every ES
-		# start k folds
-     		COR2 <- NULL
-     		bu2 <- NULL
-     		lm.coeff <- NULL
-     		y.TS <- NULL
-		n.TS<-NULL
-		for (ii in 1:k){
-			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
-			samp.kf<-val.samp3[,2]==ii
-			y.samp<-y
-			y.samp[samp.kf,2]<-NA # set values of TS to NA
-			print(head(y.samp))
-
-			# for unix
-			if(.Platform$OS.type == "unix"){
-				ASTest <- system(paste("ls"),intern=TRUE)
-				if (!(is.null(ASTest[ASTest=="ASReml"]))) system(paste("mkdir ASReml"))
-				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
-				asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
-				system(paste('asreml -p Model.pin',sep=''))
-				system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
-				system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
-				system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
-				system(paste('mv Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''))
-				system(paste('mv Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''))				
-			}
-
-			# for windows
-			if(.Platform$OS.type == "windows"){
-				write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
-				system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
-				system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
-				shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-				shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
-			}
-
-			samp.es <- val.samp3[val.samp3[,2]!=ii,]
-			# read in ASReml solutions
-			asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
-			# solve MME
-			bu <-  as.numeric(asreml.sln[,3])
-			bu2 <- cbind(bu2,bu)
-			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
-
-			# TS
-			Z2 <- Z[!(rownames(Z) %in% samp.es[,1]),]
-			X2 <- X[!(rownames(X) %in% samp.es[,1]),]
-			XZ2 <- cbind(X2,Z2)
-			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
-			y.dach <- XZ2%*%bu
-			n.TS <- rbind(n.TS,length(y.dach))
-			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
-			# Predicted breeding/testcross values of TS
-			y.TS <- rbind(y.TS,y.dach)
-			# predictive ability
-			COR <- round(cor(y2,y.dach),digits=4)
-			COR2 <- rbind(COR2,COR)
-			rownames(COR2)[ii]<-paste("fold",ii,sep="")
-			# regression = bias
-			lm1 <- lm(y2~y.dach)
-			lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
-			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+		# vectors and matrices for MME
+		y1 <- y[y[,1] %in% samp.es[,1],2]
+		Z1 <-Z[rownames(Z) %in% samp.es[,1],]
+		X1 <-X[rownames(X) %in% samp.es[,1],]
+		# crossproducts
+		XX <- crossprod(X1)
+		XZ <- crossprod(X1,Z1)
+		ZX <- crossprod(Z1,X1)
+		ZZGI <-  crossprod(Z1)+ GI
+		Xy <- crossprod(X1,y1)
+		Zy <- crossprod(Z1,y1)
+		# Left hand side	
+		LHS <- rbind(cbind(XX, XZ),cbind(ZX,ZZGI))
+		# Right hand side
+		RHS <- rbind(Xy,Zy)
+		
+		# solve MME
+		bu <-  as.vector(ginv(LHS)%*%RHS)
 		}
-	}
-   	if (VC.est=="BRR"){# estimation of variance components with BLR for every ES
-		# start k folds
-     		COR2 <- NULL
-     		bu2 <- NULL
-     		lm.coeff <- NULL
-     		y.TS <- NULL
-		n.TS<-NULL
-		for (ii in 1:k){
-			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
-			samp.kf<-val.samp3[,2]==ii
-			y.samp<-y
-			y.samp[samp.kf,2]<-NA # set values of TS to NA
-			print(head(y.samp))
 
-			# choosing priors
-			SbR <-  prior[1]
-			SE <- prior[2]
+	   # estimation of variance components with ASReml for every ES
+   	   if (VC.est=="ASReml"){
+		samp.kf<-val.samp3[,2]==ii
+		y.samp<-y
+		y.samp[samp.kf,2]<-NA # set values of TS to NA
+		#print(head(y.samp))
 
-			BRRTest <- system(paste("ls"),intern=TRUE)
-			if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
+		# for unix
+		if(.Platform$OS.type == "unix"){
 
-			mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
-			samp.es <- val.samp3[val.samp3[,2]!=ii,]
+			# checking directories for ASReml
+			ASTest <- system(paste("ls"),intern=TRUE)
+			if (!(is.null(ASTest[ASTest=="ASReml"]))) system(paste("mkdir ASReml"))
 
-			# solve MME
-			bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
-			bu2 <- cbind(bu2,bu)
-			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
+			# data output for ASReml
+			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 
-			# TS
-			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
-			print(length(y2))
-			y.dach <- data.frame(mod50k$yHat[samp.kf])
-			rownames(y.dach) <- y[samp.kf ,1]
-			print(head(y.dach))
-			print(dim(y.dach))
-			n.TS <- rbind(n.TS,nrow(y.dach))
-			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
-			# Predicted breeding/testcross values of TS
-			y.TS <- rbind(y.TS,y.dach)
-			# predictive ability
-			COR <- round(cor(y2,y.dach[ ,1]),digits=4)
-			COR2 <- rbind(COR2,COR)
-			rownames(COR2)[ii]<-paste("fold",ii,sep="")
-			# regression = bias
-			lm1 <- lm(y2~y.dach[ ,1])
-			lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
-			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+			# ASReml function
+			asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
+			system(paste('asreml -p Model.pin',sep='')) # for variance components in an extra file
+
+			system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
+			system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
+			system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
+			system(paste('mv Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''))
+			system(paste('mv Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''))				
 		}
-	}
-   	if (VC.est=="BL"){# estimation of variance components with Baysian Lasso for every ES
-		# start k folds
-     		COR2 <- NULL
-     		bu2 <- NULL
-     		lm.coeff <- NULL
-     		y.TS <- NULL
-		n.TS<-NULL
-		for (ii in 1:k){
-			cat('\n number of cov-matrix:',m,'Replication: ',i,'\t Fold: ',ii,'\n \n')
-			samp.kf<-val.samp3[,2]==ii
-			y.samp<-y
-			y.samp[samp.kf,2]<-NA # set values of TS to NA
-			print(head(y.samp))
 
-			# choosing priors
-			SE <- prior[1]
-
-			BLTest <- system(paste("ls"),intern=TRUE)
-			if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
-
-			mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
-			samp.es <- val.samp3[val.samp3[,2]!=ii,]
-
-			# solve MME
-			bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
-			bu2 <- cbind(bu2,bu)
-			colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
-
-			# TS
-			y2 <- y[!(y[,1] %in% samp.es[,1]),2]
-			print(length(y2))
-			y.dach <- data.frame(mod50k$yHat[samp.kf])
-			rownames(y.dach) <- y[samp.kf ,1]
-			print(head(y.dach))
-			print(dim(y.dach))
-			n.TS <- rbind(n.TS,nrow(y.dach))
-			rownames(n.TS)[ii]<-paste("fold",ii,sep="")
-			# Predicted breeding/testcross values of TS
-			y.TS <- rbind(y.TS,y.dach)
-			# predictive ability
-			COR <- round(cor(y2,y.dach[ ,1]),digits=4)
-			COR2 <- rbind(COR2,COR)
-			rownames(COR2)[ii]<-paste("fold",ii,sep="")
-			# regression = bias
-			lm1 <- lm(y2~y.dach[ ,1])
-			lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
-			rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+		# for windows
+		if(.Platform$OS.type == "windows"){
+			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+			system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
+			system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
+			shell(paste('move Model.asr ','Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.sln ','Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.vvp ','Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.yht ','Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.pvc ','Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
 		}
-	}
 
+		samp.es <- val.samp3[val.samp3[,2]!=ii,]
+		# read in ASReml solutions
+		asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
+		# solve MME
+		bu <-  as.numeric(asreml.sln[,3])
+	   }
+
+	   # estimation of variance components with Bayesian ridge regression for every ES
+   	   if (VC.est=="BRR"){
+		samp.kf<-val.samp3[,2]==ii
+		y.samp<-y
+		y.samp[samp.kf,2]<-NA # set values of TS to NA
+		#print(head(y.samp))
+		# choosing priors
+		SbR <-  priorBLR[1]
+		SE <- priorBLR[2]
+
+		# cheching directories for BRR
+		BRRTest <- system(paste("ls"),intern=TRUE)
+		if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
+
+		# BRR function
+		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
+		samp.es <- val.samp3[val.samp3[,2]!=ii,]
+
+		# solution
+		bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+	  }
+
+	  # estimation of variance components with Baysian Lasso for every ES
+   	  if (VC.est=="BL"){
+		samp.kf<-val.samp3[,2]==ii
+		y.samp<-y
+		y.samp[samp.kf,2]<-NA # set values of TS to NA
+		#print(head(y.samp))
+
+		# choosing priors
+		SE <- priorBLR[1]
+
+		# checking directory for BL
+		BLTest <- system(paste("ls"),intern=TRUE)
+		if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
+
+		# BL function
+		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=5000,burnIn=1000,thin=10,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
+
+		samp.es <- val.samp3[val.samp3[,2]!=ii,]
+
+		# solutions of BL
+		bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
+		#print(length(bu))
+	  }
+
+	  # solution vector
+	  bu2 <- cbind(bu2,bu)
+	  colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
+	  # TS
+	  Z2 <- Z[!(rownames(Z) %in% samp.es[,1]),]
+	  X2 <- X[!(rownames(X) %in% samp.es[,1]),]
+	  XZ2 <- cbind(X2,Z2)
+	  #print(dim(XZ2))
+	  y2 <- y[!(y[,1] %in% samp.es[,1]),2]
+	  y.dach <- XZ2%*%bu
+	  #print(head(y.dach))
+	  #print(dim(y.dach))
+	  n.TS <- rbind(n.TS,nrow(y.dach))
+	  rownames(n.TS)[ii]<-paste("fold",ii,sep="")
+          # Predicted breeding/testcross values
+          y.TS <- rbind(y.TS,y.dach)
+	  # predictive ability
+	  COR <- round(cor(y2,y.dach),digits=4)
+	  COR2 <- rbind(COR2,COR)
+	  rownames(COR2)[ii]<-paste("fold",ii,sep="")
+	  # regression = bias
+	  lm1 <- lm(y2~as.numeric(y.dach))
+	  #print(lm1)
+	  #print(y.dach)
+ 	  lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
+	  rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+   	}
 	n.TS2<-cbind(n.TS2,n.TS)
     	colnames(n.TS2)[i] <- paste("rep",i,sep="")
-	y.TS <- y.TS[order(rownames(y.TS)),]
+	y.TS <- y.TS[sort.list(rownames(y.TS)),]
     	y.TS2 <- cbind(y.TS2,y.TS)
+	print(dim(y.TS2))
     	colnames(y.TS2)[i] <- paste("rep",i,sep="")
     	COR3 <- cbind(COR3,COR2)
     	colnames(COR3)[i] <- paste("rep",i,sep="")
