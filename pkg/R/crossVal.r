@@ -26,8 +26,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	warning("no covariance matrix is given, assuming one iid random effect")
     }
     if (VC.est=="commit" & length(cov.matrix)!=(length(varComp)-1)) stop("number of variance components does not match given covariance matrices")
-    if(VC.est=="BL" & priorBLR=NULL) stop("prior for varE has to be specified")
-    if(VC.est=="BRR" & priorBLR=NULL) stop("prior for varBR and varE have to be specified")
+    if(VC.est=="BL" & is.null(priorBLR)) stop("prior for varE has to be specified")
+    if(VC.est=="BRR" & is.null(priorBLR)) stop("prior for varBR and varE have to be specified")
 
     # prepare X,Z design matrices
     X <- as.matrix(X)
@@ -214,12 +214,15 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		SbR <-  priorBLR[1]
 		SE <- priorBLR[2]
 
-		# cheching directories for BRR
+		# checking directories for BRR
+		if(.Platform$OS.type == "unix"){
 		BRRTest <- system(paste("ls"),intern=TRUE)
 		if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
+		}
 
 		# BRR function
 		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
+
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 		# solution
@@ -237,8 +240,10 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		SE <- priorBLR[1]
 
 		# checking directory for BL
+		if(.Platform$OS.type == "unix"){
 		BLTest <- system(paste("ls"),intern=TRUE)
 		if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
+		}
 
 		# BL function
 		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
@@ -276,7 +281,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  #print(y.dach)
  	  lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
 	  rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
-   	}
+   	}  # end loop for k-folds
+
 	n.TS2<-cbind(n.TS2,n.TS)
     	colnames(n.TS2)[i] <- paste("rep",i,sep="")
 	y.TS <- y.TS[sort.list(rownames(y.TS)),]
@@ -289,7 +295,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	rownames(bu3)<-names.eff
     	lm.coeff2 <- cbind(lm.coeff2,lm.coeff)
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
-    }
+    }  # end loop for replication
+
     # return object
     if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
     obj <- list( n.TS=n.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method)
