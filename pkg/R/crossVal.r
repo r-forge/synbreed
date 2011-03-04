@@ -24,8 +24,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     if(VC.est=="BRR")cov.matrix <- list(diag(ncol(Z)))
     if (is.null(cov.matrix)){
 	warning("no covariance matrix is given, assuming one iid random effect")
+    	if(VC.est=="commit")cov.matrix <- list(diag(ncol(Z)))
     }
-    if (VC.est=="commit" & length(cov.matrix)!=(length(varComp)-1)) stop("number of variance components does not match given covariance matrices")
+    if (VC.est=="commit" & length(cov.matrix)!=length(varComp)-1) stop("number of variance components does not match given covariance matrices")
     if(VC.est=="BL" & is.null(priorBLR)) stop("prior for varE has to be specified")
     if(VC.est=="BRR" & is.null(priorBLR)) stop("prior for varBR and varE have to be specified")
 
