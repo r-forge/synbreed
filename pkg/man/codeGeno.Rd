@@ -60,11 +60,11 @@ Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in populatio
 the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with family information, a column named "family" in element \code{covar} of \code{gpData} is necessary. This column should contain a \code{charater} or \code{numeric} to identify family of all genotyped individuals. Family information for nongenotyped individuals is not used an could be set to any value, i.e. NA}                          
 }
 
-4. Recoding of alleles after imputation, if necessary due to changes after imputation
+4. Recoding of alleles after imputation, if necessary due to changes in allele frequencies by imputed alleles
 
 5. Discarding markers with a minor allele frequency of <= \code{maf}
 
-6. Discarding duplicated markers if \code{keep.identical=FALSE}
+6. Discarding duplicated markers if \code{keep.identical=FALSE}. The first marker of a block of duplicated markers is retained.
 
 7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
 

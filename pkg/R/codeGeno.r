@@ -38,6 +38,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
   # elements from control list
   if(impute)  impute.type <- match.arg(impute.type)
+  noHet <- is.null(label.heter) # are there heterozygous genotypes, we need this for random imputation
  
   # catch errors 
   if (impute){
@@ -82,10 +83,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
       }
       else stop("label.heter must be a character string or a function")
       } 
-   }
    # make sure that NA is not in label.heter
    # otherwise missing values would be masked
    label.heter <- label.heter[!is.na(label.heter)]
+   }
+   
    
    
    # function to recode alleles within one locus : 0 = major, 2 = minor 
@@ -187,7 +189,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
 
               p <- mean(res[,j],na.rm=TRUE)/2  # minor allele frequency
               cnt3 <- cnt3 + sum(is.na(res[,j])) * (p^2+(1-p)^2)
-              if(is.null(label.heter)){        # assuming only 2 homozygous genotypes
+              if(noHet){        # assuming only 2 homozygous genotypes
                   res[is.na(res[,j]),j] <- sample(c(0,2),size=sum(is.na(res[,j])),prob=c(1-p,p),replace=TRUE)
               }
               else{                            # assuming 3 genotypes
@@ -228,7 +230,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
   if(!keep.identical){
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
-       if (verbose) cat("step 6 :",sum(which.duplicated),"duplicated marker(s) discarded \n")
+       if (verbose) cat("step 6 :",sum(which.duplicated),"duplicated marker(s) removed \n")
        cnames <- cnames[!which.duplicated]
        # update map 
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]

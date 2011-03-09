@@ -5,7 +5,7 @@ summary.pedigree <- function(object,...){
      else  ped <- object
       
      n <- nrow(ped) 
-     ans <- list(nID=n,nPar1=length(unique(ped$Par1)),nPar2=length(unique(ped$Par1)),nGener=length(unique(ped$gener)),nUnknownParents=sum(ped$Par1==0)+sum(ped$Par2==0))
+     ans <- list(nID=n,nPar1=length(unique(ped$Par1[ped$Par1!=0])),nPar2=length(unique(ped$Par2[ped$Par2!=0])),nGener=length(unique(ped$gener)),nUnknownParents=sum(ped$Par1==0)+sum(ped$Par2==0))
      if(!is.null(ped$sex)) ans$sex <- c(males=sum(ped$sex),females=sum(1-ped$sex))
      class(ans) <- "summary.pedigree"
      ans

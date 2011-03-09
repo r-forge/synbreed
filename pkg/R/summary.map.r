@@ -20,6 +20,8 @@ summaryGenMap <- function(map){
 
      # return data.frame
      ret <- data.frame(noM = len, range=rge, avDist = avDist, maxDist = maxDist, minDist = minDist,row.names=names(len))
+     # keep same order as original map
+     ret <- ret[order(order(unique(chr))),]
      return(ret)
 
 }
