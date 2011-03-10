@@ -195,7 +195,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family"),
               else{                            # assuming 3 genotypes
                   res[is.na(res[,j]),j] <- sample(c(0,1,2),size=sum(is.na(res[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
               }
-             if(j==1) cat("         approximate run time ",(proc.time()[3] - ptm)*M," seconds \n",sep=" ")
+             if(j==ceiling(M/100) & verbose) cat("         approximate run time ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
         }   
    }    
   

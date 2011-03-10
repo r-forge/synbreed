@@ -45,7 +45,7 @@ logical scalar. Should duplicated markers be kept, i.e. markers which have a LD 
 }                                         
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
-1. Discarding markers due with fraction > \code{nmiss} of missing values
+1. Discarding markers with fraction > \code{nmiss} of missing values
 
 2. Recoding alleles from character/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
 
@@ -68,7 +68,7 @@ the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with f
 
 7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
 
-Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations for random imputation is given by \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_F + 0.5n_R}{n_F + n_R}}{(nF + 0.5nR)/(nF+nR)} where \eqn{n_F}{nF} is the number of imputations within monomorphic families and \eqn{n_R}{nR} polymorphic families.
+Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations by marginal allele distribution is \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_F + 0.5n_R}{n_F + n_R}}{(nF + 0.5nR)/(nF+nR)} where \eqn{n_F}{nF} is the number of imputations within monomorphic families and \eqn{n_R}{nR} polymorphic families.
 
 }
 \value{
