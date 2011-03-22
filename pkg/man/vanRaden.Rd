@@ -2,7 +2,7 @@
 \alias{vanRaden}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Genomic relationship matrix according to vanRaden
+Genomic relationship matrix according to vanRaden (depreciated)
 }
 \description{
 This function computes the genomic relationship matrix with marker information from genotypic data with \eqn{n} genotypes and \eqn{p} markers. 
@@ -18,7 +18,7 @@ vanRaden(marker)
 }
 \details{
 The computation is the same for homozygous and heterozygous loci. The formula for the genomic relationship matrix according to vanRaden is
-\deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=M-P} and \eqn{M} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2. \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
+\deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=M-P} and \eqn{M} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
 }
 \value{
 An object of class \code{relationshipMatrix} which is a symmetric \eqn{nxn} matrix containing the relationship coefficients.

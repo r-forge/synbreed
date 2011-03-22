@@ -27,7 +27,7 @@ Valentin Wimmer
 
 \examples{
 ped <- simul.pedigree(gener=4,7)
-A <- kinship(ped)
+A <- kin(ped,ret="add")
 summary(A)
 }
 \keyword{methods}

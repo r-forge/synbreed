@@ -36,7 +36,7 @@ This function is obsolete and only available due to downward compatibility. Bett
 }
 
 \seealso{
-\code{\link{plot.relationshipMatrix}} ,\code{\link{kinship}}
+\code{\link{plot.relationshipMatrix}} ,\code{\link{kin}}
 }
 
 \examples{

@@ -55,8 +55,9 @@ ped.raw <- matrix(c(1,  0,   0,
                  8,  2,   2 ),byrow=TRUE,ncol=3)
 
 ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3])
+gp <- create.gpData(pedigree=ped)
 
-A <- kinship(ped,ret="add")
+A <- kin(ped,ret="add")
 write.relationshipMatrix(A,type="ginv")
 }
 \keyword{IO}

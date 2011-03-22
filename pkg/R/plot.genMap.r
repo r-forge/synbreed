@@ -12,7 +12,10 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
     if (dense)  layout(matrix(2:1, ncol = 2), width = c(0.82, 0.25))
 
     # colors from RColorBrewer red - green
-    cols <- c( "#FFFFBF","#FEE08B","#FDAE61","#F46D43","#D73027","#A50026")
+    # display.brewer.pal(11, "RdYlGn")
+    #cols <- c( "#FFFFBF","#FEE08B","#FDAE61","#F46D43","#D73027","#A50026")
+    # display.brewer.pal(7, "Reds")
+    cols <- c("#FCBBA1", "#FC9272", "#FB6A4A", "#EF3B2C", "#CB181D", "#99000D")
 
     # compute density for a grid of values
     # cpmpute in advanve to use maxDens for legend

@@ -30,7 +30,7 @@ summary.gpData <- function(object,...){
              frequencies[i] <- sum(geno==genotypes[i],na.rm=TRUE)/nobs
          }
          names(frequencies) <- genotypes
-         ans$geno <- list(nMarkers=ncol(geno),genotypes=frequencies,nNA=sum(is.na(geno),na.rm=TRUE)/nobs)
+         ans$geno <- list(nMarkers=ncol(geno),genotypes=round(frequencies,3),nNA=round(sum(is.na(geno),na.rm=TRUE)*100/nobs,3))
       } 
       if(!is.null(obj$map)){
          ans$geno$markerChr <- table(obj$map$chr)[unique(obj$map$chr)]     # keep same order as in map
@@ -64,8 +64,8 @@ print.summary.gpData <- function(x,...){
     cat("geno \n")
     cat("\t No. of markers",x$geno$nMarkers,"\n")
     cat("\t genotypes",names(x$geno$genotypes),"\n")
-    cat("\t frequencies",round(x$geno$genotypes,3),"\n")
-    cat("\t NA's",round(x$geno$nNA*100,3),"%\n")
+    cat("\t frequencies",x$geno$genotypes,"\n")
+    cat("\t NA's",x$geno$nNA,"%\n")
     cat("map \n")
     cat("\t No. of mapped markers ",x$geno$mappedMarkers,"\n")
     cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n")

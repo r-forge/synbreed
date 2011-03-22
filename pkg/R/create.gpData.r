@@ -80,7 +80,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
   # return object
   # geno as matrix
-  geno <- data.matrix(geno,TRUE)
+  if(!is.null(geno)) geno <- data.matrix(geno,TRUE)
   obj <- list(covar=NULL,pheno=pheno,geno=geno,map=map,pedigree=pedigree)
   
   # add information to element covar

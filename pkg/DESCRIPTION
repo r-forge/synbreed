@@ -1,9 +1,9 @@
 Package: synbreed
 Type: Package
-Title: Analysis Pipeline for Genomic Prediction Data Using R
-Version: 0.4-4
-Date: 2010-03-16
-Author: Valentin Wimmer with contributions by Theresa Albrecht and Hans-Juergen Auinger
+Title: Framework for the anaylsis of genomic prediction data using R
+Version: 0.5-0
+Date: 2010-03-22
+Author: Valentin Wimmer with contributions by Chris-Carolin Schoen, Theresa Albrecht and Hans-Juergen Auinger
 Depends: lattice, igraph, MASS, LDheatmap, qtl, doBy, BLR
 Suggests: kinship, regress
 Maintainer: Valentin Wimmer <Valentin.Wimmer@wzw.tum.de>                                                 

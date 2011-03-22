@@ -1,7 +1,7 @@
 \name{rogers}
 \alias{rogers}
 \title{
-Genomic relatedness based on marker similarity
+Genomic relatedness based on marker similarity (depreciated)
 }
 \description{
 This function computes the genomic relationship matrix with marker information from genotypic data with \eqn{n} genotypes and \eqn{m} biallelic markers. Kinship is reciprocal to Rogers's distance
