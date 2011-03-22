@@ -49,6 +49,35 @@ echo $contents; } ?>
     <ul>
       <li> The R-package <tt>synbreed</tt> provides a framework for the analysis of genomic prediction data (Genomic Selection, GWAS, QTL-mapping) within
 an open source software. <br>
+      <li> Features </li>  
+      <ul>
+        <li> Data processing </li>
+          <ul>
+            <li> Combining raw data sources to a gpData object </li>
+            <li>  Conversion from and to class cross in package qtl </li>
+            <li> Coding marker data into number of copies of the minor allele </li>
+            <li> Preselection of markers according to MAF, % missing values and LD  </li>
+            <li> Imputation of missing genotypes by marginal allele distribution, family structure for fully homozygous inbred individuals or flanking markers using Beagle </li>
+          </ul>
+         <li> Data visualization and analysis </li> 
+             <ul>
+                <li> Summary method for classes gpData, pedigree and relationshipMatrix </li>
+                <li> Marker map representation for low and high density maps </li>
+                <li> LD computation as r2 and LD decay visualization as as scatterplot or
+stacked histogram  </li>
+                <li> Pedigree tree and kinship visualization of relatedness between individuals </li>    
+             </ul>
+           <li> Statistical models </li>  
+             <ul>
+                <li> Estimation of pedigree based relationship (additive and dominance) </li>
+                <li> Marker based relationship    </li>
+                <li> Cross-validation for BLUP, Ridge Regression and Bayesian methods  </li>
+             </ul>
+            </ul>     
+            <li>The package comes with ABSOLUTELY NO WARRANTY; for details
+see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/gpl.html</a>
+(GPL). </li> 
+      
     </ul>
   </ul>
 </ul>
@@ -57,6 +86,12 @@ an open source software. <br>
 <blockquote>
   <blockquote>
     <blockquote> 
+     <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
+         <blockquote> 
+         <li> <a href="http://www.computationalgenetics.se/QTLMAS08/QTLMAS/DATA.html"> Data </a>  from XII QTL-MAS Workshop 2008, Uppsala
+         <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
+         <li> <a href="slides.pdf"> Slides </a> for the workshop </li>
+        </blockquote> 
     </blockquote>
   </blockquote>
 </blockquote>
@@ -64,21 +99,23 @@ an open source software. <br>
 <blockquote>
   <blockquote>
     <ul>
-      <li>
+       <li><a href="PosterGABI_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
     </ul>
   </blockquote>
 </blockquote>
 <hr><b>Developers:</b>
 <blockquote>
   <blockquote>
-    <ul>
+    <ul>  
+     <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=mitarbeiter"> Valentin Wimmer </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
+     <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=mitarbeiter"> Theresa Albrecht </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
     </ul>
   </blockquote>
 </blockquote>
 <hr><b>Financial support:</b>
 <blockquote>
-  <blockquote> The development of the pacakge was financially supported by the German Federal Ministry of Education and Research (BMBF)
-within the AgroClustEr Synbreed .. Synergistic plant and animal breeding (FKZ 0315528A)
+  <blockquote> The development of the package was financially supported by the German Federal Ministry of Education and Research (BMBF)
+within the AgroClustEr ''<a href="http://www.synbreed.tum.de">Synbreed </a> Synergistic plant and animal breeding'' (FKZ 0315528A)
     <ul>
     </ul>
   </blockquote>
