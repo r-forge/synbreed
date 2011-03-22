@@ -9,7 +9,7 @@ plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,...){
     
     # initialize map
     layout(matrix(1:2,ncol=2),width=c(0.82,0.18))
-    plot(map,type="n",xaxt="n",xlim=c(0.5,length(chr)+0.5),ylim=c(min(map$pos,na.rm=TRUE),max(map$pos,na.rm=TRUE)*1.1),...) 
+    plot(map,type="n",xaxt="n",xlim=c(0.5,length(chr)+0.5),ylim=c(max(map$pos,na.rm=TRUE,min(map$pos,na.rm=TRUE))*1.1),...) 
     axis(side=1,at=seq(along=chr),labels=chr)
     
     # loop over chromosomes

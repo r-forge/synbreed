@@ -34,7 +34,7 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
         ( 1 + ( (3+ p*x) * (12 + 12 * p + p^2*x^2)) / ( n*(2+p*x) * (11 + p*x)))
       }
       # fit curve to data
-      curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,...)
+      curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,col=2,lwd=2,...)
     }
     
     # initialize return value
