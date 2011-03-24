@@ -2,7 +2,7 @@
 \alias{gpData2cross}
 \alias{cross2gpData}
 \title{
-Conversion between class 'cross' and 'gpData'
+Conversion between objects of class 'cross' and 'gpData'
 }
 \description{
 Conversion of object class \code{gpData} to object class \code{cross} (F2 intercross) of package \code{qtl} and vice versa. Function \code{codeGeno} is applied in \code{cross2gpData}, if not done before. 

@@ -3,10 +3,10 @@
 \alias{print.summary.gpData}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Summarizing object of class gpData
+Summarizing an  object of class gpData
 }
 \description{
-\code{summary} method for class ''gpData''
+\code{summary} method for class \code{gpData}
 }
 \usage{
 \method{summary}{gpData}(object,...) 
@@ -14,7 +14,7 @@ Summarizing object of class gpData
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-object of class ''gpData''
+object of class \code{gpData}
 }
 \item{...}{
 not used

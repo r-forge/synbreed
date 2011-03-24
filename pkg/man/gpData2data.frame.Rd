@@ -5,10 +5,10 @@
 Merge of phenotypic and genotypic data
 }
 \description{
-Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets. Multiple observations for each individual in \code{pheno} could be reshape from "wide" into "long" format using a grouping variable. 
+Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter case, the missing observations are filled by \ode{NA}. Multiple observations for each individual in \code{pheno} could be reshape from "wide" into "long" format using a grouping variable. 
 }
 \usage{
-gpData2data.frame(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),...)
+gpData2data.frame(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,12 +24,21 @@ list. If multiple measures for each individual should be combined in the \code{d
   \item{onlyPheno}{
 scalar logical. Only return phenotypic data. Typically only useful, if \code{Rep} is used.
 }
+  \item{all.pheno}{
+scalar logical. Include all individuals with genotypes in the \code{data.frame} and fill the genotypic data with \code{NA}.
+}
+  \item{all.geno}{
+scalar logical. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
+}
   \item{...}{
 further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename levels of grouping variable.
 }
 }
-\details{
-Resulting \code{data.frame} only includes individuals with phenotypes and genotypes. For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates for each individual in seperate columns, i.e. i n so called "wide" format. With \code{gpData2data.frame} this coulb be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 addtional columns for the \code{id} and the levels of the grouping variable are added.  
+\details{                                        
+Argument \code{all.geno} can be used to predict the genetic value of individuals without phenotypic records using the \code{BLR} package. Here, the genetic value of individuals with \code{NA} as phenotype is predicted by the marker profile.
+
+
+For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates for each individual in seperate columns, i.e. i n so called "wide" format. With \code{gpData2data.frame} this coulb be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 addtional columns for the \code{id} and the levels of the grouping variable are added.  
 }
 \value{
 A \code{data.frame} with phenotypes in the first column(s) and marker matrix in subsequent columns.
@@ -54,17 +63,18 @@ geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=10)
 rownames(geno) <-  letters[1:10]
 colnames(geno) <- paste("M",1:12,sep="")
-# one snp is not mapped (M5)
-map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
-map  <- map[-5,]
-rownames(map) <- paste("M",c(1:4,6:12),sep="")
+# different subset of individuals in pheno and geno
 
 # create 'gpData' object
 gp <- create.gpData(pheno=pheno,geno=geno,map=map)
 summary(gp)
 
-# as data.frame
+# as data.frame with individuals with genotypes and phenotypes
 gpData2data.frame(gp,1:2)
+# as data.frame with all individuals with phenotypes
+gpData2data.frame(gp,1:2,all.pheno=TRUE)
+# as data.frame with all individuals with gotypes
+gpData2data.frame(gp,1:2,all.geno=TRUE)
 
 
 

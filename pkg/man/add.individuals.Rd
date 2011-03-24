@@ -2,10 +2,10 @@
 \alias{add.individuals}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Adding new individuals to 'gpData' object
+Adding new individuals to objects of class gpData
 }
 \description{
-This function adds new data for individuals to a \code{gpData} object by adding new phenotypes, genotypes and pedigree.
+This function adds new data for individuals to an object of class \code{gpData} by adding new phenotypes, genotypes and pedigree.
 }
 \usage{
 add.individuals(gpData, pheno = NULL, geno = NULL,

@@ -1,7 +1,7 @@
 # conversion of object class 'gpData' to data.frame
 
 
-gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),...){
+gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...){
      
      # check for class
      if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'") 
@@ -12,7 +12,7 @@ gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),
       if(!onlyPheno){
         geno <- gpData$geno
         # merge genotypic and phenotypic data
-        mergeData <- merge(pheno,geno,by="row.names")
+        mergeData <- merge(pheno,geno,by="row.names",all.x=all.pheno,all.y=all.geno)
         rownames(mergeData) <- mergeData$Row.names
         # omit row.names column
         mergeData <- mergeData[,-1]
@@ -35,7 +35,7 @@ gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),
       # merge with genotypic data 
        if(!onlyPheno){
           geno <- gpData$geno
-          mergeData <- merge(pheno,geno,by.x="id",by.y="row.names")
+          mergeData <- merge(pheno,geno,by.x="id",by.y="row.names",all.x=all.pheno,all.y=all.geno)
           rownames(mergeData) <- rownames(pheno) 
        }
        else  mergeData <- pheno

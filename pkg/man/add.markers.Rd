@@ -2,7 +2,7 @@
 \alias{add.markers}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Adding new markers to 'gpData' object
+Adding new markers to an object of class gpData
 }
 \description{
 This function adds new markers to genotypic data and updates genetic map.
@@ -23,7 +23,7 @@ object of class \code{gpData}
 }
 }
 \details{
-Make sure that \code{rownames} in \code{geno} match with \code{rownames} genotypic data in \code{gpData} object. 
+Make sure that \code{rownames} in \code{geno} match with \code{rownames} genotypic data in the object of class \code{gpData}. 
 
 }
 \value{

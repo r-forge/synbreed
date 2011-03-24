@@ -3,10 +3,10 @@
 \alias{discard.individuals}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Subsetting class 'gpData'
+Subsetting objects of class gpData
 }
 \description{
-Both functions could be used to get subsets of class \code{gpData}. To discard columns in \code{geno}, use function \code{discard.markers} to discard markers from \code{gpData}. Note that markers will also be removed from \code{map}, if available. To discard rows of \code{geno}, use function \code{discard.individuals} to discard individuals (genotypes) from \code{gpData}. Note that individuals will also be removed from \code{covar}, \code{pheno} and \code{pedigree}. 
+Both functions could be used to get subsets of objects of class \code{gpData}. To discard columns in \code{geno}, use function \code{discard.markers} to discard markers from \code{gpData}. Note that markers will also be removed from \code{map}, if available. To discard rows of \code{geno}, use function \code{discard.individuals} to discard individuals (genotypes) from \code{gpData}. Note that individuals will also be removed from \code{covar}, \code{pheno} and \code{pedigree}. 
 }                      
 \usage{
 discard.markers(gpData, which)
