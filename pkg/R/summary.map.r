@@ -19,9 +19,16 @@ summaryGenMap <- function(map){
      minDist <- as.numeric(lapply(diffs,min,na.rm=TRUE))
 
      # return data.frame
-     ret <- data.frame(noM = len, range=rge, avDist = avDist, maxDist = maxDist, minDist = minDist,row.names=names(len))
+     ret <- data.frame(noM = len, length=rge, avDist = avDist, maxDist = maxDist, minDist = minDist,row.names=names(len))
      # keep same order as original map
      ret <- ret[order(order(unique(chr))),]
+     
+     # sum over all chr
+     all <- data.frame(noM = sum(ret$noM),length= sum(ret$length),avDist=weighted.mean(ret$avDist,ret$noM),maxDist=max(ret$maxDist),minDist=min(ret$minDist))
+     rownames(all) <- paste(rownames(ret)[1],"-",rownames(ret)[nrow(ret)])
+     
+     ret <- rbind(ret,all)
+     
      return(ret)
 
 }
