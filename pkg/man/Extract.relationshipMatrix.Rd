@@ -19,8 +19,7 @@ indices
 }
 }
 \examples{
-M<- matrix(c(2,2,0,0,0,0,0,2,0,0,0,0,2,2,0,2,2,0,0,0),nrow=5)
-M
-vR <- vanRaden(M)
-vR[1:2,1:2]
+data(maize)
+U <- kin(codeGeno(maize),ret="realized")
+U[1:3,1:3]
 }

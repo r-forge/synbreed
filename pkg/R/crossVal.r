@@ -60,7 +60,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      else { 
 	if(VC.est=="ASReml"){
       	for ( i in 1:length(cov.matrix)){
-	relMatASReml(as.matrix(cov.matrix[[i]]),ginv=FALSE,file=paste("ID",i,".giv",sep=""),digits=10)
+	write.relationshipMatrix(as.matrix(cov.matrix[[i]]),file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
 	}
 	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
 	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")

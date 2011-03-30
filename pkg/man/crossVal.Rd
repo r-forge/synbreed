@@ -100,7 +100,7 @@ data(maize)
 # prepare matrices for cross validation
 maize2 <-codeGeno(maize)
 maize2$pheno <- data.frame(rownames(maize2$pheno),maize2$pheno[,1])
-rad<-vanRaden(maize2$geno)
+rad<-kin(maize2,ret="realized")
 diag(rad)<-diag(rad)+0.00001 # to avoid singularities
 X <- matrix(rep(1,nrow(maize2$pheno)),ncol=1)
 Z <- diag(nrow(maize2$pheno))
