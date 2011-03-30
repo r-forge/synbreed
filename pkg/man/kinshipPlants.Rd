@@ -24,7 +24,7 @@ Note that this function allows inbreeds where the mother is identical to the fat
 }
 
 \value{
-The numerator relationship matrix (A-matrix in the aninmal model) derived by the pedigree structure.
+The numerator relationship matrix (A-matrix in the animal model) derived by the pedigree structure.
 }
 
 \author{

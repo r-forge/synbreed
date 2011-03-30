@@ -42,7 +42,7 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 \details{
 The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used for other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
 
-In an object of class \code{gpData} different individuals in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two addtional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
+In an object of class \code{gpData} different individuals in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
 }
 \value{
 Object of class \code{gpData} which is a list with the following items
@@ -50,7 +50,7 @@ Object of class \code{gpData} which is a list with the following items
 \item{pheno}{\code{data.frame} with phenotypic data ordered by \code{row.names(pheno)}}
 \item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map}. Rows  ordered by \code{row.names(geno)}}
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
-\item{info}{\code{list} with addtional information on data (coding of data, unit in \code{map})}
+\item{info}{\code{list} with additional information on data (coding of data, unit in \code{map})}
 }
 \author{
 Valentin Wimmer
@@ -66,7 +66,7 @@ In case of missing row names or column names in one item, information is taken f
 set.seed(123)
 # 9 plants with 2 phenotypes 
 n <- 9  # only for n > 6
-pheno <- data.frame(Yield = rnorm(n,100,5), leaf.damage=rbeta(n,1,1))
+pheno <- data.frame(Yield = rnorm(n,200,5), Height=rbeta(n,100,1))
 rownames(pheno) <- sample(1:n)
 
 # marker matrix
@@ -76,7 +76,7 @@ rownames(geno) <-  sample(1:n)
 colnames(geno) <- paste("M",1:12,sep="")
 
 # genetic map
-# one snp is not mapped (M5)
+# one SNP is not mapped (M5)
 map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
 map  <- map[-5,]
 rownames(map) <- paste("M",c(1:4,6:12),sep="") 

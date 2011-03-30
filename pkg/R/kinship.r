@@ -88,7 +88,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","sm","sm-smin"),
         }
       } # end of loop over individuals
 
-      diag(D) <- 1 - (diag(A)-1)
+      #diag(D) <- 1 - (diag(A)-1)
       
     }  # end of if
 

@@ -26,7 +26,7 @@ numeric. Number of individuals in each full-sib family in the last generation.
 }  
 }
 \details{                                
-If \code{animals=FALSE} the parents for the F1 will be randomly choosen out of the genotypes in F0. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE} each  ID is either sire or dam. Each ID is progeny of a sire and a dam. Therefor a variable containing the sex is returned.
+If \code{animals=FALSE} the parents for the F1 will be randomly chosen out of the genotypes in F0. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE} each  ID is either sire or dam. Each ID is progeny of a sire and a dam. Therefore a variable containing the sex is returned.
 }
 \value{
 An object of class \code{pedigree} with N=sum(ids) genotypes.

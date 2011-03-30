@@ -14,7 +14,7 @@ cross2gpData(cross,...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-object of class \code{gpData} with non-empty slots for \code{pheno}, \code{geno} and \code{map}. 
+object of class \code{gpData} with non-empty elements for \code{pheno}, \code{geno} and \code{map}. 
 }
   \item{cross}{
 object of class \code{cross}.

@@ -34,13 +34,13 @@ Valentin Wimmer
 \examples{
 # example data
 set.seed(311)
-pheno <- data.frame(Yield = rnorm(10,100,5),gdc=rbeta(10,1,1))
+pheno <- data.frame(Yield = rnorm(10,200,5),Height=rbeta(10,100,1))
 rownames(pheno) <- letters[1:10]
 geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=10)
 rownames(geno) <-  letters[1:10]
 colnames(geno) <- paste("M",1:12,sep="")
-# one snp is not mapped (M5)
+# one SNP is not mapped (M5)
 map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
 map  <- map[-5,]
 rownames(map) <- paste("M",c(1:4,6:12),sep="")

@@ -40,7 +40,7 @@ Valentin Wimmer
 \examples{
 # creating gpData object
 # phenotypic data
-pheno <- data.frame(Yield = rnorm(10,100,5), leaf.damage=rbeta(10,1,1))
+pheno <- data.frame(Yield = rnorm(10,100,5), Height = rnorm(10,10,1))
 rownames(pheno) <- 1:10
 # genotypic data
 geno <- matrix(sample(c(1,0,2,NA),size=120,replace=TRUE,

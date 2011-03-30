@@ -12,7 +12,7 @@ rogers(marker, correction = c("none","Hayes", "Melchinger"))
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{marker}{
-A \code{matrix} or \code{data.frame} with genotypes in rows and markers in columns. Alleles should be coded 0/2 for homozygous loci and 1 for heterozygous, i.e. \code{marker} could be the result  of a call of \code{codeGeno}. Alternatively an object of class \code{gpData} with filled slot \code{geno}.
+A \code{matrix} or \code{data.frame} with genotypes in rows and markers in columns. Alleles should be coded 0/2 for homozygous loci and 1 for heterozygous, i.e. \code{marker} could be the result  of a call of \code{codeGeno}. Alternatively an object of class \code{gpData} with element \code{geno}.
 }
   \item{correction}{
 Character. Use \code{"Hayes"} for transformation of rogers distance into kinship coefficient by formula of Hayes and Goddard (2008) or use \code{"Melchinger"} for transformation according to Melchinger (1991) or any abbreviations of these names. If \code{"none"} (default) no correction is performed.

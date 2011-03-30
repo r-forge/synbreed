@@ -22,7 +22,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{logical}. Add number of markers?
 }
   \item{bw}{
-\code{numeric}. Bandwith to use for  \code{dense=TRUE}
+\code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution.
 }
 
   \item{\dots}{
@@ -30,7 +30,7 @@ further graphical arguments for function \code{plot}
 }
 }
 \details{
-In low density plot, single position of markers are drawn. In high-density plot, the distribution of the markers is visualized as a heatmap of density estimation together with a color key. In this case, the number of markers within a intervall of equal bandwith \code{bw} is counted. The high density plot is typically useful if number of makers exceeds 200 on average per chromosome.
+In low density plot, single position of markers are drawn. In high-density plot, the distribution of the markers is visualized as a heatmap of density estimation together with a color key. In this case, the number of markers within a interval of equal bandwith \code{bw} is counted. The high density plot is typically useful if number of makers exceeds 200 on average per chromosome.
 }
 \value{
 Plot of the marker positions within  each chromosome. One chromosome is displayed from the first to the last marker.

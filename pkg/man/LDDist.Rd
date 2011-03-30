@@ -17,7 +17,7 @@ LDDist(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...)
 Object of class \code{gpData} where \code{geno} and \code{map} are available.
 }
   \item{chr}{
-Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markes across chromosomes is used.  
+Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markers across chromosomes is used.  
 }
   \item{type}{
 Character string to specify the type of plot. Use \code{"p"} for a scatterplot, \code{"bars"} for stacked bars or \code{"nls"} for scatterplot together with nonlinear regression curve estimated by data. 
@@ -34,7 +34,7 @@ Further arguments for \code{plot}
 }
 \details{
 LD is computed as coefficient of determination \eqn{R^2}.  Matrix of \eqn{R^2} of markers is returned. Missing values in genotypic data are allowed and pairwise complete observations of two markers are used to compute \eqn{R^2}.  By default, one plot for each linkage group is generated. If markers across all chromosomes should be combined
-in one plot, use \code{chr="all"}. If markers of, e.g. chromosomes 5 to 10 should be combined in one plot, change \code{linkageGroup} indicator manually.
+in one plot, use \code{chr="all"}.
 }
 \references{
 For nonlinear regression curve:

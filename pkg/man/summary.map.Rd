@@ -13,11 +13,11 @@ summaryGenMap(map)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{map}{
-\code{data.frame} with columns \code{chr} and \code{pos} or a \code{gpData} object with nonempty slot \code{map}
+\code{data.frame} with columns \code{chr} and \code{pos} or a \code{gpData} object with element \code{map}
 }
 }
 \details{
-Summary statistics of differnces are based on euclidian distances between markers with available position, i.e. \code{pos!=NA}.
+Summary statistics of differences are based on euclidian distances between markers with available position, i.e. \code{pos!=NA}.
 }
 \value{
 A \code{data.frame} with one row for each chromosome and columns

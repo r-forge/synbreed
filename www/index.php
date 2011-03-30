@@ -90,7 +90,9 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
          <blockquote> 
          <li> <a href="http://www.computationalgenetics.se/QTLMAS08/QTLMAS/DATA.html"> Data </a>  from XII QTL-MAS Workshop 2008, Uppsala
          <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
-         <li> <a href="slides.pdf"> Slides </a> for the workshop </li>
+         <li> <a href="slides.pdf"> Slides from Valentin Wimmer </a> </li>
+         <li> <a href="praesentation_Martin_Schlather.pdf"> Slides from Martin Schlather </a> </li>
+         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf"> Slides from Ulrike Ober </a>  </li>
         </blockquote> 
     </blockquote>
   </blockquote>

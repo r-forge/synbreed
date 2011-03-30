@@ -26,7 +26,7 @@ Object of class "relationshipMatrix"
 Numeric; Overall mean of the trait.
 }
   \item{vc}{
-List containing the variance components. \code{vc} consists of elements \code{sigma2e}, \code{sigma2a}, \code{sigma2l}, \code{sigma2b} with the varianve components of the residual, the additive genetic effect,
+List containing the variance components. \code{vc} consists of elements \code{sigma2e}, \code{sigma2a}, \code{sigma2l}, \code{sigma2b} with the variance components of the residual, the additive genetic effect,
 the location effect and the block effect.
 }
   \item{Nloc}{

@@ -17,7 +17,7 @@ LDMap(gpData,chr=NULL,file=NULL,...)
 Object of class \code{gpData} where \code{geno} and \code{map} are available.
 }
   \item{chr}{
-Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markes across chromosomes is used.  
+Character or numeric. If specified, only one plot for markers in linkage group \code{chr} is created. If \code{chr="all"}, all pairwise LD between markers across chromosomes is used.  
 }
   \item{file}{
 Optionally a path to a file were plot is saved as \code{pdf}.
@@ -32,7 +32,7 @@ LD is computed as coefficient of determination \eqn{R^2}. The plot is simply a c
 \value{
 A list with elements 
 \item{LD}{list with a \code{matrix} containing all pairwise values of \eqn{R^2} or markers for each element of \code{chr}}
-\item{ditance}{list with a \code{matrix} containing all pairwise euclidian distances of markers for each element of \code{chr}}
+\item{distance}{list with a \code{matrix} containing all pairwise euclidian distances of markers for each element of \code{chr}}
 }
 \seealso{
 \code{\link{codeGeno}}, \code{\link[LDheatmap]{LDheatmap}}, \code{\link{LDDist}}

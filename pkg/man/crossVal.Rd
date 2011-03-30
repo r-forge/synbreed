@@ -43,7 +43,7 @@ the same order as the given covariance matrices, the last given variance compone
 }
   \item{priorBLR}{A vector with priors for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
 }
-  \item{verbose}{Logical. Wether output shows replications and folds.
+  \item{verbose}{Logical. Whether output shows replications and folds.
 }
   \item{nIter, burnIn, thin}{Number of iterations, burn-in and thinning for \code{VC.est="BRR"} and \code{VC.est="BL"} in the BLR-function
 }
@@ -64,7 +64,7 @@ The following mixed model equation is used for \code{VC.est="commit"}:
 \deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array}\right) \left(\begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array}\right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
 }
 \value{
-A object of class \code{list} with follwoing items:
+A object of class \code{list} with following items:
 \item{bu }{Estimated fixed and random effects of each fold within each replication.}
 \item{y.TS}{Predicted values of all test sets within each replication.}
 \item{PredAbi}{Predictive ability of each fold within each replication calculated as \eqn{r(y_{TS},\hat y_{TS})} .}
@@ -81,7 +81,7 @@ A regression coefficient \eqn{< 1} implies extreme high (low) values of the pred
 \references{
 Legarra A, Robert-Granie C, Manfredi E, Elsen J (2008) Performance of genomic selection in mice. Genetics 180:611-618
 
-Luan T, Wooliams JA, Lien, S, Kent M, Svendsen M, Meuwissen THE (2009) The accuracy of genomic selection in Norwegia red cattle assessed by crosss-validation. Genetics 183:1119-1126
+Luan T, Wooliams JA, Lien, S, Kent M, Svendsen M, Meuwissen THE (2009) The accuracy of genomic selection in Norwegian red cattle assessed by cross-validation. Genetics 183:1119-1126
 
 Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Measurement 11:5-11
 

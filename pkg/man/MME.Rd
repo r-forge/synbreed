@@ -4,7 +4,7 @@
 Mixed Model Equations
 }
 \description{
-Set up Mixed Model Equations for given design matricex, i.e. variance components for random effects must be known.
+Set up Mixed Model Equations for given design matrix, i.e. variance components for random effects must be known.
 }
 \usage{
 MME(X, Z, GI, RI, y)
@@ -20,7 +20,7 @@ Design matrix for random effects
 Inverse of (estimated) variance-covariance matrix of random effects
 }
   \item{RI}{
-Inverse of (estimated) variance-covariance matrisx of residuals
+Inverse of (estimated) variance-covariance matrix of residuals
 }
   \item{y}{
 Vector of phenotypic records

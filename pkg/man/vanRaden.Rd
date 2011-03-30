@@ -13,7 +13,7 @@ vanRaden(marker)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{marker}{
- A \code{matrix} or \code{data.frame} with genotypes in rows and markers in columns. Alleles should be coded 0/2 for homozygous and 0/1/2 for heterozygous loci, i.e. \code{marker} could be the result  of a call of \code{codeGeno}.  Alternatively an object of class \code{gpData} with filled slot \code{geno}.
+ A \code{matrix} or \code{data.frame} with genotypes in rows and markers in columns. Alleles should be coded 0/2 for homozygous and 0/1/2 for heterozygous loci, i.e. \code{marker} could be the result  of a call of \code{codeGeno}.  Alternatively an object of class \code{gpData} with element \code{geno}.
 }                                                                                                                                                                                                 
 }
 \details{

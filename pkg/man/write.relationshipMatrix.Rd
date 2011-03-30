@@ -17,7 +17,7 @@ sorting = "WOMBAT", type=c("ginv", "inv", "none"), digits = 10)
 Object of class "relationshipMatrix" 
 }
   \item{file}{
-Path were the output should be writen . If \code{NULL} the result is returned in R.
+Path were the output should be written . If \code{NULL} the result is returned in R.
 }
   \item{sorting}{
 Type of sorting. Use "WOMBAT" for 'row-wise' sorting of the table and "ASReml" for 'column-wise' sorting.

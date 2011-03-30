@@ -167,9 +167,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
           names(major.allele) <- names(polymorph)
           
           # loop over all families          
-          for ( i in rownames(poptab)[nmissfam>0] ){
+          for ( i in rownames(poptab)[nmissfam>0] ){                          
             # impute values for impute.type="family" : all missing genotypes
-            if (impute.type=="family"){
+            if (impute.type=="family" | (impute.type=="BeagleAfterfamily" & is.na(gpData$map$pos[j]) )){
               res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(ifelse(polymorph[i],sample(c(0,2),size=nmissfam[i],prob=c(0.5,0.5),replace=TRUE),rep(major.allele[i],nmissfam[i])))
               # update counter
               ifelse(polymorph[i],cnt2 <- cnt2 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
@@ -191,6 +191,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
   }
   if(impute.type %in% c("beagle","beagleAfterFamily")){
    
+   if (verbose) cat("step 3 : Imputing of missing values by Beagle \n")
      chr <- unique(gpData$map$chr)
      markerTEMP <- gpData
      markerTEMP$geno <- res
@@ -232,7 +233,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
         resTEMP[resTEMP>=1] <- 2
       }
       else{
-         resTEMP <- round(resTEMP,0)
+         resTEMP <- round(resTEMP,0) # 0, 1, and 2
       }
       
       if (length(sel)>0) res[,!rownames(gpData$map) %in% sel] <- resTEMP

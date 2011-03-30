@@ -26,10 +26,10 @@ numeric. The result is rounded to \code{digits}.
 }
 }
 \details{
-The results is ordered in the format for ASReml inverse numerator relationship matrizes (first ordered by row and then by column).
+The results is ordered in the format for ASReml inverse numerator relationship matrices (first ordered by row and then by column).
 }
 \value{
-Result is writen to \code{file} or returned if \code{file=NULL}
+Result is written to \code{file} or returned if \code{file=NULL}
 }
 
 \author{

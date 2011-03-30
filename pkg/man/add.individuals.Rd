@@ -20,10 +20,10 @@ object of class \code{gpData}
 \code{data.frame} with new rows for phenotypes
 }
   \item{geno}{
-\code{matrix} with new new rows for genotypic data
+\code{matrix} with new rows for genotypic data
 }
   \item{pedigree}{
-\code{data.frame} with new new rows pedigree data
+\code{data.frame} with new rows for pedigree data
 }      
   \item{covar}{
 \code{data.frame} with new rows for \code{covar} information

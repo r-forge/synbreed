@@ -17,7 +17,7 @@ object of class \code{gpData}
 character. The type of relationship matrix to be returned. See 'Details'.
 }
   \item{DH}{
-vector with logicals of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line and \code{FALSE} or 0 otherwise. Only used for pedigree based relatedness
+logical vector of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line and \code{FALSE} or 0 otherwise. Only used for pedigree based relatedness
 }
 }
 \details{
@@ -37,12 +37,12 @@ where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matr
 
 \bold{Marker based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"} and \code{"gam"}}
 
-Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the numer of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
+Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
 
-If \code{ret="realized"}, the realized relatedness between individuals is computed accordint to the formulas in Habier et al. (2007) and vanRaden(2008)
+If \code{ret="realized"}, the realized relatedness between individuals is computed according to the formulas in Habier et al. (2007) or vanRaden(2008)
 \deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=M-P} and \eqn{M} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
 
-If \code{ret="sm"}, the realized relatedness between individuals is computed according to the simple matching coefficient (Reif et al. 2005). The simple matching coefficient counts the number of shared alleles across loci. It could only be applied to homozygous inbred lines, i.e. only genotypes 0 and 2. To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) correct the simple matching coefficent by the minimum of observed simple matichin coefficients
+If \code{ret="sm"}, the realized relatedness between individuals is computed according to the simple matching coefficient (Reif et al. 2005). The simple matching coefficient counts the number of shared alleles across loci. It could only be applied to homozygous inbred lines, i.e. only genotypes 0 and 2. To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) correct the simple matching coefficient by the minimum of observed simple matching coefficients
 \deqn{\frac{s-s_{min}}{1-s_{min}}}{s-smin/(1-smin)}
 where \eqn{s} is the matrix of simple matching coefficients. This formula is used with argument \code{ret="sm-smin"}.
 }

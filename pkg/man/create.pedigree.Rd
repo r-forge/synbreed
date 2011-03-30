@@ -5,7 +5,7 @@
 Create pedigree object
 }
 \description{
-This function can be used to create a \code{pedigree} object. This function allows inlcuding inbreeds in the pedigree.
+This function can be used to create a \code{pedigree} object. This function allows including inbreeds in the pedigree.
 }
 \usage{
 create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL)
