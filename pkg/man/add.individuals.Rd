@@ -30,7 +30,7 @@ object of class \code{gpData}
 }
 }
 \details{
-Make sure that \code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} match with existing names in \code{gpData} object. 
+\code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} must match with existing names in \code{gpData} object. 
 }
 \value{
 object of class \code{gpData} with new individuals

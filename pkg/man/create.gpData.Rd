@@ -5,9 +5,9 @@
 Create genomic prediction data object
 }                  
 \description{                                                                                                            
-This function takes a set of data and combines all in one object of class \code{gpData}. Main content of this object are the phenotypic data, the genotypic data (marker data), the genetic map and the pedigree. It is strongly recommended to use this class for further analysis with \code{synbreed} package. Note that not all types of data must be specified.
+This function combines all raw data sources in a single, unified data object of class \code{gpData}. This is a \code{list} with elements for phenotypic, genotypic, pedigree and further covariate data. Moreover, the marker map is an element. Any element is optional
 }                                                                                                              
-\usage{
+\usage{                                                                                         
 create.gpData(pheno = NULL, geno = NULL, map = NULL, 
 pedigree = NULL, family = NULL, covar = NULL,
 reorderMap = TRUE, map.unit = "cM")
@@ -15,13 +15,13 @@ reorderMap = TRUE, map.unit = "cM")
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pheno}{
-\code{data.frame} with individuals in rows and one or more phenotypes in columns. \code{rownames} should identify genotypes and \code{colnames} different phenotypes. If no \code{rownames} are used, default rownames are used. In case of multiple measures for each individual an additional column for every replication should be added.
+\code{data.frame} with individuals organized in rows and traits organized in columns. Unique \code{rownames} identify individuals and unique \code{colnames} identify different traits. If no \code{rownames} are available, they are take from element \code{geno} (if available and if dimensions match). In case of multiple obsercations for each individual, use on column for every replication (such as locations or years).
 }
   \item{geno}{
-\code{matrix} with individuals in rows and markers in columns. Genotypes could be code arbitrarily. Missing values should be coded as \code{NA}. \code{rownames} should identify genotypes and \code{colnames} markers. If no \code{rownames} are used, it is assumed that genotypes are in the same order as in \code{pheno}.  If no \code{colnames} are used, \code{rownames} of \code{map} are used if dimension matches. If no \code{map} is specified, default marker names are used. 
+\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be code arbitrarily. Missing values should be coded as \code{NA}. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimensions match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension matches.  
 }                                                                                        
   \item{map}{                                                                                                
-\code{data.frame} with one row for each marker and two columns. First columns should give the chromosome marker belongs to and second column the position  on the chromosome in centimorgan or the physical distance relative to the refernece sequence in basepairs. \code{rownames} should give the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} and order is identical to \code{geno}.
+\code{data.frame} with one row for each marker and two columns. First columns gives the chromosome and second column the position  on the chromosome in centimorgan or the physical distance relative to the refernece sequence in basepairs. Unique \code{rownames} give the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} and order is identical to \code{geno}.
 }
   \item{pedigree}{
 Object of class \code{pedigree}.
@@ -33,7 +33,7 @@ Object of class \code{pedigree}.
 \code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
 }
   \item{reorderMap}{
-Logical. Should map be reordered by chromosome number and position within chromosome? 
+\code{logical}. Should map be reordered by chromosome number and position within chromosome? 
 }
   \item{map.unit}{
 Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp' for physical distance.
@@ -42,13 +42,14 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 \details{
 The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used for other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
 
-In an object of class \code{gpData} different individuals in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
+In an object of class \code{gpData} different individuals may occur in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
 }
 \value{
 Object of class \code{gpData} which is a list with the following items
 \item{covar}{\code{list} with information on individuals}
-\item{pheno}{\code{data.frame} with phenotypic data ordered by \code{row.names(pheno)}}
-\item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map}. Rows  ordered by \code{row.names(geno)}}
+\item{pheno}{\code{data.frame} with phenotypic data ordered by \code{rownames(pheno)}}
+\item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map}. Rows  ordered by \code{rownames(geno)}}
+\item{pedigree}{object of class \code{pedigree}}
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
 \item{info}{\code{list} with additional information on data (coding of data, unit in \code{map})}
 }
@@ -56,7 +57,7 @@ Object of class \code{gpData} which is a list with the following items
 Valentin Wimmer
 }
 \note{
-In case of missing row names or column names in one item, information is taken from other items and a warning is given. 
+In case of missing row names or column names in one item, information is substituted from other elements (assuming the same order of individuals/markers) and a warning is given. 
 }
                                 
 \seealso{

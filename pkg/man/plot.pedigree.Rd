@@ -42,17 +42,15 @@ This function uses the plotting method for graphs in the libraray \code{igraph}
 \code{\link{create.pedigree}}, \code{\link{simul.pedigree}}
 }
 \examples{
-ped.raw <- matrix(c(1,  0,   0,   1, 
-                 2,  0,   0,   1,
-                 3,  0,   0,   1,
-                 4,  0,   0,   1,
-                5,  1,   2,   2, 
-                 6,  1,   3,   2,
-                 7,  1,   2,   2,
-                 8,  1,   2,   2) ,
-                 byrow = TRUE, ncol = 4)
-ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
-plot(ped)                 
+# example with 9 individuals        
+id <- 1:9
+par1 <- c(0,0,0,0,1,1,1,4,7)
+par2 <- c(0,0,0,0,2,3,2,5,8)
+gener <- c(0,0,0,0,1,1,1,2,3)
+
+# create pedigree object 
+ped <- create.pedigree(id,par1,par2,gener)
+plot(ped)               
 }
 \keyword{hplot}
 

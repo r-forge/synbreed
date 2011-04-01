@@ -12,7 +12,7 @@ plotNeighbourLD(LD, map, nMarker = TRUE, dense=FALSE, ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{LD}{
-object of class \code{list} containing pairwise LD matrices for each chromosome, e.g. output of function \code{LDMap}.
+object of class \code{list} containing pairwise LD matrices for each chromosome, e.g. output of function \code{LDMap} or \code{pairwiseLD}.
 }
   \item{map}{
 object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances).
@@ -38,11 +38,6 @@ Plot of smoothed neighbour LD along each chromosome. One chromosome is displayed
 \author{
 Theresa Albrecht
 }
-\note{
-If the output of \code{LDMap} is used, the function \code{LDMap} has to be allocated to an object.
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{plotGenMap}}, \code{\link{LDMap}}

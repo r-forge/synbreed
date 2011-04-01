@@ -22,7 +22,7 @@ crossVal(y, X, Z, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
 }
   \item{Z}{Design matrix for the random effects, where the colnames represents the names of the random effects.
 }
-  \item{cov.matrix}{A object of class \code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
+  \item{cov.matrix}{\code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
 If no covariance is given, the identity matrix is used.
 }
   \item{k}{Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}].

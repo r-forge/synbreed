@@ -23,7 +23,7 @@ object of class \code{gpData}
 }
 }
 \details{
-Make sure that \code{rownames} in \code{geno} match with \code{rownames} genotypic data in the object of class \code{gpData}. 
+\code{rownames} in \code{geno} must match with \code{rownames} genotypic data in the object of class \code{gpData}. 
 
 }
 \value{

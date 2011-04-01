@@ -5,7 +5,7 @@
 Create pedigree object
 }
 \description{
-This function can be used to create a \code{pedigree} object. This function allows including inbreeds in the pedigree.
+This function can be used to create a \code{pedigree} object. 
 }
 \usage{
 create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL)
@@ -13,16 +13,16 @@ create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{ID}{
-vector of unique IDs identifying e.g. each genotype. Should be numeric.
+vector of unique IDs identifying e.g. each genotype.
 }
   \item{Par1}{
-vector of IDs identifying parent 1 (with animals: father) 
+vector of IDs identifying parent 1 (with animals: sire) 
 }
   \item{Par2}{
-vector of IDs identifying parent 2 (with animals: mother)
+vector of IDs identifying parent 2 (with animals: dam)
 }
   \item{gener}{
-vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 otherwise.
+vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 ofor generations 1,... .
 }
   \item{sex}{
 vector identifying the sex (female=0 and male=1). 
@@ -32,7 +32,7 @@ vector identifying the sex (female=0 and male=1).
 Missing values for pedigree should be coded with 0 for numeric ID or \code{NA} for character ID. 
 }
 \value{
-An object of class \code{pedigree} with the same contents as above. Note that \code{gener} starts from 0 and pedigree is sorted by generation.
+An object of class \code{pedigree}. Column \code{gener} starts from 0 and pedigree is sorted by generation.
 }                                                                             
 \author{
 Valentin Wimmer
@@ -42,30 +42,19 @@ Valentin Wimmer
 \code{\link{plot.pedigree}}
 }
 \examples{
-# example with given generation
-ped.raw <- matrix(c(1,  0,   0,   1, 
-                 2,  0,   0,   1,
-                 3,  0,   0,   1,
-                 4,  0,   0,   1,
-                5,  1,   2,   2, 
-                 6,  1,   3,   2,
-                 7,  1,   2,   2,
-                 8,  1,   2,   2) ,
-                 byrow = TRUE, ncol = 4)
-ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3],ped.raw[,4])
-ped
+# example with 9 individuals        
+id <- 1:9
+par1 <- c(0,0,0,0,1,1,1,4,7)
+par2 <- c(0,0,0,0,2,3,2,5,8)
+gener <- c(0,0,0,0,1,1,1,2,3)
 
-# example without given generation
-ped.raw2 <- matrix(c(1,  0,   0,   
-                 2,  0,   0,  
-                 3,  0,   0,  
-                 4,  0,   0,  
-                5,  1,   2,   
-                 6,  1,   3,  
-                 7,  1,   2,  
-                 8,  1,   2) ,
-                 byrow = TRUE, ncol = 3)
-ped2 <- create.pedigree(ped.raw2[,1],ped.raw2[,2],ped.raw2[,3])
+# create pedigree object (using argument gener)
+ped <- create.pedigree(id,par1,par2,gener)
+ped
+plot(ped)
+
+# create pedigree object (without using argument gener)
+ped2 <- create.pedigree(id,par1,par2)
 ped2
 }
 \keyword{manip}

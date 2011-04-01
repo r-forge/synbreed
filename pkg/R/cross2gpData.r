@@ -1,4 +1,4 @@
-cross2gpData <- function(cross,...){
+cross2gpData <- function(cross){
     # check for class
     # sometimes multiple classes in package 'qtl'
     if(all(class(cross)!="cross")) stop("object '",substitute(cross),"' not of class 'cross'")  

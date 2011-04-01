@@ -22,7 +22,7 @@ logical vector of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line an
 }
 \details{
 
-\bold{Pedigree based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"} and \code{"gam"}}
+\bold{Pedigree based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"}, and \code{"gam"})}
 
 Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{pedigree} must be available in the object of class \code{gpData}. In all cases, the first step is to build the gametic relationship is . The gametic relationship is of order 2\eqn{n} as each individual A has two alleles (\eqn{A1} and \eqn{A2}). The gametic relationship
 is defined as the matrix of probabilities that two genes are identical by descent (IBD).  Note that the diagonal elements of the gametic relationship matrix are 1. The off-diagonals of individuals with unknown pedigree are 0. If \code{ret="gam"} is specified, the gametic relationship matrix constructed by pedigree is returned.
@@ -35,7 +35,7 @@ If \code{ret="dom"}, the dominance relationship matrix is returned. The dominanc
 \deqn{\left[(A1,B1) \cdot (A2,B2) + (A1,B2) \cdot (A2,B1)\right],}{[(A1,B1) * (A2,B2) + (A1,B2) * (A2,B1)],} 
 where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix. 
 
-\bold{Marker based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"} and \code{"gam"}}
+\bold{Marker based relatedness (return arguments \code{"realized"}, \code{"sm"}, and \code{"sm-smin"})}
 
 Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
 

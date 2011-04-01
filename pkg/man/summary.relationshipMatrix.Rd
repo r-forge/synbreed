@@ -26,9 +26,9 @@ Valentin Wimmer
 }
 
 \examples{
-ped <- simul.pedigree(gener=4,7)
-A <- kin(ped,ret="add")
-summary(A)
+data(maize)
+U <- kin(codeGeno(maize),ret="realized")
+summary(U)
 }
 \keyword{methods}
 

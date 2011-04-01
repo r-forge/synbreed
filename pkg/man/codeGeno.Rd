@@ -4,8 +4,9 @@
 \title{                                            
 Recoding of genotypic data, imputing of missing values and preselection of markers 
 }
-\description{
-Function to code genotypic data in an object of class \code{gpData}. Raw genotypic data could be in any format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is suitable for biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
+\description{   
+This function combines all algrorithms for processing of marker data within \code{synbreed} pacakge.
+Raw marker data could be in any format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
 Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
@@ -19,22 +20,22 @@ label.heter="AB",keep.identical=TRUE,verbose=FALSE)
 object of class \code{gpData} with arbitrary coding in element \code{geno}. Missing values have to be coded as \code{NA}.
 }           
   \item{impute}{
-logical scalar. Should missing value be replaced by imputing?
+\code{logical}. Should missing value be replaced by imputing?
 }
   \item{impute.type}{
-character with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"}. See details.
+\code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"}. See details.
 }
   \item{replace.value}{
-numeric value to replace missing values in case \code{impute.type="fix"}. 
+\code{numeric} scalar to replace missing values in case \code{impute.type="fix"}. 
 }
   \item{maf}{
-numeric scalar. Markers with minor allele frequency < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
+\code{numeric} scalar. Threshold to discard markers due to the minor allle frequency (MAF). Markers with a MAF < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{nmiss}{
-numeric scalar. Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
+\code{numeric} scalar.  Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{label.heter}{
-This is either a scalar or vector of characters to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is a heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is high, i.e. if genotypes are coded by alleles. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and to impute only 0 and 2.
+This is either a scalar or vector of characters to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is high, i.e. if genotypes are coded by alleles. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and to impute only 0 and 2.
 }
   \item{keep.identical}{
 \code{logical}. Should duplicated markers be kept? 
@@ -45,6 +46,7 @@ This is either a scalar or vector of characters to identify heterozygous genotyp
 }                                         
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
+
 1. Discarding markers with fraction > \code{nmiss} of missing values
 
 2. Recoding alleles from character/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
@@ -56,12 +58,12 @@ Imputing is done according to \code{impute.type}
 \item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (this is only when \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}.}
 \item{"family"}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},                                          
-the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with family information, a column named "family" in element \code{covar} of \code{gpData} is necessary. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals. Family information for nongenotyped individuals is not used an could be set to any value, i.e. NA}    
+the value is 0 with probability 0.5 and 1 with probability 0.5. To impute with family information, a column named "family" in element \code{covar} of \code{gpData} is necessary. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}    
 \item{"beagle"}{
 Use Beagle Genetic Analysis Software Package (Browning and Browning 2009) to infer missing genotypes. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. To use \code{"beagle"}, the beagle executive (version \eqn{>}  3.3.1)  file must be available (either through the PATH specification in the system or the file \code{beagle.jar} must be in the working directory. Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle input and output files and run Beagle with default settings. The information on marker postion is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the imputation only to homozygous genotypes, use \code{label.heter=NULL}.}                         
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle.}
-\item{"fix"}{All missing values are imputed by \code{replace.value}. Note that in most cases only value 1 should be chosen.}                         
+\item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}                         
 }                                                                                                                                                          
 
 4. Recoding of alleles after imputation, if necessary due to changes in allele frequencies by imputed alleles

@@ -18,7 +18,7 @@ discard.individuals(gpData, which)
 object of class \code{gpData}
 }
   \item{which}{
-character vector either identifying the \code{colnames} of markers in \code{geno} to discard (in \code{discard.markers}) or the \code{rownames} of individuals to discard (in \code{discard.individuals}).
+character vector either identifying the \code{colnames} of markers in \code{geno} to discard (function \code{discard.markers}) or the \code{rownames} of individuals to discard (function \code{discard.individuals}).
 }
 }
 \value{
@@ -34,7 +34,7 @@ Valentin Wimmer
 \examples{
 # example data
 set.seed(311)
-pheno <- data.frame(Yield = rnorm(10,200,5),Height=rbeta(10,100,1))
+pheno <- data.frame(Yield = rnorm(10,200,5),Height=rnorm(10,100,1))
 rownames(pheno) <- letters[1:10]
 geno <- matrix(sample(c("A","A/B","B",NA),size=120,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=10)
