@@ -92,7 +92,7 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
          <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
          <li> <a href="slides.pdf"> Slides </a>  from Valentin Wimmer </li>
          <li> <a href="praesentation_Martin_Schlather.pdf"> Slides </a> from Martin Schlather </li>
-         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf">  </a>  Slides from Ulrike Ober  </li>
+         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf"> Slides  </a>  from Ulrike Ober  </li>
         </blockquote> 
     </blockquote>
   </blockquote>
@@ -102,7 +102,6 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
   <blockquote>
     <ul>
        <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
-       <li><a href="synbreed-manual.pdf"> Manual </a> for the synbreed package (from 1st April 2011)
     </ul>
   </blockquote>
 </blockquote>

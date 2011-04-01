@@ -45,16 +45,12 @@ Valentin Wimmer
 }
 
 \examples{
-ped.raw <- matrix(c(1,  0,   0,   
-                 2,  0,   0,   
-                 3,  0,   0,  
-                 4,  0,   0,  
-                 5,  1,   2,   
-                 6,  1,   3,   
-                 7,  1,   2,   
-                 8,  2,   2 ),byrow=TRUE,ncol=3)
-
-ped <- create.pedigree(ped.raw[,1],ped.raw[,2],ped.raw[,3])
+# example with 9 individuals        
+id <- 1:9
+par1 <- c(0,0,0,0,1,1,1,4,7)
+par2 <- c(0,0,0,0,2,3,2,5,8)
+gener <- c(0,0,0,0,1,1,1,2,3)
+ped <- create.pedigree(id,par1,par2,gener)
 gp <- create.gpData(pedigree=ped)
 
 A <- kin(ped,ret="add")
