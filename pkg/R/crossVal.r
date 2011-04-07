@@ -79,6 +79,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
     lm.coeff2 <- NULL
     y.TS2 <- NULL
     n.TS2<-NULL
+    id.TS2 <- list()   
     for (i in 1:Rep){ 
 
 	# sampling of k sets
@@ -130,6 +131,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
      lm.coeff <- NULL
      y.TS <- NULL
      n.TS <- NULL
+     id.TS <- list()
      for (ii in 1:k){
 	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
 
@@ -282,6 +284,9 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  #print(y.dach)
  	  lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
 	  rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+	  # save IDs of TS
+	  id.TS[[ii]] <- rownames(Z2)
+	  names(id.TS)[[ii]] <- paste("fold",ii,sep="")
    	}  # end loop for k-folds
 
 	n.TS2<-cbind(n.TS2,n.TS)
@@ -296,11 +301,14 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	rownames(bu3)<-names.eff
     	lm.coeff2 <- cbind(lm.coeff2,lm.coeff)
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
+	# save IDs of TS
+	id.TS2[[i]] <- id.TS
+	names(id.TS2)[[i]] <- paste("rep",i,sep="")
     }  # end loop for replication
 
     # return object
     if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
-    obj <- list( n.TS=n.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method)
+    obj <- list( n.TS=n.TS2,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method)
     class(obj) <- "cvData"
     return(obj)
 }
