@@ -38,8 +38,8 @@ the same order as the given covariance matrices, the last given variance compone
 }
   \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to families.
 }
-  \item{VC.est}{Should variance components be reestimated with "\code{"ASReml"}" or with a Bayesian approach "\code{"BRR"}" and "\code{"BL"}" within the estimation set of each fold in the cross validation? If
-\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For "\code{ASReml}", ASReml software have to be installed on the system. 
+  \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with a Bayesian approach "\code{BRR}" and "\code{BL}" within the estimation set of each fold in the cross validation? If
+\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system. 
 }
   \item{priorBLR}{A vector with priors for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
 }
@@ -56,12 +56,13 @@ To account for the family structure, \code{sampling} can be defined as:
 \describe{
 \item{random}{ Does not account for family structure, random sampling within the complete data set}
 \item{within family}{ Accounts for within family information, each family is splitted into k subsets}
-\item{across family}{ Accounts for across family information, ES and TS contains a set of complete families}}
+\item{across family}{ Accounts for across family information, ES and TS contains a set of complete families}
+}
 The following mixed model equation is used for \code{VC.est="commit"}:
 
 \deqn{\bf y=\bf{Xb}+\bf{Zu}+\bf e}{y=Xb+Zu+e} with \deqn{\bf u \sim N(0,G\sigma^2_u)}{u=N(0,Gsigma2u)}
 
-\deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array}\right) \left(\begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array}\right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
+\deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array} \right) (\left \begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array} \right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
 }
 \value{
 A object of class \code{list} with following items:
@@ -76,7 +77,7 @@ A regression coefficient \eqn{< 1} implies extreme high (low) values of the pred
 \item{Seed}{Seed for \code{set.seed()}}
 \item{rep.seed}{Calculated seeds for each replication}
 \item{nr.ranEff}{Number of random effects} 
-\item{VC.est.method}{Method for the variance components ("\code{committed}" or "\code{reestimated with ASReml/BRR/BL}")}
+\item{VC.est.method}{Method for the variance components (\code{committed} or \code{reestimated with ASReml/BRR/BL})}
 }
 \references{
 Legarra A, Robert-Granie C, Manfredi E, Elsen J (2008) Performance of genomic selection in mice. Genetics 180:611-618
