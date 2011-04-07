@@ -172,7 +172,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 			# checking directories for ASReml
 			ASTest <- system(paste("ls"),intern=TRUE)
-			if (!(is.null(ASTest[ASTest=="ASReml"]))) system(paste("mkdir ASReml"))
+			if (!any(ASTest %in% "ASReml")) system(paste("mkdir ASReml"))
 
 			# data output for ASReml
 			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
@@ -219,8 +219,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 		# checking directories for BRR
 		if(.Platform$OS.type == "unix"){
-		BRRTest <- system(paste("ls"),intern=TRUE)
-		if (!(is.null(BRRTest[BRRTest=="BRR"]))) system(paste("mkdir BRR"))
+			BRRTest <- system(paste("ls"),intern=TRUE)
+			if (!any(BRRTest %in% "BRRReml")) system(paste("mkdir BRR"))
 		}
 
 		# BRR function
@@ -244,8 +244,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 		# checking directory for BL
 		if(.Platform$OS.type == "unix"){
-		BLTest <- system(paste("ls"),intern=TRUE)
-		if (!(is.null(BLTest[BLTest=="BL"]))) system(paste("mkdir BL"))
+			BLTest <- system(paste("ls"),intern=TRUE)
+			if (!any(BLTest %in% "BLReml")) system(paste("mkdir BL"))
 		}
 
 		# BL function
