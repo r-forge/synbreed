@@ -6,6 +6,7 @@ write.beagle <- function(gp,wdir=getwd(),prefix){
        M <- ncol(geno)
 
        # prepare input file input.bgl
+       if (any(grep(" ",rownames(geno)))) stop("no blanks allowed in rownames(geno) when running beagle")
        firstLine <- c("I","id",rep(rownames(geno),each=2))
        # assume coding AA, AB, BB
        allele1 <- substr(geno,1,1)

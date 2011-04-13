@@ -24,6 +24,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     else{
       # missing colnames in geno
       if(is.null(colnames(geno))){
+        if (is.null(map)) stop("missing rownames in 'geno'")
         if(!is.null(rownames(map))){
           colnames(geno) <- rownames(map)
           warning("missing colnames in 'geno': assuming to be identical as rownames in 'map' \n")
@@ -39,6 +40,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
            warning("missing rownames in 'map': assuming to be identical as colnames in 'geno' \n")  
          }
          else{
+          stop("missing rownames in 'geno' and 'map'")
           #colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
         } 
       }

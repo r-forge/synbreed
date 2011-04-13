@@ -224,7 +224,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		}
 
 		# BRR function
-		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=list(varE=list(df=3,S=SE),varBR=list(df=3,S=SbR)),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
+		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
@@ -249,7 +249,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		}
 
 		# BL function
-		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=list(varE=list(df=3,S=SE),lambda=list(shape=0.5,rate=2e-05,value=40,type="random")),nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
+		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 

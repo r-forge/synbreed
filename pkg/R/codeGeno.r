@@ -201,7 +201,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
      # loop over chromosomses
      for (lg in seq(along=chr)){
       
-      sel <- rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr!= lg,])
+      sel <- rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr!= chr[lg],])
       if (length(sel)>0) markerTEMPbeagle <- discard.markers(markerTEMP,which=sel)
       else markerTEMPbeagle <- markerTEMP    # this occurs for only 1 chr
 
@@ -214,7 +214,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
       cnt2 <- cnt2 + sum(is.na(markerTEMPbeagle$geno))
      
       # write input files for beagle
-      pre <- paste("chr",lg,sep="")
+      pre <- paste("chr",chr[lg],sep="")
       # create new directory "beagle" for beagle input and output files
       if(!"beagle" %in% list.files()) system("mkdir beagle")
       write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
