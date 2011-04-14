@@ -39,9 +39,9 @@ the same order as the given covariance matrices, the last given variance compone
   \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to families.
 }
   \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with a Bayesian approach "\code{BRR}" and "\code{BL}" within the estimation set of each fold in the cross validation? If
-\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system. 
+\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system. On Windows operating systems, directories for BL, BRR and ASReml have to be made within the working directory.
 }
-  \item{priorBLR}{A vector with priors for varBR and varE within the BLR function. For \code{VC.est="BRR"}, varBR and varE have to be specified, for \code{VC.est="BL"}, varE has to be specified.
+  \item{priorBLR}{For \code{VC.est="BRR"} and \code{VC.est="BL"}, a list with priors for the BLR function as described in the BLR-manual for varE, varBR or lambda. 
 }
   \item{verbose}{Logical. Whether output shows replications and folds.
 }
