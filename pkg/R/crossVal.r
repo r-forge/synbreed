@@ -220,7 +220,11 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		# checking directories for BRR
 		if(.Platform$OS.type == "unix"){
 			BRRTest <- system(paste("ls"),intern=TRUE)
-			if (!any(BRRTest %in% "BRRReml")) system(paste("mkdir BRR"))
+			if (!any(BRRTest %in% "BRR")) system(paste("mkdir BRR"))
+		}
+		if(.Platform$OS.type == "windows"){
+			BRRTest <- system(paste("Dir"),intern=TRUE)
+			if (!any(BRRTest %in% "BRR")) system(paste("md BRR"))
 		}
 
 		# BRR function
@@ -245,7 +249,11 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		# checking directory for BL
 		if(.Platform$OS.type == "unix"){
 			BLTest <- system(paste("ls"),intern=TRUE)
-			if (!any(BLTest %in% "BLReml")) system(paste("mkdir BL"))
+			if (!any(BLTest %in% "BL")) system(paste("mkdir BL"))
+		}
+		if(.Platform$OS.type == "windows"){
+			BRRTest <- system(paste("Dir"),intern=TRUE)
+			if (!any(BRRTest %in% "BL")) system(paste("md BL"))
 		}
 
 		# BL function
