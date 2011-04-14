@@ -16,7 +16,7 @@ crossVal(y, X, Z, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
 	 burnIn=1000,thin=10)
 }
 \arguments{
-  \item{y}{Phenotypic records of class \code{matrix} with two columns, where the first column contains IDs of individuals and the second column contains the phenotypic values.
+  \item{y}{Phenotypic records of class \code{data.frame} with two columns, where the first column contains IDs of individuals and the second column contains the phenotypic values.
 }
   \item{X}{Design matrix for the fixed effects, where the colnames represents the names of the fixed effects.
 }
