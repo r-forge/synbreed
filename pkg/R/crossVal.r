@@ -190,14 +190,20 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 		# for windows
 		if(.Platform$OS.type == "windows"){
+
+			# checking directories for ASReml
+			ASTest <- shell(paste("dir \b"),intern=TRUE)
+			if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
+			# data output for ASReml
 			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+			# ASReml function
 			system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
 			system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
-			shell(paste('move Model.asr ','Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.sln ','Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.vvp ','Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.yht ','Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.pvc ','Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
+			shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
 		}
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
@@ -213,9 +219,6 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		y.samp<-y
 		y.samp[samp.kf,2]<-NA # set values of TS to NA
 		#print(head(y.samp))
-		# choosing priors
-		SbR <-  priorBLR[1]
-		SE <- priorBLR[2]
 
 		# checking directories for BRR
 		if(.Platform$OS.type == "unix"){
@@ -223,8 +226,8 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			if (!any(BRRTest %in% "BRR")) system(paste("mkdir BRR"))
 		}
 		if(.Platform$OS.type == "windows"){
-			BRRTest <- system(paste("Dir"),intern=TRUE)
-			if (!any(BRRTest %in% "BRR")) system(paste("md BRR"))
+			BRRTest <- shell(paste("dir \b"),intern=TRUE)
+			if (!any(BRRTest %in% "BRR")) shell(paste("md BRR"))
 		}
 
 		# BRR function
@@ -243,17 +246,14 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		y.samp[samp.kf,2]<-NA # set values of TS to NA
 		#print(head(y.samp))
 
-		# choosing priors
-		SE <- priorBLR[1]
-
 		# checking directory for BL
 		if(.Platform$OS.type == "unix"){
 			BLTest <- system(paste("ls"),intern=TRUE)
 			if (!any(BLTest %in% "BL")) system(paste("mkdir BL"))
 		}
 		if(.Platform$OS.type == "windows"){
-			BRRTest <- system(paste("Dir"),intern=TRUE)
-			if (!any(BRRTest %in% "BL")) system(paste("md BL"))
+			BLTest <- shell(paste("dir \b"),intern=TRUE)
+			if (!any(BLTest %in% "BL")) shell(paste("md BL"))
 		}
 
 		# BL function
