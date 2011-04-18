@@ -189,22 +189,22 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		}
 
 		# for windows
-		if(.Platform$OS.type == "windows"){
+		#if(.Platform$OS.type == "windows"){
 
 			# checking directories for ASReml
-			ASTest <- shell(paste("dir \b"),intern=TRUE)
-			if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
+		#	ASTest <- shell(paste("dir /b"),intern=TRUE)
+		#	if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
 			# data output for ASReml
-			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+		#	write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 			# ASReml function
-			system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
-			system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
-			shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
-		}
+		#	system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
+		##	system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
+		#	shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+		#	shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+		#	shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+		#	shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+		#	shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
+		#}
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 		# read in ASReml solutions
@@ -226,7 +226,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			if (!any(BRRTest %in% "BRR")) system(paste("mkdir BRR"))
 		}
 		if(.Platform$OS.type == "windows"){
-			BRRTest <- shell(paste("dir \b"),intern=TRUE)
+			BRRTest <- shell(paste("dir /b"),intern=TRUE)
 			if (!any(BRRTest %in% "BRR")) shell(paste("md BRR"))
 		}
 
@@ -252,7 +252,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 			if (!any(BLTest %in% "BL")) system(paste("mkdir BL"))
 		}
 		if(.Platform$OS.type == "windows"){
-			BLTest <- shell(paste("dir \b"),intern=TRUE)
+			BLTest <- shell(paste("dir /b"),intern=TRUE)
 			if (!any(BLTest %in% "BL")) shell(paste("md BL"))
 		}
 
