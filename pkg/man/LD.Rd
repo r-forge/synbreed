@@ -55,5 +55,5 @@ Valentin Wimmer
 \examples{
 data(maize)
 maizeC <- codeGeno(maize)
-pairwiseLD(maizeC,chr=1)
+head(pairwiseLD(maizeC,chr=1))
 }

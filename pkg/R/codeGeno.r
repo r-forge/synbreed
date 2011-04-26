@@ -312,10 +312,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
      }
      
   #============================================================
-  # step 6 - restoring original data format
+  # step 7 - restoring original data format
   #============================================================
   
-   if (verbose) cat("step 7 : Restoring original data format \n")
+   #if (verbose) cat("step 7 : Restoring original data format \n")
    if(is.matrix(data)){
      res <- matrix(res,nrow=n)
      rownames(res) <- rnames

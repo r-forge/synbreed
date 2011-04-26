@@ -62,7 +62,7 @@ The following mixed model equation is used for \code{VC.est="commit"}:
 
 \deqn{\bf y=\bf{Xb}+\bf{Zu}+\bf e}{y=Xb+Zu+e} with \deqn{\bf u \sim N(0,G\sigma^2_u)}{u=N(0,Gsigma2u)}
 
-\deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array} \right) (\left \begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array} \right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
+\deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array} \right) \left( \begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array} \right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
 }
 \value{
 A object of class \code{list} with following items:
