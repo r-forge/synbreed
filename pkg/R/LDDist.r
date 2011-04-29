@@ -1,26 +1,12 @@
-LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
+LDDist <- function(LDdf,type="p",breaks=NULL,file=NULL,n=NULL,...){
 
-    # catch errors
-    if(is.null(gpData$geno)) stop("no genotypic data available")
-    if(!gpData$info$codeGeno) stop("use function 'codeGeno' before")
-    if(is.null(gpData$map))  stop("no map information available")
 
-    # extract information from gpData  (only use mapped markers)
-    mapped <- !(is.na(gpData$map$chr) & is.na(gpData$map$pos)) 
-    marker <- gpData$geno[,mapped]
-    linkageGroup <- gpData$map$chr[mapped]
-    pos <- gpData$map$pos[mapped]
-   
-    # select chromosomes if 'chr' is specified
-    lg <- unique(linkageGroup)
-    if(!is.null(chr)){ 
-        lg <- chr
-        if(any(chr=="all")) linkageGroup <- rep("all",length(linkageGroup))
-    }
-    
+    if(class(LDdf)!="LDdf") stop("'LDdf' must be of class 'LDdf'")
+    if(type=="nls" & is.null(n)) stop("number of obeservations must be specified using argument 'n'")
+    lg <- 1:length(LDdf)
+
     # function for fit according to Hill and Weir (1988)
     smooth.fit <- function(overallDist,overallr2,n){
-    
       # nls estimate
       nonlinearoverall <- nls(overallr2 ~ ((10 + p*overallDist)) / ((2+p*overallDist) * (11 + p*overallDist) ) *
       ( 1 + ( (3+ p*overallDist) * (12 + 12 * p + p^2*overallDist^2)) / ( n*(2+p*overallDist) * (11 + p*overallDist))),
@@ -37,35 +23,13 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
       curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,col=2,lwd=2,...)
     }
     
-    # initialize return value
-    ret <- list()
-
+    # use LD from input arguement
+    ret <- LDdf
 
     if(!is.null(file)) pdf(file)
     # compute distances within each linkage group
     for (i in 1:length(lg)){
-       
-       # read information from data
-       markeri <- marker[,linkageGroup==lg[i]]
-       p <- ncol(markeri)
-       mn <- colnames(markeri)
-       posi <- pos[linkageGroup==lg[i]]
-       
-       # compute LD as R2 (missing values are allowed)
-       ld.r2i <- cor(markeri,method="spearman",use="pairwise.complete.obs")^2
-       ld.r2i <- ld.r2i[lower.tri(ld.r2i)] # column-wise
-       
-       # index vectors for LD matrix
-       rowi <- rep(1:p,times=(p:1)-1)
-       coli <- p+1 - sequence(1:(p-1))
-       coli <- coli[length(coli):1]
-
-       # distance between markers
-       disti <- abs(posi[rowi] - posi[coli])
-
-       # create dataset with information from above
-       ret[[lg[i]]] <- data.frame(marker1=mn[rowi],marker2=mn[coli],r2=ld.r2i,dist=disti)
-
+    
        # create plots
        # scatterplot
        if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("chromosome",lg[i]),...)
@@ -73,7 +37,7 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
        # scatterplot with nls curve
        if(type=="nls"){
                plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...) 
-               smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=nrow(markeri))
+               smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=n)
        }
 
        # stacked histogramm
@@ -102,11 +66,4 @@ LDDist <- function(gpData,chr=NULL,type="p",breaks=NULL,file=NULL,...){
         }
      # close graphic device
      if(!is.null(file)) dev.off()
-     
-      # assign names to return object
-     names(ret) <-  lg 
-      
-        
-    # return values (list of chromosomes)
-    invisible(ret)
 }

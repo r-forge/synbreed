@@ -39,7 +39,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
            rownames(map) <- colnames(geno)
            warning("missing rownames in 'map': assuming to be identical as colnames in 'geno' \n")  
          }
-         else{
+         if(is.null(rownames(map)) & is.null(colnames(geno))){
           warning("missing marker names, setting default names M1, M2, ... ")
           colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
         } 
@@ -72,10 +72,11 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   # sort markers by chromosome and position within chromosome
   if(!is.null(map)){
     if(any(colnames(map) != c("chr","pos"))) stop("colnames of 'map' must be 'chr' and 'pos'")
-    if (reorderMap) map <- orderBy(~chr+pos,data=map)
-    # sort  columns in geno, too
-    geno <- geno[,rownames(map)]
-  
+    if (reorderMap){
+     map <- orderBy(~chr+pos,data=map)
+      # sortcolumns in geno, too
+     geno <- geno[,rownames(map)]
+    }
   }
 
 

@@ -45,8 +45,10 @@ Theresa Albrecht
 \examples{
 data(maize)
 maize2 <-codeGeno(maize)
-LD <- LDMap(maize2,chr=1:10)
+\dontrun{
+LD <- pairwiseLD(maize2,chr=1:10,type="matrix")
 plotNeighbourLD(LD,maize2,nMarker=FALSE)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

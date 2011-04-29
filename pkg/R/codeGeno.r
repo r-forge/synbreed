@@ -81,7 +81,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("fix","random","family","
     else{
       if (is.function(label.heter)){                          # multiple labels for heterozygous values
           is.heter <- label.heter
-          label.heter <- unique(dataRaw[is.heter(unique(dataRaw))]) 
+          label.heter <- unique(dataRaw[which(is.heter(dataRaw),arr.ind=TRUE)])
           
       
       }
