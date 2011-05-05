@@ -6,7 +6,9 @@ Genomic predictions models for objects of class gpData
 }
 \description{
 This function can be used to fit genomic prediction models to an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
-BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2009). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package.
+BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2009). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an opject of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
+
+
 }
 \usage{
 gpMod(gpData, model = c("BLUP", "BL", "BRR"), kin = NULL, trait = 1, ...)
@@ -37,7 +39,9 @@ Object of class \code{gpMod} which is a list of
 \item{fit}{The model fit returned by the genomic prediction method}
 \item{model}{The model type, see 'Arguments'}
 \item{y}{The phenotypic records for the individuals in the training set}
-\item{y}{The predicted genetic values for the individuals in the training set}
+\item{g}{The predicted genetic values for the individuals in the training set}
+\item{m}{Predicted SNP effects (for BL and BRR)}
+\item{kin}{Matrix \code{kin}}
 }
 \references{
 Clifford D, McCullagh P (2009). regress: Gaussian Linear Models with Linear Covariance
@@ -69,7 +73,7 @@ mod1 <- gpMod(maizeC,model="BLUP",kin=A)
 mod2 <- gpMod(maizeC,model="BLUP",kin=U)
 
 # Bayesian Lasso
-prior <- list(varE=list(df=3,S=7),lambda = list(shape=0.52,rate=1e-4,value=20,type='random'))
+prior <- list(varE=list(df=3,S=35),lambda = list(shape=0.52,rate=1e-4,value=20,type='random'))
 mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)
 
 summary(mod1)

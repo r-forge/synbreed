@@ -2,13 +2,13 @@
 \alias{pairwiseLD}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Pairwise LD between markers using PLINK
+Pairwise LD between markers
 }
 \description{
-Compute pairwise LD between markers in  an object of class \code{gpData} using the PLINK software. Return values is a \code{data.frame} with one row per marker pair or a \code{matrix} with all marker pairs. Additional, the euclidian distance between position of markers can be computed
+Compute pairwise LD between markers in  an object of class \code{gpData}. For the general case, a gateway to the software PLINK (Purcell et al. 2007) is established to estimate the LD. A within-R solution is available for marker data with only 2 genotypes, i.e. homozgous inbred lines Return values is a \code{data.frame} with one row per marker pair or a \code{matrix} with all marker pairs. Additional, the euclidian distance between position of markers can be computed
 }
 \usage{
-pairwiseLD(gpData, chr = NULL, type = c("data.frame", "matrix"),distances=TRUE, ld.threshold=0, rm.unmapped = TRUE)
+pairwiseLD(gpData, chr = NULL, type = c("data.frame", "matrix"),use.plink=FALSE, ld.threshold=0, rm.unmapped = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,8 +21,8 @@ object of class \code{gpData} with elements \code{geno} and \code{map}
   \item{type}{
 \code{character}. Specifies the type of return value.
 }
-  \item{distances}{
-\code{logical}. Should distances be computed?
+  \item{use.plink}{
+\code{logical}. Should the software PLINK be used for the computation?
 }
   \item{ld.threshold}{
 \code{numeric}. Threshold for the LD. Only pairwise LD>\code{ld.threshold} is reported. This argument is can only be used for \code{"type=data.frame"}.  
@@ -61,7 +61,5 @@ Valentin Wimmer
 \examples{
 data(maize)
 maizeC <- codeGeno(maize)
-\dontrun{
 maizeLD <- pairwiseLD(maizeC,chr=1,type="data.frame")
-}
 }

@@ -9,7 +9,7 @@ This is a simulated dataset of a maize breeding program. Data comprises 1250 dou
 \deqn{tbv=\sum_{k=1}^{1000} QTL_k}{TBV=\sum QTL(k)}
 where \eqn{QTL_k}{QTL(k)} is the effect of the \eqn{k}-th QTL. Phenotypic values were simulated according to
 \deqn{y_i=tbv_i + \epsilon_i}{trait=tbv+e}
-where \eqn{\epsilon \sim N(0,I \sigma^2)}{e = N(0,sigma2)}. The value for \eqn{\sigma^2}{sigma2} was chosen in a way that a given plot heritability of \eqn{h^2=0.197}{h2=0.197} is realized. Note that true breeding values for 1250 phenotyped lines are stored as \code{tbv} in \code{covar} of \code{gpData} object. Reported phenotypic values of lines are adjusted values testcross means evaluated in 3 replications.
+where \eqn{\epsilon \sim N(0,I \sigma^2)}{e = N(0,sigma2)}. The value for \eqn{\sigma^2}{sigma2} was chosen in a way that a given plot heritability of \eqn{h^2=0.197}{h2=0.197} is realized. Note that true breeding values for 1250 phenotyped lines are stored as \code{tbv} in \code{covar} of \code{gpData} object. Reported phenotypic values of lines are adjusted values testcross means for yield [dt/ha] evaluated in 3 locations.
 }                                                                                                                                                                                                                 
 \usage{data(maize)}                                                                                
 \format{

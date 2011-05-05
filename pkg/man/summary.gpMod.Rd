@@ -8,7 +8,7 @@ Summary for class gpMod
 \description{
 S3 \code{summary} method for objects of  class \code{gpMod} }
 \usage{
-summary.gpMod(object, ...)
+\method{summary}{gpMod}(object,...) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

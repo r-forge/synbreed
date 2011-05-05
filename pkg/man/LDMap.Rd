@@ -33,10 +33,10 @@ Further arguments that could be passed to function \code{LDheatmap}.
 \examples{
 data(maize)
 maizeC <- codeGeno(maize)
-\dontrun{
+
 # LD for chr 1
 maizeLD <- pairwiseLD(maizeC,chr=1,type="matrix")
 LDMap(maizeLD,maizeC)
-}
+
 }
 \keyword{hplot}

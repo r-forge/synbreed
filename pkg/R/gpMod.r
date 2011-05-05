@@ -14,29 +14,32 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,...){
     # take data from gpData object
     y <- gpData$pheno[rownames(gpData$pheno) %in% trainSet,trait]
 
-    if (model=="BLUP"){
+    if(model=="BLUP"){
       if (is.null(kin)) stop("Missing object 'kin'")
       if (n!=nrow(kin)){
          kin <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
       }
       res <- regress(y~1,Vformula=~kin,...)
       genVal <- res$predicted
+      m <- NULL
     }
-    if (model=="BL"){
+    if(model=="BL"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
       res <- BLR(y=y,XL=X,...)
       if(!is.null(kin)) res <- BLR(y=y,XL=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
+      m <- res$bL
     }
-    if (model=="BRR"){
+    if(model=="BRR"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
       res <- BLR(y=y,XR=X,...)
       if(!is.null(kin)) res <- BLR(y=y,XR=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
+      m <- res$bR
     }
 
 
-    ret <- list(fit=res,model=model,y=y,g=genVal)
+    ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     return(ret)
 

@@ -1,4 +1,4 @@
-pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),distances=TRUE,ld.threshold=0,rm.unmapped=TRUE){
+pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=FALSE,ld.threshold=0,rm.unmapped=TRUE){
 
     # catch errors
     if(is.null(gpData$geno)) stop("no genotypic data available")
@@ -11,14 +11,17 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),distances=T
 
     # extract information from gpData  (only use mapped markers)
     if(rm.unmapped){
-      mapped <- !(is.na(gpData$map$chr) & is.na(gpData$map$pos)) 
+      mapped <- !(is.na(gpData$map$chr) | is.na(gpData$map$pos)) 
     }
     else mapped  <- rep(TRUE,ncol(gpData$geno))
     
     # restrict data to mapped markers
-    linkageGroup <- gpData$map$chr[mapped]
-    pos <- gpData$map$pos[mapped]
-    names(pos) <- rownames(gpData$map)[mapped]
+    gpData$geno <- gpData$geno[,mapped]
+    gpData$map <- gpData$map[mapped,]
+    
+    linkageGroup <- gpData$map$chr
+    pos <- gpData$map$pos
+    names(pos) <- rownames(gpData$map)
    
     
     # select chromosomes if 'chr' is specified
@@ -37,33 +40,63 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),distances=T
     # loop over all chromosomes (linkage groups)
     for (i in 1:length(lg)){
        
+       if(use.plink){ # i.e. if there are 3 genotypes
+        # call PLINK to compute the LD as r2
+        sel <- rownames(gpData$map[gpData$map$chr!= lg[i],])
+        gpTEMP <- discard.markers(gpData,which=sel)
+        pre <- paste("chr",lg[i],sep="")
+        write.plink(gpTEMP,type=type,ld.threshold=ld.threshold,prefix=pre) 
+        system(paste("plink --script ",pre,"plinkScript.txt",sep="")) 
        
-       # call PLINK to compute the LD as r2
-       sel <- rownames(gpData$map[gpData$map$chr!= lg[i],])
-       gpTEMP <- discard.markers(gpData,which=sel)
-       pre <- paste("chr",lg[i],sep="")
-       write.plink(gpTEMP,type=type,ld.threshold=ld.threshold,prefix=pre) 
-       system(paste("plink --script ",pre,"plinkScript.txt",sep="")) 
-       
-       # read data from PLINK
-       if(type=="matrix") ld.r2 <- as.matrix(read.table(paste(pre,".ld",sep="")))
-       if(type=="data.frame") ld.r2.df <- read.table(paste(pre,".ld",sep=""),header=TRUE,stringsAsFactors=FALSE)
-       
-
-       # distances between markers
-       if (distances) {
-         if(type=="matrix"){
-          distance <- as.matrix(dist(pos[linkageGroup == lg[i]],diag=FALSE,upper=FALSE))
-          colnames(distance) <- rownames(distance) <- colnames(ld.r2 ) <- rownames(ld.r2 ) <-names(pos)[linkageGroup == lg[i]]
-         }
-        if(type=="data.frame"){
-          distance <- abs(pos[ld.r2.df$SNP_A]-pos[ld.r2.df$SNP_B]) 
+        # distances between markers
+        if(type=="matrix"){
+           distance <- as.matrix(dist(pos[linkageGroup == lg[i]],diag=FALSE,upper=FALSE))
         }
+        
+        # read data from PLINK
+        if(type=="matrix") {
+          ld.r2 <- as.matrix(read.table(paste(pre,".ld",sep="")))
+          colnames(distance) <- rownames(distance) <- colnames(ld.r2 ) <- rownames(ld.r2 ) <- names(pos)[linkageGroup == lg[i]]
+        }
+        if(type=="data.frame"){
+          ld.r2.df.plink <- read.table(paste(pre,".ld",sep=""),header=TRUE,stringsAsFactors=FALSE)
+          distance <- abs(pos[ld.r2.df.plink $SNP_A]-pos[ld.r2.df.plink $SNP_B]) 
+          ld.r2.df <- with(ld.r2.df.plink,data.frame(marker1=SNP_A,marker2=SNP_B,r2=R2,dist=distance,stringsAsFactors=FALSE))
+        }  
+       
+        
+       
+       } # end if(use.plink)
+       
+       else{  # i.e. if there are 2 genotypes (e.g. DH lines)
+           # read information from data
+           markeri <- gpData$geno[,linkageGroup==lg[i]]
+           p <- ncol(markeri)
+           mn <- colnames(markeri)
+           posi <- pos[linkageGroup==lg[i]]
+       
+           ld.r2 <- cor(markeri,method="spearman",use="pairwise.complete.obs")^2
+          if(type=="data.frame"){
+              ld.r2i <- ld.r2[lower.tri(ld.r2)]
+              # index vectors for LD data.frame
+              rowi <- rep(1:p,times=(p:1)-1)
+              coli <- p+1 - sequence(1:(p-1))
+              coli <- coli[length(coli):1]
+              # distance between markers
+              disti <- abs(posi[rowi] - posi[coli])
+              ld.r2.df <- data.frame(marker1=mn[rowi],marker2=mn[coli],r2=ld.r2i,dist=disti)
+          }
+          if(type=="matrix"){
+              # matrix of distances 
+              distance <- as.matrix(dist(pos[linkageGroup == lg[i]],diag=FALSE,upper=FALSE))
+              colnames(distance) <- rownames(distance) <- colnames(gpData$geno)[linkageGroup == lg[i]]
+          }
        }
-       else distance <- rep(NA)
+
+       
        
        # create dataset with information from above in a data.frame
-       if(type=="data.frame") retList[[lg[i]]] <- with(ld.r2.df,data.frame(marker1=SNP_A,marker2=SNP_B,r2=R2,dist=distance,stringsAsFactors=FALSE))
+       if(type=="data.frame") retList[[lg[i]]] <- ld.r2.df 
        # and as a matrix
        if(type=="matrix")retMat$LD[[lg[i]]] <- ld.r2           # omit lower/upper triangle?
        if(type=="matrix")retMat$distance[[lg[i]]] <- distance  
