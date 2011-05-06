@@ -43,6 +43,9 @@ Object of class \code{gpMod} which is a list of
 \item{m}{Predicted SNP effects (for BL and BRR)}
 \item{kin}{Matrix \code{kin}}
 }
+\not{
+The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload
+}
 \references{
 Clifford D, McCullagh P (2009). regress: Gaussian Linear Models with Linear Covariance
 Structure. R package version 1.1-2, URL http://www.csiro.au.

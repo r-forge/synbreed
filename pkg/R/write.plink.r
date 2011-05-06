@@ -53,4 +53,5 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        cat("--r2 \n")
        
        sink()
+       unlink(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
 }
