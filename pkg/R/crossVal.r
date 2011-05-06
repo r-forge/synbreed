@@ -1,74 +1,86 @@
 # Cross validation with different sampling and variance components estimation methods
 
-crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within family","across family"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,burnIn=1000,thin=10) 
+crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,burnIn=1000,thin=10) 
 {
-    # number of observations 
-    n <- length(unique(y[,1]))
-    if(!is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(colnames(X),colnames(Z))
-    if(!is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(colnames(X),paste("Z",1:ncol(Z),sep=""))
+    VC.est <- match.arg(VC.est)
+    sampling <- match.arg(sampling)
+    if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'crossVal'") 
+
+    # individuals with genotypes and phenotypes
+    dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
+
+    # number of individuals
+    n <- length(dataSet)
+
+    # constructing design matrices
+    y <- data.frame(rownames(gpData$pheno),gpData$pheno[ ,trait])
+    colnames(y) <- c("ID","TRAIT")
+    y <- y[y$ID %in% dataSet, ]
+    X <- matrix(rep(1,n,ncol=1))
+    rownames(X) <- y[,1]
+    Z <- diag(n)
+    rownames(Z) <- y[,1]
+
+    # checking covariance matrices
+    if (is.null(cov.matrix) ){
+	Z <- gpData$geno[rownames(gpData$geno) %in% dataSet, ]
+	if (VC.est %in% c("commit","ASReml")) cov.matrix <- list(kin=diag(ncol(Z)))
+    }
+
     if(is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),colnames(Z))
     if(is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),paste("Z",1:ncol(Z),sep=""))
 
     # catch errors	
     if(is.null(varComp) & VC.est=="commit") stop("Variance components have to be specified")
     if(VC.est=="commit" & length(varComp)<2) stop("Variance components should be at least two, one for the random effect and one residual variance")
-    if(sampling!="random" & is.null(popStruc)) stop("popStruc has to be given")
+    if(sampling!="random" & is.null(popStruc) & is.null(gpData$covar$family)) stop("no popStruc was given")
+    if(sampling!="random" & is.null(popStruc)){
+	popStruc <- gpData$covar$family[gpData$covar$genotyped & gpData$covar$phenotyped]
+    }
     if(sampling!="random" & !is.null(popStruc)){
       if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in data")
       if(any(is.na(popStruc))) stop("no missing values allowed in popStruc")
     }
     if ( k < 2) stop("folds should be equal or greater than 2")
     if ( k > n) stop("folds should be equal or less than the number of observations")
-    # checking covariance matrices
-    if(VC.est=="BL")cov.matrix <- list(diag(ncol(Z)))
-    if(VC.est=="BRR")cov.matrix <- list(diag(ncol(Z)))
-    if (is.null(cov.matrix)){
-	warning("no covariance matrix is given, assuming one iid random effect")
-    	if(VC.est=="commit")cov.matrix <- list(diag(ncol(Z)))
-    }
-    if (VC.est=="commit" & length(cov.matrix)!=length(varComp)-1) stop("number of variance components does not match given covariance matrices")
+    if (VC.est=="commit" & !is.null(cov.matrix) & length(cov.matrix)!=length(varComp)-1) stop("number of variance components does not match given covariance matrices")
     if(VC.est=="BL" & is.null(priorBLR)) stop("prior for varE has to be specified")
     if(VC.est=="BRR" & is.null(priorBLR)) stop("prior for varBR and varE have to be specified")
 
-    # prepare X,Z design matrices
-    X <- as.matrix(X)
-    rownames(X) <- y[,1]
-    Z <- as.matrix(Z)
-    rownames(Z) <- y[,1]
-
     # prepare covariance matrices
-    m <- length(cov.matrix)
-    cat("Model with ",m," covariance matrix/ces \n")
-    if (VC.est=="commit"){
-	# function for constructing GI
-	rmat<-NULL
-   	for( i in 1:length(cov.matrix)){
-       	m <- solve(as.matrix(cov.matrix[[i]]))*(varComp[length(varComp)]/varComp[i])
-       	  if(i==1) rmat <- m
-       	  else
-          {
-            nr <- dim(m)[1]
-            nc <- dim(m)[2]
-            aa <- cbind(matrix(0,nr,dim(rmat)[2]),m)
-            rmat <- cbind(rmat,matrix(0,dim(rmat)[1],nc))
-            rmat <- rbind(rmat,aa)
-          }
-       	}
-      GI <- rmat
-      }
-     # covariance matrices for ASReml
-     else { 
-	if(VC.est=="ASReml"){
-      	for ( i in 1:length(cov.matrix)){
-	write.relationshipMatrix(as.matrix(cov.matrix[[i]]),file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
+    if (!is.null(cov.matrix)){
+	m <- length(cov.matrix)
+	cat("Model with ",m," covariance matrix/ces \n")
+	if (VC.est=="commit"){
+	   # function for constructing GI
+	   rmat<-NULL
+   	   for( i in 1:length(cov.matrix)){
+       	   m <- solve(as.matrix(cov.matrix[[i]]))*(varComp[length(varComp)]/varComp[i])
+       	     if(i==1) rmat <- m
+       	     else
+             {
+              nr <- dim(m)[1]
+              nc <- dim(m)[2]
+              aa <- cbind(matrix(0,nr,dim(rmat)[2]),m)
+              rmat <- cbind(rmat,matrix(0,dim(rmat)[1],nc))
+              rmat <- rbind(rmat,aa)
+             }
+       	   }
+         GI <- rmat
+         }
+	# covariance matrices for ASReml
+	else { 
+	   if(VC.est=="ASReml"){
+      	   for ( i in 1:length(cov.matrix)){
+	   write.relationshipMatrix(as.matrix(cov.matrix[[i]]),file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
+	   }
+	   ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
+	   ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
+	   cat(paste("Model \n ID     	  !A \n Yield  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nYield  ~ mu !r ",ID2,sep=""),file="Model.as")
+	   cat("",file="Model.pin")
+	  }
 	}
-	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
-	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
-	cat(paste("Model \n ID     	  !A \n Yield  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nYield  ~ mu !r ",ID2,sep=""),file="Model.as")
-	cat("",file="Model.pin")
-	}
-     }
-
+    }
     # set seed for replications
     if(!is.null(Seed)) set.seed(Seed)
     seed2<-round(runif(Rep,1,100000),0)
@@ -84,7 +96,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 
 	# sampling of k sets
 	# random sampling
-	cat(sampling," sampling \n")
+	if(verbose) cat(sampling," sampling \n")
 	if(sampling=="random"){
 	  y.u <- unique(y[,1])
 	  set.seed(seed2[i])
@@ -94,7 +106,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	  }
 
 	# within family sampling
-	if(sampling=="within family"){
+	if(sampling=="within popStruc"){
 	   which.pop <- unique(popStruc)# nr of families
 	   y.u <- unique(y[,1])
 	   val.samp3<- NULL
@@ -111,7 +123,7 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 	}
 
 	# across family sampling
-	if(sampling=="across family"){
+	if(sampling=="across popStruc"){
 	  which.pop <- unique(popStruc)
 	  y.u <- unique(y[,1])
 	  y2 <- matrix(y.u[order(popStruc)],ncol=1)
@@ -231,12 +243,14 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		}
 
 		# BRR function
-		mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep=""))
+		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=cov.matrix[[1]]),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 		# solution
-		bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+		if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
 	  }
 
 	  # estimation of variance components with Baysian Lasso for every ES
@@ -257,12 +271,15 @@ crossVal <- function (y,X,Z,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("ran
 		}
 
 		# BL function
-		mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep=""))
+		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=cov.matrix[[1]]),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
 		# solutions of BL
-		bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
+
+		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
+		if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
 		#print(length(bu))
 	  }
 
