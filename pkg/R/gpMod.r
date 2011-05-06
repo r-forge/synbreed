@@ -32,7 +32,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,...){
     }
     if(model=="BRR"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
-      capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt"))
+      capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
       if(!is.null(kin)) res <- BLR(y=y,XR=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
       m <- res$bR
