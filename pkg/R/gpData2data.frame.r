@@ -1,14 +1,14 @@
 # conversion of object class 'gpData' to data.frame
 
 
-gpData2data.frame <- function(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...){
+gpData2data.frame <- function(gpData,trait=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...){
      
      # check for class
      if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'") 
 
      # for single meausers
      if(is.null(Rep)){
-      pheno <- gpData$pheno[phenoNo]
+      pheno <- gpData$pheno[trait]
       if(!onlyPheno){
         geno <- gpData$geno
         # merge genotypic and phenotypic data

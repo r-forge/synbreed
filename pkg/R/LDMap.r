@@ -2,7 +2,7 @@ LDMap <- function(LDmat,gpData,file=NULL,...){
 
     # catch (possible) errors
     if(class(LDmat)!="LDmat") stop("'LDmat' must be of class 'LDmat'")
-    lg <- 1:length(LDmat)
+    lg <- 1:length(LDmat$LD)
     pos <- gpData$map$pos
     names(pos) <- rownames(gpData$map)
 

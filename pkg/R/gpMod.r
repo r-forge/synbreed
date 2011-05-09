@@ -4,9 +4,9 @@
 # author: Valentin Wimmer
 # date: 2011 - 05 - 03
 
-gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,...){
+gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,...){
     model <- match.arg(model)
-
+    
     # inidividuls with genotypes and phenotypes
     trainSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
     n <- length(trainSet)
@@ -37,7 +37,29 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,...){
       genVal <- res$yHat
       m <- res$bR
     }
-
+    if(model=="RR BLUP"){
+      if(!gpData$info$codeGeno) stop("use function 'codeGeno' before")
+      if (is.null(kin)) stop("Missing object 'kin'")
+      if (n!=nrow(kin)){
+         kin <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
+      }
+      # first run BLUP model
+      res <- regress(y~1,Vformula=~kin,...)
+      genVal <- res$predicted
+      sigma2u <- res$sigma[1]
+      sigma2  <- res$sigma[2]
+      p <- colMeans(gpData$geno)/2
+      sumP <- 2*sum(p*(1-p))
+      # use transformation rule for vc (Albrecht et al. 2011)
+      sigma2m <- sigma2u/sumP
+      # set up design matrices
+      X <- matrix(1,nrow=n)
+      Z <- gpData$geno
+      GI <- diag(rep(sigma2/sigma2m,ncol(Z)))
+      RI <- diag(n)
+      sol <- MME(X, Z, GI, RI, y)
+      m <- sol$u 
+    }
 
     ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"

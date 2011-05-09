@@ -11,7 +11,7 @@ BLUP models are fitted using the implementation of the \code{regress} package (C
 
 }
 \usage{
-gpMod(gpData, model = c("BLUP", "BL", "BRR"), kin = NULL, trait = 1, ...)
+gpMod(gpData, model = c("BLUP", "BL", "BRR","RR BlUP"), kin = NULL, trait = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,7 +43,7 @@ Object of class \code{gpMod} which is a list of
 \item{m}{Predicted SNP effects (for BL and BRR)}
 \item{kin}{Matrix \code{kin}}
 }
-\not{
+\note{
 The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload
 }
 \references{

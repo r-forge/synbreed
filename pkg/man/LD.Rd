@@ -34,9 +34,9 @@ object of class \code{gpData} with elements \code{geno} and \code{map}
 \details{
 The function \code{write.plink} to prepare the input files and the script for PLINK. The executive PLINK file must be available (e.g. in the working directory). The function \code{pairwiseLD} starts PLINK and reads the results. The evaluation is performed separate for every chromosome. The measure for LD is \eqn{r^2}{r2}. This is defined as 
 \deqn{D= p_{AB} - p_Ap_B }{D = p(AB) - p(A)*p(B)} and
-\deqn{r^2=\frac{D^2}{p_Ap_B+p_ap_b}}{r2=D2/p(A)p(B)p(a)p(b)}
+\deqn{r^2=\frac{D^2}{p_Ap_Bp_ap_b}}{r2=D2/p(A)p(B)p(a)p(b)}
 where \eqn{p_{AB}}{p(AB)} is defined as the observed probability of haplotype \eqn{AB}, \eqn{p_A=1-p_a} and \eqn{p_B=1-p_b} the observed probabilities of alleles \eqn{A} and \eqn{B}. 
-If the number of markers is higt, a threshold for the LD can be used. In this case, only pairwise LD above the threshold is reported (argument \code{--ld-window-r2 in PLINK}.
+If the number of markers is higt, a threshold for the LD can be used. In this case, only pairwise LD above the threshold is reported (argument \code{--ld-window-r2 in PLINK}).
 }
 \value{
 For \code{type="data.frame"} a list with one element for each chromosome. Each element is a \code{data.frame} with columns \code{marker1}, \code{marker2}, \code{r2} and \code{distance} for all \eqn{p(p-1)/2} marker pairs.

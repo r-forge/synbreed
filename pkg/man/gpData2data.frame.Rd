@@ -8,15 +8,15 @@ Merge of phenotypic and genotypic data
 Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}. Multiple observations for each individual in \code{pheno} are be reshaped from "wide" format in \code{pheno} into "long"  format using a grouping variable. 
 }
 \usage{
-gpData2data.frame(gpData,phenoNo=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...)
+gpData2data.frame(gpData,trait=1,Rep=NULL,onlyPheno=!is.null(Rep),all.pheno=FALSE,all.geno=FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
 object of class \code{gpData}
 }
-  \item{phenoNo}{
-numeric or character. Which phenotypes should be in the \code{data.frame}? Only for \code{Rep=NULL}.
+  \item{trait}{
+numeric or character. Which trait should be included in the \code{data.frame}? Only for \code{Rep=NULL}.
 }
   \item{Rep}{
 \code{list} with levels of the grouping variable. If multiple measures for each individual should be combined in the \code{data.frame} in "long" format, \code{Rep} is a named list with elements specifying variables in \code{pheno} that identify multiple observations, i.e. each element in \code{Rep} represents a level of the grouping variable. Name of list element is used as column name for the grouping variable. See \code{details} and \code{Examples}.
