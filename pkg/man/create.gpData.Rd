@@ -40,7 +40,7 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 }
 }
 \details{
-The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Of course this class could be used for other purposes too. For a pedigree based prediction model only \code{pheno} and \code{pedigree} are necessary. In an analysis of LD only \code{geno} and \code{map} are needed.
+The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Every data source can be omitted. In this case, the corresponding argument must be \code{NULL}. By default (argument \code{reorderMap}), markers in \code{geno} are ordered by their position in \code{map}. Individuals are ordered in alphabetical order.
 
 In an object of class \code{gpData} different individuals may occur in \code{pheno}, \code{geno} and \code{pedigree} are possible. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} identify individuals that appear in the corresponding object.   
 }

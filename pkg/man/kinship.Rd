@@ -4,7 +4,7 @@
 Relatedness based on pedigree or marker data
 }
 \description{     
-This function implements different measures of relatedness between individuals in a object of class \code{gpData}: (1) Expected relatedness based on pedigree and (2) realized relatedness based on marker data. See 'Details'.
+This function implements different measures of relatedness between individuals in a object of class \code{gpData}: (1) Expected relatedness based on pedigree and (2) realized relatedness based on marker data. See 'Details'.  The function uses as first argument an object of class \code{gpData}. An argument \code{ret} controls the type of relatedness coefficient. 
 }
 \usage{
 kin(gpData,ret=c("add","kin","dom","gam","realized","sm","sm-smin"),DH=NULL)

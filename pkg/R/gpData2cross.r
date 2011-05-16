@@ -15,6 +15,7 @@ gpData2cross <- function(gpData,...){
        # read information from gpData
        geno <- data.frame(gpData$geno[rownames(gpData$geno) %in% genoPheno,])
        pheno <- data.frame(gpData$pheno[rownames(gpData$pheno) %in% genoPheno,])
+       colnames(pheno) <- colnames(gpData$pheno)
        map  <- gpData$map
        n <- nrow(geno)
      }

@@ -34,24 +34,29 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        write.table(ped,file=file.path(wdir,paste(prefix,".ped",sep="")),quote=FALSE,col.names=FALSE,row.names=FALSE)
        write.table(map,file=file.path(wdir,paste(prefix,".map",sep="")),quote=FALSE,col.names=FALSE,row.names=FALSE)
        
-       # write PLINK script
-       zz <- file(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")), open="wt")
-       sink(zz)
-       cat("--ped ",prefix,".ped \n",sep="",append=TRUE)
-       cat("--map ",prefix,".map \n",sep="",append=TRUE)
-       cat("--compound-genotypes \n")
-       cat("--out ",prefix,"\n")
-       cat("--no-parents \n")
-       cat("--no-sex \n")
-       cat("--no-pheno \n")
-       cat("--allow-no-sex \n")
-       if(type=="matrix") cat("--matrix \n")
-       else { 
-        cat("--ld-window 99999\n")
-        cat("--ld-window-r2 ",ld.threshold)
-       }
-       cat("--r2 \n")
+       # write PLINK script (sink does not work for Linux)
+       #zz <- file(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")), open="wt")
+       #sink(zz)
+       #cat("--ped ",prefix,".ped \n",sep="",append=TRUE)
+       #cat("--map ",prefix,".map \n",sep="",append=TRUE)
+       #cat("--compound-genotypes \n")
+       #cat("--out ",prefix,"\n")
+       #cat("--no-parents \n")
+       #cat("--no-sex \n")
+       #cat("--no-pheno \n")
+       #cat("--allow-no-sex \n")
+       #if(type=="matrix") cat("--matrix \n")
+       #else { 
+       # cat("--ld-window 99999\n")
+       # cat("--ld-window-r2 ",ld.threshold)
+       #}
+       #cat("--r2 \n")
        
-       sink()
-       unlink(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
+       #sink()
+       #unlink(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
+       
+       cat("--ped ",prefix,".ped \n","--map ",prefix,".map \n","--compound-genotypes \n","--out ",prefix,"\n","--no-parents \n","--no-sex \n","--no-pheno \n","--allow-no-sex \n",ifelse(type=="matrix","--matrix \n",paste("--ld-window 99999\n","--ld-window-r2 ",ld.threshold,"\n",sep="")),"--r2 \n",sep="",file=file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
+
+
+
 }
