@@ -8,7 +8,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
     model <- match.arg(model)
     
     # inidividuls with genotypes and phenotypes
-    trainSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
+    trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped])
     n <- length(trainSet)
 
     # take data from gpData object
@@ -17,9 +17,10 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
     if(model=="BLUP"){
       if (is.null(kin)) stop("Missing object 'kin'")
       if (n!=nrow(kin)){
-         kin <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
+         kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
       }
-      res <- regress(y~1,Vformula=~kin,...)
+      else kinTS <- kin
+      res <- regress(y~1,Vformula=~kinTS,...)
       genVal <- res$predicted
       m <- NULL
     }
@@ -60,8 +61,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
       sol <- MME(X, Z, GI, RI, y)
       m <- sol$u 
     }
-
-    ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
+    names(genVal) <- trainSet
+    ret <- list(fit=res,model=model,trainingSet=trainSet,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     return(ret)
 
@@ -89,7 +90,7 @@ print.summary.gpMod <- function(x,...){
     cat(x$summaryG, " \n")
     cat("--\n")
     cat("Model fit \n")
-    if(x$model=="BLUP") cat(print(x$summaryFit),"\n")
+    if(x$model %in% c("BLUP","RR BLUP")) cat(print(x$summaryFit),"\n")
     else{
     cat("MCMC options: nIter = ",x$summaryFit$nIter,", burnIn = ",x$summaryFit$burnIn,", thin = ",x$summaryFit$thin,"\n",sep="")
     cat("             Posterior mean \n")

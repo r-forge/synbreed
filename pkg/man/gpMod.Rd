@@ -11,7 +11,7 @@ BLUP models are fitted using the implementation of the \code{regress} package (C
 
 }
 \usage{
-gpMod(gpData, model = c("BLUP", "BL", "BRR","RR BlUP"), kin = NULL, trait = 1, ...)
+gpMod(gpData, model = c("BLUP", "BL", "BRR","RR BLUP"), kin = NULL, trait = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,7 @@ Only a subset of the individuals - the training set - is used for the model fit.
 Object of class \code{gpMod} which is a list of
 \item{fit}{The model fit returned by the genomic prediction method}
 \item{model}{The model type, see 'Arguments'}
+\item{trainingSet}{IDs of the individuals in the training set}
 \item{y}{The phenotypic records for the individuals in the training set}
 \item{g}{The predicted genetic values for the individuals in the training set}
 \item{m}{Predicted SNP effects (for BL and BRR)}

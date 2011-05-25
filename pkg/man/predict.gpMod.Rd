@@ -1,0 +1,63 @@
+\name{predict.gpMod}
+\alias{predict.gpMod}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Prediction for genomic prediction models.
+}
+\description{
+S3 \code{predict} method for objects of class \code{gpMod}. A genomic prediction model is used to predict the genetic value for e.g. unphenotyped individuals using an object of class \code{gpMod} estimated by a training set.
+}
+\usage{
+\method{predict}{gpMod}(object,newdata,...) 
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{object}{
+object of class \code{gpMod} which is the model used for the prediction.
+}
+  \item{newdata}{
+for \code{model="RR BLUP"}, \code{"BL"} or \code{"BRR"} an object of class \code{gpData} with the marker data of the unphenotyped individuals. For \code{model="BLUP"} using a pedigree based relationship  matrix, a \code{character} vector with the names of the individuals to predict.
+}
+}
+\details{
+For the models modeling SNP effects directly, the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat}. The prediction using BLUP models is only possible for a pedigree-based relationshipMatrix. In this case, the full relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}
+}
+\value{
+a named vector with the predicted genetic values for all individuals in \code{newdata}.
+}
+\references{
+Henderson C (1977) Best linear unbiased prediction of breeding values not in the model for records. Journal of Dairy Science 60:783-787
+
+Henderson CR (1984). Applications of linear models in animal breeding. University of Guelph.
+}
+\author{
+Valentin Wimmer
+}
+
+\seealso{
+\code{\link{gpMod}}
+}
+\examples{
+# Example from Henderson (1977)
+dat <- data.frame(y=c(132,147,156,172),time=c(1,2,1,2),animal=c(1,2,3,4))
+ped <- create.pedigree(ID=c(6,5,1,2,3,4),Par1=c(0,0,5,5,1,6),Par2=c(0,0,0,0,6,2))
+gp <- create.gpData(pheno=dat,pedigree=ped)
+A <- kin(gp,ret="add")
+
+# assuming h2=sigma2u/(sigma2u+sigma2)=0.5
+# no REML fit possible due to the limited number of observations
+mod1 <- list(fit=list(sigma=c(1,1)),kin=A,model="BLUP",trainingSet=paste(1:4),y=c(132,147,156,172))
+class(mod1) <- "gpMod"
+predict(mod1,c("5","6"))
+
+# prediction 'by hand'
+y <- c(132,147,156,172)
+X <- matrix(1,ncol=1,nrow=4)
+Z <- diag(6)[-c(1,2),]
+AI <- solve(A)
+RI <- diag(4)
+ 
+res <- MME(X,Z,AI,RI,y)
+res$b + res$u[1:2]
+
+}

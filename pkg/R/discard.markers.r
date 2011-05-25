@@ -12,12 +12,12 @@ discard.markers <- function(gpData,which){
 
 discard.individuals <- function(gpData,which){
    # updata pheno
-   gpData$pheno <- gpData$pheno[!rownames(gpData$pheno) %in% which,]
+   gpData$pheno <- subset(gpData$pheno,!rownames(gpData$pheno) %in% which)
    # update geno
-   gpData$geno <- gpData$geno[!rownames(gpData$geno) %in% which,] 
+   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
    # update pedigree 
-   gpData$pedigree <- gpData$pedigree[!gpData$pedigree$ID %in% which,] 
+   gpData$pedigree <- subset(gpData$pedigree,!gpData$pedigree$ID %in% which) 
    # update covar
-   gpData$covar <- gpData$covar[!gpData$covar$id %in% which,]
+   gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
    return(gpData)
 }

@@ -90,7 +90,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   # sort all available individuals
   ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),obj$pedigree$ID))) 
 
-  if(is.null(covar)) obj$covar <- data.frame(id=ids)
+  if(is.null(covar)) obj$covar <- data.frame(id=ids,stringsAsFactors=FALSE)
   else obj$covar$id <- ids 
 
   obj$covar$phenotyped <- obj$covar$id %in% rownames(obj$pheno)
