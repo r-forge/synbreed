@@ -10,8 +10,8 @@ Raw marker data could be in any format (e.g. alleles coded as pair of observed a
 Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("fix","random", "family", 
-"beagle", "beagleAfterFamily"),replace.value=NULL,maf=NULL,nmiss=NULL,
+codeGeno(gpData,impute=FALSE,impute.type=c("family", 
+"beagle", "beagleAfterFamily","random","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,
 label.heter="AB",keep.identical=TRUE,verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -74,7 +74,7 @@ In the first step, missing genotypes are imputed according to the algorithm with
 
 7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
 
-Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations by marginal allele distribution is \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_F + 0.5n_R}{n_F + n_R}}{(nF + 0.5nR)/(nF+nR)} where \eqn{n_F}{nF} is the number of imputations within monomorphic families and \eqn{n_R}{nR} polymorphic families.
+Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations by marginal allele distribution is \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_M + 0.5n_P}{n_M + n_P}}{(nM + 0.5nP)/(nM+nP)} where \eqn{n_M}{nM} is the number of imputations within monomorphic families and \eqn{n_P}{nP} polymorphic families.
 
 }
 \value{

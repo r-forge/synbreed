@@ -1,9 +1,12 @@
 # predictions for objects of class gpMod
 
-predict.gpMod <- function(object,newdata,...){
+predict.gpMod <- function(object,newdata=NULL,...){
   if(class(object)!="gpMod") stop("'object' must be of class 'gpMod'")
+  if (is.null(newdata)) prediction <- object$g
+  else{
   model <- object$model
-  if(model %in% c("BRR","BL")){
+  
+  if(model %in% c("modBRR","modBL")){
       if(!is.null(object$kin)) ("including a polygenic effect is not yet implemented")
       if(class(newdata)!="gpData") stop("object 'newdata' must be of class 'gpData'")
       X <- newdata$geno
@@ -11,15 +14,14 @@ predict.gpMod <- function(object,newdata,...){
       mu <- object$fit$mu
       prediction <- mu + X %*% m
   }
-  if(model=="RR BLUP"){
+  if(model=="modRR"){
      if(class(newdata)!="gpData") stop("object 'newdata' must be of class 'gpData'")
      X <- newdata$geno
      m <- object$m
      mu <- object$fit$beta
      prediction <- mu + X %*% m
   }
-  if(model=="BLUP"){
-      warning("valid results only for a pedigree-based relationship matrix, prediction for a realized relationship matrix is not yet implemented")
+  if(model=="modA"){
       G <- object$kin[c(object$trainingSet,newdata),c(object$trainingSet,newdata)]
       y <- object$y
       n <- length(y) # size of the training set
@@ -32,6 +34,10 @@ predict.gpMod <- function(object,newdata,...){
       sol <- MME(X, Z, GI, RI, y)
       prediction <- sol$b + sol$u[-(1:n)]
       names(prediction) <- newdata
+  }
+  if(model=="modU"){
+     stop("prediction not possible for modU")
+  }
   }
   return(prediction)
 }                                         

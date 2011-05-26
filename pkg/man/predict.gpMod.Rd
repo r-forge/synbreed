@@ -5,7 +5,7 @@
 Prediction for genomic prediction models.
 }
 \description{
-S3 \code{predict} method for objects of class \code{gpMod}. A genomic prediction model is used to predict the genetic value for e.g. unphenotyped individuals using an object of class \code{gpMod} estimated by a training set.
+S3 \code{predict} method for objects of class \code{gpMod}. A genomic prediction model is used to predict the genetic performance for e.g. unphenotyped individuals using an object of class \code{gpMod} estimated by a training set.
 }
 \usage{
 \method{predict}{gpMod}(object,newdata,...) 
@@ -16,11 +16,13 @@ S3 \code{predict} method for objects of class \code{gpMod}. A genomic prediction
 object of class \code{gpMod} which is the model used for the prediction.
 }
   \item{newdata}{
-for \code{model="RR BLUP"}, \code{"BL"} or \code{"BRR"} an object of class \code{gpData} with the marker data of the unphenotyped individuals. For \code{model="BLUP"} using a pedigree based relationship  matrix, a \code{character} vector with the names of the individuals to predict.
+for \code{model="modRR"}, \code{"modBL"} or \code{"modBRR"} an object of class \code{gpData} with the marker data of the unphenotyped individuals. For \code{model="modA"}, a \code{character} vector with the names of the individuals to predict. If \code{newdata=NULL},  the genetic performances of the individuals for the training set is returned. 
+}
+\item{...}{not used
 }
 }
 \details{
-For the models modeling SNP effects directly, the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat}. The prediction using BLUP models is only possible for a pedigree-based relationshipMatrix. In this case, the full relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}
+For models, \code{model="modRR"}, \code{"modBL"} and \code{"modBRR" }the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat}. For the prediction using \code{model="modA"}, the  relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}. No prediction is possible for \code{model="modU"}. 
 }
 \value{
 a named vector with the predicted genetic values for all individuals in \code{newdata}.
@@ -46,7 +48,7 @@ A <- kin(gp,ret="add")
 
 # assuming h2=sigma2u/(sigma2u+sigma2)=0.5
 # no REML fit possible due to the limited number of observations
-mod1 <- list(fit=list(sigma=c(1,1)),kin=A,model="BLUP",trainingSet=paste(1:4),y=c(132,147,156,172))
+mod1 <- list(fit=list(sigma=c(1,1)),kin=A,model="modA",trainingSet=paste(1:4),y=c(132,147,156,172))
 class(mod1) <- "gpMod"
 predict(mod1,c("5","6"))
 

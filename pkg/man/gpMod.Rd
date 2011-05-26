@@ -11,7 +11,7 @@ BLUP models are fitted using the implementation of the \code{regress} package (C
 
 }
 \usage{
-gpMod(gpData, model = c("BLUP", "BL", "BRR","RR BLUP"), kin = NULL, trait = 1, ...)
+gpMod(gpData, model = c("modA","modU","modRR","modBL","modBRR"), kin = NULL, trait = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -73,12 +73,12 @@ A <- kin(maizeC,ret="kin",DH=maize$covar$DH)
 U <- kin(maizeC,ret="realized")/4
 
 # BLUP models
-mod1 <- gpMod(maizeC,model="BLUP",kin=A)
-mod2 <- gpMod(maizeC,model="BLUP",kin=U)
+mod1 <- gpMod(maizeC,model="modA",kin=A)
+mod2 <- gpMod(maizeC,model="modU",kin=U)
 
 # Bayesian Lasso
 prior <- list(varE=list(df=3,S=35),lambda = list(shape=0.52,rate=1e-4,value=20,type='random'))
-mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)
+mod3 <- gpMod(maizeC,model="modBL",prior=prior,nIter=6000,burnIn=1000,thin=5)
 
 summary(mod1)
 summary(mod2)

@@ -4,17 +4,44 @@
 # author: Valentin Wimmer
 # date: 2011 - 05 - 03
 
-gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,...){
+gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NULL,trait=1,...){
     model <- match.arg(model)
     
+
+    if(model=="modA"){
+      
+      # inidividuls with genotypes and phenotypes
+      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped ])
+      # remove missing observations
+      trainSet <- trainSet[!is.na(gpData$pheno[,trait])]
+      n <- length(trainSet)
+
+      # take data from gpData object
+      y <- gpData$pheno[rownames(gpData$pheno) %in% trainSet,trait]
+    
+      if (is.null(kin)) stop("Missing object 'kin'")
+      if (n!=nrow(kin)){
+         kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
+      }
+      else kinTS <- kin
+      res <- regress(y~1,Vformula=~kinTS,...)
+      genVal <- res$predicted
+      names(genVal) <- trainSet
+      m <- NULL
+    }
+    
+    else{
     # inidividuls with genotypes and phenotypes
-    trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped])
-    n <- length(trainSet)
+      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped &gpData$covar$genotyped])
+      n <- length(trainSet)
+      # take data from gpData object
+      y <- gpData$pheno[rownames(gpData$pheno) %in% trainSet,trait]
+    
+    
+      if(model=="modU"){
+      
+      
 
-    # take data from gpData object
-    y <- gpData$pheno[rownames(gpData$pheno) %in% trainSet,trait]
-
-    if(model=="BLUP"){
       if (is.null(kin)) stop("Missing object 'kin'")
       if (n!=nrow(kin)){
          kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
@@ -24,21 +51,25 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
       genVal <- res$predicted
       m <- NULL
     }
-    if(model=="BL"){
+    
+    
+    if(model=="modBL"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
       capture.output(res <- BLR(y=y,XL=X,...),file="BLRout.txt")
       if(!is.null(kin)) res <- BLR(y=y,XL=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
+      names(genVal) <- rownames(X)
       m <- res$bL
     }
-    if(model=="BRR"){
+    if(model=="modBRR"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
       capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
       if(!is.null(kin)) res <- BLR(y=y,XR=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
+      names(genVal) <- rownames(X)
       m <- res$bR
     }
-    if(model=="RR BLUP"){
+    if(model=="modRR"){
       if(!gpData$info$codeGeno) stop("use function 'codeGeno' before")
       if (is.null(kin)) stop("Missing object 'kin'")
       if (n!=nrow(kin)){
@@ -47,6 +78,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
       # first run BLUP model
       res <- regress(y~1,Vformula=~kin,...)
       genVal <- res$predicted
+      names(genVal) <- trainSet
       sigma2u <- res$sigma[1]
       sigma2  <- res$sigma[2]
       p <- colMeans(gpData$geno)/2
@@ -61,7 +93,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
       sol <- MME(X, Z, GI, RI, y)
       m <- sol$u 
     }
-    names(genVal) <- trainSet
+    }
+    
     ret <- list(fit=res,model=model,trainingSet=trainSet,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     return(ret)
@@ -71,9 +104,9 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR","RR BLUP"),kin=NULL,trait=1,.
 summary.gpMod <- function(object,...){
     ans <- list()
     ans$model <- object$model
-    if(object$model=="BLUP") ans$summaryFit <- summary(object$fit)
-    if(object$model=="BL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
-    if(object$model=="BRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model %in% c("modA","modU","modRR")) ans$summaryFit <- summary(object$fit)
+    if(object$model=="modBL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model=="modBRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
     ans$n <- length(object$y)
     ans$sumNA <- sum(is.na(object$y))
     ans$summaryG <- summary(as.numeric(object$g))
@@ -85,21 +118,21 @@ print.summary.gpMod <- function(x,...){
     cat("object of class 'gpMod' \n")
     cat("Model used:",x$model,"\n")
     cat("nr. observations ",x$n," (NA = ",x$sumNA,") \n",sep="")
-    cat("Genetic values: \n")
+    cat("Genetic performances: \n")
     cat("Min. 1st Qu. Median Mean 3rd Qu. Max \n")
     cat(x$summaryG, " \n")
     cat("--\n")
     cat("Model fit \n")
-    if(x$model %in% c("BLUP","RR BLUP")) cat(print(x$summaryFit),"\n")
+    if(x$model %in% c("modA","modU","modRR")) cat(print(x$summaryFit),"\n")
     else{
     cat("MCMC options: nIter = ",x$summaryFit$nIter,", burnIn = ",x$summaryFit$burnIn,", thin = ",x$summaryFit$thin,"\n",sep="")
     cat("             Posterior mean \n")
     cat("(Intercept) ",x$summaryFit$mu,"\n")
     cat("VarE        ",x$summaryFit$varE,"\n")
-    if(x$model=="BL"){
+    if(x$model=="modBL"){
     cat("lambda      ",x$summaryFit$lambda,"\n")
     }
-    if(x$model=="BRR"){
+    if(x$model=="modBRR"){
     cat("varBr       ",x$summaryFit$varBr,"\n")
     }
     }
