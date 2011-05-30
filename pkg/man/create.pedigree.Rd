@@ -8,7 +8,7 @@ Create pedigree object
 This function can be used to create a \code{pedigree} object. 
 }
 \usage{
-create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL)
+create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL,add.ancestors=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,9 @@ vector identifying the generation. If \code{NULL} gener will be 0 for unknown pa
 }
   \item{sex}{
 vector identifying the sex (female=0 and male=1). 
+}
+  \item{add.ancestors}{
+\code{logical}. Add ancestors which do not occur in \code{ID} to the pedigree.
 }
 }
 \details{

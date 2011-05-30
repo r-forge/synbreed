@@ -98,6 +98,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   
   # family information for genotyped indviduals  
   if(!is.null(family)){
+    colnames(family)[1] <- "family"
     obj$covar <- merge(obj$covar,family,by.x=1,by.y=0,all=TRUE)
   }
   

@@ -7,6 +7,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
   #============================================================
   
   noHet <- is.null(label.heter) # are there only homozygous genotypes?, we need this for random imputation
+  if(is.null(impute.type)) impute.type <- "random"   # default
+  impute.type <- match.arg(impute.type)
   
   # check for class 'gpData'
   if(class(gpData)=="gpData"){
@@ -98,7 +100,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
     # do not use heterozygous values
     alleles <- alleles[!alleles %in% label.heter]
-    if (length(alleles)>2) stop("only biallelic marker allowed (check for heterozygous genotypes)")
+    if (length(alleles)>2) stop("more than 2 marker genotypes found but no 'label.heter' declared")
     x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
     return(x)
    }
@@ -169,16 +171,23 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
           # loop over all families          
           for ( i in rownames(poptab)[nmissfam>0] ){                          
             # impute values for impute.type="family" : all missing genotypes
-            if (impute.type=="family" | (impute.type=="BeagleAfterfamily" & is.na(gpData$map$pos[j]) )){
+            if (impute.type=="family"){
               res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(ifelse(polymorph[i],sample(c(0,2),size=nmissfam[i],prob=c(0.5,0.5),replace=TRUE),rep(major.allele[i],nmissfam[i])))
               # update counter
               ifelse(polymorph[i],cnt2 <- cnt2 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
             }
             if (impute.type=="beagleAfterFamily"){
+              if (is.na(gpData$map$pos[j])){     # if no position is available use family algoithm
+                 res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(ifelse(polymorph[i],sample(c(0,2),size=nmissfam[i],prob=c(0.5,0.5),replace=TRUE),rep  (major.allele[i],nmissfam[i])))
+                # update counter
+                ifelse(polymorph[i],cnt2 <- cnt2 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
+              }
+              else{ # use Beagle and impute NA for polymorphic families
               # impute values for impute.type="beagleAfterfamily"  : only monomorph markers
               res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(ifelse(polymorph[i],NA,rep(major.allele[i],nmissfam[i])))
               # update counter
-              ifelse(polymorph[i],cnt2 <- cnt2 + 0,cnt1 <- cnt1 + nmissfam[i])  
+              ifelse(polymorph[i],cnt2 <- cnt2 + 0,cnt1 <- cnt1 + nmissfam[i]) 
+              } 
             }  
           }
         }
@@ -338,8 +347,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
     if(impute.type %in% c("family","beagleAfterFamily")) cat(paste("  number of imputations by family structure     :",cnt1,"\n"))
     if(impute.type %in% c("beagle","beagleAfterFamily")) cat(paste("  number of Beagle imputations                  :",cnt2,"\n"))
     else cat(paste("  number of random imputations                  :",cnt2,"\n"))
-    if(impute.type=="family") cat(paste("  approximate fraction of correct imputations   :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
-    if(impute.type=="random") cat(paste("  approximate fraction of correct imputations   :",round((cnt3)/cnt2,3),"\n"))
+    #if(impute.type=="family") cat(paste("  approximate fraction of correct imputations   :",round((cnt1+0.5*cnt2)/(cnt1+cnt2),3),"\n"))
+    #if(impute.type=="random") cat(paste("  approximate fraction of correct imputations   :",round((cnt3)/cnt2,3),"\n"))
   }
   
   # overwrite original genotypic data

@@ -23,7 +23,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{logical}. Should missing value be replaced by imputing?
 }
   \item{impute.type}{
-\code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"}. See details.
+\code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"} (default = \code{"random"}).  See details.
 }
   \item{replace.value}{
 \code{numeric} scalar to replace missing values in case \code{impute.type="fix"}. 
@@ -74,7 +74,7 @@ In the first step, missing genotypes are imputed according to the algorithm with
 
 7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
 
-Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations by marginal allele distribution is \eqn{\frac{1}{M} \sum_{j=1}^M p_j^2 + (1-p_j)^2}{1/M * sum p^2 + (1-p)^2} where \eqn{M} is the number of makers. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_M + 0.5n_P}{n_M + n_P}}{(nM + 0.5nP)/(nM+nP)} where \eqn{n_M}{nM} is the number of imputations within monomorphic families and \eqn{n_P}{nP} polymorphic families.
+Information about imputing is reported after a call of \code{codeGeno}. The approximate number of correct imputations by marginal allele distribution is \eqn{\frac{1}{N} \sum_{j=1}^M N_j ( p_j^2 + (1-p_j)^2 )}{1/N * sum Nj (pj^2 + (1-pj)^2)} where \eqn{M} is the number of markers, \eqn{N_j}{Nj} and \eqn{p_j}{pj} the number of missing marker genotypes and the minor allele frequency of marker \eqn{j=1,...,M}, respectively. The total number of missing marker genotypes is \eqn{N=\sum_{j=1}^M N_j}{N = sum Nj}. For imputation by family fraction of correct imputations is estimated \eqn{\frac{n_M + 0.5n_P}{n_M + n_P}}{(nM + 0.5nP)/(nM+nP)} where \eqn{n_M}{nM} is the number of imputations within monomorphic families and \eqn{n_P}{nP} polymorphic families.
 
 }
 \value{
