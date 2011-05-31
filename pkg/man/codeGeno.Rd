@@ -49,13 +49,12 @@ Coding of genotypic data is done in the following order (depending on choice of 
 
 1. Discarding markers with fraction > \code{nmiss} of missing values
 
-2. Recoding alleles from character/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2
+2. Recoding alleles from character/factor/numeric as the number of the minor alleles, i.e. 0, 1 and 2. In \code{codeGeno}, in the first step heterozygous genotypes are coded as 1. From the other genotypes, the less frequent genotype is coded as 2 and the remaining genotype as 0. Note that  function \code{codeGeno} will terminate with an error whenever more than three genotypes are found.
 
 3. Replace of missing values by \code{replace.value}  or impute missing values according to one of the following methods:
 
 Imputing is done according to \code{impute.type}
 \describe{
-\item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (this is only when \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}.}
 \item{"family"}{
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},                                          
 the value is 0 with probability 0.5 and 1 with probability 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}    
@@ -63,6 +62,7 @@ the value is 0 with probability 0.5 and 1 with probability 0.5. To use this algo
 Use Beagle Genetic Analysis Software Package (Browning and Browning 2009) to infer missing genotypes. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. To use \code{"beagle"}, the beagle executive (version \eqn{>}  3.3.1)  file must be available (either through the PATH specification in the system or the file \code{beagle.jar} must be in the working directory. Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle input and output files and run Beagle with default settings. The information on marker postion is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the imputation only to homozygous genotypes, use \code{label.heter=NULL}.}                         
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle.}
+\item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (this is only when \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}.}
 \item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}                         
 }                                                                                                                                                          
 

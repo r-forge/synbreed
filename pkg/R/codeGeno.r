@@ -100,7 +100,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
     # do not use heterozygous values
     alleles <- alleles[!alleles %in% label.heter]
-    if (length(alleles)>2) stop("more than 2 marker genotypes found but no 'label.heter' declared")
+    if (length(alleles)>2) stop(paste("more than 2 marker genotypes found but no 'label.heter' declared. Genotypes found",alleles))
     x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
     return(x)
    }

@@ -1,6 +1,4 @@
 # read genomic prediction data
-
-
 create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,reorderMap=TRUE,map.unit="cM"){
   # some checks on data
   
@@ -73,13 +71,13 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   if(!is.null(map)){
     if(any(colnames(map) != c("chr","pos"))) stop("colnames of 'map' must be 'chr' and 'pos'")
     if (reorderMap){
+     # first order in alphabetical oder (important for SNPs with the same position)
+     map <- map[order(as.character(rownames(map))),]
      map <- orderBy(~chr+pos,data=map)
       # sortcolumns in geno, too
      geno <- geno[,rownames(map)]
     }
   }
-
-
 
   # return object
   # geno as matrix

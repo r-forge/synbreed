@@ -115,9 +115,9 @@ summary.gpMod <- function(object,...){
 }
 
 print.summary.gpMod <- function(x,...){
-    cat("object of class 'gpMod' \n")
+    cat("Object of class 'gpMod' \n")
     cat("Model used:",x$model,"\n")
-    cat("nr. observations ",x$n," (NA = ",x$sumNA,") \n",sep="")
+    cat("Nr. observations ",x$n," (NA = ",x$sumNA,") \n",sep="")
     cat("Genetic performances: \n")
     cat("Min. 1st Qu. Median Mean 3rd Qu. Max \n")
     cat(x$summaryG, " \n")
