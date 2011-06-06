@@ -33,7 +33,7 @@ Object of class \code{pedigree}.
 \code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
 }
   \item{reorderMap}{
-\code{logical}. Should map be reordered by chromosome number and position within chromosome? 
+\code{logical}. Should markers in \code{geno} and \code{map} be reordered by chromosome number and position within chromosome according to \code{map}? 
 }
   \item{map.unit}{
 Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp' for physical distance.

@@ -1,7 +1,7 @@
 # read genomic prediction data
 create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,reorderMap=TRUE,map.unit="cM"){
-  # some checks on data
   
+  # start with some checks on data
   # geno as matrix but not data.frame (storage) 
   if(!is.null(geno)){
      if(class(geno) == "data.frame"){
@@ -11,36 +11,37 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
   # match geno and map
   if(!is.null(geno) & !is.null(map)){
-    if(ncol(geno) != nrow(map)){ 
+    if(ncol(geno) != nrow(map)){  # different subsets of markers in geno and map
        if(is.null(colnames(geno)) & is.null(rownames(map))) stop("no marker names found in 'map' or 'geno'")
        else{ 
         # fill in gaps in map
-        warning(" not all markers in 'geno' mapped in 'map', gaps filled with 'NA' \n")
+        warning("not all markers in 'geno' mapped in 'map', gaps filled with 'NA' \n")
         map <- data.frame(chr=map$chr[match(colnames(geno),rownames(map))],pos=map$pos[match(colnames(geno),rownames(map))],row.names=colnames(geno))
        }
-       }
-    else{
+    }
+    else{  # same subsets of markers in geno and map
       # missing colnames in geno
-      if(is.null(colnames(geno))){
+      if(is.null(colnames(geno))){  # no marker names in geno
         if (is.null(map)) stop("missing rownames in 'geno'")
         if(!is.null(rownames(map))){
           colnames(geno) <- rownames(map)
           warning("missing colnames in 'geno': assuming to be identical as rownames in 'map' \n")
         }
-        else{
+        else{ # default marker names
+          warning("no marker names provide in 'geno' or 'map', using default names M1, M2, ... \n")
           colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
         }
       }
-      else{
+      else{  # marker names in geno
       # missing rownames in map
-         if(is.null(rownames(map)) & !is.null(colnames(geno))){
+         if(is.null(rownames(map))){
            rownames(map) <- colnames(geno)
            warning("missing rownames in 'map': assuming to be identical as colnames in 'geno' \n")  
          }
-         if(is.null(rownames(map)) & is.null(colnames(geno))){
-          warning("missing marker names, setting default names M1, M2, ... ")
-          colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
-        } 
+        # if(is.null(rownames(map)) & is.null(colnames(geno))){
+        #  warning("missing marker names, setting default names M1, M2, ... ")
+        #  colnames(geno) <- rownames(map) <- paste("M",1:ncol(geno),sep="")
+        #} 
       }
     }
   }
@@ -55,10 +56,10 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         if(is.null(rownames(pheno)) & is.null(rownames(geno))) rownames(pheno) <- rownames(geno) <- paste("ID",1:nrow(geno),sep="")
     }
     # now geno and pheno have rownames
-    else stop("missing rownames for 'pheno' or 'geno'")
+    else stop("missing rownames for 'pheno' and 'geno'")
     }
    } 
-    # sort geno and pheno by rownames
+    # sort geno and pheno by rownames (alphabetical order)
     if(!is.null(geno)) geno <- geno[order(row.names(geno)),]
     if(!is.null(pheno)){
       phenonames <- colnames(pheno)

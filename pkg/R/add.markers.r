@@ -19,8 +19,6 @@ add.markers <- function(gpData,geno,map=NULL){
       # need id in rownames for create.gpData
       rownames(gpData$covar) <- gpData$covar$id
       
-      print(str(geno))
-      
       # create new gpData object
       ret <- create.gpData(pheno=gpData$pheno,geno=geno,map=map,pedigree=gpData$pedigree,covar=gpData$covar,map.unit=gpData$info$map.unit)
       return(ret)

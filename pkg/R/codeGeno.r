@@ -100,14 +100,14 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
     alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
     # do not use heterozygous values
     alleles <- alleles[!alleles %in% label.heter]
-    if (length(alleles)>2) stop(paste("more than 2 marker genotypes found but no 'label.heter' declared. Genotypes found",alleles))
+    if (length(alleles)>2) stop("more than 2 marker genotypes found but no 'label.heter' declared")
     x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
     return(x)
    }
 
   if (verbose) cat("step 2 : Recoding alleles \n")
   # apply function on whole genotypic data
-  res <- apply(dataRaw,2,codeNumeric)
+  res <- apply(as.matrix(dataRaw),2,codeNumeric)
  
    # set heterozygous genotypes as 1
    res[res %in% label.heter] <- 1
@@ -123,7 +123,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
   if(impute){
   
   # number of markers
-   M <- ncol(res)          
+   M <- ncol(res)
+   if(M==0) stop("no markers remained after step 1 (to many missing values)")          
   
   
    # number of missing values
