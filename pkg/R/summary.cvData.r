@@ -21,16 +21,16 @@ summary.cvData <- function(object,...){
      # Results
      # Predictive ability
      colmean.pa <- colMeans(obj$PredAbi)
-     ans$se.pa <- round(sd(colmean.pa)/sqrt(length(colmean.pa)),digits=4)
-     ans$min.pa <- round(min(obj$PredAbi),digits=4)
-     ans$mean.pa <- round(mean(obj$PredAbi),digits=4)
-     ans$max.pa <- round(max(obj$PredAbi),digits=4)
+     ans$se.pa <- format(round(sd(colmean.pa)/sqrt(length(colmean.pa)),digits=4),digits=4,nsmall=4)
+     ans$min.pa <- format(min(obj$PredAbi),digits=4)
+     ans$mean.pa <- format(mean(obj$PredAbi),digits=4)
+     ans$max.pa <- format(max(obj$PredAbi),digits=4)
      # Bias
      colmean.b <- colMeans(obj$bias)
-     ans$se.b <- round(sd(colmean.b)/sqrt(length(colmean.b)),digits=4)
-     ans$min.b<- round(min(obj$bias),digits=4)
-     ans$mean.b <- round(mean(obj$bias),digits=4)
-     ans$max.b <- round(max(obj$bias),digits=4)
+     ans$se.b <- format(round(sd(colmean.b)/sqrt(length(colmean.b)),digits=4),digits=4,nsmall=4)
+     ans$min.b<- format(min(obj$bias),digits=4,nsmall=4)
+     ans$mean.b <- format(mean(obj$bias),digits=4,nsmall=4)
+     ans$max.b <-format(max(obj$bias),nsmall=4,digits=4)
 
      # Seed
      ans$Seed <- obj$Seed
@@ -51,8 +51,8 @@ print.summary.cvData <- function(x,...){
     cat("     Size of the TS:          ",x$nmin.TS,"--", x$nmax.TS," \n")
     cat("\nResults: \n")
     cat("                      Min         Mean +- pooled SE     Max \n")
-    cat(" Predictive ability: ",x$min.pa,"    ",x$mean.pa,"+-",x$se.pa,"      ",x$max.pa,"\n")
-    cat(" Bias:               ",x$min.b,"    ",x$mean.b,"+-",x$se.b,"      ",x$max.b,"\n")
+    cat(" Predictive ability: ",x$min.pa,"    ",x$mean.pa,"+-",x$se.pa,"    ",x$max.pa,"\n")
+    cat(" Bias:               ",x$min.b,"    ",x$mean.b,"+-",x$se.b,"    ",x$max.b,"\n")
 
     cat("\nSeed start: ",x$Seed,"\n")
     cat("Seed replications: \n")
