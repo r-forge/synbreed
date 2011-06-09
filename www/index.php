@@ -109,7 +109,7 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
 <blockquote>
   <blockquote>
     <ul>  
-     <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=mitarbeiter"> Valentin Wimmer </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
+     <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=48&L=1"> Valentin Wimmer </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
      <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=mitarbeiter"> Theresa Albrecht </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
     </ul>
   </blockquote>

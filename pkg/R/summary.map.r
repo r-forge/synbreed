@@ -24,7 +24,7 @@ summaryGenMap <- function(map){
      ret <- ret[order(order(unique(chr))),]
      
      # sum over all chr
-     all <- data.frame(noM = sum(ret$noM),length= sum(ret$length),avDist=weighted.mean(ret$avDist,ret$noM),maxDist=max(ret$maxDist),minDist=min(ret$minDist))
+     all <- data.frame(noM = sum(ret$noM,na.rm=TRUE),length= sum(ret$length,na.rm=TRUE),avDist=weighted.mean(ret$avDist,ret$noM,na.rm=TRUE),maxDist=max(ret$maxDist,na.rm=TRUE),minDist=min(ret$minDist,na.rm=TRUE))
      rownames(all) <- paste(rownames(ret)[1],"-",rownames(ret)[nrow(ret)])
      
      ret <- rbind(ret,all)

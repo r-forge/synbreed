@@ -8,7 +8,7 @@ gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NUL
     model <- match.arg(model)
     
 
-    if(model=="modA"){
+    if(model %in% c("modA","modU")){
       
       # inidividuls with genotypes and phenotypes
       trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped ])
@@ -32,26 +32,25 @@ gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NUL
     
     else{
     # inidividuls with genotypes and phenotypes
-      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped &gpData$covar$genotyped])
+      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped & gpData$covar$genotyped])
       n <- length(trainSet)
+
       # take data from gpData object
       y <- gpData$pheno[rownames(gpData$pheno) %in% trainSet,trait]
-    
-    
-      if(model=="modU"){
-      
-      
 
-      if (is.null(kin)) stop("Missing object 'kin'")
-      if (n!=nrow(kin)){
-         kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
-      }
-      else kinTS <- kin
-      res <- regress(y~1,Vformula=~kinTS,...)
-      genVal <- res$predicted
-      m <- NULL
-    }
     
+      #if(model=="modU"){
+      #if (is.null(kin)) stop("Missing object 'kin'")
+      #if (n!=nrow(kin)){
+      #   kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
+      #}
+      #else kinTS <- kin
+#print(length(y))
+#print(dim(kinTS))
+#      res <- regress(y~1,Vformula=~kinTS,...)
+#      genVal <- res$predicted
+#      m <- NULL
+#    }
     
     if(model=="modBL"){
       X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
@@ -117,10 +116,10 @@ summary.gpMod <- function(object,...){
 print.summary.gpMod <- function(x,...){
     cat("Object of class 'gpMod' \n")
     cat("Model used:",x$model,"\n")
-    cat("Nr. observations ",x$n," (NA = ",x$sumNA,") \n",sep="")
+    cat("Nr. observations ",x$n," \n",sep="")
     cat("Genetic performances: \n")
     cat("Min. 1st Qu. Median Mean 3rd Qu. Max \n")
-    cat(x$summaryG, " \n")
+    cat(x$summaryG, " \n",sep="  ")
     cat("--\n")
     cat("Model fit \n")
     if(x$model %in% c("modA","modU","modRR")) cat(print(x$summaryFit),"\n")

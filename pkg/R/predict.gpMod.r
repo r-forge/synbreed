@@ -21,7 +21,7 @@ predict.gpMod <- function(object,newdata=NULL,...){
      mu <- object$fit$beta
      prediction <- mu + X %*% m
   }
-  if(model=="modA"){
+  if(model %in% c("modA","modU")){
       G <- object$kin[c(object$trainingSet,newdata),c(object$trainingSet,newdata)]
       y <- object$y
       n <- length(y) # size of the training set
@@ -29,15 +29,14 @@ predict.gpMod <- function(object,newdata=NULL,...){
       X <- matrix(1,nrow=n)
       sigma2g <- object$fit$sigma[1]
       sigma2  <- object$fit$sigma[2]
-      GI <- ginv(G)*sigma2/sigma2g
+      diag(G) <- diag(G) + 0.00001
+      GI <- solve(G)*sigma2/sigma2g    # to ensure a solution for the inverse
       RI <- diag(n)
       sol <- MME(X, Z, GI, RI, y)
       prediction <- sol$b + sol$u[-(1:n)]
       names(prediction) <- newdata
   }
-  if(model=="modU"){
-     stop("prediction not possible for modU")
-  }
+
   }
   return(prediction)
 }                                         
