@@ -15,7 +15,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
     if(is.null(gpData$geno)) stop("no genotypic data available")
     else data <- gpData$geno
     # family information (population structure) for genotypic data
-    popStruc <- gpData$covar$family[gpData$covar$genotyped] 
+    # drop unused levels
+    if(is.factor(gpData$covar$family)) popStruc <- droplevels(gpData$covar$family[gpData$covar$genotyped]) 
+    else popStruc <- gpData$covar$family[gpData$covar$genotyped] 
     if(gpData$info$codeGeno & !noHet){
        warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
        label.heter <- "1"
