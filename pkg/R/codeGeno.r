@@ -230,9 +230,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
       # create new directory "beagle" for beagle input and output files
       if(!"beagle" %in% list.files()) system("mkdir beagle")
       write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
-      system("cd beagle")
+      #system("cd beagle")
       system(paste("java -Xmx1000m -jar beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""))
-      system("cd..")
+      #system("cd..")
       system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
       
       # read data from beagle

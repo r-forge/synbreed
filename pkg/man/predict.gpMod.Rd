@@ -62,7 +62,7 @@ RI <- diag(4)
 res <- MME(X,Z,AI,RI,y)
 res$b + res$u[1:2]
 
-# prediction of the last 50 individuals in the maize data set
+# prediction of genetic performance of the last 50 individuals in the maize data set
 data(maize)
 maizeC <- codeGeno(maize)
 U <- kin(maizeC,ret="realized")
