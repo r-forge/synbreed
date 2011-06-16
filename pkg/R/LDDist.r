@@ -1,9 +1,10 @@
-LDDist <- function(LDdf,type="p",breaks=NULL,file=NULL,n=NULL,...){
+LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
 
 
     if(class(LDdf)!="LDdf") stop("'LDdf' must be of class 'LDdf'")
     if(type=="nls" & is.null(n)) stop("number of obeservations must be specified using argument 'n'")
-    lg <- 1:length(LDdf)
+    if(is.null(chr)) lg <- (1:length(LDdf))[!as.logical(lapply(LDdf,is.null))]
+    else lg <- chr
 
     # function for fit according to Hill and Weir (1988)
     smooth.fit <- function(overallDist,overallr2,n){

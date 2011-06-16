@@ -41,7 +41,7 @@ Object of class \code{gpMod} which is a list of
 \item{trainingSet}{IDs of the individuals in the training set}
 \item{y}{The phenotypic records for the individuals in the training set}
 \item{g}{The predicted genetic values for the individuals in the training set}
-\item{m}{Predicted SNP effects (for BL and BRR)}
+\item{m}{Predicted SNP effects (for \code{modRR}, \code{modBL} and \code{modBRR})}
 \item{kin}{Matrix \code{kin}}
 }
 \note{
