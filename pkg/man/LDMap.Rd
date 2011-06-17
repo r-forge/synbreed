@@ -9,7 +9,7 @@ LD Heatmap
 Computation of pairwise LD as \eqn{R^2} for marker data and plot of LD heatmap for each linkage group (chromosome)
 }
 \usage{
-LDMap(LDmat,gpData,file=NULL,...)
+LDMap(LDmat,gpData,chr=NULL,file=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,9 @@ Object of class \code{gpData} where \code{geno} and \code{map} are available.
   \item{gpData}{
 Object of class \code{gpData} that was used to infer \code{LDmat}.
 }
+  \item{chr}{
+\code{numeric}. Return value is a plot for each chromosome in \code{chr}.
+}  
   \item{file}{
 Optionally a path to a file were plot is saved as \code{pdf}.
 }

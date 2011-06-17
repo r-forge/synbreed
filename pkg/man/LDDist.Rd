@@ -9,7 +9,7 @@ LD versus distance Plot
 Visualization of pairwise LD measured as. A single plot is generated for every chromosome. 
 }
 \usage{
-LDDist(LDdf,chr=1,type="p",breaks=NULL,file=NULL,n=NULL,...)
+LDDist(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,7 +17,7 @@ LDDist(LDdf,chr=1,type="p",breaks=NULL,file=NULL,n=NULL,...)
 object of class \code{LDdf} which is the output of function \code{pairwiseLD}
 }
   \item{chr}{
-\code{numeric}. Return value is a list with pairwise LD of all markers for each chromosome in \code{chr}.
+\code{numeric}. Return value is a plot for each chromosome in \code{chr}.
 }  
   \item{type}{
 Character string to specify the type of plot. Use \code{"p"} for a scatterplot, \code{"bars"} for stacked bars or \code{"nls"} for scatterplot together with nonlinear regression curve according to Hill and Weir (1988). 

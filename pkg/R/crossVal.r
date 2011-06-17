@@ -8,6 +8,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
+    # remove observations with missing values in the trait
+    dataSet <- trainSet[trainSet %in% rownames(gpData$pheno)[!is.na(gpData$pheno[,trait])]]
 
     # number of individuals
     n <- length(dataSet)

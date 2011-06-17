@@ -5,6 +5,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
     if(type=="nls" & is.null(n)) stop("number of obeservations must be specified using argument 'n'")
     if(is.null(chr)) lg <- (1:length(LDdf))[!as.logical(lapply(LDdf,is.null))]
     else lg <- chr
+  
 
     # function for fit according to Hill and Weir (1988)
     smooth.fit <- function(overallDist,overallr2,n){
@@ -29,23 +30,23 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
 
     if(!is.null(file)) pdf(file)
     # compute distances within each linkage group
-    for (i in 1:length(lg)){
+    for (i in lg){
     
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[lg[i]]],main=paste("chromosome",lg[i]),...)
+       if(type=="p") plot(r2~dist,data=ret[[i]],main=paste("chromosome",i),...)
 
        # scatterplot with nls curve
        if(type=="nls"){
-               plot(r2~dist,data=ret[[lg[i]]],main=paste("Linkage Group",lg[i]),...) 
-               smooth.fit(ret[[lg[i]]][,4],ret[[lg[i]]][,3],n=n)
+               plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",i),...) 
+               smooth.fit(ret[[i]][,4],ret[[i]][,3],n=n)
        }
 
        # stacked histogramm
        if(type=="bars"){
           # use default breaks
           if(is.null(breaks)){
-             breaks.dist <- seq(from=min(ret[[lg[i]]]$dist),to=max(ret[[lg[i]]]$dist),length=6)
+             breaks.dist <- seq(from=min(ret[[i]]$dist),to=max(ret[[i]]$dist),length=6)
              breaks.r2 <- seq(from=1,to=0,by=-0.2) 
           }
           # use user- specified breaks
@@ -53,8 +54,8 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
              breaks.dist <- breaks$dist
              breaks.r2 <- breaks$r2
           }
-          cut.dist <- cut(ret[[lg[i]]]$dist,breaks=breaks.dist)
-          cut.r2 <- cut(ret[[lg[i]]]$r2,breaks=breaks.r2)
+          cut.dist <- cut(ret[[i]]$dist,breaks=breaks.dist)
+          cut.r2 <- cut(ret[[i]]$r2,breaks=breaks.r2)
           
           # create matrix with relative frequencies
           tab.abs <- table(cut.r2,cut.dist)
