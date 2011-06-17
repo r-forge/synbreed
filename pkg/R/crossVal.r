@@ -9,7 +9,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
     # remove observations with missing values in the trait
-    dataSet <- dataSet [dataSet  %in% rownames(gpData$pheno)[!is.na(gpData$pheno[,trait])]]
+    dataSet <- dataSet[dataSet  %in% rownames(gpData$pheno)[!is.na(gpData$pheno[,trait])]]
 
     # number of individuals
     n <- length(dataSet)
@@ -23,7 +23,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     Z <- diag(n)
     rownames(Z) <- y[,1]
 
-    # checking covariance matrices
+    # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     if (is.null(cov.matrix) ){
 	Z <- gpData$geno[rownames(gpData$geno) %in% dataSet, ]
 	if (VC.est %in% c("commit","ASReml")) cov.matrix <- list(kin=diag(ncol(Z)))
@@ -57,7 +57,9 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   # function for constructing GI
 	   rmat<-NULL
    	   for( i in 1:length(cov.matrix)){
-       	   m <- solve(as.matrix(cov.matrix[[i]]))*(varComp[length(varComp)]/varComp[i])
+	   covM <- as.matrix(cov.matrix[[i]])
+	   covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+       	   m <- solve(covM)*(varComp[length(varComp)]/varComp[i])
        	     if(i==1) rmat <- m
        	     else
              {
@@ -74,7 +76,9 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	else { 
 	   if(VC.est=="ASReml"){
       	   for ( i in 1:length(cov.matrix)){
-	   write.relationshipMatrix(as.matrix(cov.matrix[[i]]),file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
+	   covM <- as.matrix(cov.matrix[[i]])
+	   covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+	   write.relationshipMatrix(covM,file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
 	   }
 	   ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
 	   ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
@@ -246,7 +250,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
 		# BRR function
 		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=cov.matrix[[1]]),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!is.null(cov.matrix)){
+		    covM <- as.matrix(cov.matrix[[1]])
+	   	    covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+   		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+		}
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
@@ -274,7 +282,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
 		# BL function
 		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=cov.matrix[[1]]),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!is.null(cov.matrix)){
+		    covM <- as.matrix(cov.matrix[[1]])
+	   	    covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		}
 
 		samp.es <- val.samp3[val.samp3[,2]!=ii,]
 
