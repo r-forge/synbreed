@@ -62,7 +62,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
           colSum <- matrix(rep(colSums(tab.abs),nrow(tab.abs)),nrow=nrow(tab.abs),byrow=TRUE)
           
           # baplot out of frequency matrix
-          barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs))[1:nrow(tab.abs)],space=c(.2),main=paste("chromosome",lg[i]),xlim=c(0,ncol(tab.abs)+2.8),ylab="fraction of SNP pairs",...)
+          barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs))[1:nrow(tab.abs)],space=c(.2),main=paste("chromosome",i),xlim=c(0,ncol(tab.abs)+2.8),ylab="fraction of SNP pairs",...)
           legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r2)",cex=1)
          }
         }

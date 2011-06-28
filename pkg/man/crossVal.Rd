@@ -97,11 +97,11 @@ Crossa J, de los Campos G, Perez P, Gianola D, Burgueno J, et al. (2010) Predict
 \examples{
 # loading the maize data set
 data(maize)
-maize2 <-codeGeno(maize)
-rad<-kin(maize2,ret="realized")
-diag(rad)<-diag(rad)+0.00001 # to avoid singularities
+maize2 <- codeGeno(maize)
+rad <- kin(maize2,ret="realized")
+diag(rad) <- diag(rad)+0.00001 # to avoid singularities
 # cross validation
-cv.maize <- crossVal(maize2,cov.matrix=list(rad),k=5,Rep=1,
+cv.maize  <- crossVal(maize2,cov.matrix=list(rad),k=5,Rep=1,
             Seed=123,sampling="random",varComp=c(26.5282,48.5785),VC.est="commit")
 cv.maize2 <- crossVal(maize2,k=5,Rep=1,
              Seed=123,sampling="random",varComp=c(0.0704447,48.5785),VC.est="commit")
