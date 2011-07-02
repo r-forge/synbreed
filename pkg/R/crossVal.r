@@ -1,5 +1,4 @@
 # Cross validation with different sampling and variance components estimation methods
-
 crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc"), varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,burnIn=1000,thin=10) 
 {
     VC.est <- match.arg(VC.est)
@@ -22,7 +21,13 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     rownames(X) <- y[,1]
     Z <- diag(n)
     rownames(Z) <- y[,1]
-
+    # checking if IDs are in cov.matrix
+    if (!is.null(cov.matrix) ){
+   	   for( i in 1:length(cov.matrix)){
+	   covM <- as.matrix(cov.matrix[[i]])
+	   cov.matrix[[i]] <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+	   }
+    }
     # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     if (is.null(cov.matrix) ){
 	Z <- gpData$geno[rownames(gpData$geno) %in% dataSet, ]
@@ -58,7 +63,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   rmat<-NULL
    	   for( i in 1:length(cov.matrix)){
 	   covM <- as.matrix(cov.matrix[[i]])
-	   covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
        	   m <- solve(covM)*(varComp[length(varComp)]/varComp[i])
        	     if(i==1) rmat <- m
        	     else
@@ -77,7 +81,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   if(VC.est=="ASReml"){
       	   for ( i in 1:length(cov.matrix)){
 	   covM <- as.matrix(cov.matrix[[i]])
-	   covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
 	   write.relationshipMatrix(covM,file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
 	   }
 	   ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
@@ -252,7 +255,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 		if(!is.null(cov.matrix)){
 		    covM <- as.matrix(cov.matrix[[1]])
-	   	    covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
    		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 		}
 
@@ -284,7 +286,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 		if(!is.null(cov.matrix)){
 		    covM <- as.matrix(cov.matrix[[1]])
-	   	    covM <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
 		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 		}
 

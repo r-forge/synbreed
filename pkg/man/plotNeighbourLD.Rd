@@ -12,7 +12,7 @@ plotNeighbourLD(LD, map, nMarker = TRUE, dense=FALSE, ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{LD}{
-object of class \code{list} containing pairwise LD matrices for each chromosome, e.g. output of function \code{LDMap} or \code{pairwiseLD}.
+object of class \code{LDmat}, i.e the output of function \code{pairwiseLD} using argument \code{type="matrix"}.
 }
   \item{map}{
 object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances).
@@ -45,10 +45,8 @@ Theresa Albrecht
 \examples{
 data(maize)
 maize2 <-codeGeno(maize)
-\dontrun{
 LD <- pairwiseLD(maize2,chr=1:10,type="matrix")
 plotNeighbourLD(LD,maize2,nMarker=FALSE)
-}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

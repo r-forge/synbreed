@@ -22,7 +22,7 @@ for \code{model="modRR"}, \code{"modBL"} or \code{"modBRR"} an object of class \
 }
 }
 \details{
-For models, \code{model="modRR"}, \code{"modBL"} and \code{"modBRR" } the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat}. For the prediction using \code{model="modA"} and  \code{model="modU"}, the  relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}.
+For models, \code{model="modRR"}, \code{"modBL"} and \code{"modBRR" } the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat} For the prediction using \code{model="modA"} and  \code{model="modU"}, the  relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}.
 }
 \value{
 a named vector with the predicted genetic values for all individuals in \code{newdata}.
