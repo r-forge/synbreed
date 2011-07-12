@@ -74,7 +74,7 @@ gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NUL
       sigma2m <- sigma2u/sumP
       # set up design matrices
       X <- matrix(1,nrow=n)
-      Z <- gpData$geno
+      Z <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
       GI <- diag(rep(sigma2/sigma2m,ncol(Z)))
       RI <- diag(n)
       sol <- MME(X, Z, GI, RI, y)
@@ -94,7 +94,7 @@ summary.gpMod <- function(object,...){
     if(object$model %in% c("modA","modU","modRR")) ans$summaryFit <- summary(object$fit)
     if(object$model=="modBL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
     if(object$model=="modBRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
-    ans$n <- length(object$y)
+    ans$n <- sum(!is.na(object$y))
     ans$sumNA <- sum(is.na(object$y))
     ans$summaryG <- summary(as.numeric(object$g))
     class(ans) <- "summary.gpMod"
