@@ -205,6 +205,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
    
    if (verbose) cat("step 3 : Imputing of missing values by Beagle \n")
      chr <- unique(gpData$map$chr)
+     chr <- chr[!is.na(chr)]
      markerTEMP <- gpData
      markerTEMP$geno <- res
      rownames(markerTEMP$geno) <- rownames(gpData$geno)
