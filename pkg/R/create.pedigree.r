@@ -15,7 +15,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL,add.ancestors=FALSE
      
      # add ancestors (if required)
      if(add.ancestors){
-          ancestors <- c(Par1[(!is.na(Par1)) & (!Par1 %in% ID) ],Par2[(!is.na(Par1)) & (!Par1 %in% ID) ])
+          ancestors <- c(Par1[(!is.na(Par1)) & (!Par1 %in% ID) ],Par2[(!is.na(Par2)) & (!Par2 %in% ID) ])
           ID <- c(ancestors,ID)
           Par1 <- c(rep(NA,length(ancestors)),Par1)
           Par2 <- c(rep(NA,length(ancestors)),Par2)
