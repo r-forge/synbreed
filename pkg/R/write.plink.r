@@ -16,7 +16,7 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        family <- gp$covar$family[gp$covar$genotyped]  # only for individuals with genotypes
        id <- gp$covar$id[gp$covar$genotyped]  # only for individuals with genotypes
        # combine in one file
-       ped <- cbind(family,id,geno)
+       ped <- data.frame(family,id,geno)
        
        # prepare .map file
        # Chromosome ID, SNP ID, genetic distance, bp pos
@@ -28,7 +28,7 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        if(gp$info$map.unit=="bp") bpPos <- gp$map$pos 
        else bpPos <- rep(0,M) 
        # combine in one file
-       map <- cbind(chr,snpID,gPos,bpPos)
+       map <- data.frame(chr,snpID,gPos,bpPos)
        
        # write data for PLINK
        write.table(ped,file=file.path(wdir,paste(prefix,".ped",sep="")),quote=FALSE,col.names=FALSE,row.names=FALSE)
