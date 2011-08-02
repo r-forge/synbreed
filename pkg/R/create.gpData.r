@@ -64,7 +64,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     if(!is.null(pheno)){
       phenonames <- colnames(pheno)
       phenodf <- pheno[order(row.names(pheno)),]
-      pheno <- data.frame(phenodf,row.names= row.names(pheno)[order(row.names(pheno))])
+      pheno <- data.frame(phenodf,row.names= rownames(pheno)[order(row.names(pheno))])
       colnames(pheno) <- phenonames
     }
 
@@ -87,7 +87,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   
   # add information to element covar
   # sort all available individuals
-  ids <- sort(unique(c(row.names(obj$pheno),rownames(obj$geno),obj$pedigree$ID))) 
+  ids <- sort(unique(c(rownames(obj$pheno),rownames(obj$geno),as.character(obj$pedigree$ID)))) 
 
   if(is.null(covar)) obj$covar <- data.frame(id=ids,stringsAsFactors=FALSE)
   else obj$covar$id <- ids 
