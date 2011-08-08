@@ -1,4 +1,4 @@
-create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL){
+create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL,add.ancestors=FALSE){
      ID <- as.character(ID)
      Par1 <- as.character(Par1)
      Par2 <- as.character(Par2)
@@ -48,12 +48,12 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL){
             gener[Par2 %in% ID[gener==i]] <- i+1
             i<-i+1
         }
-     }
      
+     if(add.ancestors) ancestors <- FALSE
   
      # gener starts from 0
-     if(!is.null(sex)) pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,sex=sex,stringsAsFactors=FALSE)
-     else pedigree <- data.frame(ID=ID,Par1=Par1,Par2=Par2,gener=gener,stringsAsFactors=FALSE)
+     if(!is.null(sex)) pedigree <- data.frame(ID=ID[ID!=ancestors],Par1=Par1[ID!=ancestors],Par2=Par2[ID!=ancestors],gener=gener[ID!=ancestors],sex=sex[ID!=ancestors],stringsAsFactors=FALSE)
+     else pedigree <- data.frame(ID=ID[ID!=ancestors],Par1=Par1[ID!=ancestors],Par2=Par2[ID!=ancestors],gener=gener[ID!=ancestors],stringsAsFactors=FALSE)
      
      # removing duplicated entries
      pedigree <- pedigree[!duplicated(pedigree), ]
