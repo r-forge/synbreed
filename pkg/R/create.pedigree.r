@@ -48,6 +48,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL,add.ancestors=FALSE
             gener[Par2 %in% ID[gener==i]] <- i+1
             i<-i+1
         }
+     }
      
      if(add.ancestors) ancestors <- FALSE
   
