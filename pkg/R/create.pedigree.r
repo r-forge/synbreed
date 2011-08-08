@@ -53,8 +53,8 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL,add.ancestors=FALSE
      if(add.ancestors) ancestors <- FALSE
   
      # gener starts from 0
-     if(!is.null(sex)) pedigree <- data.frame(ID=ID[ID!=ancestors],Par1=Par1[ID!=ancestors],Par2=Par2[ID!=ancestors],gener=gener[ID!=ancestors],sex=sex[ID!=ancestors],stringsAsFactors=FALSE)
-     else pedigree <- data.frame(ID=ID[ID!=ancestors],Par1=Par1[ID!=ancestors],Par2=Par2[ID!=ancestors],gener=gener[ID!=ancestors],stringsAsFactors=FALSE)
+     if(!is.null(sex)) pedigree <- data.frame(ID=ID[!ID%in%ancestors],Par1=Par1[!ID%in%ancestors],Par2=Par2[!ID%in%ancestors],gener=gener[!ID%in%ancestors],sex=sex[!ID%in%ancestors],stringsAsFactors=FALSE)
+     else pedigree <- data.frame(ID=ID[!ID%in%ancestors],Par1=Par1[!ID%in%ancestors],Par2=Par2[!ID%in%ancestors],gener=gener[!ID%in%ancestors],stringsAsFactors=FALSE)
      
      # removing duplicated entries
      pedigree <- pedigree[!duplicated(pedigree), ]
