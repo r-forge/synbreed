@@ -65,7 +65,7 @@ print.summary.gpData <- function(x,...){
     cat("\t No. of markers",x$geno$nMarkers,"\n")
     cat("\t genotypes",names(x$geno$genotypes),"\n")
     cat("\t frequencies",x$geno$genotypes,"\n")
-    cat("\t NA's",x$geno$nNA,"%\n")
+    cat("\t NA's",x$geno$nNA*100,"%\n")
     cat("map \n")
     cat("\t No. of mapped markers ",x$geno$mappedMarkers,"\n")
     cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n")
