@@ -47,6 +47,7 @@ create.pedigree <- function(ID,Par1,Par2,gener=NULL,sex=NULL,add.ancestors=FALSE
             gener[Par1 %in% ID[gener==i]] <- i+1
             gener[Par2 %in% ID[gener==i]] <- i+1
             i<-i+1
+            if(i>n+10) break
         }
      }
      
