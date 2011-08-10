@@ -19,7 +19,7 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
     gpData$geno <- gpData$geno[,mapped]
     gpData$map <- gpData$map[mapped,]
     
-    linkageGroup <- gpData$map$chr
+    linkageGroup <- as.character(gpData$map$chr)
     pos <- gpData$map$pos
     names(pos) <- rownames(gpData$map)
    
@@ -98,11 +98,12 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
        # create dataset with information from above in a data.frame
        if(type=="data.frame") retList[[i]] <- ld.r2.df 
        # and as a matrix
-       if(type=="matrix")retMat$LD[[i]] <- ld.r2           # omit lower/upper triangle?
-       if(type=="matrix")retMat$distance[[i]] <- distance  
+       if(type=="matrix") retMat$LD[[i]] <- ld.r2           # omit lower/upper triangle?
+       if(type=="matrix") retMat$distance[[i]] <- distance  
     }  
     
-    names(retList) <- names(retMat$LD) <- names(retMat$distance) <- lg
+    if(type=="data.frame") names(retList) <- paste("chr", lg, sep="_")
+    if(type=="matrix") names(retMat$LD) <- names(retMat$distance) <- paste("chr", lg, sep="_")
 
 
       # return values 
