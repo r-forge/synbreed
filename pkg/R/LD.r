@@ -96,11 +96,13 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
        
        
        # create dataset with information from above in a data.frame
-       if(type=="data.frame") retList[[lg[i]]] <- ld.r2.df 
+       if(type=="data.frame") retList[[i]] <- ld.r2.df 
        # and as a matrix
-       if(type=="matrix")retMat$LD[[lg[i]]] <- ld.r2           # omit lower/upper triangle?
-       if(type=="matrix")retMat$distance[[lg[i]]] <- distance  
-    }   
+       if(type=="matrix")retMat$LD[[i]] <- ld.r2           # omit lower/upper triangle?
+       if(type=="matrix")retMat$distance[[i]] <- distance  
+    }  
+    
+    names(retList) <- names(retMat$LD) <- names(retMat$distance) <- lg
 
 
       # return values 
