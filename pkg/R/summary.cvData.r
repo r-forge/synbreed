@@ -22,9 +22,9 @@ summary.cvData <- function(object,...){
      # Predictive ability
      colmean.pa <- colMeans(obj$PredAbi)
      ans$se.pa <- format(round(sd(colmean.pa)/sqrt(length(colmean.pa)),digits=4),digits=4,nsmall=4)
-     ans$min.pa <- format(min(obj$PredAbi),digits=4)
-     ans$mean.pa <- format(mean(obj$PredAbi),digits=4)
-     ans$max.pa <- format(max(obj$PredAbi),digits=4)
+     ans$min.pa <- format(min(obj$PredAbi),digits=4,nsmall=4)
+     ans$mean.pa <- format(mean(obj$PredAbi),digits=4,nsmall=4)
+     ans$max.pa <- format(max(obj$PredAbi),digits=4,nsmall=4)
      # Bias
      colmean.b <- colMeans(obj$bias)
      ans$se.b <- format(round(sd(colmean.b)/sqrt(length(colmean.b)),digits=4),digits=4,nsmall=4)
