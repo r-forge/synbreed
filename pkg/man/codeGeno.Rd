@@ -10,8 +10,8 @@ Raw marker data could be in any format (e.g. alleles coded as pair of observed a
 Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("family", 
-"beagle", "beagleAfterFamily","random","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,
+codeGeno(gpData,impute=FALSE,impute.type=c("random","family", 
+"beagle", "beagleAfterFamily","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,
 label.heter="AB",keep.identical=TRUE,verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
