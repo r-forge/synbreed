@@ -58,7 +58,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
   }
  
   #============================================================
-  # step 1  - remove makrers with more than nmiss fraction of missing values (optional, argument nmiss>0)
+  # step 1  - remove markers with more than nmiss fraction of missing values (optional, argument nmiss>0)
   #============================================================
  
    if(!is.null(nmiss)){
