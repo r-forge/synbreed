@@ -33,7 +33,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
   }                                
   #  catch errors
   if(class(data)!= "data.frame" & class(data) != "matrix") stop("wrong data format")
-  if (any(colMeans(is.na(data))==1)) warning("markers with no nonmissing values in data")
+  if (any(colMeans(is.na(data))==1)) warning("markers with only missing values in data")
   
   # number of genotypes
   n <- nrow(data)
@@ -365,5 +365,3 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("family","beagle","beagle
   # return a gpData object (or a matrix)
   return(gpData)
 }
-
-
