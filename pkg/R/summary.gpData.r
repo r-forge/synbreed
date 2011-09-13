@@ -69,7 +69,9 @@ print.summary.gpData <- function(x,...){
     cat("map \n")
     cat("\t No. of mapped markers ",x$geno$mappedMarkers,"\n")
     cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n")
-    cat("\t markers per chromosome",x$geno$markerChr,"\n")
+    cat("\t markers per chromosome \n")
+    print(x$geno$markerChr)
+    cat("\n")
     cat("pedigree \n")
     print(x$pedigree)
 }
