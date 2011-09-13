@@ -8,6 +8,9 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         geno <- matrix(unlist(geno),nrow=nrow(geno),ncol=ncol(geno),dimnames=dimnames(geno))
      }
   }
+  # test if positions in map are numeric
+  if(!is.null(map$pos)) 
+    if(!is.numeric(map$pos)) stop("Position informations have to be numeric values!")
 
   # match geno and map
   if(!is.null(geno) & !is.null(map)){
