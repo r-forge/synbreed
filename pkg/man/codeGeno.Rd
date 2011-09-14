@@ -2,15 +2,15 @@
 \alias{codeGeno}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{                                            
-Recoding of genotypic data, imputing of missing values and preselection of markers 
+Recoding of genotypic data, imputing of missing values and preselection of markers
 }
 \description{   
 This function combines all algrorithms for processing of marker data within \code{synbreed} pacakge.
-Raw marker data could be in any format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2. 
-Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.                                     
+Raw marker data could be in any format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded as the number of counts of the minor allele, i.e. 0, 1 and 2.
+Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("random","family", 
+codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
 "beagle", "beagleAfterFamily","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,
 label.heter="AB",keep.identical=TRUE,verbose=FALSE)
 }
@@ -18,7 +18,7 @@ label.heter="AB",keep.identical=TRUE,verbose=FALSE)
 \arguments{
   \item{gpData}{
 object of class \code{gpData} with arbitrary coding in element \code{geno}. Missing values have to be coded as \code{NA}.
-}           
+}
   \item{impute}{
 \code{logical}. Should missing value be replaced by imputing?
 }
@@ -26,7 +26,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"} (default = \code{"random"}).  See details.
 }
   \item{replace.value}{
-\code{numeric} scalar to replace missing values in case \code{impute.type="fix"}. 
+\code{numeric} scalar to replace missing values in case \code{impute.type="fix"}.
 }
   \item{maf}{
 \code{numeric} scalar. Threshold to discard markers due to the minor allle frequency (MAF). Markers with a MAF < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
@@ -38,12 +38,12 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 This is either a scalar or vector of characters to identify heterozygous genotypes or a function which evaluates if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is high, i.e. if genotypes are coded by alleles. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and to impute only 0 and 2.
 }
   \item{keep.identical}{
-\code{logical}. Should duplicated markers be kept? 
+\code{logical}. Should duplicated markers be kept?
 }
  \item{verbose}{
 	logical scalar. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is useful to obtain numbers of discarded markers due to different criteria.
  }
-}                                         
+}
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
 
@@ -56,15 +56,21 @@ Coding of genotypic data is done in the following order (depending on choice of 
 Imputing is done according to \code{impute.type}
 \describe{
 \item{"family"}{
-Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},                                          
-the value is 0 with probability 0.5 and 1 with probability 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}    
-\item{"beagle"}{
-Use Beagle Genetic Analysis Software Package (Browning and Browning 2009) to infer missing genotypes. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. To use \code{"beagle"}, the beagle executive (version \eqn{>}  3.3.1)  file must be available (either through the PATH specification in the system or the file \code{beagle.jar} must be in the working directory and files of the format \code{gz} must be unzippable using \code{gzip}. Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle input and output files and run Beagle with default settings. The information on marker postion is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the imputation only to homozygous genotypes, use \code{label.heter=NULL}.}                         
+Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
+the value is 0 with probability 0.5 and 1 with probability 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
+\item{"beagle"}{ Use Beagle Genetic Analysis Software Package (Browning and Browning 2009) to
+    infer missing genotypes. Beagle uses a HMM to reconstruct missing genotypes by the flanking
+    markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
+    Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle
+    input and output files and run Beagle with default settings. The information on marker
+    postion is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be
+    available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the
+    imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle.}
 \item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (this is only when \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}. To use this distribution for the sampling of missing values, specify \code{label.heter=NULL}. In case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2}.}
-\item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}                         
-}                                                                                                                                                          
+\item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}
+}
 
 4. Recoding of alleles after imputation, if necessary due to changes in allele frequencies by imputed alleles
 
@@ -91,7 +97,7 @@ Valentin Wimmer
 
 
 \examples{
-# create marker data for 9 SNPs and 10 homozygous individuals 
+# create marker data for 9 SNPs and 10 homozygous individuals
 snp9 <- matrix(c(
   "AA",   "AA",   "AA",   "BB",   "AA",   "AA",   "AA",   "AA",  NA,
   "AA",   "AA",   "BB",   "BB",   "AA",   "AA",   "BB",   "AA",  NA,
