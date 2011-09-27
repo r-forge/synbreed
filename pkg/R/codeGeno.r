@@ -1,6 +1,6 @@
 
 # coding genotypic data
-codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE){
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),minFam=5,replace.value=NULL,maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE){
 
   #============================================================
   # read information from arguments
@@ -135,7 +135,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # initialize counter  
    cnt1 <- 0   # for nr. of imputations with family structure
    cnt2 <- 0   # for nr. of random imputations
-   cnt3 <- 0   # for expected fractions of correct omputations by family structure = p^2 + (1-p)^2
+   cnt3 <- 0   # for expected fractions of correct imputations by family structure = p^2 + (1-p)^2
 
   # if impute.type="fix", replace missing values according to specified value
   if(impute.type=="fix"){  
@@ -155,6 +155,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         try({
         # compute population structure  as counts
         poptab <- table(popStruc,res[,j])
+	nFam <- table(popStruc)
         rS <- rowSums(poptab)     
          
         # continue only if there are missing values
@@ -163,9 +164,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           major.allele <- unlist(attr(poptab,"dimnames")[[2]][apply(poptab,1,which.max)])
           
           # look if SNP is segregating  for this population
-          polymorph <- apply(poptab,1,length) >1 & ( apply(poptab,1,min) != 0)
-         
-          # count missing vlalues
+          polymorph <- apply(poptab,1,length) >1 & ( apply(poptab,1,min) != 0) 
+	  polymorph2 <-  apply(poptab,1,min) ==0  | apply(poptab,1,max) < minFam 
+          polymorph[polymorph2] <- TRUE
+
+	  # count missing vlalues
           nmissfam <- tapply(is.na(res[,j]),popStruc,sum)
           
           # must be a named list
@@ -204,6 +207,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(impute.type %in% c("beagle","beagleAfterFamily")){
    
    if (verbose) cat("step 3 : Imputing of missing values by Beagle \n")
+     for(j in 1:M){
+        if(sum(is.na(res[,j]))>0 ){
+          if (is.na(gpData$map$pos[j])){     # if no position is available, random imputation
+	    p <- mean(res[,j],na.rm=TRUE)/2  # minor allele frequency
+            res[is.na(res[,j]) ,j] <- as.numeric(sample(c(0,2),size=length(res[is.na(res[,j]) ,j]),prob=c(1-p,p),replace=TRUE))
+          }
+	}
+     }
+     # use Beagle and impute NA for polymorphic families
      chr <- unique(gpData$map$chr)
      chr <- chr[!is.na(chr)]
      markerTEMP <- gpData
