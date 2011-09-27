@@ -1,4 +1,4 @@
-plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
+plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1,centr=NULL, ...)
 {
     if (class(map) == "gpData"){
        map.unit <- map$info$map.unit
@@ -7,6 +7,10 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
     else map.unit <- "unit"
     chr <- unique(map$chr)
     chr <- chr[!is.na(chr)]
+    map <- map[!is.na(map$chr), ]
+
+    # norm pos
+    if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
 
     # add legend to the left side
     if (dense)  layout(matrix(2:1, ncol = 2), width = c(0.82, 0.25))
@@ -48,12 +52,21 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
     }
 
    # make an empty plot 
-    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
+    if(!is.null(centr)) {
+	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
+        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
+    }
+    else{
+	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
         0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
-        
+    }    
    # x-axis     
     axis(side = 1, at = seq(along = chr), labels = chr)
-
+   # y-axis
+    if(!is.null(centr)){
+        box()
+        axis(side=2,at=-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=50),labels=abs(-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=50)),las=1)
+    }
 
    # plot each chromosome
     for (i in seq(along = chr)) {
@@ -62,6 +75,11 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, ...)
                 image(seq(i - 0.35, i + 0.35, length = 20), x.grid[[i]],
                 matrix(rep(y.grid[[i]], 20), nrow = 20, byrow = TRUE),
                 col = cols, breaks=round(seq(0,maxDens,length=7)), add = TRUE)
+    		if(!is.null(centr)){
+        		# centromere
+        		polygon(x=c(i-0.4,i-0.1,i-0.1,i-0.4,i-0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+        		polygon(x=c(i+0.4,i+0.1,i+0.1,i+0.4,i+0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+		}
         }
         else {
             n <- sum(map$chr == chr[i], na.rm = TRUE)
