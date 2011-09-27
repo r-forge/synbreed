@@ -9,6 +9,9 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1,centr=NULL, ...
     chr <- chr[!is.na(chr)]
     map <- map[!is.na(map$chr), ]
 
+    # centromere positions of maize
+    if(!is.null(centr)) if(centr == "maize") centr <- c(133,90,95,104.6,105.5,50,55.3,46.5,68.8,59.9)
+
     # norm pos
     if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
 
@@ -65,7 +68,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1,centr=NULL, ...
    # y-axis
     if(!is.null(centr)){
         box()
-        axis(side=2,at=-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=50),labels=abs(-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=50)),las=1)
+        axis(side=2,at=-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=25),labels=abs(-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=25)),las=1)
     }
 
    # plot each chromosome
