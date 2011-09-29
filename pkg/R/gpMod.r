@@ -6,15 +6,15 @@
 
 gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NULL,trait=1,...){
     model <- match.arg(model)
-    
-
-    if(model %in% c("modA","modU")){
-      
-      # inidividuls with phenotypes (and genotypes)
-      if(model == "modU") trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped & gpData$covar$genotyped ])
-      else trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped ])
+    if(model == "modA") {
+      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped ])
+    } else {
+      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped & gpData$covar$genotyped ])
+    }
       # remove missing observations
       trainSet <- trainSet[trainSet %in% rownames(gpData$pheno)[!is.na(gpData$pheno[,trait])]]
+
+    if(model %in% c("modA","modU")){
       n <- length(trainSet)
 
       # take data from gpData object
@@ -23,18 +23,13 @@ gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NUL
       if (is.null(kin)) stop("Missing object 'kin'")
       if (n!=nrow(kin)){
          kinTS <- kin[rownames(kin) %in% trainSet,rownames(kin) %in% trainSet]
-      }
-      else kinTS <- kin
+      } else kinTS <- kin
 
       res <- regress(y~1,Vformula=~kinTS,...)
       genVal <- res$predicted
       names(genVal) <- trainSet
       m <- NULL
-    }
-    
-    else{
-    # inidividuls with genotypes and phenotypes
-      trainSet <- as.character(gpData$covar$id[gpData$covar$phenotyped & gpData$covar$genotyped])
+    } else {
       n <- length(trainSet)
 
       # take data from gpData object
