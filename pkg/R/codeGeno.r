@@ -275,6 +275,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       colnames(res) <- rownames(gpData$map) 
       # loop over chromosomses
       for (lg in seq(along=chr)){
+        if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
         sel <- rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg],])
         if (length(sel)>0) {
            markerTEMPbeagle <- discard.markers(gpData,which=sel)
