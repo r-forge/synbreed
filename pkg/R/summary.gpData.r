@@ -34,6 +34,7 @@ summary.gpData <- function(object,...){
       } 
       if(!is.null(obj$map)){
          ans$geno$markerChr <- table(obj$map$chr)[unique(obj$map$chr)]     # keep same order as in map
+         ans$geno$markerChr <- ans$geno$markerChr[!is.na(ans$geno$markerChr)]
          mapped <- !(is.na(obj$map$chr) | is.na(obj$map$pos))
          ans$geno$mappedMarkers <- sum(mapped)
       }
@@ -68,8 +69,8 @@ print.summary.gpData <- function(x,...){
     cat("\t NA's",format(x$geno$nNA*100,digits=3,nsmall=3),"%\n")
     cat("map \n")
     cat("\t No. of mapped markers ",x$geno$mappedMarkers,"\n")
-    cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n")
-    cat("\t markers per chromosome \n")
+    cat("\t No. of chromosomes    ",length(x$geno$markerChr),"\n\n")
+    cat("\t markers per chromosome \n\t")
     print(x$geno$markerChr)
     cat("\n")
     cat("pedigree \n")
