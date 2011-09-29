@@ -1,7 +1,7 @@
 
 # coding genotypic data
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,
-                     maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE,minFam=5,tester=NULL){
+                     maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE,minFam=5,tester=NULL, showBeagleOutput=FALSE){
 
   #============================================================
   # read information from arguments
@@ -70,13 +70,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
     which.miss <- apply(is.na(dataRaw),2,mean,na.rm=TRUE)<=nmiss 
     dataRaw <- dataRaw[,which.miss]
-    if (verbose) cat("step 1 :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
+    if (verbose) cat("step 1  :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
     } else{
       dataRaw <- dataRaw
-      if (verbose) cat("step 1 : No markers removed due to fraction of missing values \n")
+      if (verbose) cat("step 1  : No markers removed due to fraction of missing values \n")
     }
     
   #============================================================
@@ -255,7 +255,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  }  
                }
              }
-             if(j==ceiling(M/100)) cat("         approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep=" ")
+             if(j==ceiling(M/100)) cat("          approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep="")
           }) # end try
         }   # end of if(sum(!is.na(res[,j]))>0)
       }  # end of marker loop
@@ -297,7 +297,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(!"beagle" %in% list.files()) system("mkdir beagle")
         write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
         system(paste("java -Xmx1000m -jar ", .path.package()[grep("synbreed", .path.package())],
-                     "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""))
+                     "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
+                     show.output.on.console=showBeagleOutput)
         system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
       
         # read data from beagle
@@ -348,10 +349,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   
     # recode again if allele frequeny changed to to imputing
     if(any(colMeans(res,na.rm=TRUE)>1)){
-      if (verbose) cat("step 4 : Recode alleles due to imputation \n")
+      if (verbose) cat("step 4  : Recode alleles due to imputation \n")
       res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)]     
     } else{
-      if (verbose) cat("step 4 : No recoding of alleles necessary after imputation \n") 
+      if (verbose) cat("step 4  : No recoding of alleles necessary after imputation \n") 
     }
   }
   
@@ -363,13 +364,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     if(is.null(tester)) which.maf <- colMeans(res,na.rm=TRUE)>=2*maf else
       which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf
-    if (verbose) cat("step 5 :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
+    if (verbose) cat("step 5  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
     cnames <- cnames[which.maf] 
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
   } else {
-    if (verbose) cat("step 5 : No markers discarded due to minor allele frequency \n")
+    if (verbose) cat("step 5  : No markers discarded due to minor allele frequency \n")
   }
   
   #============================================================
@@ -379,12 +380,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(!keep.identical){
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
-       if (verbose) cat("step 6 :",sum(which.duplicated),"duplicated marker(s) removed \n")
+       if (verbose) cat("step 6  :",sum(which.duplicated),"duplicated marker(s) removed \n")
        cnames <- cnames[!which.duplicated]
        # update map 
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   } else{
-    if (verbose) cat("step 6 : No duplicated markers discarded \n")
+    if (verbose) cat("step 6  : No duplicated markers discarded \n")
   }
      
   #============================================================
@@ -394,11 +395,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(!is.null(tester)){
     which.fixed <- apply(res, 2, sum) == nrow(res)-1
     res <- res[,!which.fixed]
-    if (verbose) cat("step 6a  :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
+    if (verbose) cat("step 6a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
     cnames <- cnames[!which.fixed]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.fixed,]
   } else{
-    if (verbose) cat("step 6a  : No duplicated markers discarded \n")
+    if (verbose) cat("step 6a : No duplicated markers discarded \n")
   }
   
   #============================================================
@@ -417,7 +418,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     row.names(res) <- rnames
   }
 
-  if (verbose) cat("End     :",ncol(res),"marker(s) remain after the check\n")
+  if (verbose) cat("End      :",ncol(res),"marker(s) remain after the check\n")
 
   #============================================================
   # print summary of imputation
