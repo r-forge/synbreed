@@ -8,7 +8,7 @@ Plot marker map
 A function to visualize low and high-density marker maps.
 }
 \usage{
-plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1,...)
+plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +24,9 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
   \item{bw}{
 \code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution.
 }
-
+  \item{centr}{
+Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize are used.
+}
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
