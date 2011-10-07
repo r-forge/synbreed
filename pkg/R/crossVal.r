@@ -21,6 +21,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     rownames(X) <- y[,1]
     Z <- diag(n)
     rownames(Z) <- y[,1]
+    colnames(Z) <- y[,1]
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
    	   for( i in 1:length(cov.matrix)){
@@ -171,7 +172,9 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
      # start k folds
      COR2 <- NULL
      rCOR2 <- NULL
-     bu2 <- NULL
+     bu2 <- matrix(NA,ncol=k,nrow=(ncol(X)+n))
+     rownames(bu2) <- names.eff
+     colnames(bu2) <- paste("rep",i,"_fold",1:k,sep="")
      lm.coeff <- NULL
      y.TS <- NULL
      n.TS <- NULL
@@ -182,21 +185,26 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	# select ES, k-times
 	samp.es <- val.samp3[val.samp3[,2]!=ii,]
 	samp.ts <- val.samp3[val.samp3[,2]==ii,] 
+	cat("samp.ts",dim(samp.ts),"\n")
 	namesDS <- c(samp.es[,1],samp.ts[,1])
 	y.samp <- y
 	if(!is.null(ES)){ # if ES is committed
 	  samp.es <- samp.es[samp.es[,1] %in% ES[[i]][[ii]], ]
-	  namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1]))
-	  val.samp3 <- val.samp3[val.samp3[,1] %in% namesDS, ]
-	  y.samp <- y.samp[y.samp$ID %in% namesDS, ]
+	  namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1])) # new DS
+	  y.samp[ !( y.samp[,1] %in% namesDS),2] <- NA  # set values of not-DS to NA
+	  cat("y.samp ",dim(y.samp), "\n")
+	  if (!RR & VC.est=="commit") {  
 	  # contruct new Z matrix
-	  if (!RR) {  
 		Z <- diag(length(namesDS))
-	   	rownames(Z) <- colnames(Z) <- y.samp[,1]
+	   	rownames(Z) <- colnames(Z) <- namesDS
+		cat("Z",dim(Z),"\n")
+	  # cut out G-inverse
+		GI1 <- GI[rownames(GI) %in% namesDS, colnames(GI) %in% namesDS]
 	  } 
 	}
-	samp.kf<-val.samp3[,2]==ii
-	y.samp[samp.kf,2]<-NA # set values of TS to NA
+	samp.kf <- val.samp3[,2]==ii
+	y.samp[samp.kf,2] <- NA  # set values of TS to NA
+
 	   # CV in R with committing variance components
 	   if (VC.est=="commit"){
 		# vectors and matrices for MME
@@ -207,7 +215,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		XX <- crossprod(X1)
 		XZ <- crossprod(X1,Z1)
 		ZX <- crossprod(Z1,X1)
-		ZZGI <-  crossprod(Z1)+ GI
+		if(is.null(ES)) ZZGI <-  crossprod(Z1)+ GI
+		if(!is.null(ES)) ZZGI <-  crossprod(Z1)+ GI1
 		Xy <- crossprod(X1,y1)
 		Zy <- crossprod(Z1,y1)
 		# Left hand side	
@@ -217,6 +226,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		
 		# solve MME
 		bu <-  as.vector(ginv(LHS)%*%RHS)
+		print(length(bu))
 		}
 
 	   # estimation of variance components with ASReml for every ES
@@ -319,12 +329,13 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  }
 
 	  # solution vector
-	  bu2 <- cbind(bu2,bu)
-	  colnames(bu2)[ii]<-paste("rep",i,"_fold",ii,sep="")
+	  if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
+	  else bu2[ ,ii] <- bu
 	  # TS
 	  Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
 	  X2 <- X[(rownames(X) %in% samp.ts[,1]),]
 	  XZ2 <- cbind(X2,Z2)
+	  print(dim(XZ2))
 	  #print(dim(XZ2))
 	  y2 <- y[(y[,1] %in% samp.ts[,1]),2]
 	  y.dach <- XZ2%*%bu
@@ -369,7 +380,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     	rCOR3 <- cbind(rCOR3,rCOR2)
     	colnames(rCOR3)[i] <- paste("rep",i,sep="")
     	bu3 <- cbind(bu3,bu2)
-	rownames(bu3)<-names.eff
     	lm.coeff2 <- cbind(lm.coeff2,lm.coeff)
     	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
 	# save IDs of TS
