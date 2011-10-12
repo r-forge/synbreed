@@ -300,7 +300,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
         output <- system(paste("java -Xmx1000m -jar ", .path.package()[grep("synbreed", .path.package())],
                      "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
-                     intern=showBeagleOutput)
+                     intern=!showBeagleOutput)
         system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
       
         # read data from beagle
@@ -398,10 +398,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     which.fixed <- apply(res, 2, sum) == nrow(res)-1
     res <- res[,!which.fixed]
     cnames <- cnames[!which.fixed]
-    if (verbose) cat("step 6a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.fixed,]
-  } else{
-    if (verbose) cat("step 6a : No duplicated markers discarded \n")
+    if (verbose)
+      if(sum(which.fixed) != 0){
+        cat("step 6a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
+      } else {
+        cat("step 6a : No in crosses fixed marker(s) removed \n")
+      }
   }
   
   #============================================================
