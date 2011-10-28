@@ -190,12 +190,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(all(res[, i] == res[, j], na.rm = TRUE)){
           if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){
             which.duplicated[i] <- TRUE
-          cat(i, j, "\n")
             break
           } else {
             which.duplicated[j] <- TRUE
-          cat(j, i, "\n")
-
           }
         }
     }
