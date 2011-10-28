@@ -1,4 +1,3 @@
-
 # coding genotypic data
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,
                      maf=NULL,nmiss=NULL,label.heter="AB",keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL){
@@ -85,21 +84,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if (verbose) cat("step 2  : Recoding alleles \n")
-   # identify heterozygous genotypes
-   if(!is.null(label.heter)){
-    if (is.character(label.heter)) {
-      label.heter <- label.heter # 1 label for heterozygous
-    } else {
-      if (is.function(label.heter)){                          # multiple labels for heterozygous values
+    # identify heterozygous genotypes
+    if(!is.null(label.heter)){
+      if (is.character(label.heter)) {
+        label.heter <- label.heter # 1 label for heterozygous
+      } else {
+        if (is.function(label.heter)){                          # multiple labels for heterozygous values
           is.heter <- label.heter
           label.heter <- unique(res[which(is.heter(res),arr.ind=TRUE)])
-      }
-      else stop("label.heter must be a character string or a function")
-      } 
-   # make sure that NA is not in label.heter
-   # otherwise missing values would be masked
-   label.heter <- label.heter[!is.na(label.heter)]
-   }
+      } else stop("label.heter must be a character string or a function")
+    } 
+    # make sure that NA is not in label.heter
+    # otherwise missing values would be masked
+    label.heter <- label.heter[!is.na(label.heter)]
+  }
+
    
   #============================================================
   # step 2a  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
@@ -170,6 +169,43 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else{
       if (verbose) cat("step 2c : No markers discarded due to fraction of missing values \n")
     }
+  }
+  #============================================================
+  # step 2.1 - discard duplicated markers   (optional, argument keep.identical=FALSE)
+  #============================================================
+  
+  if(!keep.identical){
+    which.duplicated <- duplicated(res,MARGIN=2)
+    res <- res[,!which.duplicated]
+    cnames <- cnames[!which.duplicated]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
+    step1<- sum(which.duplicated)
+    which.duplicated <- rep(FALSE, ncol(res))
+    which.miss <- apply(is.na(res),2,sum)>0
+    which.miss <- (1:length(which.miss))[which.miss]
+    if(which.miss[length(which.miss)] == ncol(res)) which.miss <- which.miss[1:(length(which.miss)-1)]
+    for(i in which.miss){
+      if(which.duplicated[i]) next
+      for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]])
+        if(all(res[, i] == res[, j], na.rm = TRUE)){
+          if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){
+            which.duplicated[i] <- TRUE
+          cat(i, j, "\n")
+            break
+          } else {
+            which.duplicated[j] <- TRUE
+          cat(j, i, "\n")
+
+          }
+        }
+    }
+    res <- res[,!which.duplicated]
+    cnames <- cnames[!which.duplicated]
+    if (verbose) cat("step 2.1:",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
+    # update map 
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
+  } else {
+    if (verbose) cat("step 2.1: No duplicated markers discarded \n")
   }
 
   # coding of SNPs finished
@@ -322,7 +358,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         }
       }  
     } 
-    
     #########################################################################
     # impute missing values with no population structure or missing positions
     #########################################################################
