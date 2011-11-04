@@ -183,7 +183,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     which.duplicated <- rep(FALSE, ncol(res))
     which.miss <- apply(is.na(res),2,sum)>0
     which.miss <- (1:length(which.miss))[which.miss]
-    if(which.miss[length(which.miss)] == ncol(res)) which.miss <- which.miss[1:(length(which.miss)-1)]
+    if(length(which.miss[which.miss]) == ncol(res)) which.miss <- which.miss[1:(length(which.miss)-1)]
     for(i in which.miss){
       if(which.duplicated[i]) next
       for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]])
