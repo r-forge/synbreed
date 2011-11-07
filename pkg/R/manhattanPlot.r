@@ -1,16 +1,22 @@
-manhattanPlot <- function(b,gpData=NULL,...){
+manhattanPlot <- function(b,gpData=NULL,colored=FALSE,add=FALSE,pch=19,ylab=NULL,...){
     if(is.null(gpData)) plot(b,...)
     else{               
        if (class(b) == "gpMod") b <- b$m
-       gpData$map <- gpData$map[!(is.na(gpData$map$pos) | is.na(gpData$map$chr)),]
        b <- b[!(is.na(gpData$map$pos) | is.na(gpData$map$chr))]
-       cols <- rep(c(grey(0.3),grey(0.7)),times=length(unique(gpData$map$chr)))
-       chr <- cumsum(as.numeric(gpData$map$pos))
-
-       plot(chr,b,col=cols[as.numeric(gpData$map$chr)],type="p",axes=FALSE,...)
+       gpData$map <- gpData$map[!(is.na(gpData$map$pos) | is.na(gpData$map$chr)),]
+       if(colored) cols <- rainbow(6)
+       else cols <- rep(c(grey(0.3),grey(0.7)),times=length(unique(gpData$map$chr)))
+       chrs <- cumsum(tapply(gpData$map$pos, gpData$map$chr, max))
+       namChrs <- names(chrs)
+       chrs <- c(0,chrs[1:(length(chrs)-1)])
+       names(chrs) <- namChrs
+       chr <- as.numeric(chrs[gpData$map$chr]) + as.numeric(gpData$map$pos)+ as.numeric(gpData$map$chr)*0.01
+       if(!add){
+       plot(chr,b,col=cols[(as.numeric(gpData$map$chr)-1)%%6+1],type="p",axes=FALSE,pch=pch,ylab=ylab,...)
        axis(side=1,at=c(chr[!duplicated(gpData$map$chr)],max(chr,na.rm=TRUE)),labels=NA)
        axis(side=1,at=chr[!duplicated(gpData$map$chr)]+diff(c(chr[!duplicated(gpData$map$chr)],max(chr,na.rm=TRUE)))/2,tick=FALSE,labels=unique(gpData$map$chr),hadj=0)
-       axis(side=2)
+       axis(side=2) 
        box()
+       } else points(chr, b, col=cols[(as.numeric(gpData$map$chr)-1)%%6+1], pch=pch,...)
     }
 }

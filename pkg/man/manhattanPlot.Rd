@@ -8,7 +8,7 @@ Manhattan plot for SNP effects
 Plot of SNP effect along the chromosome
 }
 \usage{
-manhattanPlot(b, gpData = NULL, ...)
+manhattanPlot(b, gpData = NULL, colored = FALSE, add = FALSE, pch = 19, ylab = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,18 @@ numeric vector of effects to plot
 }
   \item{gpData}{
 object of class \code{gpData} with map position
+}
+  \item{colored}{
+  Is the plot colored or in grey. The \code{default} is "\code{grey}"
+}
+  \item{add}{
+  If \code{TRUE} the plot is added to an existing plot. The default is \code{FALSE}.
+}
+  \item{pch}{
+  a vector of plotting characters or symbols: see \code{\link[graphics]{points}}. The default is an open circle.
+}
+  \item{ylab}{
+  a title for the y axis: see \code{\link[graphics]{title}}.
 }
   \item{\dots}{
 further arguments for function \code{plot}
