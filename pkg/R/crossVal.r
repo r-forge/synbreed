@@ -161,7 +161,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	# sampling with committed TS
 	if(sampling=="commit"){
 	  val.samp2 <- as.data.frame(y[,1])
-	  val.samp2$val.samp <- rep(1,n)
+	  val.samp2$val.samp <- rep(NA,n)
 	  k <- length(names(TS[[i]]))
 	  for (ii in 1:k){	  
 	    val.samp2[val.samp2[,1] %in% TS[[i]][[ii]],2] <- ii
@@ -172,7 +172,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
      # start k folds
      COR2 <- NULL
      rCOR2 <- NULL
-     bu2 <- matrix(NA,ncol=k,nrow=(ncol(X)+n))
+     bu2 <- matrix(NA,ncol=k,nrow=(ncol(X)+ncol(Z)))
      rownames(bu2) <- names.eff
      colnames(bu2) <- paste("rep",i,"_fold",1:k,sep="")
      lm.coeff <- NULL
@@ -183,26 +183,29 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
      for (ii in 1:k){
 	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
 	# select ES, k-times
-	samp.es <- val.samp3[val.samp3[,2]!=ii,]
-	samp.ts <- val.samp3[val.samp3[,2]==ii,] 
+	samp.es <- val.samp3[!(val.samp3[,2] %in% ii),] 
+	samp.ts <- val.samp3[!is.na(val.samp3[,2]),] 
+	samp.ts <- samp.ts[samp.ts[,2]==ii,] 
 	cat("samp.ts",dim(samp.ts),"\n")
 	namesDS <- c(samp.es[,1],samp.ts[,1])
 	y.samp <- y
 	if(!is.null(ES)){ # if ES is committed
 	  samp.es <- samp.es[samp.es[,1] %in% ES[[i]][[ii]], ]
+	  cat("samp.es",dim(samp.es),"\n")
 	  namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1])) # new DS
 	  y.samp[ !( y.samp[,1] %in% namesDS),2] <- NA  # set values of not-DS to NA
 	  cat("y.samp ",dim(y.samp), "\n")
-	  if (!RR & VC.est=="commit") {  
+	  #if (!RR & VC.est=="commit") {  
 	  # contruct new Z matrix
-		Z <- diag(length(namesDS))
-	   	rownames(Z) <- colnames(Z) <- namesDS
-		cat("Z",dim(Z),"\n")
+		#Z <- diag(length(namesDS))
+	   	#rownames(Z) <- colnames(Z) <- namesDS
+		#cat("Z",dim(Z),"\n")
 	  # cut out G-inverse
-		GI1 <- GI[rownames(GI) %in% namesDS, colnames(GI) %in% namesDS]
-	  } 
+		#GI1 <- GI[rownames(GI) %in% namesDS, colnames(GI) %in% namesDS]
+	  #} 
 	}
 	samp.kf <- val.samp3[,2]==ii
+	samp.kf[is.na(samp.kf)] <- TRUE
 	y.samp[samp.kf,2] <- NA  # set values of TS to NA
 
 	   # CV in R with committing variance components
@@ -215,8 +218,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		XX <- crossprod(X1)
 		XZ <- crossprod(X1,Z1)
 		ZX <- crossprod(Z1,X1)
-		if(is.null(ES)) ZZGI <-  crossprod(Z1)+ GI
-		if(!is.null(ES)) ZZGI <-  crossprod(Z1)+ GI1
+		ZZGI <-  crossprod(Z1)+ GI
 		Xy <- crossprod(X1,y1)
 		Zy <- crossprod(Z1,y1)
 		# Left hand side	
@@ -329,8 +331,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  }
 
 	  # solution vector
-	  if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
-	  else bu2[ ,ii] <- bu
+	  #if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
+	  bu2[ ,ii] <- bu
 	  # TS
 	  Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
 	  X2 <- X[(rownames(X) %in% samp.ts[,1]),]
