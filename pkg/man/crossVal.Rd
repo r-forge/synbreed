@@ -31,7 +31,7 @@ If no covariance is given, the identity matrix an genotypes are used for a marke
 }
   \item{sampling}{Different sampling strategies can be \code{"random"}, \code{"within popStruc"} or \code{"across popStruc"}. If sampling is \code{"commit"} test sets have to specified in TS.
 }
-  \item{TS}{A list of IDs for the test set in each fold within each replication.
+  \item{TS}{A list of vectors with IDs for the test set in each fold within a list of replications, same layout as output for \code{id.TS} .
 }
   \item{ES}{A list of IDs for the estimation set in each fold within each replication.
 }
