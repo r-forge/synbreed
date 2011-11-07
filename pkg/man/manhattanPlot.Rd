@@ -36,6 +36,7 @@ further arguments for function \code{plot}
 }
 
 \author{
+Hans-Jürgen Auinger
 Valentin Wimmer
 }
 
