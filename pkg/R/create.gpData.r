@@ -56,7 +56,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         warning("assuming identical order of genotypes in 'pheno' and 'geno' \n")  
         if(is.null(rownames(pheno))) rownames(pheno) <- rownames(geno)
         else rownames(geno) <- rownames(pheno)
-        if(is.null(rownames(pheno)) & is.null(rownames(geno))) rownames(pheno) <- rownames(geno) <- paste("ID",1:nrow(geno),sep="")
+        if(is.null(rownames(pheno)) & is.null(rownames(geno))) rownames(pheno) <- rownames(geno) <- paste("ID",10^ceiling(log10(nrow(geno)))+1:nrow(geno),sep="")
     }
     # now geno and pheno have rownames
     else stop("missing rownames for 'pheno' and 'geno'")

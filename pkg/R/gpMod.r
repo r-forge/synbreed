@@ -74,6 +74,7 @@ gpMod <- function(gpData,model=c("modA","modU","modRR","modBL","modBRR"),kin=NUL
       RI <- diag(n)
       sol <- MME(X, Z, GI, RI, y)
       m <- sol$u 
+      names(m) <- colnames(Z)
     }
     }
     
