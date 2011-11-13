@@ -43,7 +43,8 @@ Valentin Wimmer
 \examples{
 # from gpData to cross
 data(maize)
-maize.cross <- gpData2cross(maize)
+maizeC <- codeGeno(maize)
+maize.cross <- gpData2cross(maizeC)
 # descriptive statistics
 summary(maize.cross)
 plot(maize.cross)

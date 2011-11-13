@@ -8,14 +8,15 @@ gpData2cross <- function(gpData,...){
      if(is.null(gpData$geno) | is.null(gpData$map)) stop("'geno' and 'map' needed in",substitute(gpData))
      else{
        # use codeGeno if not yet done
-       if(!gpData$info$codeGeno) gpData <- codeGeno(gpData,...)
+       if(!gpData$info$codeGeno) stop("Use function codeGeno before gpData2cross!")
      
        # only use individuals with genotypes and phenotypes
        genoPheno <- gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped]
        # read information from gpData
        geno <- data.frame(gpData$geno[rownames(gpData$geno) %in% genoPheno,])
-       pheno <- data.frame(gpData$pheno[rownames(gpData$pheno) %in% genoPheno,])
-       colnames(pheno) <- colnames(gpData$pheno)
+       pheno <- data.frame(apply(gpData$pheno[dimnames(gpData$pheno)[[1]] %in% genoPheno, ,], 2, rbind))
+       if(dim(gpData$pheno)[3]>1) pheno$repl <- rep(1:dim(gpData$pheno)[3], each=dim(gpData$pheno)[1])
+       if(!is.null(gpData$phenoCovars)) pheno <- cbind(pheno, data.frame(apply(gpData$phenoCovars[dimnames(gpData$phenoCovars)[[1]] %in% genoPheno, ,], 2, rbind)))
        map  <- gpData$map
        n <- nrow(geno)
      }
