@@ -3,7 +3,7 @@ Type: Package
 Title: Framework for the analysis of genomic prediction data 
 using R 
 Version: 0.8-1 
-Date: 2011-11-10 
+Date: 2011-11-14 
 Author: Valentin Wimmer with contributions by 
 Chris-Carolin Schoen, Theresa Albrecht and Hans-Juergen Auinger 
 Depends: lattice, igraph, MASS, LDheatmap, qtl, doBy, BLR, regress, abind 

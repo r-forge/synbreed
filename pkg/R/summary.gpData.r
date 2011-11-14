@@ -47,7 +47,7 @@ summary.gpData <- function(object,...){
          ans$geno <- list(nMarkers=ncol(geno),genotypes=round(frequencies,3),nNA=sum(is.na(geno),na.rm=TRUE)/nobs)
       } 
       if(!is.null(obj$map)){
-         ans$geno$markerChr <- table(obj$map$chr)[unique(obj$map$chr)]     # keep same order as in map
+         ans$geno$markerChr <- table(obj$map$chr)#[unique(obj$map$chr)]     # keep same order as in map
          ans$geno$markerChr <- ans$geno$markerChr[!is.na(ans$geno$markerChr)]
          mapped <- !(is.na(obj$map$chr) | is.na(obj$map$pos))
          ans$geno$mappedMarkers <- sum(mapped)
