@@ -14,6 +14,7 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        # family ID, individual ID, paternal ID, maternal ID, sex, phenotype, genotypedata
        # we omit cols 3-6
        family <- gp$covar$family[gp$covar$genotyped]  # only for individuals with genotypes
+       if(is.null(family)) stop("missing family information in gpData$covar")
        id <- gp$covar$id[gp$covar$genotyped]  # only for individuals with genotypes
        # combine in one file
        ped <- data.frame(family,id,geno)
