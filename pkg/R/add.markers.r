@@ -40,7 +40,7 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
         if(!"ID" %in% colnames(pheno)) pheno$ID <- rownames(pheno)
         repl <- NULL
       } else {
-        if(!all(c("ID") %in% colnames(pheno))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
+        if(!all(c("ID") %in% colnames(pheno)))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
       }
       if(!is.null(pheno)) if(any(colnames(pheno)!=dimnames(gpData$pheno)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")
       if(!is.null(pheno)) if(any(colnames(pheno)!=dimnames(gpData$phenoCovars)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")

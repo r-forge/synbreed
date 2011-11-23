@@ -10,7 +10,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
   if(is.null(impute.type)) impute.type <- "random"   # default
   if(impute) impute.type <- match.arg(impute.type)
-  if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, 3, 3)}
+  if (is.character(label.heter)) if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, 3, 3)}
 
   orgFormat <- class(gpData)
   # check for class 'gpData'
