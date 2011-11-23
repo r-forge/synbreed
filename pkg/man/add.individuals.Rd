@@ -58,7 +58,7 @@ newDHpedigree <- data.frame(ID="newDH",Par1=0,Par2=0,gener=0)
 # new covar information
 newDHcovar <- data.frame(family=NA,DH=1,tbv=1000,row.names="newDH")
 
-maize2 <- add.individuals(maize,newDHpheno,newDHgeno,newDHpedigree,newDHcovar)  
+maize2 <- add.individuals(maize,newDHpheno,newDHgeno,newDHpedigree,newDHcovar)
 summary(maize2)
 
 }

@@ -55,9 +55,15 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     classList <- unlist(lapply(pheno, class))
     if(!all((classList[!names(classList) %in% repeated & !names(classList) %in% modCovar])[-1] %in% c("numeric", "integer"))) stop("Trait values have to be numeric!")
     if(is.null(repeated)){
-      pheno <- pheno[order(rownames(pheno)), ]
-      arrPheno <- array(as.matrix(pheno[, !(colnames(pheno) %in% modCovar)]), dim=c(dim(pheno[, !(colnames(pheno) %in% modCovar)]), 1))
-      dimnames(arrPheno) <- list(rownames(pheno), colnames(pheno), "1")
+      if(dim(pheno)[2] ==1){
+        phenoNames <- dimnames(pheno)
+        arrPheno <- array(pheno[order(phenoNames[[1]]), ], dim = c(length(phenoNames[[1]]), 1, 1))
+        dimnames(arrPheno) <- list(phenoNames[[1]][order(phenoNames[[1]])], phenoNames[[2]], "1")
+      } else {
+        pheno <- pheno[order(rownames(pheno)), ]
+        arrPheno <- array(as.matrix(pheno[, !(colnames(pheno) %in% modCovar)]), dim=c(dim(pheno[, !(colnames(pheno) %in% modCovar)]), 1))
+        dimnames(arrPheno) <- list(rownames(pheno), colnames(pheno)[!(colnames(pheno) %in% modCovar)], "1")
+      }
       if(!is.null(modCovar)) arrModCovars <- array(pheno[, colnames(pheno) %in% modCovar], dim=c(dim(pheno[, colnames(pheno) %in% modCovar]), 1))
     } else {
       dim3 <- data.frame(unique(pheno[, repeated]))
