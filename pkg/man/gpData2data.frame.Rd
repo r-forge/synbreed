@@ -8,7 +8,7 @@ Merge of phenotypic and genotypic data
 Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}. Multiple observations for each individual in \code{pheno} are be reshaped from "wide" format in \code{pheno} into "long"  format using a grouping variable. 
 }
 \usage{
-gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,...)
+gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,repl=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,7 +16,7 @@ gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,
 object of class \code{gpData}
 }
   \item{trait}{
-numeric or character. Which trait should be included in the \code{data.frame}? Only for \code{Rep=NULL}.
+\code{numeric} or \code{character}. A vector with the names or numbers of the trait that should be extracted of pheno. Default is \code{1}.
 }
   \item{onlyPheno}{
 \code{logical}. Only return phenotypic data.
@@ -26,6 +26,8 @@ numeric or character. Which trait should be included in the \code{data.frame}? O
 }
   \item{all.geno}{
 scalar logical. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
+}
+  \item{repl}{\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are taken.
 }
   \item{...}{
 further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename levels of grouping variable.
@@ -41,8 +43,9 @@ For multiple measures, phenotypic data in object \code{gpData} is arranged with 
 A \code{data.frame} with phenotypes in the first column(s) and marker matrix in subsequent columns.
 }
 \author{
-Hans-Juergen Auinger
 Valentin Wimmer
+
+Hans-Juergen Auinger
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

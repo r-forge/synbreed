@@ -11,7 +11,7 @@ BLUP models are fitted using the implementation of the \code{regress} package (C
 
 }
 \usage{
-gpMod(gpData, model = c("modA","modU","modRR","modBL","modBRR"), kin = NULL, trait = 1, ...)
+gpMod(gpData, model = c("BLUP","modBL","modBRR"), kin = NULL, trait = 1, repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,16 +19,28 @@ gpMod(gpData, model = c("modA","modU","modRR","modBL","modBRR"), kin = NULL, tra
 object of class \code{gpData}
 }
   \item{model}{
-\code{character}. The model to use.
+\code{character}. The model to use. \code{"modBL"} and \code{"modBRR"} are at the moment only for two-stage analysis. So you have to fit a model for phenotypic covariats first.
 }
   \item{kin}{
 object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as addtional polygenic effect \eqn{u} in the Bayesian regression models.
 }
   \item{trait}{
-\code{numeric} or \code{character}. The name or number of the trait to fit the model
+\code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model
+}
+  \item{repl}{
+\code{numeric} or \code{character}. A vector with names or numbers of the repeated values of \code{gpData$pheno} to fit the model
+}
+  \item{markerEffects}{
+  If fitted a BLUP-model the effects of markers can be calculated. NOTE: This gives only meaningful results, if the realized kinship of the function \code{kin} is used without changes!
+}
+  \item{fixed}{
+  A formula for fixed effects. The details of model specification are the same as for \code{lm} exept that you don´t have to specify the left side of the model.
+} 
+  \item{random}{
+  A formula for random effects of the model. Specifies the matrices to include in the covariance structure. Each term is either a symmetric matrix, or a factor. Independent Gaussian random effects are included by passing the corresponding block factor. For mor details see \code{\link[regress]{regress}}.
 }
   \item{\dots}{
-further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{?BLR}).
+further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BLR]{BLR}}).
 }
 }
 \details{
@@ -58,6 +70,8 @@ http://CRAN.R-project.org/package=BLR
 }
 \author{
 Valentin Wimmer
+
+Hans-Juergen Auiner
 }
 \seealso{
 \code{\link{kin}}, \code{\link{crossVal}}

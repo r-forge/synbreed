@@ -35,6 +35,8 @@ Broman, K. W. and Churchill, S. S. (2003). R/qtl: Qtl mapping in experimental cr
 }
 \author{
 Valentin Wimmer
+
+Hans-Jürgen Auinger
 }
 
 \seealso{

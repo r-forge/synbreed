@@ -50,6 +50,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     }
   }
   phenoCovars <- NULL
+  attrModCovars <- NULL
   if(!is.null(pheno)){
     classList <- unlist(lapply(pheno, class))
     if(!all((classList[!names(classList) %in% repeated & !names(classList) %in% modCovar])[-1] %in% c("numeric", "integer"))) stop("Trait values have to be numeric!")
@@ -60,13 +61,13 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
       if(!is.null(modCovar)) arrModCovars <- array(pheno[, colnames(pheno) %in% modCovar], dim=c(dim(pheno[, colnames(pheno) %in% modCovar]), 1))
     } else {
       dim3 <- data.frame(unique(pheno[, repeated]))
-      dim3 <- orderBy(as.formula(paste("~", paste(repeated, collapse = " + "))), data = dim3)
       colnames(dim3) <- repeated
+      dim3 <- orderBy(as.formula(paste("~", paste(repeated, collapse = " + "))), data = dim3)
       for(i in 1:ncol(dim3)) dim3[, i] <- as.character(dim3[, i])
       rownam <- sort(unique(pheno[, 1]))
       if(!is.null(modCovar)) repeated <- unique(c(repeated, modCovar))
       arrPheno <- array(NA, dim = c(length(rownam), ncol(pheno)-(1+length(repeated)), nrow(dim3)))
-      dimnames(arrPheno) <- list(rownam, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1], apply(dim3, 1, paste, collapse = "_"))
+      dimnames(arrPheno) <- list(rownam, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1], as.character(apply(dim3, 1, paste, collapse = "_")))
       for(i in 1:nrow(dim3)){
         vec.bool <- apply(as.matrix(pheno[, colnames(dim3)]) == as.matrix(dim3[rep(i, nrow(pheno)), ]), 1, all)
         arrPheno[pheno[vec.bool, 1], , i] <- as.matrix(pheno[vec.bool, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1]])
@@ -75,12 +76,11 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         arrModCovars <- arrPheno[,rep(1, length(modCovar)), ]
         dimnames(arrModCovars)[[2]] <- colnames(pheno)[colnames(pheno) %in% modCovar]
         for(i in 1:nrow(dim3)){
-          vec.bool <- apply(pheno[, colnames(dim3)] == dim3[rep(i, nrow(pheno)), ], 1, all)
+          vec.bool <- apply(matrix(pheno[, colnames(dim3)] == dim3[rep(i, nrow(pheno)), ], ncol=ncol(dim3)), 1, all)
           arrModCovars[pheno[vec.bool, 1], , i] <- as.matrix(pheno[vec.bool, colnames(pheno)[colnames(pheno) %in% modCovar]])
         }
       }
     }
-    pheno <- arrPheno
     if(!is.null(modCovar)){
       phenoCovars <- arrModCovars
       attrModCovars <- classList[dimnames(arrModCovars)[[2]]]
@@ -90,11 +90,10 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         else
           attrModCovars[ i] <- "factor"
       }
-
-      rm(arrModCovars)
     }
+    pheno <- arrPheno
     rm(arrPheno)
-  }
+  } 
   # match geno and pheno gpWheat1$pheno[1:5,]
   if(!is.null(geno) & !is.null(pheno)){
     if(is.null(dimnames(pheno)[[1]]) | is.null(rownames(geno))){

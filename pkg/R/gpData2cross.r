@@ -14,7 +14,13 @@ gpData2cross <- function(gpData,...){
        genoPheno <- gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped]
        # read information from gpData
        geno <- data.frame(gpData$geno[rownames(gpData$geno) %in% genoPheno,])
-       pheno <- data.frame(apply(gpData$pheno[dimnames(gpData$pheno)[[1]] %in% genoPheno, ,], 2, rbind))
+       phenoDim <- dim(gpData$pheno)
+       phenoNames <- dimnames(gpData$pheno)
+       phenoDim[1] <- sum(dimnames(gpData$pheno)[[1]] %in% genoPheno)
+       phenoNames[[1]] <- dimnames(gpData$pheno)[dimnames(gpData$pheno)[[1]] %in% genoPheno]
+       pheno <- gpData$pheno[dimnames(gpData$pheno)[[1]] %in% genoPheno, ,]
+       pheno <- array(pheno, dim=phenoDim)
+       dimnames(pheno) <- phenoNames
        if(dim(gpData$pheno)[3]>1) pheno$repl <- rep(1:dim(gpData$pheno)[3], each=dim(gpData$pheno)[1])
        if(!is.null(gpData$phenoCovars)) pheno <- cbind(pheno, data.frame(apply(gpData$phenoCovars[dimnames(gpData$phenoCovars)[[1]] %in% genoPheno, ,], 2, rbind)))
        map  <- gpData$map
