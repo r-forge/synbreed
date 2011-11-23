@@ -32,7 +32,7 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
       if (any(rownames(pheno) %in% gpData$covar$id) | any(rownames(geno) %in% gpData$covar$id) ){
         stop("some of the individuals of are allready in ", substitute(gpData))
       }
-      if(repl=NULL) repl <- "repl" 
+      if(repl==NULL) repl <- "repl" 
       if(!all(unique(pheno[, repl]) %in% dimnames(gpData$pheno)[[3]])) stop("Your values for replication is not in the dimnames of ", substitute(gpData$pheno))
       colnames(pheno)[colnames(pheno) == repl] <- "repl"
       # merge phenotypic data

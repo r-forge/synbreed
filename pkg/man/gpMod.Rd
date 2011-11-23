@@ -11,7 +11,7 @@ BLUP models are fitted using the implementation of the \code{regress} package (C
 
 }
 \usage{
-gpMod(gpData, model = c("BLUP","modBL","modBRR"), kin = NULL, trait = 1, repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
+gpMod(gpData, model = c("BLUP","BL","BRR"), kin = NULL, trait = 1, repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,7 @@ gpMod(gpData, model = c("BLUP","modBL","modBRR"), kin = NULL, trait = 1, repl = 
 object of class \code{gpData}
 }
   \item{model}{
-\code{character}. The model to use. \code{"modBL"} and \code{"modBRR"} are at the moment only for two-stage analysis. So you have to fit a model for phenotypic covariats first.
+\code{character}. The model to use. \code{"BL"} and \code{"BRR"} are at the moment only for two-stage analysis. So you have to fit a model for phenotypic covariats first.
 }
   \item{kin}{
 object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as addtional polygenic effect \eqn{u} in the Bayesian regression models.
@@ -50,7 +50,6 @@ Only a subset of the individuals - the training set - is used for the model fit.
 Object of class \code{gpMod} which is a list of
 \item{fit}{The model fit returned by the genomic prediction method}
 \item{model}{The model type, see 'Arguments'}
-\item{trainingSet}{IDs of the individuals in the training set}
 \item{y}{The phenotypic records for the individuals in the training set}
 \item{g}{The predicted genetic values for the individuals in the training set}
 \item{m}{Predicted SNP effects (for \code{modRR}, \code{modBL} and \code{modBRR})}
@@ -87,12 +86,12 @@ A <- kin(maizeC,ret="kin",DH=maize$covar$DH)
 U <- kin(maizeC,ret="realized")/4
 
 # BLUP models
-mod1 <- gpMod(maizeC,model="modA",kin=A)
-mod2 <- gpMod(maizeC,model="modU",kin=U)
+mod1 <- gpMod(maizeC,model="BLUP",kin=A)
+mod2 <- gpMod(maizeC,model="BLUP",kin=U)
 
 # Bayesian Lasso
 prior <- list(varE=list(df=3,S=35),lambda = list(shape=0.52,rate=1e-4,value=20,type='random'))
-mod3 <- gpMod(maizeC,model="modBL",prior=prior,nIter=6000,burnIn=1000,thin=5)
+mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)
 
 summary(mod1)
 summary(mod2)

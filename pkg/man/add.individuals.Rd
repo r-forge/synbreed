@@ -9,7 +9,7 @@ This function adds new data for individuals to an object of class \code{gpData} 
 }
 \usage{
 add.individuals(gpData, pheno = NULL, geno = NULL,
- pedigree = NULL, covar = NULL)
+ pedigree = NULL, covar = NULL, repl=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,20 +17,23 @@ add.individuals(gpData, pheno = NULL, geno = NULL,
 object of class \code{gpData}
 }
   \item{pheno}{
-\code{data.frame} with new rows for phenotypes
+\code{data.frame} with new rows for phenotypes. For unrepeated values the ID of the Genotypes can be the rownames. Otherwise a column with name \code{"ID"} is expected.
 }
   \item{geno}{
 \code{matrix} with new rows for genotypic data
 }
   \item{pedigree}{
 \code{data.frame} with new rows for pedigree data
-}      
+}
   \item{covar}{
 \code{data.frame} with new rows for \code{covar} information
 }
+  \item{repl}{
+The column of the pheno \code{data.frame} for the replicated measures. If the values are unrepeated or  this column is named \code{"repl"} this argument is not needed.
+}
 }
 \details{
-\code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} must match with existing names in \code{gpData} object. 
+\code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} must match with existing names in \code{gpData} object.
 }
 \value{
 object of class \code{gpData} with new individuals
@@ -44,7 +47,7 @@ Valentin Wimmer
 }
 \examples{
 # adding one new DH line to maize data
-data(maize)                                          
+data(maize)
 newDHpheno <- data.frame(Trait=1000,row.names="newDH")
 # simulating genotypic data
 newDHgeno <- matrix(sample(c(0,1),ncol(maize$geno),replace=TRUE),nrow=1)
