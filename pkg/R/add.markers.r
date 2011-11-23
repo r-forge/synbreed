@@ -27,16 +27,33 @@ add.markers <- function(gpData,geno,map=NULL){
 
 # adding new individuals to gpData object
 
-add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL){
+add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL,repl=NULL){
       # check if individuals are allready in data
       if (any(rownames(pheno) %in% gpData$covar$id) | any(rownames(geno) %in% gpData$covar$id) ){
         stop("some of the individuals of are allready in ", substitute(gpData))
       }
-      
+      if(repl=NULL) repl <- "repl" 
+      if(!all(unique(pheno[, repl]) %in% dimnames(gpData$pheno)[[3]])) stop("Your values for replication is not in the dimnames of ", substitute(gpData$pheno))
+      colnames(pheno)[colnames(pheno) == repl] <- "repl"
       # merge phenotypic data
-      if(!is.null(pheno)) if(any(colnames(pheno)!=colnames(gpData$pheno))) stop("different phenotypes (colnames) in 'gpData$pheno' and 'pheno'")
-      pheno <- rbind(gpData$pheno,pheno)
-      
+      if(dim(gpData$pheno)[3] == 1) {
+        if(!"ID" %in% colnames(pheno)) pheno$ID <- rownames(pheno)
+        repl <- NULL
+      } else {
+        if(!all(c("ID") %in% colnames(pheno))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
+      }
+      if(!is.null(pheno)) if(any(colnames(pheno)!=dimnames(gpData$pheno)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")
+      if(!is.null(pheno)) if(any(colnames(pheno)!=dimnames(gpData$phenoCovars)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")
+      df.pheno <- gpData2data.frame(gpData, onlyPheno=TRUE, trait = dimnames(gpData$pheno)[[2]])
+      if(!all(colnames(df.pheno) %in% colnames(pheno))) warning("Not all traits and covariates are available in the new data!")
+      pheno[, colnames(df.pheno)[!colnames(df.pheno) %in% colnames(pheno)]] <- NA
+      pheno <- pheno[, colnames(df.pheno)]
+      pheno <- rbind(df.pheno, pheno)
+      rm(df.pheno)
+      if(dim(gpData$pheno)[3] == 1) {
+        rownames(pheno) <- pheno$ID
+        pheno$ID <- NULL
+      }
       # merge genotypic data
       if(!is.null(geno)) if(any(colnames(geno)!=colnames(gpData$geno))) stop("different markers (colnames) in 'gpData$geno' and 'geno'")
       geno <- rbind(gpData$geno,geno)
@@ -62,6 +79,6 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
 
 
       # create new gpData object
-      ret <- create.gpData(pheno=pheno,geno=geno,map=gpData$map,pedigree=pedigree,covar=covarUpdate,map.unit=gpData$info$map.unit)
+      ret <- create.gpData(pheno=pheno,geno=geno,map=gpData$map,pedigree=pedigree,covar=covarUpdate,map.unit=gpData$info$map.unit,modCovar=dimnames(gpData$phenoCovars)[[2]],repeated=repl)
       return(ret)
 }

@@ -18,22 +18,23 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
       }
       # append column for each replication
       if(dim(pheno)[3]>1){
-        pheno <- abind(matrix(rep(1:dim(gpData$pheno)[3], each=dim(gpData$phenoCovars)[1]), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1]), pheno, along=2)
+        pheno <- abind(matrix(rep(reps, each=dim(gpData$phenoCovars)[1]), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1]), pheno, along=2)
         dimnames(pheno)[[2]][1] <- "repl"
       }
-      if(!is.null(repl)) 
+      if(!is.null(repl)){ 
         if(all(repl %in% 1:dim(pheno)[3])) repl <- dimnames(pheno)[[3]][repl] 
         else if(!all(repl %in% dimnames(pheno)[[3]])) stop("wrong replication names used")
-             else repl <- dimnames(pheno)[[3]]
-      pheno <- as.data.frame(apply(pheno[, ,repl], 2, c))
+      } else repl <- dimnames(pheno)[[3]]
+      pheno <- as.data.frame(apply(pheno[, ,repl], 2, cbind))
       for(i in names(gpData$info$attrPhenoCovars)){
-        if(gpData$info$attrPhenoCovar[i] == "numeric") pheno[, i] <- as(as.character(pheno[, i]), gpData$info$attrPhenoCovar[i])
+        if(gpData$info$attrPhenoCovars[i] == "numeric") 
+          pheno[, i] <- as(as.character(pheno[, i]), gpData$info$attrPhenoCovars[i])
       }
       if(!is.null(repl))
         for(i in colnames(pheno))
           if(class(pheno[, i]) == "factor")
             pheno[, i] <- as.factor(as.character(pheno[, i]))
-      pheno$ID <- IDs[pheno$ID]
+      pheno$ID <- IDs[as.numeric(as.factor(as.character(pheno$ID)))]
       if(!onlyPheno){
         geno <- gpData$geno
         # merge genotypic and phenotypic data
@@ -46,7 +47,9 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
      if(is.null(mergeData$repl))
        mergeData <- orderBy(~ID,data=mergeData)  
      else{
-       mergeData$repl <- as.numeric(mergeData$repl)
+       if(all(mergeData$repl %in% 1:dim(gpData$pheno)[3])){
+         mergeData$repl <- as.numeric(mergeData$repl)
+       }
        mergeData <- orderBy(~ID+repl,data=mergeData) 
      } 
      rownames(mergeData) <- NULL

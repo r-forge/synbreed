@@ -6,7 +6,7 @@
 # changes: Hans-Jürgen Auinger
 # date: 2011 - 11 - 21
 
-gpMod <- function(gpData,model=c("BLUP","modBL","modBRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
+gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
   model <- match.arg(model)
   m <- NULL
   for(i in trait){
@@ -48,7 +48,7 @@ gpMod <- function(gpData,model=c("BLUP","modBL","modBRR"),kin=NULL,trait=1,repl=
         sigma2m <- sigma2u/sumP
         # set up design matrices
         X <- matrix(1,nrow=n)
-        Z <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
+        Z <- gpData$geno[df.trait$ID,]
         GI <- diag(rep(sigma2/sigma2m,ncol(Z)))
         RI <- diag(n)
         sol <- MME(X, Z, GI, RI, y)
@@ -57,7 +57,7 @@ gpMod <- function(gpData,model=c("BLUP","modBL","modBRR"),kin=NULL,trait=1,repl=
       }
     }
 
-    if(model=="modBL"){
+    if(model=="BL"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
       X <- gpData$geno[df.trait$ID, ]
       capture.output(res <- BLR(y=df.trait[, yName],XL=X,...),file="BLRout.txt")
@@ -66,9 +66,9 @@ gpMod <- function(gpData,model=c("BLUP","modBL","modBRR"),kin=NULL,trait=1,repl=
       names(genVal) <- rownames(X)
       m <- res$bL
     }
-    if(model=="modBRR"){
+    if(model=="BRR"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
-      X <- gpData$geno[rownames(gpData$geno) %in% trainSet,]
+      X <- gpData$geno[df.trait$ID,]
       capture.output(res <- BLR(y=df.trait[, yName],XR=X,...),file="BLRout.txt")
       if(!is.null(kin)) res <- BLR(y=df.trait[, yName],XR=X,GF=list(ID=1:n,A=kin),...)
       genVal <- res$yHat
@@ -77,7 +77,7 @@ gpMod <- function(gpData,model=c("BLUP","modBL","modBRR"),kin=NULL,trait=1,repl=
     }
 
     
-    ret <- list(fit=res,model=model,trainingSet=trainSet,y=y,g=genVal,m=m,kin=kin)
+    ret <- list(fit=res,model=model,data.frame=df.trait,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     return(ret)
   }
@@ -87,8 +87,8 @@ summary.gpMod <- function(object,...){
     ans <- list()
     ans$model <- object$model
     if(object$model %in% c("BLUP")) ans$summaryFit <- summary(object$fit)
-    if(object$model=="modBL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
-    if(object$model=="modBRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model=="BL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model=="BRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
     ans$n <- sum(!is.na(object$y))
     ans$sumNA <- sum(is.na(object$y))
     ans$summaryG <- summary(as.numeric(object$g))
@@ -111,10 +111,10 @@ print.summary.gpMod <- function(x,...){
     cat("             Posterior mean \n")
     cat("(Intercept) ",x$summaryFit$mu,"\n")
     cat("VarE        ",x$summaryFit$varE,"\n")
-    if(x$model=="modBL"){
+    if(x$model=="BL"){
     cat("lambda      ",x$summaryFit$lambda,"\n")
     }
-    if(x$model=="modBRR"){
+    if(x$model=="BRR"){
     cat("varBr       ",x$summaryFit$varBr,"\n")
     }
     }
