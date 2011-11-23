@@ -35,7 +35,7 @@ object of class \code{relationshipMatrix}. Kinship structure to be used in the B
 }
   \item{fixed}{
   A formula for fixed effects. The details of model specification are the same as for \code{lm} exept that you don´t have to specify the left side of the model.
-} 
+}
   \item{random}{
   A formula for random effects of the model. Specifies the matrices to include in the covariance structure. Each term is either a symmetric matrix, or a factor. Independent Gaussian random effects are included by passing the corresponding block factor. For mor details see \code{\link[regress]{regress}}.
 }
