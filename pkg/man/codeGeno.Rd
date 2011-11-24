@@ -103,7 +103,7 @@ B L Browning and S R Browning (2009) A unified approach to genotype imputation a
 }
 
 \author{
-Hans-Jürgen Auinger and Valentin Wimmer
+Hans-Juergen Auinger and Valentin Wimmer
 }
 
 

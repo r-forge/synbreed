@@ -34,7 +34,7 @@ Object of class \code{cross} or \code{gpData} for function  \code{gpData2cross} 
 Broman, K. W. and Churchill, S. S. (2003). R/qtl: Qtl mapping in experimental crosses. Bioinformatics, (19):889-890.
 }
 \author{
-Valentin Wimmer and Hans-Jürgen Auinger
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 \seealso{

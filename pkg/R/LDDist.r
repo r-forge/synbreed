@@ -34,7 +34,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
     
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[i]],main=paste("chromosome",i),...)
+       if(type=="p") plot(r2~dist,data=ret[[i]],main=names(ret)[[i]],...)
 
        # scatterplot with nls curve
        if(type=="nls"){
