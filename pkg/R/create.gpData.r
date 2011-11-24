@@ -54,18 +54,22 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   if(!is.null(pheno)){
     classList <- unlist(lapply(pheno, class))
     if(!all((classList[!names(classList) %in% repeated & !names(classList) %in% modCovar])[-1] %in% c("numeric", "integer"))) stop("Trait values have to be numeric!")
+    # repeated measures? Use rownames of pheno as identifier for genotypes
     if(is.null(repeated)){
-      if(dim(pheno)[2] ==1){
+      add <- 10^ceiling(log10(nrow(geno)))
+      if(rownames(pheno) %in% 1:nrow(pheno)) rownames(pheno) <- add + as.numeric(rownames(pheno)) else add <- NULL
+      if(dim(pheno)[2] ==1){# only a vector of traits
         phenoNames <- dimnames(pheno)
         arrPheno <- array(pheno[order(phenoNames[[1]]), ], dim = c(length(phenoNames[[1]]), 1, 1))
         dimnames(arrPheno) <- list(phenoNames[[1]][order(phenoNames[[1]])], phenoNames[[2]], "1")
-      } else {
+      } else {# more than one trait, still unreplicated
         pheno <- pheno[order(rownames(pheno)), ]
         arrPheno <- array(as.matrix(pheno[, !(colnames(pheno) %in% modCovar)]), dim=c(dim(pheno[, !(colnames(pheno) %in% modCovar)]), 1))
         dimnames(arrPheno) <- list(rownames(pheno), colnames(pheno)[!(colnames(pheno) %in% modCovar)], "1")
       }
+      if(!is.null(add)) dimnames(arrPheno)[[1]] <- as.numeric(dimnames(arrPheno)[[1]]) - add
       if(!is.null(modCovar)) arrModCovars <- array(pheno[, colnames(pheno) %in% modCovar], dim=c(dim(pheno[, colnames(pheno) %in% modCovar]), 1))
-    } else {
+    } else {# a vector with replication idetifier is applied. The fist column is the identifier for genotypes
       dim3 <- data.frame(unique(pheno[, repeated]))
       colnames(dim3) <- repeated
       dim3 <- orderBy(as.formula(paste("~", paste(repeated, collapse = " + "))), data = dim3)
@@ -78,7 +82,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         vec.bool <- apply(as.matrix(pheno[, colnames(dim3)]) == as.matrix(dim3[rep(i, nrow(pheno)), ]), 1, all)
         arrPheno[pheno[vec.bool, 1], , i] <- as.matrix(pheno[vec.bool, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1]])
       }
-      if(!is.null(modCovar)){
+      if(!is.null(modCovar)){ # strip out covariates
         arrModCovars <- arrPheno[,rep(1, length(modCovar)), ]
         dimnames(arrModCovars)[[2]] <- colnames(pheno)[colnames(pheno) %in% modCovar]
         for(i in 1:nrow(dim3)){
@@ -87,7 +91,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         }
       }
     }
-    if(!is.null(modCovar)){
+    if(!is.null(modCovar)){ # take the correct class of the covariates
       phenoCovars <- arrModCovars
       attrModCovars <- classList[dimnames(arrModCovars)[[2]]]
       for(i in names(attrModCovars)){
@@ -114,7 +118,12 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     }
    } 
     # sort geno and pheno by rownames (alphabetical order)
-    if(!is.null(geno)) geno <- geno[order(row.names(geno)),]
+    if(!is.null(geno)){
+      if(all(row.names(geno) %in% 1:nrow(geno))) 
+        geno <- geno[order(as.numeric(row.names(geno))), ]
+      else
+        geno <- geno[order(row.names(geno)),]
+    }
 
   # sort markers by chromosome and position within chromosome
   if(!is.null(map)){

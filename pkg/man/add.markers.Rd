@@ -55,7 +55,7 @@ gp <- create.gpData(pheno,geno,map)
 
 # new data
 geno2 <- matrix(c(0,0,1,1,1,2,2,1,1,2,1,2,0,2,1,1,1,2,2,2),ncol=2)
-rownames(geno) <- 1:10
+rownames(geno2) <- 1:10
 map2 <- data.frame(pos=c(0.3,5),chr=c(1,2))
 rownames(map2) <- colnames(geno2) <- c("M13","M14")
 
