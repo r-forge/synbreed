@@ -2,14 +2,21 @@
 
 add.markers <- function(gpData,geno,map=NULL){
       # check if markers are allready in data
-      if (any(colnames(geno) %in% c(colnames(gpData$geno),rownames(gpData$map))) | any(rownames(map) %in% c(colnames(gpData$geno),rownames(gpData$map)))){
+      if (any(colnames(geno) %in% colnames(gpData$geno)) | any(rownames(map) %in% colnames(gpData$geno))){
         stop("some of the markers of ", substitute(geno)," are allready in ", substitute(gpData))
       }
+      if(!all(rownames(geno) %in% gpData$covar$id)) stop("You like to put new individuals into the data set!\nUse add.individuals() for that!")
+      if(!all(rownames(map) %in% colnames(geno))) stop("There are markers in the map, which don't have information in ", substitue(geno), "!")
       # take names form map if available
-      if(is.null(colnames(geno)) & !is.null(map)) colnames(geno) <- rownames(map)
+      if(is.null(colnames(geno)) & !is.null(map))
+        if(ncol(geno) == nrow(map)) colnames(geno) <- rownames(map) else
+          stop("Check the colnames of", substitute(geno), " and the rownames of ", substitute(map), "!")
       
       # merge genotypic data
-      geno <- merge(gpData$geno,geno,by.x="row.names",by.y="row.names",sort=FALSE)
+      nmiss <- sum(!rownames(gpData$geno) %in% rownames(geno))
+      geno <- rbind(matrix(NA, nrow = nmiss, ncol = ncol(geno)), geno)
+      
+      geno <- geno[rownames(gpData$geno), ] 
       # first column as rownames and delete first column
       rownames(geno) <- geno[,1]
       geno <- data.matrix(geno[,-1],TRUE)
@@ -41,7 +48,7 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
         if(!"ID" %in% colnames(pheno)) pheno$ID <- rownames(pheno)
         repl <- NULL
       } else {
-        if(any(c("ID") %in% colnames(pheno)))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
+        if(!"ID" %in% colnames(pheno))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
       }
       if(!is.null(pheno)) if(any(colnames(pheno)[colnames(pheno)!="ID"]!=dimnames(gpData$pheno)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")
       if(!is.null(pheno)) if(any(colnames(pheno)[colnames(pheno)!="ID"]!=dimnames(gpData$phenoCovars)[[2]])) stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' and '", substitute(pheno), "'")
