@@ -10,7 +10,7 @@ Both functions could be used to get subsets of objects of class \code{gpData}. T
 }                      
 \usage{
 discard.markers(gpData, which)
-discard.individuals(gpData, which)
+discard.individuals(gpData, which, keepPedigree = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,12 +20,15 @@ object of class \code{gpData}
   \item{which}{
 character vector either identifying the \code{colnames} of markers in \code{geno} to discard (function \code{discard.markers}) or the \code{rownames} of individuals to discard (function \code{discard.individuals}).
 }
+  \item{keepPedigree}{
+\code{logical}. Should the individual kept in the pedigree?
+}
 }
 \value{
 Object of class \code{gpData} 
 }
 \author{
-Valentin Wimmer
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 \seealso{

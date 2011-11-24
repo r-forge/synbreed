@@ -1,6 +1,8 @@
 # discard markers from class 'gpData'
 
 discard.markers <- function(gpData,which){
+  if(class(gpData) != "gpData") 
+    stop(substitute(gpData), " is not a gpData-object!")
   # update geno
   gpData$geno <- gpData$geno[,!colnames(gpData$geno) %in% which]
   # update map                 
@@ -10,14 +12,28 @@ discard.markers <- function(gpData,which){
                      
 # discard individuals from class 'gpData'
 
-discard.individuals <- function(gpData,which){
-   # updata pheno
-   gpData$pheno <- gpData$pheno[!rownames(gpData$pheno) %in% which, , ]
-   # update geno
-   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
-   # update pedigree 
-   gpData$pedigree <- subset(gpData$pedigree,!gpData$pedigree$ID %in% which) 
-   # update covar
-   gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
-   return(gpData)
+discard.individuals <- function(gpData,which,keepPedigree=FALSE){
+  if(class(gpData) != "gpData") 
+    stop(substitute(gpData), " is not a gpData-object!")
+  if(!all(which %in% gpData$covar$id)) stop("Some individuals are not in the ", substitute(gpData), "-object!")
+  # updata pheno
+  phenoNames <- dimnames(gpData$pheno)
+  phenoNames[[1]] <- phenoNames[[1]][!phenoNames[[1]] %in% which]
+  phenoDim <- dim(gpData$pheno)
+  phenoDim[1] <- length(phenoNames[[1]])
+  gpData$pheno <- array(gpData$pheno[!rownames(gpData$pheno) %in% which, , ], dim = phenoDim)
+  dimnames(gpData) <- phenoNames
+  # update geno
+  gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
+  # update pedigree 
+  if(!keepPedigree){
+    gpData$pedigree <- subset(gpData$pedigree,!gpData$pedigree$ID %in% which) 
+    gpData$pedigree$Par1[gpData$pedigree$Par1 %in% which] <- 0
+    gpData$pedigree$Par2[gpData$pedigree$Par2 %in% which] <- 0
+    gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
+  } else {
+    gpData$covar[gpData$covar$id %in% which, c("phenotyped", "genotyped")] <- NA
+  }
+  # update covar
+  return(gpData)
 }
