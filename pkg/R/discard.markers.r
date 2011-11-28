@@ -26,14 +26,15 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
   # update geno
   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
   # update pedigree 
-  if(!keepPedigree){
-    gpData$pedigree <- subset(gpData$pedigree,!gpData$pedigree$ID %in% which) 
-    gpData$pedigree$Par1[gpData$pedigree$Par1 %in% which] <- 0
-    gpData$pedigree$Par2[gpData$pedigree$Par2 %in% which] <- 0
-    gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
-  } else {
-    gpData$covar[gpData$covar$id %in% which, c("phenotyped", "genotyped")] <- NA
-  }
+  if(!is.null(gpData$pedigree))
+    if(!keepPedigree){
+      gpData$pedigree <- subset(gpData$pedigree,!gpData$pedigree$ID %in% which) 
+      gpData$pedigree$Par1[gpData$pedigree$Par1 %in% which] <- 0
+      gpData$pedigree$Par2[gpData$pedigree$Par2 %in% which] <- 0
+      gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
+    } else {
+      gpData$covar[gpData$covar$id %in% which, c("phenotyped", "genotyped")] <- NA
+    }
   # update covar
   return(gpData)
 }

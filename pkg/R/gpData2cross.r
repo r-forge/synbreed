@@ -6,6 +6,7 @@ gpData2cross <- function(gpData,...){
      if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'")  
      # check on geno and map
      if(is.null(gpData$geno) | is.null(gpData$map)) stop("'geno' and 'map' needed in",substitute(gpData))
+     if(dim(gpData$pheno)[3] > 1) stop("You can only use unreplicated values for cross!")
      else{
        # use codeGeno if not yet done
        if(!gpData$info$codeGeno) stop("Use function codeGeno before gpData2cross!")
@@ -17,15 +18,20 @@ gpData2cross <- function(gpData,...){
        phenoDim <- dim(gpData$pheno)
        phenoNames <- dimnames(gpData$pheno)
        phenoDim[1] <- sum(dimnames(gpData$pheno)[[1]] %in% genoPheno)
-       phenoNames[[1]] <- dimnames(gpData$pheno)[dimnames(gpData$pheno)[[1]] %in% genoPheno]
+       phenoNames[[1]] <- dimnames(gpData$pheno)[[1]][dimnames(gpData$pheno)[[1]] %in% genoPheno]
        pheno <- gpData$pheno[dimnames(gpData$pheno)[[1]] %in% genoPheno, ,]
        pheno <- array(pheno, dim=phenoDim)
        dimnames(pheno) <- phenoNames
+       pheno <- apply(pheno, 2, rbind) # possible because of unreplicated data!!!
+       rownames(pheno) <- phenoNames[[1]]
        if(dim(gpData$pheno)[3]>1) pheno$repl <- rep(1:dim(gpData$pheno)[3], each=dim(gpData$pheno)[1])
        if(!is.null(gpData$phenoCovars)) pheno <- cbind(pheno, data.frame(apply(gpData$phenoCovars[dimnames(gpData$phenoCovars)[[1]] %in% genoPheno, ,], 2, rbind)))
        map  <- gpData$map
        n <- nrow(geno)
+       pheno1 <- rbind(pheno)
+       print(pheno1)
      }
+     
      # split markers (+pos) and genotypes on chromosomes
      genoList <- split(cbind(rownames(map),map$pos,t(geno)),map$chr)
      # result is a list       
