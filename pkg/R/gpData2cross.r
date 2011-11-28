@@ -29,7 +29,6 @@ gpData2cross <- function(gpData,...){
        map  <- gpData$map
        n <- nrow(geno)
        pheno1 <- rbind(pheno)
-       print(pheno1)
      }
      
      # split markers (+pos) and genotypes on chromosomes
