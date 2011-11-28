@@ -14,7 +14,7 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
       dimnames(pheno) <- list(IDs, c("ID", trait), reps)
       # look for covariables
       if(!is.null(gpData$phenoCovars)){
-        pheno <- abind(gpData$phenoCovars, pheno, along=2)
+        pheno <- abind(pheno, gpData$phenoCovars, along=2)
       }
       # append column for each replication
       if(dim(pheno)[3]>1){
