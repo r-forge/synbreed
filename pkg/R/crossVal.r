@@ -7,19 +7,32 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
-    # remove observations with missing values in the trait
-    dataSet <- dataSet[dataSet  %in% rownames(gpData$pheno)[!is.na(gpData$pheno[,trait])]]
-
+    
     # number of individuals
     n <- length(dataSet)
 
     # constructing design matrices
-    y <- data.frame(rownames(gpData$pheno),gpData$pheno[ ,trait])
-    colnames(y) <- c("ID","TRAIT")
-    y <- y[y$ID %in% dataSet, ]
+    y <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=TRUE)
+    if (ncol(y)>2) colnames(y)[3] <- "TRAIT"
+    if (ncol(y)<=2) colnames(y)[2] <- "TRAIT"
+    # remove observations with missing values in the trait
+    dataSet <- dataSet[dataSet  %in% unique(y$ID)]
+
     X <- matrix(rep(1,n,ncol=1))
+    if (ncol(y)>2){
+	fixEff <- unique(y$repl)
+	X <- outer(y$repl,1:length(fixEff),"==")+0
+	colnames(X) <- fixEff
+	#X <- cbind(X,rep(1,n))
+    }
     rownames(X) <- y[,1]
     Z <- diag(n)
+    if (ncol(y)>2){
+	ranEff <- unique(y$ID)
+	Z <- outer(y$ID,1:length(ranEff),"==")+0
+	colnames(Z) <- ranEff
+	#X <- cbind(X,rep(1,n))
+    }
     rownames(Z) <- y[,1]
     colnames(Z) <- y[,1]
     # checking if IDs are in cov.matrix
@@ -91,9 +104,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
 	   	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
 	     }
-	     cat(paste("Model \n ID     	  !A \n Yield  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nYield  ~ mu !r ",ID2,sep=""),file="Model.as")
-	     if(RR)cat(paste("Model \n ID     	  !A \n Yield  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nYield  ~ mu !r M",sep=""),file="Model.as")
-	     cat("",file="Model.pin")
+	     cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r ",ID2,sep=""),file="Model.as")
+	     if(ncol(y)>2)cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r ",ID2,sep=""),file="Model.as")
+
+	     if(RR)cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r M",sep=""),file="Model.as")
 	     cat("",file="Model.pin")
 	  }
 	}
@@ -186,15 +200,15 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	samp.es <- val.samp3[!(val.samp3[,2] %in% ii),] 
 	samp.ts <- val.samp3[!is.na(val.samp3[,2]),] 
 	samp.ts <- samp.ts[samp.ts[,2]==ii,] 
-	cat("samp.ts",dim(samp.ts),"\n")
+	#cat("samp.ts",dim(samp.ts),"\n")
 	namesDS <- c(samp.es[,1],samp.ts[,1])
 	y.samp <- y
 	if(!is.null(ES)){ # if ES is committed
 	  samp.es <- samp.es[samp.es[,1] %in% ES[[i]][[ii]], ]
-	  cat("samp.es",dim(samp.es),"\n")
+	  #cat("samp.es",dim(samp.es),"\n")
 	  namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1])) # new DS
-	  y.samp[ !( y.samp[,1] %in% namesDS),2] <- NA  # set values of not-DS to NA
-	  cat("y.samp ",dim(y.samp), "\n")
+	  y.samp[ !( y.samp[,1] %in% namesDS),"TRAIT"] <- NA  # set values of not-DS to NA
+	  #cat("y.samp ",dim(y.samp), "\n")
 	  #if (!RR & VC.est=="commit") {  
 	  # contruct new Z matrix
 		#Z <- diag(length(namesDS))
@@ -206,12 +220,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	}
 	samp.kf <- val.samp3[,2]==ii
 	samp.kf[is.na(samp.kf)] <- TRUE
-	y.samp[samp.kf,2] <- NA  # set values of TS to NA
+	y.samp[samp.kf,"TRAIT"] <- NA  # set values of TS to NA
 
 	   # CV in R with committing variance components
 	   if (VC.est=="commit"){
 		# vectors and matrices for MME
-		y1 <- y[y[,1] %in% samp.es[,1],2]
+		y1 <- y[y[,1] %in% samp.es[,1],"TRAIT"]
 		Z1 <-Z[rownames(Z) %in% samp.es[,1],]
 		X1 <-X[rownames(X) %in% samp.es[,1],]
 		# crossproducts
@@ -228,7 +242,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		
 		# solve MME
 		bu <-  as.vector(ginv(LHS)%*%RHS)
-		print(length(bu))
+		#print(length(bu))
 		}
 
 	   # estimation of variance components with ASReml for every ES
@@ -337,9 +351,9 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
 	  X2 <- X[(rownames(X) %in% samp.ts[,1]),]
 	  XZ2 <- cbind(X2,Z2)
-	  print(dim(XZ2))
 	  #print(dim(XZ2))
-	  y2 <- y[(y[,1] %in% samp.ts[,1]),2]
+	  #print(dim(XZ2))
+	  y2 <- y[(y[,1] %in% samp.ts[,1]),"TRAIT"]
 	  y.dach <- XZ2%*%bu
 	  #print(head(y.dach))
 	  #print(dim(y.dach))
