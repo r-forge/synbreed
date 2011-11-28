@@ -28,7 +28,7 @@ gpData2cross <- function(gpData,...){
        if(!is.null(gpData$phenoCovars)) pheno <- cbind(pheno, data.frame(apply(gpData$phenoCovars[dimnames(gpData$phenoCovars)[[1]] %in% genoPheno, ,], 2, rbind)))
        map  <- gpData$map
        n <- nrow(geno)
-       pheno1 <- rbind(pheno)
+       pheno <- as.data.frame(pheno)
      }
      
      # split markers (+pos) and genotypes on chromosomes
