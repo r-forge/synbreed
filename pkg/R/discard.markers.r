@@ -22,7 +22,7 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
   phenoDim <- dim(gpData$pheno)
   phenoDim[1] <- length(phenoNames[[1]])
   gpData$pheno <- array(gpData$pheno[!rownames(gpData$pheno) %in% which, , ], dim = phenoDim)
-  dimnames(gpData) <- phenoNames
+  dimnames(gpData$pheno) <- phenoNames
   # update geno
   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
   # update pedigree 

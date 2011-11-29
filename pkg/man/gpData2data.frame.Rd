@@ -83,9 +83,10 @@ gpData2data.frame(gp,1:2,all.geno=TRUE)
 set.seed(311)
 
 # simulating genotypic and phenotypic data 
-pheno <- data.frame(Trait =c(rnorm(10,1,2),rnorm(10,2,0.2),rbeta(10,2,4)), repl=rep(1:3, each=10))
+pheno <- data.frame(ID = letters[1:10], Trait = c(rnorm(10,1,2),rnorm(10,2,0.2),rbeta(10,2,4)), repl = rep(1:3, each=10))
 geno <- matrix(rep(c(1,0,2),10),nrow=10)
 colnames(geno) <- c("M1","M2","M3")
+rownames(geno) <-  letters[1:10]
 
 # create 'gpData' object
 gp <- create.gpData(pheno=pheno,geno=geno, repeated="repl")

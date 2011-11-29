@@ -68,9 +68,7 @@ http://CRAN.R-project.org/package=BLR
 
 }
 \author{
-Valentin Wimmer
-
-Hans-Juergen Auiner
+Valentin Wimmer and Hans-Juergen Auinger
 }
 \seealso{
 \code{\link{kin}}, \code{\link{crossVal}}
