@@ -43,11 +43,11 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
        } else mergeData <- pheno[, c("ID", colnames(pheno)[!colnames(pheno) %in% "ID"])]
      # sort by ID
      for(i in trait)
-       mergeData[, i] <- as.numeric(mergeData[, i])
+       mergeData[, i] <- as.numeric(as.character(mergeData[, i]))
      if(all(mergeData$ID %in% 1:nrow(mergeData))) mergeData$ID <- as.numeric(mergeData$ID)
-     if(is.null(mergeData$repl))
+     if(is.null(mergeData$repl)){
        mergeData <- orderBy(~ID,data=mergeData)  
-     else{
+     } else {
        if(all(mergeData$repl %in% 1:dim(gpData$pheno)[3])){
          mergeData$repl <- as.numeric(mergeData$repl)
        }

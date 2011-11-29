@@ -31,8 +31,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       df.trait <- df.trait[!df.trait$ID %in% kinNames,]
       warning("Some phenotyped IDs are not in the kinship matrix!\nThese are removed from the analysis")
     }
-    kinTS <- kin[df.trait$ID, df.trait$ID]
-
+    kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
       if(is.null(fixed)) fixed <- " ~ 1"
       if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), " + ")
