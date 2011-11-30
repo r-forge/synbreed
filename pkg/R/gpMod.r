@@ -44,25 +44,6 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
       if(markerEffects){
         # DESIGN MATRIX FUNCTION by Larry Schaeffer
-        if(length(strsplit(random, ":", fixed = TRUE)[[1]]) > 1 | length(strsplit(random, "*", fixed = TRUE)[[1]]) > 1 |
-           length(strsplit(random, "/", fixed = TRUE)[[1]]) > 1) stop("In random formula only connection of terms with '+' is allowed yet! ")
-        desgn <- function(v){
-          if(is.numeric(v)){
-            va <- as.factor(v)
-          } else if(is.character(v)){
-            va <- as.factor(v)
-          } else if(is.factor(v)){
-            va <- v
-          }
-          mrow <- length(va)
-          mcol <- length(levels(va))
-          X <- matrix(data=c(0),nrow=mrow,ncol=mcol)
-          for(i in 1:mrow){
-            ic <- va[i]
-            X[i,ic] <- 1 
-          }
-          return(X)  
-        }   
         sigma2u <- res$sigma["kinTS"]
         sigma2  <- res$sigma["In"]
         p <- colMeans(gpData$geno)/2
@@ -72,25 +53,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         # set up design matrices
         X <- as.matrix(lm(as.formula(paste(yName, paste(fixed, collapse=" "))), data=df.trait, x=TRUE)$x)#
         term <- terms(as.formula(paste(paste(random, collapse=" "), "ID")))
-        if(length(term) > 1){
-          Z <- desgn(df.trait[, as.character(term[1][[2]])])
-          dims <- ncol(Z)
-          if(length(term) > 2) for(ii in 2:(length(term)-1)){
-            Z <- cbind(Z, desgn(df.trait[, as.character(term[ii][[2]])]))
-            dims[ii] <- ncol(Z)
-          }
-          Z <- cbind(Z, gpData$geno[df.trait$ID, ])
-          dims[length(term)] <- ncol(Z)
-        } else {
-          Z <- gpData$geno[df.trait$ID, ]
-          dims <- ncol(Z)
-        }
-        dims <- c(0, dims)
-        GI <- diag(ncol(Z))
-        if(length(dims) >2)
-          for(ii in 2:(length(dims)-1)){
-            GI[dims[ii-1]:dims[ii], dims[ii-1]:dims[ii]] <- GI[dims[ii-1]:dims[ii], dims[ii-1]:dims[ii]] * res$sigma[ii-1]
-          }
+        
         GI
         RI <- res$Z$In
         sol <- MME(X, Z, GI, RI, y)
