@@ -49,7 +49,7 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
        mergeData <- orderBy(~ID,data=mergeData)  
      } else {
        if(all(mergeData$repl %in% 1:dim(gpData$pheno)[3])){
-         mergeData$repl <- as.numeric(mergeData$repl)
+         mergeData$repl <- as.numeric(as.character(mergeData$repl))
        }
        mergeData <- orderBy(~ID+repl,data=mergeData) 
      } 
