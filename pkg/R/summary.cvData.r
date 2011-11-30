@@ -45,10 +45,18 @@ summary.cvData <- function(object,...){
      ans$max.b <-format(max(obj$bias),nsmall=4,digits=4)
      # 10% best
      if(!is.null(obj$m10)){
-     ans$se.10 <- format(sd(obj$m10)/sqrt(length(obj$m10)),digits=4,nsmall=4)
+     ans$se.10 <- format(sd(as.vector(obj$m10))/sqrt(length(obj$m10)),digits=4,nsmall=4)
      ans$min.10<- format(min(obj$m10),digits=2,nsmall=2)
      ans$mean.10 <- format(mean(obj$m10),digits=2,nsmall=2)
      ans$max.10 <-format(max(obj$m10),nsmall=2,digits=2)
+     }
+     # Mean squared error
+     if(!is.null(obj$mse)){
+     colmean.mse <- colMeans(obj$mse)
+     ans$se.mse <- format(sd(colmean.mse)/sqrt(length(colmean.mse)),digits=4,nsmall=4)
+     ans$min.mse <- format(min(obj$mse),digits=3,nsmall=3)
+     ans$mean.mse <- format(mean(obj$mse),digits=3,nsmall=3)
+     ans$max.mse <- format(max(obj$mse),digits=3,nsmall=3)
      }
      # Seed
      ans$Seed <- obj$Seed
@@ -71,6 +79,7 @@ print.summary.cvData <- function(x,...){
     cat("                      Min \t  Mean +- pooled SE \t  Max \n")
     cat(" Predictive ability: ",x$min.pa," \t ",x$mean.pa,"+-",x$se.pa," \t ",x$max.pa,"\n")
     if(!is.null(x$mean.rc)) cat(" Rank correlation:   ",x$min.rc," \t ",x$mean.rc,"+-",x$se.rc," \t ",x$max.rc,"\n")
+    if(!is.null(x$mean.mse)) cat(" Mean squared error: ",x$min.mse," \t ",x$mean.mse,"+-",x$se.mse," \t ",x$max.mse,"\n")
     cat(" Bias:               ",x$min.b," \t ",x$mean.b,"+-",x$se.b," \t ",x$max.b,"\n")
     if(!is.null(x$mean.10)) cat(" 10% best predicted: ",x$min.10," \t ",x$mean.10,"+-",x$se.10," \t ",x$max.10,"\n")
     cat("\nSeed start: ",x$Seed,"\n")
