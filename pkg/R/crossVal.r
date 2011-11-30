@@ -118,15 +118,30 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     seed2<-round(runif(Rep,1,100000),0)
 
     # begin replications
-    COR3 <- NULL
-    rCOR3 <- NULL
+    COR2 <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(COR2) <- paste("rep",1:Rep,sep="")
+    rownames(COR2) <- paste("fold",1:k,sep="")
+    rCOR2 <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(rCOR2) <- paste("rep",1:Rep,sep="")
+    rownames(rCOR2) <- paste("fold",1:k,sep="")
     bu3 <- NULL
-    lm.coeff2 <- NULL
+    lm.coeff <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(lm.coeff) <- paste("rep",1:Rep,sep="")
+    rownames(lm.coeff) <- paste("fold",1:k,sep="")
     y.TS2 <- NULL
-    n.TS2<-NULL
-    n.DS2 <- NULL
+    n.TS <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(n.TS) <- paste("rep",1:Rep,sep="")
+    rownames(n.TS) <- paste("fold",1:k,sep="")
+    n.DS <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(n.DS) <- paste("rep",1:Rep,sep="")
+    rownames(n.DS) <- paste("fold",1:k,sep="")
     id.TS2 <- list()   
-    m10 <- NULL
+    m10 <- matrix(NA,nrow=Rep,ncol=1)
+    colnames(m10) <- "m10"
+    rownames(m10) <- paste("rep",1:Rep,sep="")
+    mse <- matrix(NA,nrow=k,ncol=Rep)
+    colnames(mse) <- paste("rep",1:Rep,sep="")
+    rownames(mse) <- paste("fold",1:k,sep="")
     for (i in 1:Rep){ 
 
 	# sampling of k sets
@@ -184,15 +199,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	}
 
      # start k folds
-     COR2 <- NULL
-     rCOR2 <- NULL
      bu2 <- matrix(NA,ncol=k,nrow=(ncol(X)+ncol(Z)))
      rownames(bu2) <- names.eff
      colnames(bu2) <- paste("rep",i,"_fold",1:k,sep="")
-     lm.coeff <- NULL
      y.TS <- NULL
-     n.TS <- NULL
-     n.DS <- NULL
      id.TS <- list()
      for (ii in 1:k){
 	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
@@ -357,48 +367,36 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  y.dach <- XZ2%*%bu
 	  #print(head(y.dach))
 	  #print(dim(y.dach))
-	  n.TS <- rbind(n.TS,nrow(y.dach))
-	  rownames(n.TS)[ii]<-paste("fold",ii,sep="")
+	  n.TS[ii,i] <- nrow(y.dach)
 	  # save DS size
-	  n.DS <- rbind(n.DS,length(namesDS))
-	  rownames(n.DS)[ii]<-paste("fold",ii,sep="")
+	  n.DS[ii,i] <- length(namesDS)
           # Predicted breeding/testcross values
           y.TS <- rbind(y.TS,y.dach)
 	  # predictive ability
 	  COR <- round(cor(y2,y.dach),digits=4)
-	  COR2 <- rbind(COR2,COR)
-	  rownames(COR2)[ii] <- paste("fold",ii,sep="")
-	  # predictive ability
+	  COR2[ii,i] <- COR
+	  # spearman rank correlation
 	  rCOR <- round(cor(y2,y.dach,method="spearman"),digits=4)
-	  rCOR2 <- rbind(rCOR2,rCOR)
-	  rownames(rCOR2)[ii] <- paste("fold",ii,sep="")
+	  rCOR2[ii,i] <- rCOR
 	  # regression = bias
 	  lm1 <- lm(y2~as.numeric(y.dach))
 	  #print(lm1)
 	  #print(y.dach)
- 	  lm.coeff <- rbind(lm.coeff,lm1$coefficients[2])
-	  rownames(lm.coeff)[ii]<-paste("fold",ii,sep="")
+ 	  lm.coeff[ii,i] <- lm1$coefficients[2]
+	  # Mean squared error
+	  mse[ii,i] <- mean((y2-as.numeric(y.dach))^2) 
 	  # save IDs of TS
 	  id.TS[[ii]] <- rownames(Z2)
 	  names(id.TS)[[ii]] <- paste("fold",ii,sep="")
+	  
    	}  # end loop for k-folds
 
-	n.TS2<-cbind(n.TS2,n.TS)
-    	colnames(n.TS2)[i] <- paste("rep",i,sep="")
-	n.DS2<-cbind(n.DS2,n.DS)
-    	colnames(n.DS2)[i] <- paste("rep",i,sep="")
 	y.TS <- y.TS[sort.list(rownames(y.TS)),]
     	y.TS2 <- cbind(y.TS2,y.TS)
 	#print(dim(y.TS2))
     	colnames(y.TS2)[i] <- paste("rep",i,sep="")
-    	COR3 <- cbind(COR3,COR2)
-    	colnames(COR3)[i] <- paste("rep",i,sep="")
-    	rCOR3 <- cbind(rCOR3,rCOR2)
-    	colnames(rCOR3)[i] <- paste("rep",i,sep="")
     	bu3 <- cbind(bu3,bu2)
-    	lm.coeff2 <- cbind(lm.coeff2,lm.coeff)
-    	colnames(lm.coeff2)[i] <- paste("rep",i,sep="")
-	# save IDs of TS
+ 	# save IDs of TS
 	id.TS2[[i]] <- id.TS
 	names(id.TS2)[[i]] <- paste("rep",i,sep="")
 	# 10% best predicted
@@ -406,13 +404,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	TS10 <- y.TS[order(-y.TS)]
 	n10 <- round(0.1 * length(y.TS))
 	TS10sel <- TS10[1:n10 ]
-	m10 <- c(m10,mean(y[y$ID %in% names(TS10sel), 2]))
-	names(m10)[i] <- paste("Rep",i,sep="")
+	m10[i,1] <- mean(y[y$ID %in% names(TS10sel), 2])
     }  # end loop for replication
 
     # return object
     if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
-    obj <- list( n.TS=n.TS2,n.DS=n.DS2,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR3,rankCor=rCOR3,bias=lm.coeff2,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method,m10=m10)
+    obj <- list( n.TS=n.TS,n.DS=n.DS,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR2,rankCor=rCOR2,bias=lm.coeff,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method,m10=m10,mse=mse)
     class(obj) <- "cvData"
     return(obj)
 }
