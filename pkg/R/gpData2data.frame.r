@@ -18,7 +18,7 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
       }
       # append column for each replication
       if(dim(pheno)[3]>1){
-        pheno <- abind(matrix(rep(reps, each=dim(gpData$pheno)[1]), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1]), pheno, along=2)
+        pheno <- abind(matrix(rep(reps, each=dim(gpData$pheno)[1]), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), pheno, along=2)
         dimnames(pheno)[[2]][1] <- "repl"
       }
       if(!is.null(repl)){ 
