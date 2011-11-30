@@ -9,19 +9,19 @@ This function combines all raw data sources in a single, unified data object of 
 }
 \usage{                                                                                         
 create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL, family = NULL, covar = NULL,
-              reorderMap = TRUE, map.unit = "cM", repeated  =NULL, modCovar = NULL)
+              reorderMap = TRUE, map.unit = "cM", repeated  = NULL, modCovar = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pheno}{
 \code{data.frame} with individuals organized in rows and traits organized in columns. For
-unrepeated measures unique \code{rownames} can identify individuals. In other cases the first
-column identify individuals. In tis case a value for \code{repeated} is necessary. This can be also used for unrepeated trait, but than a column with a unique value in the whole column is needed.}
+unrepeated measures unique \code{rownames} should identify individuals. In other cases the first
+column identify individuals. In this case a value for argument \code{repeated} is necessary. This can be also used for unrepeated trait, but than a column with a unique value in the whole column is needed.}
   \item{geno}{
-\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be code arbitrarily. Missing values should be coded as \code{NA}. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimensions match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension matches.
+\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be coded arbitrarily. Missing values should be coded as \code{NA}. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimensions match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension matches.
 }
   \item{map}{
-\code{data.frame} with one row for each marker and two columns. First columns gives the chromosome and second column the position  on the chromosome in centimorgan or the physical distance relative to the refernece sequence in basepairs. Unique \code{rownames} give the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} and order is identical to \code{geno}.
+\code{data.frame} with one row for each marker and two columns (named \code{chr} and \code{pos}). First columns gives the chromosome and second column the position  on the chromosome in centimorgan or the physical distance relative to the refernece sequence in basepairs. Unique \code{rownames} give the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to the order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} to ensure that the order is identical to \code{geno}.
 }
   \item{pedigree}{
 Object of class \code{pedigree}.
@@ -33,7 +33,7 @@ Object of class \code{pedigree}.
 \code{data.frame} with further covariates for all individuals that either appear in \code{pheno}, \code{geno} or \code{pedigree$ID},  e.g. sex or age. \code{rownames} must be specified to identify individuals. Typically this element is not specified by the user.
 }
   \item{reorderMap}{
-\code{logical}. Should markers in \code{geno} and \code{map} be reordered by chromosome number and position within chromosome according to \code{map}?
+\code{logical}. Should markers in \code{geno} and \code{map} be reordered by chromosome number and position within chromosome according to \code{map} (default = \code{TRUE})?
 }
   \item{map.unit}{
 Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp' for physical distance.
@@ -53,7 +53,7 @@ In an object of class \code{gpData} different individuals may occur in \code{phe
 \value{
 Object of class \code{gpData} which is a list with the following items
 \item{covar}{\code{list} with information on individuals}
-\item{pheno}{\code{array} with phenotypic data ordered by \code{rownames(pheno)}}
+\item{pheno}{\code{array} (individuals x traits x replications) with phenotypic data ordered by \code{rownames(pheno)}}
 \item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map}. Rows  ordered by \code{rownames(geno)}}
 \item{pedigree}{object of class \code{pedigree}}
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
@@ -76,7 +76,7 @@ In case of missing row names or column names in one item, information is substit
 set.seed(123)
 # 9 plants with 2 phenotypes
 n <- 9  # only for n > 6
-pheno <- data.frame(Yield = rnorm(n,200,5), Height=rbeta(n,100,1))
+pheno <- data.frame(Yield = rnorm(n,200,5), Height=rnorm(n,100,1))
 rownames(pheno) <- sample(1:n)
 
 # marker matrix
@@ -97,5 +97,14 @@ ped <- simul.pedigree(3,c(3,3,n-6))
 # combine in one object
 gp <- create.gpData(pheno,geno,map,ped)
 summary(gp)
+
+
+# 9 plants with 2 phenotypes , 3 reps
+n <- 9  #
+pheno <- data.frame(ID = rep(letters[1:n],3), rep = rep(1:3,each=n), Yield = rnorm(3*n,200,5), Height=rnorm(3*n,100,1))
+
+# combine in one object
+gp2 <- create.gpData(pheno,geno,map,repeated="rep")
+summary(gp2)
 }
 \keyword{manip}
