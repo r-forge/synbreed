@@ -4,7 +4,7 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
      
       # check for class
       if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'") 
-      pheno <- abind(gpData$pheno, matrix(1:dim(gpData$pheno)[1]+10**ceiling(log10(dim(gpData$pheno)[1])), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1]), along=2)
+      pheno <- abind(gpData$pheno, matrix(1:dim(gpData$pheno)[1]+10**ceiling(log10(dim(gpData$pheno)[1])), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), along=2)
       IDs <- dimnames(pheno)[[1]]
       reps <- dimnames(pheno)[[3]]
       dimnames(pheno)[[2]][dim(pheno)[2]] <- "ID"
