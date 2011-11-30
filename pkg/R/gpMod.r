@@ -5,6 +5,8 @@
 # date: 2011 - 05 - 03
 # changes: Hans-Jürgen Auinger
 # date: 2011 - 11 - 21
+# changes: return argumen by Valentin Wimmer
+# date: 2011 - 11 - 30
 
 gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
   model <- match.arg(model)
@@ -75,8 +77,9 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       m <- res$bR
     }
 
-    
-    ret <- list(fit=res,model=model,data.frame=df.trait,g=genVal,m=m,kin=kin)
+    y <- df.trait[,yName]
+    names(y) <- df.trait[,"ID"]
+    ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     return(ret)
   }
