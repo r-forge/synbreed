@@ -77,12 +77,12 @@ set.seed(123)
 # 9 plants with 2 phenotypes
 n <- 9  # only for n > 6
 pheno <- data.frame(Yield = rnorm(n,200,5), Height=rnorm(n,100,1))
-rownames(pheno) <- sample(1:n)
+rownames(pheno) <- letters[1:n]
 
 # marker matrix
 geno <- matrix(sample(c("AA","AB","BB",NA),size=n*12,replace=TRUE,
 prob=c(0.6,0.2,0.1,0.1)),nrow=n)
-rownames(geno) <-  sample(1:n)
+rownames(geno) <-  letters[n:1]
 colnames(geno) <- paste("M",1:12,sep="")
 
 # genetic map
