@@ -18,23 +18,27 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # remove observations with missing values in the trait
     dataSet <- dataSet[dataSet  %in% unique(y$ID)]
 
-    X <- matrix(rep(1,n,ncol=1))
-    if (ncol(y)>2){
+    if (ncol(y) <=2){
+	X <- matrix(rep(1,n,ncol=1))
+	rownames(X) <- unique(y[,1])
+    }
+    else{
 	fixEff <- unique(y$repl)
-	X <- outer(y$repl,1:length(fixEff),"==")+0
+	X <- outer(y[,2],fixEff,"==")+0
 	colnames(X) <- fixEff
+    	rownames(X) <- y[,1]
 	#X <- cbind(X,rep(1,n))
     }
-    rownames(X) <- y[,1]
-    Z <- diag(n)
-    if (ncol(y)>2){
+    if (ncol(y) <=2){
+    	Z <- diag(n)
+    	rownames(Z) <- unique(y[,1])
+    }
+    else{
 	ranEff <- unique(y$ID)
-	Z <- outer(y$ID,1:length(ranEff),"==")+0
-	colnames(Z) <- ranEff
-	#X <- cbind(X,rep(1,n))
+	Z <- outer(y$ID,ranEff,"==")+0
+    	rownames(Z) <- y[,1]
     }
-    rownames(Z) <- y[,1]
-    colnames(Z) <- y[,1]
+    colnames(Z) <- unique(y[,1])
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
    	   for( i in 1:length(cov.matrix)){
@@ -50,6 +54,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	RR <- TRUE
     }
 
+    if(!is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(colnames(X),colnames(Z))
     if(is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),colnames(Z))
     if(is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),paste("Z",1:ncol(Z),sep=""))
 
@@ -365,6 +370,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  #print(dim(XZ2))
 	  y2 <- y[(y[,1] %in% samp.ts[,1]),"TRAIT"]
 	  y.dach <- XZ2%*%bu
+	  rownames(y.dach) <- paste(rownames(X2),colnames(X2),sep="_")
 	  #print(head(y.dach))
 	  #print(dim(y.dach))
 	  n.TS[ii,i] <- nrow(y.dach)
@@ -386,7 +392,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  # Mean squared error
 	  mse[ii,i] <- mean((y2-as.numeric(y.dach))^2) 
 	  # save IDs of TS
-	  id.TS[[ii]] <- rownames(Z2)
+	  id.TS[[ii]] <- unique(rownames(Z2))
 	  names(id.TS)[[ii]] <- paste("fold",ii,sep="")
 	  
    	}  # end loop for k-folds
@@ -404,7 +410,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	TS10 <- y.TS[order(-y.TS)]
 	n10 <- round(0.1 * length(y.TS))
 	TS10sel <- TS10[1:n10 ]
-	m10[i,1] <- mean(y[y$ID %in% names(TS10sel), 2])
+	rownames(y) <- paste(rownames(Z),colnames(X),sep="_")
+	m10[i,1] <- mean(y[rownames(y) %in% names(TS10sel), "TRAIT"])
     }  # end loop for replication
 
     # return object
