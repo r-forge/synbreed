@@ -15,7 +15,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
     # take data from gpData object
     if (is.null(kin)){
-      if(!gpData$info$codeGeno) stop("Missing object 'kin'")
+      if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
     }
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
@@ -36,27 +36,44 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
       if(is.null(fixed)) fixed <- " ~ 1"
-      if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), " + ")
-      res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait,...)
+      if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
+      res <- synbreed::regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
       us <- BLUP(res)$Mean
       genVal <- us[grep("kinTS", names(us))]
       genVal <- genVal[!duplicated(names(genVal))]
       names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
       if(markerEffects){
-        # DESIGN MATRIX FUNCTION by Larry Schaeffer
         sigma2u <- res$sigma["kinTS"]
-        sigma2  <- res$sigma["In"]
         p <- colMeans(gpData$geno)/2
         sumP <- 2*sum(p*(1-p))
         # use transformation rule for vc (Albrecht et al. 2011)
         sigma2m <- sigma2u/sumP
         # set up design matrices
-        X <- as.matrix(lm(as.formula(paste(yName, paste(fixed, collapse=" "))), data=df.trait, x=TRUE)$x)#
-        term <- terms(as.formula(paste(paste(random, collapse=" "), "ID")))
-        
-        GI
+        X <- model.matrix(fixed, data=df.trait)# fixed part of the model
+        if(grepl("+", random)){
+          random <- substr(random, 1, nchar(random)-3)
+          term <- labels(terms(as.formula(random)))
+          if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
+          Z <-  res$Z[[term[1]]]
+          if(length(term) > 1) for(ii in 2:length(term))
+            Z <- cbind(Z, res$Z[[term[ii]]])  
+          Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
+          GI <- diag(ncol(Z))
+          cnt <- 1
+          for(ii in term){
+            cnt1 <- nlevels(df.trait[, ii])-1
+            if(cnt1 == 0 ) cnt1 <- 0
+            GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] <- GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] / res$sigma[ii] * res$sigma["In"]
+            cnt <- cnt + cnt1 + 1
+          }
+        } else {
+          Z <- gpData$geno[df.trait$ID, ]
+          GI <- diag(ncol(Z))
+        }
+        GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] <- 
+                GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] / sigma2m * res$sigma["In"]
         RI <- res$Z$In
-        sol <- MME(X, Z, GI, RI, y)
+        sol <- MME(X, Z, GI, RI, df.trait[, yName])
         m <- sol$u 
         names(m) <- colnames(Z)
       }
