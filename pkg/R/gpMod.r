@@ -17,7 +17,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
-    }
+    } else if(markerEffects) warning("Be aware that ", substitute(kin), "is the realized kinship matrix without any changes!")
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
     if(i %in% 1:ncol(df.trait)) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
@@ -55,8 +55,12 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
           term <- labels(terms(as.formula(random)))
           if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
           Z <-  res$Z[[term[1]]]
-          if(length(term) > 1) for(ii in 2:length(term))
-            Z <- cbind(Z, res$Z[[term[ii]]])  
+          colnames(Z) <- paste(term[1], colnames(Z), sep=".")
+          if(length(term) > 1) for(ii in 2:length(term)){
+            Z1 <- res$Z[[term[ii]]]
+            colnames(Z1) <- paste(term[ii], colnames(Z1), sep=".")
+            Z <- cbind(Z, Z1)  
+          }
           Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
           GI <- diag(ncol(Z))
           cnt <- 1
@@ -76,6 +80,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         sol <- MME(X, Z, GI, RI, df.trait[, yName])
         m <- sol$u 
         names(m) <- colnames(Z)
+        m <- m[colnames(gpData$geno)]
       }
     }
 
