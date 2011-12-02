@@ -5,7 +5,7 @@
 # date: 2011 - 05 - 03
 # changes: Hans-Jürgen Auinger
 # date: 2011 - 11 - 21
-# changes: return argumen by Valentin Wimmer
+# changes: return argument by Valentin Wimmer
 # date: 2011 - 11 - 30
 
 gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
@@ -17,7 +17,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
-    } else if(markerEffects) warning("Be aware that ", substitute(kin), "is the realized kinship matrix without any changes!")
+    } else if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
     if(i %in% 1:ncol(df.trait)) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]

@@ -21,8 +21,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     if (ncol(y) <=2){
 	X <- matrix(rep(1,n,ncol=1))
 	rownames(X) <- unique(y[,1])
-    }
-    else{
+    }else{
 	fixEff <- unique(y$repl)
 	X <- outer(y[,2],fixEff,"==")+0
 	colnames(X) <- fixEff
@@ -32,8 +31,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     if (ncol(y) <=2){
     	Z <- diag(n)
     	rownames(Z) <- unique(y[,1])
-    }
-    else{
+    }else{
 	ranEff <- unique(y$ID)
 	Z <- outer(y$ID,ranEff,"==")+0
     	rownames(Z) <- y[,1]
@@ -49,7 +47,9 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     RR <- FALSE
     if (is.null(cov.matrix) ){
-	Z <- gpData$geno[rownames(gpData$geno) %in% dataSet, ]
+	y.sampGeno <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=FALSE)
+	Z <- as.matrix(y.sampGeno[, (ncol(y.sampGeno)-ncol(gpData$geno)+1):ncol(y.sampGeno)])
+    	rownames(Z) <- y[,1]
 	if (VC.est %in% c("commit","ASReml")) cov.matrix <- list(kin=diag(ncol(Z)))
 	RR <- TRUE
     }
@@ -109,10 +109,14 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
 	   	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
 	     }
-	     cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r ",ID2,sep=""),file="Model.as")
-	     if(ncol(y)>2)cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r ",ID2,sep=""),file="Model.as")
-
-	     if(RR)cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r M",sep=""),file="Model.as")
+	     if(!RR){
+		cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r ",ID2,sep=""),file="Model.as")
+		if(ncol(y)>2) cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r ",ID2,sep=""),file="Model.as")
+	     }
+	     else{
+		cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r M",sep=""),file="Model.as")
+		if(ncol(y)>2) cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r M",sep=""),file="Model.as")
+	     }
 	     cat("",file="Model.pin")
 	  }
 	}
@@ -258,7 +262,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		# solve MME
 		bu <-  as.vector(ginv(LHS)%*%RHS)
 		#print(length(bu))
-		}
+	   }
 
 	   # estimation of variance components with ASReml for every ES
    	   if (VC.est=="ASReml"){
@@ -271,6 +275,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 			if (!any(ASTest %in% "ASReml")) system(paste("mkdir ASReml"))
 
 			# data output for ASReml
+			if(RR){
+			   y.sampGeno <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=FALSE)
+			   y.Geno <- y.sampGeno[, (ncol(y.sampGeno)-ncol(gpData$geno)+1):ncol(y.sampGeno)]
+			   if(ncol(y)<=2) y.samp <- cbind(y.samp,y.Geno)
+			   if(ncol(y)>2) y.samp <- cbind(y.samp[ ,1:3],y.Geno)
+			}
 			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 
 			# ASReml function
@@ -370,7 +380,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  #print(dim(XZ2))
 	  y2 <- y[(y[,1] %in% samp.ts[,1]),"TRAIT"]
 	  y.dach <- XZ2%*%bu
-	  rownames(y.dach) <- paste(rownames(X2),colnames(X2),sep="_")
+	  if(ncol(y)>2) rownames(y.dach) <- paste(rownames(X2),colnames(X2),sep="_")
 	  #print(head(y.dach))
 	  #print(dim(y.dach))
 	  n.TS[ii,i] <- nrow(y.dach)
@@ -397,7 +407,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	  
    	}  # end loop for k-folds
 
-	y.TS <- y.TS[sort.list(rownames(y.TS)),]
+	y.TS <- y.TS[order(rownames(y.TS)),]
     	y.TS2 <- cbind(y.TS2,y.TS)
 	#print(dim(y.TS2))
     	colnames(y.TS2)[i] <- paste("rep",i,sep="")
@@ -410,8 +420,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	TS10 <- y.TS[order(-y.TS)]
 	n10 <- round(0.1 * length(y.TS))
 	TS10sel <- TS10[1:n10 ]
+	if(ncol(y)>2){ 
 	rownames(y) <- paste(rownames(Z),colnames(X),sep="_")
 	m10[i,1] <- mean(y[rownames(y) %in% names(TS10sel), "TRAIT"])
+	}else{
+	m10[i,1] <- mean(y[y$ID %in% names(TS10sel), "TRAIT"])
+	}
     }  # end loop for replication
 
     # return object
