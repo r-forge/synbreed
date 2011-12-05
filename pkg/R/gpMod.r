@@ -55,7 +55,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         sigma2m <- sigma2u/sumP
         # set up design matrices
         X <- model.matrix(fixed, data=df.trait)# fixed part of the model
-        if(grepl("+", random)){
+        if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
           random <- substr(random, 1, nchar(random)-3)
           term <- labels(terms(as.formula(random)))
           if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
