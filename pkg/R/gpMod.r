@@ -12,21 +12,21 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
   ans <- list()
   model <- match.arg(model)
   m <- NULL
-  if(length(trait) > 1) warning("\n\n   The return will be a list of gpMod-objects!")
+  if(length(trait) > 1) warning("\n   The return will be a list of gpMod-objects!\n")
   if(is.null(fixed)) fixed <- " ~ 1"
   if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
-  for(i in trait){
-    df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
-    # take data from gpData object
+  if(model == "BLUP")
     if (is.null(kin)){
       no.kin <- TRUE
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
-    } 
-    else{ 
+    } else{ 
       if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
       no.kin <- FALSE
     }
+  for(i in trait){
+    df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
+    # take data from gpData object
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
     if(i %in% 1:ncol(df.trait)) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
@@ -44,7 +44,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
-      res <- synbreed::regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
+      res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
       us <- BLUP(res)$Mean
       genVal <- us[grep("kinTS", names(us))]
       genVal <- genVal[!duplicated(names(genVal))]
@@ -72,7 +72,6 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
           Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
           GI <- diag(ncol(Z))
           cnt <- 1
-          print(res$sigma)
           for(ii in term){
             cnt1 <- nlevels(df.trait[, ii])-1
             if(cnt1 == 0 ) cnt1 <- 0
@@ -119,7 +118,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
     ans[[i]] <- ret
-    names(length(ans))<- yName
+    names(ans)[length(ans)] <- yName
   }
   if(length(trait) > 1){
    class(ans) <- "gpModList"
@@ -179,9 +178,9 @@ print.summary.gpMod <- function(x,...){
 }
 
 print.summary.gpModList <- function(x,...) {
-  for(i in 1: length(x)){
-    cat(paste("\tTrait ", names(x)[i], "\n\n\n"))
+  for(i in 1:length(x)){
+    cat(paste("\n\tTrait ", names(x)[i], "\n\n\n"))
     print(x[[i]]) 
-    cat("\n\n") 
+    if(i != length(x)) cat("-------------------------------------------------\n") 
   }
 }
