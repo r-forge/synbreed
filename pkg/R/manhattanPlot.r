@@ -1,6 +1,7 @@
 manhattanPlot <- function(b,gpData=NULL,colored=FALSE,add=FALSE,pch=19,ylab=NULL,...){
   if(is.null(gpData)) plot(b,...)
   else{               
+    if(is.null(gpData$map)) stop("missing map in gpData object ",substitute(gpData))
     if (class(b) == "gpMod") b <- b$m
     b <- b[!(is.na(gpData$map$pos) | is.na(gpData$map$chr))]
     gpData$map <- gpData$map[!(is.na(gpData$map$pos) | is.na(gpData$map$chr)),]

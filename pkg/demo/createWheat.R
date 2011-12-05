@@ -13,23 +13,30 @@ data(wheat)
 # Y = phenotypes
 
 # assign names
-rownames(X) <- paste("ID",1000+(1:nrow(X)),sep="")
+rownames(X) <- colnames(A)
 colnames(Y) <- paste("Env",1:4,sep="")
-rownames(Y) <- paste("ID",1000+(1:nrow(X)),sep="")
+rownames(Y) <- colnames(A)
 
 # create a gpData object
 gpWheat <- create.gpData(pheno=Y,geno=X)
 gpWheat <- codeGeno(gpWheat)
 
-
-
 # predictive ability using Bayesian Lasso
 # use prior values from Crossa et al. (2010)
 priorCrossa <- list(varE=list(df=4,S=1),lambda = list(shape=0.6,rate=1e-4,value=20,type='random'))
 
-modBL <- gpMod(gpWheat,trait=1,model="BL",prior=priorCrossa)
+# model M-BL for GY-E1 
+modMBL <- gpMod(gpWheat,trait=1,model="BL",prior=priorCrossa,nIter=15000,burnIn=5000)
+
+# model PM-BL for GY-E1
+modPMBL <- gpMod(gpWheat,trait=1,model="BL",prior=priorCrossa,nIter=15000,burnIn=5000,kin=A)
+
+
+# extract predicted genetic values and plot versus phenotypic values
+plot(predict(modPMBL),gpWheat$pheno[,1,])
 
 cv <- crossVal(gpWheat,trait=1,VC.est="BL",priorBLR=priorCrossa,k=10,Rep=1)
+summary(cv)
 #Object of class 'cvData'
 #
 # 10 -fold cross validation with 1 replications

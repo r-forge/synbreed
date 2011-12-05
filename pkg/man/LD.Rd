@@ -25,7 +25,7 @@ object of class \code{gpData} with elements \code{geno} and \code{map}
 \code{logical}. Should the software PLINK be used for the computation?
 }
   \item{ld.threshold}{
-\code{numeric}. Threshold for the LD. Only pairwise LD>\code{ld.threshold} is reported. This argument is can only be used for \code{"type=data.frame"}.  
+\code{numeric}. Threshold for the LD. Only pairwise LD>\code{ld.threshold} is reported when PLINK is used. This argument is can only be used for \code{"type=data.frame"}.  
 }
   \item{rm.unmapped}{
 \code{logical}. Remove markers with unknown postion in \code{map} before using PLINK?

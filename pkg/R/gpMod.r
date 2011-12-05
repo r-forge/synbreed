@@ -15,9 +15,14 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
     # take data from gpData object
     if (is.null(kin)){
+      no.kin <- TRUE
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
-    } else if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
+    } 
+    else{ 
+      if(markerEffects) warning("Be aware that ", substitute(kin), "is the realized kinship matrix without any changes!")
+      no.kin <- FALSE
+    }
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
     if(i %in% 1:ncol(df.trait)) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
@@ -88,7 +93,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
       X <- gpData$geno[df.trait$ID, ]
       capture.output(res <- BLR(y=df.trait[, yName],XL=X,...),file="BLRout.txt")
-      if(!is.null(kin)) res <- BLR(y=df.trait[, yName],XL=X,GF=list(ID=1:n,A=kinTS),...)
+      if(!no.kin) capture.output(res <- BLR(y=df.trait[, yName],XL=X,GF=list(ID=df.trait$ID,A=kinTS),...),file="BLRout.txt")
+      else kin <- NULL
       genVal <- res$yHat
       names(genVal) <- rownames(X)
       m <- res$bL
@@ -97,7 +103,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
       X <- gpData$geno[df.trait$ID,]
       capture.output(res <- BLR(y=df.trait[, yName],XR=X,...),file="BLRout.txt")
-      if(!is.null(kin)) res <- BLR(y=df.trait[, yName],XR=X,GF=list(ID=1:n,A=kin),...)
+      if(!no.kin)  capture.output(res <- BLR(y=df.trait[, yName],XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
+      else kin <- NULL
       genVal <- res$yHat
       names(genVal) <- rownames(X)
       m <- res$bR
@@ -115,8 +122,8 @@ summary.gpMod <- function(object,...){
     ans <- list()
     ans$model <- object$model
     if(object$model %in% c("BLUP")) ans$summaryFit <- summary(object$fit)
-    if(object$model=="BL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
-    if(object$model=="BRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model=="BL") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varU=object$fit$varU, lambda=object$fit$lambda, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
+    if(object$model=="BRR") ans$summaryFit <- list(mu = object$fit$mu, varE=object$fit$varE, varBr=object$fit$varBr, varU=object$fit$varU, nIter = object$fit$nIter,burnIn = object$fit$burnIn,thin=object$fit$thin)
     ans$n <- sum(!is.na(object$y))
     ans$sumNA <- sum(is.na(object$y))
     ans$summaryG <- summary(as.numeric(object$g))
@@ -139,6 +146,7 @@ print.summary.gpMod <- function(x,...){
     cat("             Posterior mean \n")
     cat("(Intercept) ",x$summaryFit$mu,"\n")
     cat("VarE        ",x$summaryFit$varE,"\n")
+    if(!is.null(x$summaryFit$varU)) cat("VarU        ",x$summaryFit$varU,"\n")
     if(x$model=="BL"){
     cat("lambda      ",x$summaryFit$lambda,"\n")
     }
