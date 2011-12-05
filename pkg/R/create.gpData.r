@@ -56,7 +56,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
     if(!all((classList[!names(classList) %in% repeated & !names(classList) %in% modCovar])[-1] %in% c("numeric", "integer"))) stop("Trait values have to be numeric!")
     # repeated measures? Use rownames of pheno as identifier for genotypes
     if(is.null(repeated)){
-      add <- 10^ceiling(log10(nrow(geno)))
+      add <- 10^ceiling(log10(nrow(pheno)))
       if(all(rownames(pheno) %in% 1:nrow(pheno))) rownames(pheno) <- add + as.numeric(rownames(pheno)) else add <- NULL
       if(dim(pheno)[2] ==1){# only a vector of traits
         phenoNames <- dimnames(pheno)

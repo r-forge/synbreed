@@ -20,7 +20,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       kin <- kin(gpData, ret="realized")
     } 
     else{ 
-      if(markerEffects) warning("Be aware that ", substitute(kin), "is the realized kinship matrix without any changes!")
+      if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
       no.kin <- FALSE
     }
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
