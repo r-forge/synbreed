@@ -1,6 +1,8 @@
 \name{summary.gpMod}
 \alias{summary.gpMod}
+\alias{summary.gpModList}
 \alias{print.summary.gpMod}
+\alias{print.summary.gpModList}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Summary for class gpMod

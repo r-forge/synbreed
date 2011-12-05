@@ -11,12 +11,12 @@ Dairy cattle data
 \format{
 Object of class \code{gpData}
 }
-\details{
+%%\details{
 %%  ~~ If necessary, more details than the __description__ above ~~
-}
-\source{
+%%}
+%%\source{
 %%  ~~ reference to a publication or URL from which the data were obtained ~~
-}
+%%}
 
 \examples{
 data(cattle)

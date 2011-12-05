@@ -1,1 +1,1 @@
-load("cattle.Rdata")
+load("cattle.RData")

@@ -1,3 +1,3 @@
-gpMaize     Genomic prediction using the maize data Comparision of G-BLUP and P-BLUP
+gpMaize	Genomic prediction using the maize data Comparision of G-BLUP and P-BLUP
 createWheat	create a gpData object from the wheat data in the BLR package and redo some analyses of Crossa et al. (2010)
-gpTest      little testdata for repeated measures with the functions create.gpData and gpMod
+gpTest	little testdata for repeated measures with the functions create.gpData and gpMod
