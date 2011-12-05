@@ -331,7 +331,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         # write input files for beagle
         pre <- paste("chr",chr[lg],sep="")
         # create new directory "beagle" for beagle input and output files
-        if(!"beagle" %in% list.files()) system("mkdir beagle")
+        if(!"beagle" %in% list.files()){
+           if(.Platform$OS.type == "unix") system("mkdir beagle")
+           if(.Platform$OS.type == "windows") shell("mkdir beagle")
+        } 
         write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
         output <- system(paste("java -Xmx1000m -jar ", .path.package()[grep("synbreed", .path.package())],
                      "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
