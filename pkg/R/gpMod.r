@@ -54,7 +54,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         # use transformation rule for vc (Albrecht et al. 2011)
         sigma2m <- sigma2u/sumP
         # set up design matrices
-        X <- model.matrix(fixed, data=df.trait)# fixed part of the model
+        X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
         if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
           random <- substr(random, 1, nchar(random)-3)
           term <- labels(terms(as.formula(random)))
