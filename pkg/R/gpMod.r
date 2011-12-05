@@ -9,8 +9,12 @@
 # date: 2011 - 11 - 30
 
 gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
+  ans <- list()
   model <- match.arg(model)
   m <- NULL
+  if(length(trait) > 1) warning("\n\n   The return will be a list of gpMod-objects!")
+  if(is.null(fixed)) fixed <- " ~ 1"
+  if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
   for(i in trait){
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
     # take data from gpData object
@@ -40,8 +44,6 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
-      if(is.null(fixed)) fixed <- " ~ 1"
-      if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
       res <- synbreed::regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
       us <- BLUP(res)$Mean
       genVal <- us[grep("kinTS", names(us))]
@@ -54,10 +56,11 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         # use transformation rule for vc (Albrecht et al. 2011)
         sigma2m <- sigma2u/sumP
         # set up design matrices
+        Z <- NULL; X <- NULL
         X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
         if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
-          random <- substr(random, 1, nchar(random)-3)
-          term <- labels(terms(as.formula(random)))
+          randomM <- substr(random, 1, nchar(random)-3)
+          term <- labels(terms(as.formula(randomM)))
           if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
           Z <-  res$Z[[term[1]]]
           colnames(Z) <- paste(term[1], colnames(Z), sep=".")
@@ -69,6 +72,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
           Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
           GI <- diag(ncol(Z))
           cnt <- 1
+          print(res$sigma)
           for(ii in term){
             cnt1 <- nlevels(df.trait[, ii])-1
             if(cnt1 == 0 ) cnt1 <- 0
@@ -114,6 +118,13 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     names(y) <- df.trait[,"ID"]
     ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
     class(ret) = "gpMod"
+    ans[[i]] <- ret
+    names(length(ans))<- yName
+  }
+  if(length(trait) > 1){
+   class(ans) <- "gpModList"
+   return(ans)
+  } else {
     return(ret)
   }
 }
@@ -131,6 +142,16 @@ summary.gpMod <- function(object,...){
     ans
 }
 
+summary.gpModList <- function(object,...){
+  ret <- list()
+  for(i in 1:length(object)){
+    ret[[i]] <- summary(object[[i]])
+  }
+  class(ret) <- "summary.gpModList"
+  names(ret) <- names(object)
+  ret
+}
+
 print.summary.gpMod <- function(x,...){
     cat("Object of class 'gpMod' \n")
     cat("Model used:",x$model,"\n")
@@ -140,18 +161,27 @@ print.summary.gpMod <- function(x,...){
     cat(format(x$summaryG,width=7,trim=TRUE), "\n",sep=" ")
     cat("--\n")
     cat("Model fit \n")
-    if(x$model %in% c("BLUP")) cat(print(x$summaryFit),"\n")
-    else{
-    cat("MCMC options: nIter = ",x$summaryFit$nIter,", burnIn = ",x$summaryFit$burnIn,", thin = ",x$summaryFit$thin,"\n",sep="")
-    cat("             Posterior mean \n")
-    cat("(Intercept) ",x$summaryFit$mu,"\n")
-    cat("VarE        ",x$summaryFit$varE,"\n")
-    if(!is.null(x$summaryFit$varU)) cat("VarU        ",x$summaryFit$varU,"\n")
-    if(x$model=="BL"){
-    cat("lambda      ",x$summaryFit$lambda,"\n")
+    if(x$model %in% c("BLUP")) 
+      cat(print(x$summaryFit),"\n")
+    else {
+      cat("MCMC options: nIter = ",x$summaryFit$nIter,", burnIn = ",x$summaryFit$burnIn,", thin = ",x$summaryFit$thin,"\n",sep="")
+      cat("             Posterior mean \n")
+      cat("(Intercept) ",x$summaryFit$mu,"\n")
+      cat("VarE        ",x$summaryFit$varE,"\n")
+      if(!is.null(x$summaryFit$varU)) cat("VarU        ",x$summaryFit$varU,"\n")
+      if(x$model=="BL"){
+        cat("lambda      ",x$summaryFit$lambda,"\n")
+      }
+      if(x$model=="BRR"){
+        cat("varBr       ",x$summaryFit$varBr,"\n")
+      }
     }
-    if(x$model=="BRR"){
-    cat("varBr       ",x$summaryFit$varBr,"\n")
-    }
-    }
+}
+
+print.summary.gpModList <- function(x,...) {
+  for(i in 1: length(x)){
+    cat(paste("\tTrait ", names(x)[i], "\n\n\n"))
+    print(x[[i]]) 
+    cat("\n\n") 
+  }
 }
