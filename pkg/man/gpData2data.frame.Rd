@@ -19,13 +19,13 @@ object of class \code{gpData}
 \code{numeric} or \code{character}. A vector with the names or numbers of the trait that should be extracted of pheno. Default is \code{1}.
 }
   \item{onlyPheno}{
-\code{logical}. Only return phenotypic data.
+scalar \code{logical}. Only return phenotypic data.
 }
   \item{all.pheno}{
-\code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the genotypic data with \code{NA}.
+scalar \code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the genotypic data with \code{NA}.
 }
   \item{all.geno}{
-scalar logical. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
+scalar \code{logical}. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
 }
   \item{repl}{\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are taken.
 }
@@ -40,11 +40,10 @@ Argument \code{all.geno} can be used to predict the genetic value of individuals
 For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates for each individual in separate columns, i.e. i n so called "wide" format. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable are added.  
 }
 \value{
-A \code{data.frame} with phenotypes in the first column(s) and marker matrix in subsequent columns.
+A \code{data.frame} with the individuals names in the first column, the phenotypes in the next column(s) and the marker genotypes in subsequent columns.
 }
 \author{
 Valentin Wimmer
-
 Hans-Juergen Auinger
 }
 

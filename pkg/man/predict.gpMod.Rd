@@ -48,12 +48,13 @@ A <- kin(gp,ret="add")
 
 # assuming h2=sigma2u/(sigma2u+sigma2)=0.5
 # no REML fit possible due to the limited number of observations
-mod1 <- list(fit=list(sigma=c(1,1)),kin=A,model="modA",trainingSet=paste(1:4),y=c(132,147,156,172))
+y <- c(132,147,156,172)
+names(y) <- paste(1:4)
+mod1 <- list(fit=list(sigma=c(1,1)),kin=A,model="BLUP",y=y,m=NULL)
 class(mod1) <- "gpMod"
 predict(mod1,c("5","6"))
 
 # prediction 'by hand'
-y <- c(132,147,156,172)
 X <- matrix(1,ncol=1,nrow=4)
 Z <- diag(6)[-c(1,2),]
 AI <- solve(A)
@@ -67,6 +68,6 @@ data(maize)
 maizeC <- codeGeno(maize)
 U <- kin(maizeC,ret="realized")
 maizeC2 <- discard.individuals(maizeC,rownames(maizeC$pheno)[1201:1250])
-modU <- gpMod(maizeC2,model="modU",kin=U)
+modU <- gpMod(maizeC2,model="BLUP",kin=U)
 predict(modU,rownames(maizeC$pheno)[1201:1250])
 }

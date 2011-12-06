@@ -31,7 +31,7 @@ maizeC <- codeGeno(maize)
 U <- kin(maizeC,ret="realized")/4
 
 # BLUP model
-mod <- gpMod(maizeC,model="modU",kin=U)
+mod <- gpMod(maizeC,model="BLUP",kin=U)
 summary(mod)
 }
 

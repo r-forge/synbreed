@@ -17,12 +17,10 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
   if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
   if(model == "BLUP")
     if (is.null(kin)){
-      no.kin <- TRUE
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
     } else{ 
       if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
-      no.kin <- FALSE
     }
   for(i in trait){
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
@@ -38,7 +36,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     df.trait <- df.trait[, vec.bool]
     df.trait <- df.trait[!apply(is.na(df.trait), 1, sum), ]
     kinNames <- unique(df.trait$ID[!df.trait$ID %in% rownames(kin)])
-    if(length(kinNames) != 0){
+    if(length(kinNames) != 0 & model=="BLUP"){
       df.trait <- df.trait[!df.trait$ID %in% kinNames,]
       warning("Some phenotyped IDs are not in the kinship matrix!\nThese are removed from the analysis")
     }
@@ -94,9 +92,10 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
 
     if(model=="BL"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
-      X <- gpData$geno[df.trait$ID, ]
-      capture.output(res <- BLR(y=df.trait[, yName],XL=X,...),file="BLRout.txt")
-      if(!no.kin) capture.output(res <- BLR(y=df.trait[, yName],XL=X,GF=list(ID=df.trait$ID,A=kinTS),...),file="BLRout.txt")
+       X <- gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
+       y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
+      capture.output(res <- BLR(y=y,XL=X,...),file="BLRout.txt")
+      if(!is.null(kin)) capture.output(res <- BLR(y=y,XL=X,GF=list(ID=df.trait$ID,A=kinTS),...),file="BLRout.txt")
       else kin <- NULL
       genVal <- res$yHat
       names(genVal) <- rownames(X)
@@ -104,14 +103,15 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     if(model=="BRR"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
-      X <- gpData$geno[df.trait$ID,]
-      capture.output(res <- BLR(y=df.trait[, yName],XR=X,...),file="BLRout.txt")
-      if(!no.kin)  capture.output(res <- BLR(y=df.trait[, yName],XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
-      else kin <- NULL
-      genVal <- res$yHat
-      names(genVal) <- rownames(X)
-      m <- res$bR
-    }
+        X <-  gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
+        y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
+        capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
+        if(!is.null(kin))  capture.output(res <- BLR(y=y,XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
+        else kin <- NULL
+        genVal <- res$yHat
+        names(genVal) <- rownames(X)
+        m <- res$bR
+      }
 
     y <- df.trait[,yName]
     names(y) <- df.trait[,"ID"]
