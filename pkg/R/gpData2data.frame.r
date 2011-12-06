@@ -4,9 +4,9 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
      
       # check for class
       if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'") 
-      if(is.null(dimnames(pheno)) stop("There aren't dimnames for the pheno slot of ", substitute(gpData))
-      IDs <- dimnames(pheno)[[1]]
-      reps <- dimnames(pheno)[[3]]
+      if(is.null(dimnames(gpData$pheno))) stop("There aren't dimnames for the pheno slot of ", substitute(gpData))
+      IDs <- dimnames(gpData$pheno)[[1]]
+      reps <- dimnames(gpData$pheno)[[3]]
       pheno <- abind(gpData$pheno, matrix(1:dim(gpData$pheno)[1]+10**ceiling(log10(dim(gpData$pheno)[1])), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), along=2)
       dimnames(pheno)[[2]][dim(pheno)[2]] <- "ID"
       # choose Traits
@@ -54,7 +54,7 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
        }
        mergeData <- orderBy(~ID+repl,data=mergeData) 
      } 
-     mergeData$ID <- as.factor(mergeData$ID)
+     mergeData$ID <- as.character(mergeData$ID)
      rownames(mergeData) <- NULL
      return(mergeData)
 }          
