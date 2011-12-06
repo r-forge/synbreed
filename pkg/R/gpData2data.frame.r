@@ -4,9 +4,10 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
      
       # check for class
       if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'") 
-      pheno <- abind(gpData$pheno, matrix(1:dim(gpData$pheno)[1]+10**ceiling(log10(dim(gpData$pheno)[1])), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), along=2)
+      if(is.null(dimnames(pheno)) stop("There aren't dimnames for the pheno slot of ", substitute(gpData))
       IDs <- dimnames(pheno)[[1]]
       reps <- dimnames(pheno)[[3]]
+      pheno <- abind(gpData$pheno, matrix(1:dim(gpData$pheno)[1]+10**ceiling(log10(dim(gpData$pheno)[1])), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), along=2)
       dimnames(pheno)[[2]][dim(pheno)[2]] <- "ID"
       # choose Traits
       if(all(is.numeric(trait))) trait <- (dimnames(pheno)[[2]])[trait]   
