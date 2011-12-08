@@ -1,4 +1,4 @@
-kin <- function(gpData,ret=c("add","kin","dom","gam","realized","sm","sm-smin"),DH=NULL){
+kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL){
 
     ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","sm","sm-smin"),several.ok = FALSE)
 
@@ -127,7 +127,33 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","sm","sm-smin"),
     
     kmat <- U
     }
+
+    if (ret == "realizedAB"){ # based an Astle & Balding (2009)
     
+        # extract information from arguments
+          if(any(class(gpData)=="gpData")){
+             if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'kin'") 
+             marker <- gpData$geno
+          }
+           else stop("object is not of class 'gpData'")
+
+        # M supposed to be coded with 0,1,2
+        M <- marker
+        n <- nrow(M)
+        p <- ncol(M)
+    
+        # 2* minor allele frequency as expectation
+        maf <- colMeans(M,na.rm=TRUE)
+        pq2 <- 2*sum(maf/2*(1-maf/2))
+        # compute realized relationship matrix U
+        Z <- sweep(M,2,maf)
+        for (i in 1:p){  # loop for standardizing columns by sd
+	    Z[,i]<-Z[,i]/sqrt(pq2[i])
+        }
+        U <- (Z %*% t(Z))/(2*p)
+        kmat <- U
+    }
+
     if (ret %in% c("sm","sm-smin")){      # simple matchin coefficient (only for homozygous inbreed lines)
               
           # extract information from arguments
