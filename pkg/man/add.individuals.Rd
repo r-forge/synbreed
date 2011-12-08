@@ -52,15 +52,14 @@ newDHpheno <- data.frame(Trait=1000,row.names="newDH")
 # simulating genotypic data
 newDHgeno <- matrix(sample(c(0,1),ncol(maize$geno),replace=TRUE),nrow=1)
 rownames(newDHgeno) <- "newDH"
-colnames(newDHgeno)
 # new pedigree
 newDHpedigree <- data.frame(ID="newDH",Par1=0,Par2=0,gener=0)
 # new covar information
 newDHcovar <- data.frame(family=NA,DH=1,tbv=1000,row.names="newDH")
 
+# add individual
 maize2 <- add.individuals(maize,newDHpheno,newDHgeno,newDHpedigree,newDHcovar)
 summary(maize2)
-
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

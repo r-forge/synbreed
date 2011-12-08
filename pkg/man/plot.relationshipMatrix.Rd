@@ -33,10 +33,10 @@ plot(A)
 
 # big pedigree
 data(maize)
-A <- kin(maize,ret="add")
-U <- kin(codeGeno(maize),ret="realized")/4
+K <- kin(maize,ret="kin")
+U <- kin(codeGeno(maize),ret="realized")/2
 # equal colorkeys
-plot(A,at=seq(0,2,length=9))
+plot(K,at=seq(0,2,length=9))
 plot(U,at=seq(0,2,length=9))
 }
 

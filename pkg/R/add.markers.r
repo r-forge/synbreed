@@ -40,6 +40,8 @@ add.markers <- function(gpData,geno,map=NULL){
   gpData$map <- map
   gpData$geno <- gpData$geno[, match(rownames(gpData$map), colnames(gpData$geno))]
   gpData$info$codeGeno <- FALSE
+  # sortcolumns in geno, too
+  gpData$geno <- gpData$geno[,rownames(gpData$map)]
   # create new gpData object
   return(gpData)
 }

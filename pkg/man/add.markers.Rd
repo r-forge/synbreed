@@ -5,7 +5,7 @@
 Adding new markers to an object of class gpData
 }
 \description{
-This function adds new markers to genotypic data and updates genetic map.
+This function adds new markers to the element \code{geno} of an object of class \code{gpData} and updates the marker map.
 }
 \usage{
 add.markers(gpData, geno, map)
@@ -19,11 +19,11 @@ object of class \code{gpData}
 \code{matrix} with new columns
 }
   \item{map}{
-\code{data.frame} with columns 'chr' and 'pos' and new rows for new markers 
+\code{data.frame} with columns 'chr' and 'pos' for new markers
 }
 }
 \details{
-\code{rownames} in \code{geno} must match with \code{rownames} genotypic data in the object of class \code{gpData}. 
+\code{rownames} in argument \code{geno} must match with \code{rownames} in the element \code{geno} object of class \code{gpData}.
 
 }
 \value{

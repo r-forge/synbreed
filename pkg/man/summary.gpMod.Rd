@@ -28,7 +28,7 @@ not used
 data(maize)
 maizeC <- codeGeno(maize)
 # marker-based (realized) relationship matrix
-U <- kin(maizeC,ret="realized")/4
+U <- kin(maizeC,ret="realized")/2
 
 # BLUP model
 mod <- gpMod(maizeC,model="BLUP",kin=U)

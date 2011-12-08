@@ -3,10 +3,10 @@
 \alias{discard.individuals}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Subsetting objects of class gpData
+Subsets for objects of class gpData
 }
 \description{
-Both functions could be used to get subsets of objects of class \code{gpData}. To discard columns in \code{geno}, use function \code{discard.markers} to discard markers from \code{gpData}. Note that markers will also be removed from \code{map}, if available. To discard rows of \code{geno}, use function \code{discard.individuals} to discard individuals (genotypes) from \code{gpData}. Note that individuals will also be removed from \code{covar}, \code{pheno} and \code{pedigree}. 
+Both functions could be used to get subsets of objects of class \code{gpData}. Use function \code{discard.markers} to discard markers from an object of class \code{gpData}. Note that markers will also be removed from \code{map}, if available. Use function \code{discard.individuals} to discard individuals from the object of class \code{gpData}. Note that individuals will also be removed from \code{covar}, \code{pheno} and \code{pedigree}.
 }                      
 \usage{
 discard.markers(gpData, which)
@@ -50,11 +50,11 @@ rownames(map) <- paste("M",c(1:4,6:12),sep="")
 gp <- create.gpData(pheno=pheno,geno=geno,map=map)
 summary(gp)
 
-# remove unmapped SNP from gpData
+# remove unmapped SNP M5 (which has no postion in the map)
 gp2 <- discard.markers(gp,"M5")
 summary(gp2)
 
-# discard genotypes with missing values
+# discard genotypes with missing values in the marker matrix
 gp3 <- discard.individuals(gp,names(which(rowSums(is.na(gp$geno))>0)))
 summary(gp3)
 

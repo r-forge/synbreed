@@ -25,7 +25,7 @@ further arguments for function \code{codeGeno}. Only used in \code{gpData2cross}
 }
 \details{
 In \code{cross}, genotypic data is splitted into chromosomes while in \code{gpData} genotypic data comprises all chromosomes. 
-Note that coding of genotypic data differs between classes. In \code{gpData}, genotypic data is coded as the number of copies of the minor allele, i.e. 0,1 and 2. Thus, function \code{codeGeno} should be applied to \code{gpData} before using \code{gpData2cross} to ensure correct coding. In \code{cross}, coding for F2 intercross is: AA = 1, AB = 2, BB = 3. When using  \code{gpData2cross} or \code{cross2gpData}, resulting genotypic data has correct format.
+Note that coding of genotypic data differs between classes. In \code{gpData}, genotypic data is coded as the number of copies of the minor allele, i.e. 0, 1 and 2. Thus, function \code{codeGeno} should be applied to \code{gpData} before using \code{gpData2cross} to ensure correct coding. In \code{cross}, coding for F2 intercross is: AA = 1, AB = 2, BB = 3. When using  \code{gpData2cross} or \code{cross2gpData}, resulting genotypic data has correct format.
 }
 \value{
 Object of class \code{cross} or \code{gpData} for function  \code{gpData2cross} or \code{cross2gpData}, respectively.

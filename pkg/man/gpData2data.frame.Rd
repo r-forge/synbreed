@@ -5,10 +5,11 @@
 Merge of phenotypic and genotypic data
 }
 \description{
-Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}. Multiple observations for each individual in \code{pheno} are be reshaped from "wide" format in \code{pheno} into "long"  format using a grouping variable. 
+Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}.
 }
 \usage{
-gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,repl=NULL,...)
+gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,
+  all.geno=FALSE,repl=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +38,7 @@ further arguments to be used in function \code{reshape}. The argument \code{time
 Argument \code{all.geno} can be used to predict the genetic value of individuals without phenotypic records using the \code{BLR} package. Here, the genetic value of individuals with \code{NA} as phenotype is predicted by the marker profile.
 
 
-For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates for each individual in separate columns, i.e. i n so called "wide" format. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable are added.  
+For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates in an \code{array}. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable are added.
 }
 \value{
 A \code{data.frame} with the individuals names in the first column, the phenotypes in the next column(s) and the marker genotypes in subsequent columns.
@@ -73,10 +74,8 @@ summary(gp)
 gpData2data.frame(gp,1:2)
 # as data.frame with all individuals with phenotypes
 gpData2data.frame(gp,1:2,all.pheno=TRUE)
-# as data.frame with all individuals with gotypes
+# as data.frame with all individuals with genotypes
 gpData2data.frame(gp,1:2,all.geno=TRUE)
-
-
 
 # example with repeated observations
 set.seed(311)

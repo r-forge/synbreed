@@ -270,10 +270,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  for ( i in rownames(poptab)[nmissfam>0] ){                          
                    # impute values for impute.type="family" : all missing genotypes
                    allTab <- table(res[popStruc == i, j])
-                   if(all(names(allTab) == c(0, 2)) & noHet == FALSE)
-                     allTab <- table(c(0,1,1,2))
+                   if(all(names(allTab) == c(0, 2)) & noHet == FALSE)  allTab <- table(c(0,1,1,2))
                    if (impute.type=="family"){
-                     res[is.na(res[,j]) & popStruc == i ,j] <- sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE)
+                     res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                      # update counter
                      ifelse(polymorph[i],cnt3 <- cnt3 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
                    }

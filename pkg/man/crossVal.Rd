@@ -10,10 +10,10 @@ and variance components can be committed or reestimated with ASReml or the BLR f
 }
 \usage{
 crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL, 
-         sampling = c("random", "within popStruc", "across popStruc","commit"),TS=NULL,ES=NULL ,
-         varComp = NULL, popStruc = NULL, VC.est = c("commit",
+         sampling = c("random", "within popStruc", "across popStruc","commit"),
+         TS=NULL,ES=NULL, varComp = NULL, popStruc = NULL, VC.est = c("commit",
          "ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,
-	 burnIn=1000,thin=10)
+	       burnIn=1000,thin=10)
 }
 \arguments{
   \item{gpData}{Object of class \code{gpData}
@@ -31,9 +31,9 @@ If no covariance is given, the identity matrix an genotypes are used for a marke
 }
   \item{sampling}{Different sampling strategies can be \code{"random"}, \code{"within popStruc"} or \code{"across popStruc"}. If sampling is \code{"commit"} test sets have to specified in TS.
 }
-  \item{TS}{A list of vectors with IDs for the test set in each fold within a list of replications, same layout as output for \code{id.TS} .
+  \item{TS}{A (optional) list of vectors with IDs for the test set in each fold within a list of replications, same layout as output for \code{id.TS} .
 }
-  \item{ES}{A list of IDs for the estimation set in each fold within each replication.
+  \item{ES}{A (optional) list of IDs for the estimation set in each fold within each replication.
 }
   \item{varComp}{A \code{vector} of variance components for the random effects, which has to be specified if \code{VC.est="commit"}. The first variance components should be 
 the same order as the given covariance matrices, the last given variance component is for the residuals.

@@ -44,7 +44,7 @@ further arguments to be used by the genomic prediction models, i.e. prior values
 }
 }
 \details{
-Only a subset of the individuals - the training set - is used for the model fit. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen.
+Only a subset of the individuals - the training set - is used for the model fit. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen. Marker effects for \code{model=BLUP} are extracted from the corresponding G-BLUP model using their functional relationship. In this case, \code{fit} reports the G-BLUP model
 }
 \value{
 Object of class \code{gpMod} which is a list of
@@ -59,8 +59,8 @@ Object of class \code{gpMod} which is a list of
 The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload
 }
 \references{
-Clifford D, McCullagh P (2009). regress: Gaussian Linear Models with Linear Covariance
-Structure. R package version 1.1-2, URL http://www.csiro.au.
+Clifford D, McCullagh P (2011). regress: Gaussian Linear Models with Linear Covariance
+Structure. R package version 1.3-4, URL http://www.csiro.au.
 
 Gustavo de los Campos and Paulino Perez Rodriguez, (2010). BLR:
 Bayesian Linear Regression. R package version 1.2.
@@ -78,13 +78,17 @@ data(maize)
 maizeC <- codeGeno(maize)
 
 # pedigree-based (expected) kinship matrix
-A <- kin(maizeC,ret="kin",DH=maize$covar$DH)
+K <- kin(maizeC,ret="kin",DH=maize$covar$DH)
 
 # marker-based (realized) relationship matrix
-U <- kin(maizeC,ret="realized")/4
+# divide by an additional factor 2
+# because marker variance for DH lines is 4p(1-p), not 2p(1-p)
+U <- kin(maizeC,ret="realized")/2
 
 # BLUP models
-mod1 <- gpMod(maizeC,model="BLUP",kin=A)
+# P-BLUP
+mod1 <- gpMod(maizeC,model="BLUP",kin=K)
+# G-BLUP
 mod2 <- gpMod(maizeC,model="BLUP",kin=U)
 
 # Bayesian Lasso
@@ -94,5 +98,4 @@ mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)
 summary(mod1)
 summary(mod2)
 summary(mod3)
-
 }
