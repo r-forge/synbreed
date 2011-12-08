@@ -6,7 +6,7 @@
 LD Heatmap
 }
 \description{
-Computation of pairwise LD as \eqn{R^2} for marker data and plot of LD heatmap for each linkage group (chromosome)
+Visualization of pairwise LD in LD heatmap for each linkage group (chromosome) using the \code{LDheatmap} package.
 }
 \usage{
 LDMap(LDmat,gpData,chr=NULL,file=NULL,...)

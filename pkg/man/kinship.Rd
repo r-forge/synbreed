@@ -14,17 +14,17 @@ kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin")
 object of class \code{gpData}
 }
   \item{ret}{
-character. The type of relationship matrix to be returned. See 'Details'.
+\code{character}. The type of relationship matrix to be returned. See 'Details'.
 }
   \item{DH}{
-logical vector of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line and \code{FALSE} or 0 otherwise. Only used for pedigree based relatedness
+\code{logical} vector of length \eqn{n}. \code{TRUE} or 1 if individual is a DH line and \code{FALSE} or 0 otherwise. Only used for pedigree based relatedness coefficients
 }
 }
 \details{
 
 \bold{Pedigree based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"}, and \code{"gam"})}
 
-Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{pedigree} must be available in the object of class \code{gpData}. In all cases, the first step is to build the gametic relationship is . The gametic relationship is of order 2\eqn{n} as each individual A has two alleles (\eqn{A1} and \eqn{A2}). The gametic relationship
+Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{pedigree} must be available in the object of class \code{gpData}. In all cases, the first step is to build the gametic relationship. The gametic relationship is of order 2\eqn{n} as each individual has two alleles (e.g. for individual \eqn{A} \eqn{A1} and \eqn{A2}). The gametic relationship
 is defined as the matrix of probabilities that two genes are identical by descent (IBD).  Note that the diagonal elements of the gametic relationship matrix are 1. The off-diagonals of individuals with unknown pedigree are 0. If \code{ret="gam"} is specified, the gametic relationship matrix constructed by pedigree is returned.
 
 The gametic relationship matrix can be used to set up other types of relationship matrices. If \code{ret="add"}, the additive numerator relationship matrix is returned. The additive relationship of individuals A (alleles \eqn{A1,A2}) and B (alleles \eqn{B1,B2}) is given by  the entries of the gametic relationship matrix
@@ -39,7 +39,7 @@ where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matr
 
 Function \code{kin} provides different types of measures for marker based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
 
-If \code{ret="realized"}, the realized relatedness between individuals is computed according to the formulas in Habier et al. (2007) or vanRaden(2008)
+If \code{ret="realized"}, the realized relatedness between individuals is computed according to the formulas in Habier et al. (2007) or vanRaden (2008)
 \deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=W-P} and \eqn{W} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
 
 If \code{ret="realizedAB"}, the realized relatedness between individuals is computed according to the formula in Astle and Balding (2009)
@@ -64,7 +64,6 @@ vanRaden, P. (2008). Efficient methods to compute genomic predictions.
 Journal of Dairy Science, 91:4414 -- 4423.
 
 Astle, W., and D.J. Balding (2009). Population Structure and Cryptic Relatedness in Genetic Association Studies. Statistical Science, 24(4), 451 -- 471.
-
 
 Rogers, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
 VII, volume 7213. Univ. of Texas, Austin

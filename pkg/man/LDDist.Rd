@@ -6,7 +6,7 @@
 LD versus distance Plot
 }
 \description{
-Visualization of pairwise LD measured as. A single plot is generated for every chromosome. 
+Visualization of pairwise LD versus distance. A single plot is generated for every chromosome.
 }
 \usage{
 LDDist(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...)

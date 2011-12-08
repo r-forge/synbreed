@@ -8,7 +8,8 @@ Manhattan plot for SNP effects
 Plot of SNP effect along the chromosome
 }
 \usage{
-manhattanPlot(b, gpData = NULL, colored = FALSE, add = FALSE, pch = 19, ylab = NULL, ...)
+manhattanPlot(b, gpData = NULL, colored = FALSE, add = FALSE,
+ pch = 19, ylab = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,6 +42,7 @@ Valentin Wimmer
 
 \examples{
 data(mice)
+# plot only random noise
 b <- rexp(ncol(mice$geno),3)
 manhattanPlot(b,mice)
 }

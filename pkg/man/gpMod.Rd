@@ -6,12 +6,13 @@ Genomic predictions models for objects of class gpData
 }
 \description{
 This function can be used to fit genomic prediction models to an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
-BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2009). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an opject of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
+BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2011). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an opject of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
 
 
 }
 \usage{
-gpMod(gpData, model = c("BLUP","BL","BRR"), kin = NULL, trait = 1, repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
+gpMod(gpData, model = c("BLUP","BL","BRR"), kin = NULL, trait = 1,
+repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,11 +53,11 @@ Object of class \code{gpMod} which is a list of
 \item{model}{The model type, see 'Arguments'}
 \item{y}{The phenotypic records for the individuals in the training set}
 \item{g}{The predicted genetic values for the individuals in the training set}
-\item{m}{Predicted SNP effects (for \code{modRR}, \code{modBL} and \code{modBRR})}
+\item{m}{Predicted SNP effects (if available)}
 \item{kin}{Matrix \code{kin}}
 }
 \note{
-The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload
+The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload.
 }
 \references{
 Clifford D, McCullagh P (2011). regress: Gaussian Linear Models with Linear Covariance
