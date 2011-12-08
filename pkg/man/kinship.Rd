@@ -7,7 +7,7 @@ Relatedness based on pedigree or marker data
 This function implements different measures of relatedness between individuals in a object of class \code{gpData}: (1) Expected relatedness based on pedigree and (2) realized relatedness based on marker data. See 'Details'.  The function uses as first argument an object of class \code{gpData}. An argument \code{ret} controls the type of relatedness coefficient. 
 }
 \usage{
-kin(gpData,ret=c("add","kin","dom","gam","realized","sm","sm-smin"),DH=NULL)
+kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL)
 }
 \arguments{
   \item{gpData}{
@@ -35,12 +35,15 @@ If \code{ret="dom"}, the dominance relationship matrix is returned. The dominanc
 \deqn{\left[(A1,B1) \cdot (A2,B2) + (A1,B2) \cdot (A2,B1)\right],}{[(A1,B1) * (A2,B2) + (A1,B2) * (A2,B1)],} 
 where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matrix. 
 
-\bold{Marker based relatedness (return arguments \code{"realized"}, \code{"sm"}, and \code{"sm-smin"})}
+\bold{Marker based relatedness (return arguments \code{"realized"},\code{"realizedAB"}, \code{"sm"}, and \code{"sm-smin"})}
 
-Function \code{kin} provides different types of measures for pedigree based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
+Function \code{kin} provides different types of measures for marker based relatedness. A element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be code by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
 
 If \code{ret="realized"}, the realized relatedness between individuals is computed according to the formulas in Habier et al. (2007) or vanRaden(2008)
-\deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=M-P} and \eqn{M} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
+\deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=W-P} and \eqn{W} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
+
+If \code{ret="realizedAB"}, the realized relatedness between individuals is computed according to the formula in Astle and Balding (2009)
+\deqn{U = \frac{1}{M} \sum \frac{(m_i-2p_i)(m_i-2p_i)'}{2p_i(1-p_i)}}{1/M sum((mi-2pi)(mi-2pi)'/(2pi(1-pi)))} where \eqn{m_i}{mi} is the marker genotype, \eqn{p_i}{pi} is the allele frequency at marker locus \eqn{i}, and \eqn{M} is the number of marker loci. 
 
 If \code{ret="sm"}, the realized relatedness between individuals is computed according to the simple matching coefficient (Reif et al. 2005). The simple matching coefficient counts the number of shared alleles across loci. It could only be applied to homozygous inbred lines, i.e. only genotypes 0 and 2. To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) correct the simple matching coefficient by the minimum of observed simple matching coefficients
 \deqn{\frac{s-s_{min}}{1-s_{min}}}{s-smin/(1-smin)}
@@ -59,6 +62,9 @@ on Genome-Assisted Breeding Values. Genetics, 177, 2389 -- 2397.
 
 vanRaden, P. (2008). Efficient methods to compute genomic predictions.
 Journal of Dairy Science, 91:4414 -- 4423.
+
+Astle, W., and D.J. Balding (2009). Population Structure and Cryptic Relatedness in Genetic Association Studies. Statistical Science, 24(4), 451 -- 471.
+
 
 Rogers, J., 1972 Measures of genetic similarity and genetic distance. In Studies in genetics
 VII, volume 7213. Univ. of Texas, Austin
