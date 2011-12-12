@@ -6,7 +6,7 @@
 ## date : 2011 - 11 - 30
 ##
 ##############################################
-
+rm(list=ls())
 set.seed(19810703)
 # number of locations
 nLoc <- 3
@@ -56,3 +56,14 @@ testMod2 <- gpMod (gpData=gpTest, model="BLUP", trait=1:3, repl=NULL, markerEffe
 summary(testMod2)
 testMod3 <- gpMod (gpData=gpTest, model="BLUP", trait=1:3, repl=NULL, markerEffects=TRUE)
 summary(testMod3)
+
+mod1 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
+source("D:/Pflanzenzuechtung/R-Codes/regress/R/reml.R")
+mod1a <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
+source("D:/Rsynbreed/pkg/R/gpMod.r")
+source("D:/Pflanzenzuechtung/R-Codes/regress1.2.R")
+mod2 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
+source("D:/Pflanzenzuechtung/R-Codes/regress1.3.R")
+mod3 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=1, repl=NULL, markerEffects=FALSE, fixed=~loc, random=~repl)
+source("D:/Pflanzenzuechtung/R-Codes/regress1.3-2.R")
+mod4 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=1, repl=NULL, markerEffects=FALSE, fixed=~loc, random=~repl)

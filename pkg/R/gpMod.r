@@ -43,10 +43,11 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
       res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
-      us <- BLUP(res)$Mean
-      genVal <- us[grep("kinTS", names(us))]
-      genVal <- genVal[!duplicated(names(genVal))]
-      names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
+#      us <- BLUP(res)$Mean
+#      genVal <- us[grep("kinTS", names(us))]
+#      genVal <- genVal[!duplicated(names(genVal))]
+#      names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
+genVal<-NULL
       if(markerEffects){
         sigma2u <- res$sigma["kinTS"]
         p <- colMeans(gpData$geno)/2
