@@ -19,8 +19,10 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
+# transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP 
+      if(markerEffects) kin <- tcrossprod(gpData$geno) 
     } else{ 
-      if(markerEffects) warning("Be aware that ", substitute(kin), " is the realized relationship matrix without any changes!")
+      if(markerEffects) kin <- tcrossprod(gpData$geno)
     }
   for(i in trait){
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
@@ -49,11 +51,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
       # genVal <- NULL
       if(markerEffects){
-        sigma2u <- res$sigma["kinTS"]
-        p <- colMeans(gpData$geno)/2
-        sumP <- 2*sum(p*(1-p))
-        # use transformation rule for vc (Albrecht et al. 2011)
-        sigma2m <- sigma2u/sumP
+        sigma2m <- res$sigma["kinTS"]
         # set up design matrices
         Z <- NULL; X <- NULL
         X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
