@@ -32,7 +32,7 @@ object of class \code{relationshipMatrix}. Kinship structure to be used in the B
 \code{numeric} or \code{character}. A vector with names or numbers of the repeated values of \code{gpData$pheno} to fit the model
 }
   \item{markerEffects}{
-  If fitted a BLUP-model the effects of markers can be calculated. NOTE: This gives only meaningful results, if the realized kinship of the function \code{kin} is used without changes!
+  If fitted a BLUP-model the effects of markers can be calculated, i.e. Random Regression BLUP. In this case, the Matrix \code{kin} is calculated as the transposed crossproduct of the genotype martix.
 }
   \item{fixed}{
   A formula for fixed effects. The details of model specification are the same as for \code{lm} exept that you do not have to specify the left side of the model.
@@ -83,7 +83,7 @@ K <- kin(maizeC,ret="kin",DH=maize$covar$DH)
 
 # marker-based (realized) relationship matrix
 # divide by an additional factor 2
-# because marker variance for DH lines is 4p(1-p), not 2p(1-p)
+# because for testcross prediction the kinship of DH lines is used
 U <- kin(maizeC,ret="realized")/2
 
 # BLUP models
