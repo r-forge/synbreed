@@ -5,7 +5,7 @@
 Writing relationshipMatrix in table format
 }
 \description{
-This function could be used to write an object of class "relationshipMatrix" in table format to file in a way that it could be used by other software, i.e. WOMBAT or ASReml.  The table has three columns, the row, the column and the entry of the (inverse) relationshipMatrix.
+This function could be used to write an object of class "relationshipMatrix" in the table format used by other software, i.e. WOMBAT or ASReml.  The table has three columns, the row, the column and the entry of the (inverse) relationshipMatrix.
 }
 \usage{
 write.relationshipMatrix(relationshipMatrix, file = NULL, 

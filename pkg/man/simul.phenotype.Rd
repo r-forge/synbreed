@@ -23,7 +23,7 @@ object of class "pedigree"
 object of class "relationshipMatrix"
 }
   \item{mu}{
-Numeric; Overall mean of the trait.
+\code{numeric}; Overall mean of the trait.
 }
   \item{vc}{
 list containing the variance components. \code{vc} consists of elements \code{sigma2e}, \code{sigma2a}, \code{sigma2l}, \code{sigma2b} with the variance components of the residual, the additive genetic effect,
@@ -42,7 +42,7 @@ use identity matrix for \code{A}. True breeding values for \eqn{N} individuals i
 \deqn{tbv \sim N(0,\bf A \sigma_a^2)}{tbv = chol(A)*sigma2a*rnorm(N,0,1)}       
 Observations are simulated according to
 \deqn{y \sim N(mu + tbv + block +loc,\sigma^2_e)}{}
-If now location or block effects should appear, Use \code{sigma2l=0} and/or \code{sigma2b=0}.
+If now location or block effects should appear, use \code{sigma2l=0} and/or \code{sigma2b=0}.
 }
 \value{
 A \code{data.frame} with containing the simulated values for trait and the following variables

@@ -16,16 +16,16 @@ plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL,...)
 object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances)
 }                                                                                  
   \item{dense}{
-\code{logical}. Should visualization for high-density genetic maps be used?
+\code{logical}. Should density visualization for high-density genetic maps be used?
 }
   \item{nMarker}{
-\code{logical}. Add number of markers for each chromosome?
+\code{logical}. Print number of markers for each chromosome?
 }
   \item{bw}{
 \code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution.
 }
   \item{centr}{
-Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize are used.
+\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize are used.
 }
   \item{\dots}{
 further graphical arguments for function \code{plot}

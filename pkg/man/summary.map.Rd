@@ -5,7 +5,7 @@
 Summarizing marker map information
 }
 \description{
-This function could be used to summarize information from a marker map.  Return value is a \code{data.frame} with one row for each chromosome and one row summarazing all chromosomes.
+This function could be used to summarize information from a marker map.  Return value is a \code{data.frame} with one row for each chromosome and one row summarizing all chromosomes.
 }
 \usage{
 summaryGenMap(map)

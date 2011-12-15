@@ -5,7 +5,7 @@
 Simulation of pedigree structure
 }
 \description{
-This function could be used to simulate pedigree structure for a given number of generations. Function uses random mating within generations. Fully inbred may be generated optionally using selfing.
+This function could be used to simulate a pedigree for a given number of generations and individuals. Function uses random mating within generations. Fully inbred may be generated optionally using selfing.
 }
 \usage{
 simul.pedigree(generations = 2, ids = 4, animals=FALSE,familySize=1)
@@ -13,20 +13,20 @@ simul.pedigree(generations = 2, ids = 4, animals=FALSE,familySize=1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{generations}{
-integer. Number of generations to simulate
+\code{integer}. Number of generations to simulate
 }
   \item{ids}{
-integer or vector of integers. Number of genotypes in each generation. If length equal one, the same number will be replicated and used for each generation.
+\code{integer} or vector of integers. Number of genotypes in each generation. If length equal one, the same number will be replicated and used for each generation.
 }
   \item{animals}{
-logical. Should a pedigree for animals be simulated? See details. 
+\code{logical}. Should a pedigree for animals be simulated? See details.
 }  
   \item{familySize}{
-numeric. Number of individuals in each full-sib family in the last generation.
+\code{numeric}. Number of individuals in each full-sib family in the last generation.
 }  
 }
 \details{                                
-If \code{animals=FALSE} the parents for the F1 will be randomly chosen out of the genotypes in F0. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE} each  ID is either sire or dam. Each ID is progeny of one sire and one dam.
+If \code{animals=FALSE} the parents for the current generation will be randomly chosen out of the genotypes in the last generation. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE} each  ID is either sire or dam. Each ID is progeny of one sire and one dam.
 }
 \value{
 An object of class \code{pedigree} with N=sum(ids) genotypes.

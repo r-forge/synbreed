@@ -5,7 +5,7 @@
 Prepare genotypic data for Beagle
 }
 \description{
-Create input file for Beagle software (Browning and Browning 2009) from a \code{gpData} object. This function is created for usage within function \code{codeGeno}. 
+Create input file for Beagle software (Browning and Browning 2009) from a \code{gpData} object. This function is created for usage within function \code{codeGeno} for imputing missing values.
 }
 \usage{
 write.beagle(gp, wdir = getwd(), prefix)

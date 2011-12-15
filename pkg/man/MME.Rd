@@ -17,10 +17,10 @@ Design matrix for fixed effects
 Design matrix for random effects
 }
   \item{GI}{
-Inverse of (estimated) variance-covariance matrix of random effects
+Inverse of (estimated) variance-covariance matrix of random (genetic) effects multplied by the ratio of residual to genetic variance
 }
   \item{RI}{
-Inverse of (estimated) variance-covariance matrix of residuals
+Inverse of (estimated) variance-covariance matrix of residuals (without multiplying with a constant, i.e. \eqn{\sigma^2_e}{sigma2e})
 }
   \item{y}{
 Vector of phenotypic records
@@ -55,5 +55,26 @@ Valentin Wimmer
 }
 \seealso{
 \code{\link[regress]{regress}}, \code{\link{crossVal}}
+}
+\examples{
+data(maize)
+
+# realized kinship matrix
+U <- kin(codeGeno(maize),ret="realized")/2
+
+# solution with gpMod
+m <- gpMod(maize,kin=U,model="BLUP")
+
+# solution with MME
+diag(U) <- diag(U) + 0.000001
+GI <- solve(U)*(m$fit$sigma[2]/ m$fit$sigma[1])
+y <- maize$pheno[,1,]
+n <- length(y)
+X <- matrix(1,ncol=1,nrow=n)
+mme <- MME(y=y,Z=diag(n),GI=GI,X=X,RI=diag(n))
+
+# comparison
+head(m$fit$predicted[,1]-m$fit$beta)
+head(mme$u)
 }
 

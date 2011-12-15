@@ -16,13 +16,13 @@ S3 \code{predict} method for objects of class \code{gpMod}. A genomic prediction
 object of class \code{gpMod} which is the model used for the prediction.
 }
   \item{newdata}{
-for \code{model="modRR"}, \code{"modBL"} or \code{"modBRR"} an object of class \code{gpData} with the marker data of the unphenotyped individuals. For \code{model="modA"} and  \code{model="modU"}, a \code{character} vector with the names of the individuals to predict. If \code{newdata=NULL},  the genetic performances of the individuals for the training set is returned.
+for \code{model="BL"} and \code{"BRR"} an object of class \code{gpData} with the marker data of the unphenotyped individuals. For \code{model="BLUP"} a \code{character} vector with the names of the individuals to predict. If \code{newdata=NULL},  the genetic performances of the individuals for the training set are returned.
 }
 \item{...}{not used
 }
 }
 \details{
-For models, \code{model="modRR"}, \code{"modBL"} and \code{"modBRR" } the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat} For the prediction using \code{model="modA"} and  \code{model="modU"}, the  relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}.
+For models, \code{model="RR"} and \code{"BL"} the prediction for the unphenotyped individuals is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat} with the estimates taken from the \code{gpMod} object. For the prediction using \code{model="BLUP"}, the full relationship matrix including individuals of the training set and the prediction set must be specified in the \code{gpMod}. This model is used to predict the unphenotyped individuals of the prediction set by solving the corresponding mixed model equations using the variance components of the fit in \code{gpMod}.
 }
 \value{
 a named vector with the predicted genetic values for all individuals in \code{newdata}.
