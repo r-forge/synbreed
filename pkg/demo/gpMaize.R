@@ -28,7 +28,7 @@ maizeC <- codeGeno(maize)
 # formula of Habier et al (2007) must
 # be corrected by an additional factor 4
 U <- kin(maizeC,ret="realized")
-U <- U/4
+U <- U/2
 
 # compute the pedigree-based kinship
 A <- kin(maizeC,ret="kin",DH=maize$covar$DH)
