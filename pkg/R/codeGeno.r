@@ -338,8 +338,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         output <- system(paste("java -Xmx1000m -jar ", .path.package()[grep("synbreed", .path.package())],
                      "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
                      intern=!showBeagleOutput)
-        system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
-      
+        if(.Platform$OS.type == "unix") system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
+        if(.Platform$OS.type == "windows") shell(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
+
         # read data from beagle
         resTEMP <- read.table(paste("beagle/",pre,"input.bgl.dose",sep=""),header=TRUE,row.names=1)
         resTEMP <- t(resTEMP[,-c(1:2)])
