@@ -8,15 +8,17 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
     
-    # number of individuals
-    n <- length(dataSet)
-
     # constructing design matrices
     y <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=TRUE)
     if (ncol(y)>2) colnames(y)[3] <- "TRAIT"
     if (ncol(y)<=2) colnames(y)[2] <- "TRAIT"
     # remove observations with missing values in the trait
+    y <- na.omit(y)
     dataSet <- dataSet[dataSet  %in% unique(y$ID)]
+    y <- y[y$ID %in% dataSet, ]
+
+    # number of individuals
+    n <- length(dataSet)
 
     if (ncol(y) <=2){
 	X <- matrix(rep(1,n,ncol=1))
@@ -276,10 +278,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
 			# data output for ASReml
 			if(RR){
-			   y.sampGeno <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=FALSE)
-			   y.Geno <- y.sampGeno[, (ncol(y.sampGeno)-ncol(gpData$geno)+1):ncol(y.sampGeno)]
-			   if(ncol(y)<=2) y.samp <- cbind(y.samp,y.Geno)
-			   if(ncol(y)>2) y.samp <- cbind(y.samp[ ,1:3],y.Geno)
+			   if(ncol(y)<=2) y.samp <- cbind(y.samp,Z)
+			   if(ncol(y)>2) y.samp <- cbind(y.samp[ ,1:3],Z)
 			}
 			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 
@@ -295,22 +295,30 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		}
 
 		# for windows
-		#if(.Platform$OS.type == "windows"){
+		if(.Platform$OS.type == "windows"){
 
 			# checking directories for ASReml
-		#	ASTest <- shell(paste("dir /b"),intern=TRUE)
-		#	if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
+			ASTest <- shell(paste("dir /b"),intern=TRUE)
+			if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
+
 			# data output for ASReml
-		#	write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+			if(RR){
+			   if(ncol(y)<=2) y.samp <- cbind(y.samp,Z)
+			   if(ncol(y)>2) y.samp <- cbind(y.samp[ ,1:3],Z)
+			}
+
+			# data output for ASReml
+			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 			# ASReml function
-		#	system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
-		##	system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
-		#	shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-		#	shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-		#	shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-		#	shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-		#	shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
-		#}
+			system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
+			system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
+
+			shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+			shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
+		}
 
 		# read in ASReml solutions
 		asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
