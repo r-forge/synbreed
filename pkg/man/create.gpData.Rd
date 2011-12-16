@@ -9,8 +9,8 @@ This function combines all raw data sources in a single, unified data object of 
 }
 \usage{                                                                                         
 create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL,
-  family = NULL, covar = NULL, reorderMap = TRUE, map.unit = "cM",
-  repeated  = NULL, modCovar = NULL)
+              family = NULL, covar = NULL, reorderMap = TRUE, 
+              map.unit = "cM", repeated  = NULL, modCovar = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

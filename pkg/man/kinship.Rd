@@ -7,7 +7,8 @@ Relatedness based on pedigree or marker data
 This function implements different measures of relatedness between individuals in a object of class \code{gpData}: (1) Expected relatedness based on pedigree and (2) realized relatedness based on marker data. See 'Details'.  The function uses as first argument an object of class \code{gpData}. An argument \code{ret} controls the type of relatedness coefficient. 
 }
 \usage{
-kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL)
+kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),
+    DH=NULL)
 }
 \arguments{
   \item{gpData}{
@@ -43,7 +44,7 @@ If \code{ret="realized"}, the realized relatedness between individuals is comput
 \deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=W-P} and \eqn{W} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}. 
 
 If \code{ret="realizedAB"}, the realized relatedness between individuals is computed according to the formula in Astle and Balding (2009)
-\deqn{U = \frac{1}{M} \sum \frac{(m_i-2p_i)(m_i-2p_i)'}{2p_i(1-p_i)}}{1/M sum((mi-2pi)(mi-2pi)'/(2pi(1-pi)))} where \eqn{m_i}{mi} is the marker genotype, \eqn{p_i}{pi} is the allele frequency at marker locus \eqn{i}, and \eqn{M} is the number of marker loci. 
+\deqn{U = \frac{1}{M} \sum \frac{(w_i-2p_i)(w_i-2p_i)'}{2p_i(1-p_i)}}{1/M sum((wi-2pi)(wi-2pi)'/(2pi(1-pi)))} where \eqn{w_i}{wi} is the marker genotype, \eqn{p_i}{pi} is the allele frequency at marker locus \eqn{i}, and \eqn{M} is the number of marker loci. 
 
 If \code{ret="sm"}, the realized relatedness between individuals is computed according to the simple matching coefficient (Reif et al. 2005). The simple matching coefficient counts the number of shared alleles across loci. It could only be applied to homozygous inbred lines, i.e. only genotypes 0 and 2. To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) correct the simple matching coefficient by the minimum of observed simple matching coefficients
 \deqn{\frac{s-s_{min}}{1-s_{min}}}{s-smin/(1-smin)}
@@ -53,7 +54,7 @@ where \eqn{s} is the matrix of simple matching coefficients. This formula is use
 An object of class "relationshipMatrix".
 }
 \author{
-Valentin Wimmer
+Valentin Wimmer and Theresa Albrecht
 }
 \references{
 

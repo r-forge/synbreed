@@ -9,7 +9,8 @@ This function could be used to write an object of class "relationshipMatrix" in 
 }
 \usage{
 write.relationshipMatrix(relationshipMatrix, file = NULL, 
-sorting=c("WOMBAT","ASReml"), type=c("ginv", "inv", "none"), digits = 10)
+                  sorting=c("WOMBAT","ASReml"), 
+                  type=c("ginv", "inv", "none"), digits = 10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

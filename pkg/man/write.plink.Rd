@@ -9,7 +9,7 @@ Create input files and corresponding script for PLINK (Purcell et al. 2007) to c
 }
 \usage{
 write.plink(gp, wdir = getwd(), prefix = paste(substitute(gp)),
-ld.threshold = 0, type = c("data.frame", "matrix"))
+            ld.threshold = 0, type = c("data.frame", "matrix"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

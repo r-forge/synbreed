@@ -6,13 +6,13 @@ Genomic predictions models for objects of class gpData
 }
 \description{
 This function can be used to fit genomic prediction models to an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
-BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2011). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an opject of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
+BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2011). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
 
 
 }
 \usage{
 gpMod(gpData, model = c("BLUP","BL","BRR"), kin = NULL, trait = 1,
-repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
+      repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +23,7 @@ object of class \code{gpData}
 \code{character}. The model to use. \code{"BL"} and \code{"BRR"} are at the moment only for two-stage analysis. So you have to fit a model for phenotypic covariats first.
 }
   \item{kin}{
-object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as addtional polygenic effect \eqn{u} in the Bayesian regression models.
+object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as additional polygenic effect \eqn{u} in the Bayesian regression models.
 }
   \item{trait}{
 \code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model
@@ -32,7 +32,7 @@ object of class \code{relationshipMatrix}. Kinship structure to be used in the B
 \code{numeric} or \code{character}. A vector with names or numbers of the repeated values of \code{gpData$pheno} to fit the model
 }
   \item{markerEffects}{
-  If fitted a BLUP-model the effects of markers can be calculated, i.e. Random Regression BLUP. In this case, the Matrix \code{kin} is calculated as the transposed crossproduct of the genotype martix.
+  If fitted a BLUP model the effects of markers can be calculated, i.e. Random Regression BLUP. In this case, the matrix \code{kin} is calculated as the transposed crossproduct of the genotype matrix.
 }
   \item{fixed}{
   A formula for fixed effects. The details of model specification are the same as for \code{lm} exept that you do not have to specify the left side of the model.
@@ -69,7 +69,7 @@ http://CRAN.R-project.org/package=BLR
 
 }
 \author{
-Valentin Wimmer and Hans-Juergen Auinger
+Valentin Wimmer, Hans-Juergen Auinger, and Theresa Albrecht
 }
 \seealso{
 \code{\link{kin}}, \code{\link{crossVal}}

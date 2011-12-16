@@ -9,7 +9,7 @@ This function adds new data for individuals to an object of class \code{gpData} 
 }
 \usage{
 add.individuals(gpData, pheno = NULL, geno = NULL,
- pedigree = NULL, covar = NULL, repl=NULL)
+                pedigree = NULL, covar = NULL, repl=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

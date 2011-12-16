@@ -9,7 +9,7 @@ Compute pairwise LD between markers measured as \eqn{r^2}{r2} using an object of
 }
 \usage{
 pairwiseLD(gpData, chr = NULL, type = c("data.frame", "matrix"),
-use.plink=FALSE, ld.threshold=0, rm.unmapped = TRUE)
+           use.plink=FALSE, ld.threshold=0, rm.unmapped = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

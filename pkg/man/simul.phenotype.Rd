@@ -11,8 +11,8 @@ The field trial consists of multiple locations and randomized complete block des
 A single quantitative trait is simulated according to the model \code{Trait ~ id(A) + block + loc + e}.
 }
 \usage{
-simul.phenotype(pedigree = NULL, A = NULL, mu = 100, 
-vc = NULL, Nloc = 1, Nrepl = 1)
+simul.phenotype(pedigree = NULL, A = NULL, mu = 100, vc = NULL,
+                Nloc = 1, Nrepl = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

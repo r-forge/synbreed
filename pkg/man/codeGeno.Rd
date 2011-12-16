@@ -11,9 +11,9 @@ Imputing of missing values can be done by random sampling from allele distributi
 }
 \usage{
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
-"beagle", "beagleAfterFamily","fix"),replace.value=NULL,maf=NULL,nmiss=NULL,
-label.heter="AB",keep.identical=TRUE,verbose=FALSE,minFam=5,
-showBeagleOutput=FALSE, tester=NULL)
+         "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
+         nmiss=NULL, label.heter="AB", keep.identical=TRUE, verbose=FALSE, 
+         minFam=5, showBeagleOutput=FALSE, tester=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,7 +45,7 @@ This is either a scalar or vector of characters to identify heterozygous genotyp
 \code{logical}. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is useful to obtain numbers of discarded markers due to different criteria.
  }
  \item{minFam}{
-For \code{impute.type} \code{family} and \code{beagleAfterFamily} have to have at least \code{minFam} members available information for a marker to impute missing values according to the family. The default is 5.
+For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family should have at least \code{minFam} members with available information for a marker to impute missing values according to the family. The default is 5.
  }
  \item{showBeagleOutput}{
 \code{logical}. Do you like to see the output of the Beagle software package. The default is \code{FASLE}.

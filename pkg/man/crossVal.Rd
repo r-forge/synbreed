@@ -12,8 +12,7 @@ and variance components can be committed or reestimated with ASReml or the BLR f
 crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL, 
          sampling = c("random", "within popStruc", "across popStruc","commit"),
          TS=NULL,ES=NULL, varComp = NULL, popStruc = NULL, VC.est = c("commit",
-         "ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,
-	       burnIn=1000,thin=10)
+         "ASReml","BRR","BL"),verbose=TRUE,...)
 }
 \arguments{
   \item{gpData}{Object of class \code{gpData}
@@ -21,7 +20,7 @@ crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
   \item{trait}{\code{numeric} or \code{character}. The name or number of the trait to be selected out of \code{gpData}
 }
   \item{cov.matrix}{\code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
-If no covariance is given, the identity matrix an genotypes are used for a marker regression.
+If no covariance is given, an identity matrix and genotypes are used for a marker regression.
 }
   \item{k}{Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}].
 }
@@ -41,13 +40,12 @@ the same order as the given covariance matrices, the last given variance compone
   \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no popStruc is defined, family information of \code{gpData} is used.
 }
   \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with a Bayesian approach "\code{BRR}" and "\code{BL}" within the estimation set of each fold in the cross validation? If
-\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system (not yet for Windows).
-}
-  \item{priorBLR}{For \code{VC.est="BRR"} and \code{VC.est="BL"}, a list with priors for the BLR function as described in the BLR-manual for varE, varBR or lambda. 
+\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system.
 }
   \item{verbose}{Logical. Whether output shows replications and folds.
 }
-  \item{nIter, burnIn, thin}{Number of iterations, burn-in and thinning for \code{VC.est="BRR"} and \code{VC.est="BL"} in the BLR-function
+  \item{\dots}{
+further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BLR]{BLR}}).
 }
 }
 \details{
@@ -73,8 +71,9 @@ A object of class \code{list} with following items:
 \item{y.TS}{Predicted values of all test sets within each replication.}
 \item{n.TS}{Size of the test set in each fold.}
 \item{id.TS}{List of IDs of each test sets within a list of each replication.}
-\item{PredAbi}{Predictive ability of each fold within each replication calculated as \eqn{r(y_{TS},\hat y_{TS})} .}
-\item{rankCor}{Spearman's rank correlation of each fold within each replication calculated between y_{TS} and \eqn{\hat y_{TS}} .}
+\item{PredAbi}{Predictive ability of each fold within each replication calculated as \eqn{r(y_{TS},\hat y_{TS})}.}
+\item{rankCor}{Spearman's rank correlation of each fold within each replication calculated between \eqn{y_{TS}} and \eqn{\hat y_{TS}}.}
+\item{mse}{Mean squared error of each fold within each replication calculated between \eqn{y_{TS}} and \eqn{\hat y_{TS}}.}
 \item{bias}{Regression coefficients of a regression of the observed values on the predicted values in the TS. 
 A regression coefficient \eqn{< 1} implies extreme high (low) values of the predicted values over- (under-) estimated the observed values, and vice versa for a regression coefficient \eqn{> 1}.}
 \item{m10}{Mean of observed values for the 10\% best predicted of each replication. The k test sets are pooled within each replication.}

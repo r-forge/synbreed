@@ -9,7 +9,7 @@ Plot of SNP effect along the chromosome
 }
 \usage{
 manhattanPlot(b, gpData = NULL, colored = FALSE, add = FALSE,
- pch = 19, ylab = NULL, ...)
+              pch = 19, ylab = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
