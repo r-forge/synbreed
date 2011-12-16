@@ -102,7 +102,8 @@ summary(gp)
 
 # 9 plants with 2 phenotypes , 3 reps
 n <- 9  #
-pheno <- data.frame(ID = rep(letters[1:n],3), rep = rep(1:3,each=n), Yield = rnorm(3*n,200,5), Height=rnorm(3*n,100,1))
+pheno <- data.frame(ID = rep(letters[1:n],3), rep = rep(1:3,each=n), 
+                    Yield = rnorm(3*n,200,5), Height=rnorm(3*n,100,1))
 
 # combine in one object
 gp2 <- create.gpData(pheno,geno,map,repeated="rep")
