@@ -1,4 +1,4 @@
-plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1,centr=NULL, ...)
+plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ...)
 {
     if (class(map) == "gpData"){
        map.unit <- map$info$map.unit
@@ -33,6 +33,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1,centr=NULL, ...
         start <- min(map$pos[map$chr == chr[i]], na.rm = TRUE)
         end <- max(map$pos[map$chr == chr[i]], na.rm = TRUE)
         x.grid[[i]] <- seq(from=start,to=end,by=bw)
+        if(length(x.grid[[i]]) > 10000) warning("large discrepancy between map length and bandwith, maybe choose a larger value for 'bw'")
         y.grid[[i]] <- rep(NA,length(x.grid))
         for(j in seq(along=x.grid[[i]])){
            y.grid[[i]][j] <- sum(map$pos[map$chr == chr[i]] >= x.grid[[i]][j]-bw/2 & map$pos[map$chr == chr[i]] <= x.grid[[i]][j]+bw/2)
