@@ -1,5 +1,5 @@
 # Cross validation with different sampling and variance components estimation methods
-crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc","commit"),TS=NULL,ES=NULL, varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),priorBLR=NULL,verbose=TRUE,nIter=5000,burnIn=1000,thin=10) 
+crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc","commit"),TS=NULL,ES=NULL, varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),verbose=FALSE,...) 
 {
     VC.est <- match.arg(VC.est)
     sampling <- match.arg(sampling)
@@ -75,13 +75,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     if ( k < 2) stop("folds should be equal or greater than 2")
     if ( k > n) stop("folds should be equal or less than the number of observations")
     if (VC.est=="commit" & !is.null(cov.matrix) & length(cov.matrix)!=length(varComp)-1) stop("number of variance components does not match given covariance matrices")
-    if(VC.est=="BL" & is.null(priorBLR)) stop("prior for varE has to be specified")
-    if(VC.est=="BRR" & is.null(priorBLR)) stop("prior for varBR and varE have to be specified")
 
     # prepare covariance matrices
     if (!is.null(cov.matrix)){
 	m <- length(cov.matrix)
-	cat("Model with ",m," covariance matrix/ces \n")
+	if(verbose) cat("Model with ",m," covariance matrix/ces \n")
 	if (VC.est=="commit"){
 	   # function for constructing GI
 	   rmat<-NULL
@@ -340,10 +338,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		}
 
 		# BRR function
-		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 		if(!is.null(cov.matrix)){
 		    covM <- as.matrix(cov.matrix[[1]])
-   		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BRR/50k_rep",i,"_fold",ii,sep="")),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+   		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 		}
 
 		# solution
@@ -365,10 +363,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		}
 
 		# BL function
-		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 		if(!is.null(cov.matrix)){
 		    covM <- as.matrix(cov.matrix[[1]])
-		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),prior=priorBLR,nIter=nIter,burnIn=burnIn,thin=thin,saveAt=paste("BL/50k_rep",i,"_fold",ii,sep="")),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 		}
 
 		# solutions of BL
