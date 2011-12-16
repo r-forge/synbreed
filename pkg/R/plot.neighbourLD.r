@@ -78,7 +78,7 @@ plotNeighbourLD <- function(LD,map,dense=FALSE,nMarker=TRUE,centr=NULL,...){
     
     # add legend
         par(mar = c(5, 1, 4, 3.8) + 0.1)
-      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=6),matrix(rep(seq(from=0,to=1,length=6),20),nrow=20,byrow=TRUE),main="r²",col=cols,axes=FALSE,xlab="")
+      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=6),matrix(rep(seq(from=0,to=1,length=6),20),nrow=20,byrow=TRUE),main=expression(paste(r^{2})),col=cols,axes=FALSE,xlab="")
       axis(side=4,at=round(seq(from=0,to=1,length=6),4),las=1)
         par(mar = c(5, 4, 4, 1) + 0.1)
 }
