@@ -12,7 +12,7 @@ and variance components can be committed or reestimated with ASReml or the BLR f
 crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL, 
          sampling = c("random", "within popStruc", "across popStruc","commit"),
          TS=NULL,ES=NULL, varComp = NULL, popStruc = NULL, VC.est = c("commit",
-         "ASReml","BRR","BL"),verbose=TRUE,...)
+         "ASReml","BRR","BL"),verbose=FALSE,...)
 }
 \arguments{
   \item{gpData}{Object of class \code{gpData}
