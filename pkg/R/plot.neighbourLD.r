@@ -1,52 +1,85 @@
-plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,...){
+plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,centr=NULL,...){
 
-    if(class(map)=="gpData") map <- map$map
-   
-    # extract chromosomes
-    chr <-  (1:length(LD$LD))[!as.logical(lapply(LD$LD,is.null))]
-    
+    if (class(map) == "gpData"){
+       map.unit <- map$info$map.unit
+       map <- map$map
+    }
+    else map.unit <- "unit"
+    chr <- unique(map$chr)
+    chr <- chr[!is.na(chr)]
+    map <- map[!is.na(map$chr), ]
+
+    # centromere positions of maize
+    if(!is.null(centr)) if(centr == "maize") centr <- c(133,90,95,104.6,105.5,50,55.3,46.5,68.8,59.9)
+
+    # norm pos
+    if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
     
     # initialize map
     layout(matrix(1:2,ncol=2),width=c(0.82,0.18))
-    plot(map,type="n",xaxt="n",xlim=range(chr,na.rm=TRUE)+c(-0.5,0.5),ylim= c(max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),...) 
-    axis(side=1,at=chr,labels=chr)
-    
+    # make an empty plot 
+    if(!is.null(centr)) {
+	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
+        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
+    }
+    else{
+	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
+        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
+    }   
+ 
+   # x-axis     
+    axis(side = 1, at = seq(along = chr), labels = chr)
+   # y-axis
+    if(!is.null(centr)){
+        box()
+        axis(side=2,at=-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=25),labels=abs(-seq(-round(max(map$pos, na.rm = TRUE),-2),round(max(map$pos, na.rm = TRUE),-2),by=25)),las=1)
+    }
+
     # loop over chromosomes
-    for (i in chr){
+    for (i in seq(along=chr)){
     
         n <- sum(map$chr==i,na.rm=TRUE) 
-        start <- min(map$pos[map$chr==i],na.rm=TRUE)
-        end <- max(map$pos[map$chr==i],na.rm=TRUE)
-
-        # from RColorBrewer, brewer.pal(11,"RdYlGn")
-        #cols <- c("#A50026","#D73027","#F46D43","#FDAE61","#FEE08B","#FFFFBF","#D9EF8B","#A6D96A","#66BD63","#1A9850","#006837")[11:1] 
-        
+        start <- min(map$pos[map$chr==chr[i]],na.rm=TRUE)
+        end <- max(map$pos[map$chr==chr[i]],na.rm=TRUE)
+      
         # display.brewer.pal(7, "Reds")s
         cols <- c("#FCBBA1", "#FC9272", "#FB6A4A", "#EF3B2C", "#CB181D", "#99000D")
 
 	if(dense){  # calculating averaged LD
 		# map posittions
-		mapPos <- smooth(map$pos[map$chr==i])
+		mapPos <- smooth(map$pos[map$chr == chr[i]])
 		# matrices with 10 rows
 		avLD <- matrix(c(diag(LD$LD[[i]][-nrow(LD$LD[[i]]),-1]),rep(NA,(ceiling((n-1)/10)*10-(n-1)))),nrow=10)
 		avPos <- matrix(c(mapPos[-length(mapPos)],rep(NA,(ceiling((n-1)/10)*10-(n-1)))),nrow=10)
 
         	# visualisation of map
-        	image(seq(i-0.4,i+0.4,length=20), colMeans(avPos,na.rm=TRUE),matrix(rep(colMeans(avLD,na.rm=TRUE),20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
+        	image(seq(i-0.35,i+0.35,length=20), colMeans(avPos,na.rm=TRUE),matrix(rep(colMeans(avLD,na.rm=TRUE),20),nrow=20,byrow=TRUE),col=cols,add=TRUE,zlim=c(0,1))
 
 	}  # end of if,  smooth LD calculation
 	else{  # using LD directly
+		# map posittions
+		mapPos <- map$pos[map$chr==chr[i]]
+		avLD <- diag(LD$LD[[i]][-nrow(LD$LD[[i]]),-1])
+		avPos <-mapPos[-length(mapPos)]
+		LDPos <- data.frame(avLD,avPos)
+		LDPos <- LDPos[!duplicated(LDPos$avPos), ]
+		#LDPos <- LDPos[LDPos$avLD>=0.2, ]
 		# visualisation of map
-        	image(seq(i-0.4,i+0.4,length=20), map$pos[map$chr==i],matrix(rep(diag(LD$LD[[i]][-nrow(LD$LD[[i]]),-1]),20),nrow=20,byrow=TRUE),col=cols,add=TRUE)
+        	image(seq(i-0.35,i+0.35,length=20), LDPos$avPos,matrix(rep(LDPos$avLD,20),nrow=20,byrow=TRUE),col=cols,add=TRUE,zlim=c(0,1))
 	}
-      if(nMarker) text(i,max(map$pos)*1.05,sum(map$chr==i))
+    	if(!is.null(centr)){
+        # centromere
+        polygon(x=c(i-0.4,i-0.1,i-0.1,i-0.4,i-0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+        polygon(x=c(i+0.4,i+0.1,i+0.1,i+0.4,i+0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+		}
+      if(nMarker) text(i,max(map$pos)*1.05,sum(map$chr==chr[i],na.rm=TRUE))
  
       } # end chromosome loop
     
     # add legend
-      par(mar=c(5,0,4,3.8)+0.1)
-      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=11),matrix(rep(seq(from=0,to=1,length=11),20),nrow=20,byrow=TRUE),col=cols,axes=FALSE,xlab="")
-      axis(side=4,at=round(seq(from=0,to=1,length=11),4),las=1)
-      par(mar=c(5,4,4,1)+0.1)
+        par(mar = c(5, 1, 4, 3.8) + 0.1)
+      image(seq(-0.4,0.4,length=20),seq(from=0,to=1,length=6),matrix(rep(seq(from=0,to=1,length=6),20),nrow=20,byrow=TRUE),main="r²",col=cols,axes=FALSE,xlab="")
+      axis(side=4,at=round(seq(from=0,to=1,length=6),4),las=1)
+        par(mar = c(5, 4, 4, 1) + 0.1)
 }
 
