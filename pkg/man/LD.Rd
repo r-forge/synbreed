@@ -42,7 +42,7 @@ If the number of markers is higt, a threshold for the LD can be used. In this ca
 \value{
 For \code{type="data.frame"} an object of class \code{LDdf} with one element for each chromosome. Each element is a \code{data.frame} with columns \code{marker1}, \code{marker2}, \code{r2} and \code{distance} for all \eqn{p(p-1)/2} marker pairs.
 
-For \code{type="matrix"} an object of class \code{LDdf} with one element for each chromosome. Each element is a list of 2: a \eqn{p \times p}{p x p} \code{matrix} with pairwise LD and a  \eqn{p \times p}{p x p} \code{matrix} with pairwise distances.
+For \code{type="matrix"} an object of class \code{LDmat} with one element for each chromosome. Each element is a list of 2: a \eqn{p \times p}{p x p} \code{matrix} with pairwise LD and a  \eqn{p \times p}{p x p} \code{matrix} with pairwise distances.
 
 }
 \references{

@@ -25,7 +25,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution.
 }
   \item{centr}{
-\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize are used.
+\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
 }
   \item{\dots}{
 further graphical arguments for function \code{plot}

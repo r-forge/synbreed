@@ -7,7 +7,7 @@ Plot neighbour linkage disequilibrium
 A function to visualize LD between adjacent markers.
 }
 \usage{
-plotNeighbourLD(LD, map, nMarker = TRUE, dense=FALSE, ...)
+plotNeighbourLD(LD, map, dense=FALSE, nMarker = TRUE, centr=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,24 +15,27 @@ plotNeighbourLD(LD, map, nMarker = TRUE, dense=FALSE, ...)
 object of class \code{LDmat}, i.e the output of function \code{pairwiseLD} using argument \code{type="matrix"}.
 }
   \item{map}{
-object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances).
+object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances)
+} 
+  \item{dense}{
+\code{logical}. Should density visualization for high-density genetic maps be used?
 }
   \item{nMarker}{
-\code{logical}. Add number of markers?
+\code{logical}. Print number of markers for each chromosome?
 }
-  \item{dense}{                                       
-\code{logical}. Should visualization for high-density visualization be used?
+  \item{centr}{
+\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
 }
-
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
+
 }
 \details{
 The graph is similar to \code{plotGenMap} with the option \code{dense=TRUE}, but here the LD between adjacent markers is plotted along the chromosomes. 
 }
 \value{
-Plot of smoothed neighbour LD along each chromosome. One chromosome is displayed from the first to the last marker.
+Plot of neighbour LD along each chromosome. One chromosome is displayed from the first to the last marker.
 }
 
 \author{
@@ -40,7 +43,7 @@ Theresa Albrecht
 }
 
 \seealso{
-\code{\link{plotGenMap}}, \code{\link{LDMap}}
+\code{\link{plotGenMap}}, \code{\link{pairwiseLD}}
 }
 \examples{
 data(maize)
