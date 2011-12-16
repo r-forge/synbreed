@@ -1,4 +1,4 @@
-plotNeighbourLD <- function(LD,map,nMarker=TRUE,dense=FALSE,centr=NULL,...){
+plotNeighbourLD <- function(LD,map,dense=FALSE,nMarker=TRUE,centr=NULL,...){
 
     if (class(map) == "gpData"){
        map.unit <- map$info$map.unit
