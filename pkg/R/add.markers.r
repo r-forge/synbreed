@@ -24,8 +24,8 @@ add.markers <- function(gpData,geno,map=NULL){
   # first column as rownames and delete first column
   # merge map
   if(is.null(map)){
-    map <- gpData$map[1:ncol(geno),]
-    map <- NA
+    #map <- gpData$map[1:ncol(geno),]
+    map <- data.frame(chr=rep(NA,ncol(geno)),pos=rep(NA,ncol(geno)))
     rownames(map) <- colnames(geno)
   } else if(nrow(map) != ncol(geno)){
     map[colnames(geno)[!colnames(geno) %in% rownames(map)],] <- NA
