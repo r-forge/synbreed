@@ -39,6 +39,13 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     	rownames(Z) <- y[,1]
     }
     colnames(Z) <- unique(y[,1])
+    if(length(cov.matrix)>1){
+	Z1 <- NULL
+	for (i in 1:length(cov.matrix)){
+		 Z1 <- cbind(Z1,Z)
+	}
+	Z <- Z1
+    }	
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
    	   for( i in 1:length(cov.matrix)){
