@@ -1,6 +1,6 @@
 kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL){
 
-    ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","sm","sm-smin"),several.ok = FALSE)
+    ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),several.ok = FALSE)
 
     # (1) expected relatedness
     
