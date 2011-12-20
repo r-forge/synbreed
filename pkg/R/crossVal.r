@@ -338,8 +338,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		}
 
 		# BRR function
-		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!is.null(cov.matrix)){
+		if(RR) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!RR){
 		    covM <- as.matrix(cov.matrix[[1]])
    		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
 		}
@@ -363,8 +363,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		}
 
 		# BL function
-		if(is.null(cov.matrix)) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!is.null(cov.matrix)){
+		if(RR) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+		if(!RR){
 		    covM <- as.matrix(cov.matrix[[1]])
 		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
 		}
@@ -433,10 +433,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	m10[i,1] <- mean(y[y$ID %in% names(TS10sel), "TRAIT"])
 	}
     }  # end loop for replication
-
+    
     # return object
     if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
-    obj <- list( n.TS=n.TS,n.DS=n.DS,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR2,rankCor=rCOR2,bias=lm.coeff,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = length(cov.matrix),VC.est.method=est.method,m10=m10,mse=mse)
+    obj <- list( n.TS=n.TS,n.DS=n.DS,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR2,rankCor=rCOR2,bias=lm.coeff,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = ncol(Z),VC.est.method=est.method,m10=m10,mse=mse)
     class(obj) <- "cvData"
     return(obj)
 }
