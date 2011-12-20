@@ -144,7 +144,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
     
         # 2* minor allele frequency as expectation
         maf <- colMeans(M,na.rm=TRUE)
-        pq2 <- 2*sum(maf/2*(1-maf/2))
+        pq2 <- 2*maf/2*(1-maf/2)
         # compute realized relationship matrix U
         Z <- sweep(M,2,maf)
         for (i in 1:p){  # loop for standardizing columns by sd
