@@ -35,7 +35,7 @@ modPMBL <- gpMod(gpWheat,trait=1,model="BL",prior=priorCrossa,nIter=15000,burnIn
 # extract predicted genetic values and plot versus phenotypic values
 plot(predict(modPMBL),gpWheat$pheno[,1,])
 
-cv <- crossVal(gpWheat,trait=1,VC.est="BL",priorBLR=priorCrossa,k=10,Rep=1)
+cv <- crossVal(gpWheat,trait=1,VC.est="BL",prior=priorCrossa,k=10,Rep=1)
 summary(cv)
 #Object of class 'cvData'
 #
