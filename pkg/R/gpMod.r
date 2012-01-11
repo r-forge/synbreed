@@ -15,20 +15,21 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
   if(length(trait) > 1) warning("\n   The return will be a list of gpMod-objects!\n")
   if(is.null(fixed)) fixed <- " ~ 1"
   if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
-  if(model == "BLUP")
+  if(model == "BLUP"){
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
       kin <- kin(gpData, ret="realized")
-# transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP 
+      # transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP 
       if(markerEffects) kin <- tcrossprod(gpData$geno) 
-    } else{ 
+    } else { 
       if(markerEffects) kin <- tcrossprod(gpData$geno)
     }
+  }
   for(i in trait){
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
     # take data from gpData object
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
-    if(i %in% 1:ncol(df.trait)) {
+    if(i %in% 1:(dim(gpData$pheno)[2]+ dim(gpData$phenoCovars)[2])) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
       vec.bool[colnames(df.trait) %in% yName] <- TRUE 
     } else {
@@ -44,6 +45,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
+      xNA <- model.matrix(as.formula(paste(paste(as.character(formula)[c(2,1,3)], collapse=" "), "+", as.character(Vformula)[2])), data=data)
+
       res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
       us <- BLUP(res)$Mean
       genVal <- us[grep("kinTS", names(us))]

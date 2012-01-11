@@ -25,6 +25,14 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
   dimnames(gpData$pheno) <- phenoNames
   # update geno
   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
+  if(!is.null(gpData$phenoCovars)){
+    phenoCovarsNames <- dimnames(gpData$phenoCovars)
+    phenoCovarsNames[[1]] <- phenoCovarsNames[[1]][!phenoCovarsNames[[1]] %in% which]
+    phenoCovarsDim <- dim(gpData$phenoCovars)
+    phenoCovarsDim[1] <- length(phenoCovarsNames[[1]])
+    gpData$phenoCovars <- array(gpData$phenoCovars[!rownames(gpData$phenoCovars) %in% which, , ], dim = phenoCovarsDim)
+    dimnames(gpData$phenoCovars) <- phenoCovarsNames
+  }
   # update pedigree 
   if(!is.null(gpData$pedigree))
     if(!keepPedigree){
