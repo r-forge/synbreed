@@ -45,8 +45,6 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
-      xNA <- model.matrix(as.formula(paste(paste(as.character(formula)[c(2,1,3)], collapse=" "), "+", as.character(Vformula)[2])), data=data)
-
       res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
       us <- BLUP(res)$Mean
       genVal <- us[grep("kinTS", names(us))]
