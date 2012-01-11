@@ -68,7 +68,12 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
         dimnames(arrPheno) <- list(rownames(pheno), colnames(pheno)[!(colnames(pheno) %in% modCovar)], "1")
       }
       if(!is.null(add)) dimnames(arrPheno)[[1]] <- as.numeric(dimnames(arrPheno)[[1]]) - add
-      if(!is.null(modCovar)) arrModCovars <- array(pheno[, colnames(pheno) %in% modCovar], dim=c(dim(pheno[, colnames(pheno) %in% modCovar]), 1))
+      if(!is.null(modCovar)){
+        arrModCovars <- array(1,  dim=c(dim(pheno[, colnames(pheno) %in% modCovar]), 1))
+        dimnames(arrModCovars) <- list(dimnames(arrPheno)[[1]], colnames(pheno)[colnames(pheno) %in% modCovar], "1")
+        for(i in colnames(pheno)[colnames(pheno) %in% modCovar])
+          arrModCovars[, i, 1] <- pheno[, i]
+      }
     } else {# a vector with replication idetifier is applied. The fist column is the identifier for genotypes
       dim3 <- data.frame(unique(pheno[, repeated]))
       colnames(dim3) <- repeated
