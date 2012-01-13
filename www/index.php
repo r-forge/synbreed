@@ -86,14 +86,22 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
 <blockquote>
   <blockquote>
     <blockquote> 
-     <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
-         <blockquote> 
-         <li> <a href="http://www.computationalgenetics.se/QTLMAS08/QTLMAS/DATA.html"> Data </a>  from XII QTL-MAS Workshop 2008, Uppsala
-         <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
-         <li> <a href="slides.pdf"> Slides </a>  from Valentin Wimmer </li>
-         <li> <a href="praesentation_Martin_Schlather.pdf"> Slides </a> from Martin Schlather </li>
-         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf"> Slides  </a>  from Ulrike Ober  </li>
-        </blockquote> 
+       The <tt>synbreed</tt> package is hosted through R-Forge:<br>
+      <br>
+      <div style="text-align: center;"><a
+ href="https://r-forge.r-project.org/projects/synbreed/">https://r-forge.r-project.org/projects/synbreed/</a><br>
+      </div>
+      <br>
+From this page snapshots of the current development version are
+							   available. For example -- if you are running a recent R version -- you can obtain a binary snapshot of the development version as<br>
+<br>
+<div style="text-align: center;"> <tt>install.packages("synbreed",repos="http://r-forge.r-project.org")</tt></div>
+<br>
+ You can also manually download the source code from 
+    <br>
+ <a href="https://r-forge.r-project.org/R/?group_id=710">https://r-forge.r-project.org/R/?group_id=710 </a>
+    <br>
+      <br><p>
     </blockquote>
   </blockquote>
 </blockquote>
@@ -101,7 +109,17 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
 <blockquote>
   <blockquote>
     <ul>
+       <li><a href="synbreed-manual"> pdf </a> version of the manual </li>
+       <li> package vignette with detailed background information and examples: availble upon request </li>
        <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
+       <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
+         <blockquote>
+         <li> <a href="http://www.computationalgenetics.se/QTLMAS08/QTLMAS/DATA.html"> Data </a>  from XII QTL-MAS Workshop 2008, Uppsala
+         <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
+         <li> <a href="slides.pdf"> Slides </a>  from Valentin Wimmer </li>
+         <li> <a href="praesentation_Martin_Schlather.pdf"> Slides </a> from Martin Schlather </li>
+         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf"> Slides  </a>  from Ulrike Ober  </li>
+        </blockquote>
     </ul>
   </blockquote>
 </blockquote>
@@ -110,7 +128,9 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
   <blockquote>
     <ul>  
      <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=48&L=1"> Valentin Wimmer </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
-     <li> <a href="http://wzw.tum.de/plantbreeding/index.php?id=mitarbeiter"> Theresa Albrecht </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
+     <li> <a href="http://www.plantbreeding.wzw.tum.de/index.php?id=54&L=1"> Theresa Albrecht </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
+     <li> <a href="http://www.plantbreeding.wzw.tum.de/index.php?id=55&L=1"> Hans-Juergen Auinger </a>, Chair of Plant Breeding, Technische Universit&auml;t M&uuml;nchen  </li>
+
     </ul>
   </blockquote>
 </blockquote>
