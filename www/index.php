@@ -92,8 +92,7 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
  href="https://r-forge.r-project.org/projects/synbreed/">https://r-forge.r-project.org/projects/synbreed/</a><br>
       </div>
       <br>
-From this page snapshots of the current development version are
-							   available. For example -- if you are running a recent R version -- you can obtain a binary snapshot of the development version as<br>
+Do install the package <tt>synbreed</tt> from R (if you are running a recent R version), use<br>
 <br>
 <div style="text-align: center;"> <tt>install.packages("synbreed",repos="http://r-forge.r-project.org")</tt></div>
 <br>
@@ -109,7 +108,7 @@ From this page snapshots of the current development version are
 <blockquote>
   <blockquote>
     <ul>
-       <li><a href="synbreed-manual"> pdf </a> version of the manual </li>
+       <li><a href="synbreed-manual.pdf"> pdf </a> version of the manual </li>
        <li> package vignette with detailed background information and examples: availble upon request </li>
        <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
        <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
