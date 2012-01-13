@@ -110,6 +110,7 @@ Do install the package <tt>synbreed</tt> from R (if you are running a recent R v
     <ul>
        <li><a href="synbreed-manual.pdf"> pdf </a> version of the manual </li>
        <li> package vignette with detailed background information and examples: availble upon request </li>
+       <li><a href="synbreedPackageDescription.pdf"> overview </a> over the functions </li>
        <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
        <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
          <blockquote>
