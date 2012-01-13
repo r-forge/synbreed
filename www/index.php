@@ -92,7 +92,7 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
  href="https://r-forge.r-project.org/projects/synbreed/">https://r-forge.r-project.org/projects/synbreed/</a><br>
       </div>
       <br>
-Do install the package <tt>synbreed</tt> from R (if you are running a recent R version), use<br>
+To install the package <tt>synbreed</tt> from R (if you are running a recent R version), use<br>
 <br>
 <div style="text-align: center;"> <tt>install.packages("synbreed",repos="http://r-forge.r-project.org")</tt></div>
 <br>
