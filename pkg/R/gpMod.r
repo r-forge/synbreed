@@ -8,7 +8,7 @@
 # changes: return argument by Valentin Wimmer
 # date: 2011 - 11 - 30
 
-gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
+gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,ASReml=FALSE,...){
   ans <- list()
   model <- match.arg(model)
   m <- NULL
@@ -18,9 +18,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
   if(model == "BLUP"){
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
-      kin <- kin(gpData, ret="realized")
       # transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP 
-      if(markerEffects) kin <- tcrossprod(gpData$geno) 
+      if(markerEffects) kin <- tcrossprod(gpData$geno) else kin <- kin(gpData, ret="realized")
     } else { 
       if(markerEffects) kin <- tcrossprod(gpData$geno)
     }
@@ -45,49 +44,83 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
     }
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
-      res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE,...)
-      us <- BLUP(res)$Mean
-      genVal <- us[grep("kinTS", names(us))]
-      genVal <- genVal[!duplicated(names(genVal))]
-      names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
-      # genVal <- NULL
-      if(markerEffects){
-        sigma2m <- res$sigma["kinTS"]
-        # set up design matrices
-        Z <- NULL; X <- NULL
-        X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
-        if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
-          randomM <- substr(random, 1, nchar(random)-3)
-          term <- labels(terms(as.formula(randomM)))
-          if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
-          Z <-  res$Z[[term[1]]]
-          colnames(Z) <- paste(term[1], colnames(Z), sep=".")
-          if(length(term) > 1) for(ii in 2:length(term)){
-            Z1 <- res$Z[[term[ii]]]
-            colnames(Z1) <- paste(term[ii], colnames(Z1), sep=".")
-            Z <- cbind(Z, Z1)  
-          }
-          Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
-          GI <- diag(ncol(Z))
-          cnt <- 1
-          for(ii in term){
-            cnt1 <- nlevels(df.trait[, ii])-1
-            if(cnt1 == 0 ) cnt1 <- 0
-            GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] <- GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] / res$sigma[ii] * res$sigma["In"]
-            cnt <- cnt + cnt1 + 1
-          }
-        } else {
-          Z <- gpData$geno[df.trait$ID, ]
-          GI <- diag(ncol(Z))
+      if(!ASReml){
+        res <- regress(as.formula(paste(yName, paste(fixed, collapse=" "))), Vformula=as.formula(paste(paste(random, collapse=" "), "kinTS")),data=df.trait, identity=TRUE, tol=1e-8,...)
+        us <- BLUP(res)$Mean
+        genVal <- us[grep("kinTS", names(us))]
+        genVal <- genVal[!duplicated(names(genVal))]
+        names(genVal) <-  unlist(strsplit(names(genVal), "kinTS."))[(1:length(genVal))*2]
+      } else {
+        system("mkdir ASReml")
+        oldwd <- getwd()
+        setwd(paste(oldwd, "ASReml", sep="/"))
+        kinTS <- kin[dimnames(gpData$pheno)[[1]], dimnames(gpData$pheno)[[1]]]
+        write.relationshipMatrix(kinTS+diag(x=10**(-7), nrow(kinTS)),file="Kins.giv",type="inv",sorting="ASReml",digits=10)
+        write.table(df.trait, file="Pheno.txt", col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
+        cat("Model \n ID        !A \n TRAIT     !D* \n", file = "Model.as")
+        if(ncol(df.trait) > 2) for(i in 3:ncol(df.trait)){
+          cat(" ", colnames(df.trait)[i], sep= "", file = "Model.as", append=TRUE)
+          if(gpData$info$attrPhenoCovars[colnames(df.trait)[i]] == "numeric") cat("   !D*\n", file="Model.as",append=TRUE) else cat("   !A*\n", file="Model.as",append=TRUE)
         }
-        GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] <- 
-                GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] / sigma2m * res$sigma["In"]
-        RI <- res$Z$In
-        sol <- MME(X, Z, GI, RI, df.trait[, yName])
-        m <- sol$u 
-        names(m) <- colnames(Z)
-        m <- m[colnames(gpData$geno)]
+        if(!is.null(fixed)){ 
+          fixedC <- as.character(fixed)[2]
+          fixedC <- paste(unlist(strsplit(fixedC, "+", fixed=TRUE)), collapse=" ")
+        } else fixedC <- NULL
+        if(!is.null(random)){ 
+          randomC <- as.character(random)[2]
+          randomC <- paste(unlist(strsplit(randomC, "+", fixed=TRUE)), collapse=" ")
+        } else randomC <- NULL
+        cat(paste("Kins.giv \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu ", fixedC, 
+            " !r ", random, " giv(ID,1)",sep=""),file="Model.as", append=TRUE)
+        cat("",file="Model.pin")
+        system("asreml -ns10000 Model.as",TRUE)
+        system("asreml -p Model.pin") # for variance components in an extra file
+        us <- matrix(scan("Model.sln",what='character'),ncol=4,byrow=TRUE)
+        # solve MME
+        genVal <-  as.numeric(us[us[, 1] == "giv(ID,1)",3])
+        names(genVal) <- us[us[, 1] == "giv(ID,1)",2]
+        res <- scan("Model.asr", what="character", sep="\n")
+        setwd(oldwd)
       }
+       # genVal <- NULL
+        if(markerEffects){
+          if(ASReml) stop("This method is not yet developed for ASReml estimates!")
+          sigma2m <- res$sigma["kinTS"]
+          # set up design matrices
+          Z <- NULL; X <- NULL
+          X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
+          if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
+            randomM <- substr(random, 1, nchar(random)-3)
+            term <- labels(terms(as.formula(randomM)))
+            if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
+            Z <-  res$Z[[term[1]]]
+            colnames(Z) <- paste(term[1], colnames(Z), sep=".")
+            if(length(term) > 1) for(ii in 2:length(term)){
+              Z1 <- res$Z[[term[ii]]]
+              colnames(Z1) <- paste(term[ii], colnames(Z1), sep=".")
+              Z <- cbind(Z, Z1)  
+            }
+            Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
+            GI <- diag(ncol(Z))
+            cnt <- 1
+            for(ii in term){
+              cnt1 <- nlevels(df.trait[, ii])-1
+              if(cnt1 == 0 ) cnt1 <- 0
+              GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] <- GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] / res$sigma[ii] * res$sigma["In"]
+              cnt <- cnt + cnt1 + 1
+            }
+          } else {
+            Z <- gpData$geno[df.trait$ID, ]
+            GI <- diag(ncol(Z))
+          }
+          GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] <- 
+                  GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] / sigma2m * res$sigma["In"]
+          RI <- res$Z$In
+          sol <- MME(X, Z, GI, RI, df.trait[, yName])
+          m <- sol$u 
+          names(m) <- colnames(Z)
+          m <- m[colnames(gpData$geno)]
+        }
     }
 
     if(model=="BL"){
