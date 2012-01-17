@@ -8,7 +8,8 @@
 # changes: return argument by Valentin Wimmer
 # date: 2011 - 11 - 30
 
-gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,ASReml=FALSE,...){
+gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
+  ASReml <- FALSE
   ans <- list()
   model <- match.arg(model)
   m <- NULL
