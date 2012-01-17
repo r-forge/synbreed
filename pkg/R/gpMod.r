@@ -86,41 +86,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
        # genVal <- NULL
         if(markerEffects){
           if(ASReml) stop("This method is not yet developed for ASReml estimates!")
-          sigma2m <- res$sigma["kinTS"]
-          # set up design matrices
-          Z <- NULL; X <- NULL
-          X <- model.matrix(as.formula(fixed), data=df.trait)# fixed part of the model
-          if(substr(random, nchar(random)-1, nchar(random)-1) == "+"){
-            randomM <- substr(random, 1, nchar(random)-3)
-            term <- labels(terms(as.formula(randomM)))
-            if(!all(term %in% colnames(df.trait))) stop("for markerEffects = TRUE only factors or regressors as random covariables are allowed!")
-            Z <-  res$Z[[term[1]]]
-            colnames(Z) <- paste(term[1], colnames(Z), sep=".")
-            if(length(term) > 1) for(ii in 2:length(term)){
-              Z1 <- res$Z[[term[ii]]]
-              colnames(Z1) <- paste(term[ii], colnames(Z1), sep=".")
-              Z <- cbind(Z, Z1)  
-            }
-            Z <- cbind(Z, gpData$geno[df.trait$ID, ]) 
-            GI <- diag(ncol(Z))
-            cnt <- 1
-            for(ii in term){
-              cnt1 <- nlevels(df.trait[, ii])-1
-              if(cnt1 == 0 ) cnt1 <- 0
-              GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] <- GI[cnt:(cnt+cnt1), cnt:(cnt+cnt1)] / res$sigma[ii] * res$sigma["In"]
-              cnt <- cnt + cnt1 + 1
-            }
-          } else {
-            Z <- gpData$geno[df.trait$ID, ]
-            GI <- diag(ncol(Z))
-          }
-          GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] <- 
-                  GI[(nrow(GI)-ncol(gpData$geno)+1):nrow(GI), (nrow(GI)-ncol(gpData$geno)+1):nrow(GI)] / sigma2m * res$sigma["In"]
-          RI <- res$Z$In
-          sol <- MME(X, Z, GI, RI, df.trait[, yName])
-          m <- sol$u 
-          names(m) <- colnames(Z)
-          m <- m[colnames(gpData$geno)]
+          m <- t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
         }
     }
 
