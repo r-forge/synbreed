@@ -8,11 +8,12 @@
 # changes: return argument by Valentin Wimmer
 # date: 2011 - 11 - 30
 
-gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
+gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
   ASReml <- FALSE
   ans <- list()
   model <- match.arg(model)
   m <- NULL
+  prediction <- NULL
   if(length(trait) > 1) warning("\n   The return will be a list of gpMod-objects!\n")
   if(is.null(fixed)) fixed <- " ~ 1"
   if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
@@ -43,6 +44,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
       df.trait <- df.trait[!df.trait$ID %in% kinNames,]
       warning("Some phenotyped IDs are not in the kinship matrix!\nThese are removed from the analysis")
     }
+    kin <- kin[unique(df.trait$ID), unique(df.trait$ID)]
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
       if(!ASReml){
@@ -83,39 +85,52 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,trait=1,repl=NULL,m
         res <- scan("Model.asr", what="character", sep="\n")
         setwd(oldwd)
       }
-       # genVal <- NULL
+      # genVal <- NULL
+      if(markerEffects){
+        m <- t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+      }
+      if(predict){
         if(markerEffects){
-          if(ASReml) stop("This method is not yet developed for ASReml estimates!")
-          m <- t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+          prediction <- gpData$geno[!rownames(gpData$geno) %in% rownames(kin), ] %*% m
+        } else {
+          prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+          prediction <- prediction[!names(prediction) %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
         }
+      }
     }
 
     if(model=="BL"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
-       X <- gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
-       y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
+      X <- gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
+      y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
       capture.output(res <- BLR(y=y,XL=X,...),file="BLRout.txt")
       if(!is.null(kin)) capture.output(res <- BLR(y=y,XL=X,GF=list(ID=df.trait$ID,A=kinTS),...),file="BLRout.txt")
       else kin <- NULL
       genVal <- res$yHat
       names(genVal) <- rownames(X)
       m <- res$bL
+      if(predict){
+        prediction <- gpData$geno[!rownames(geno) %in% names(genVal), ] %*% m
+      }
     }
     if(model=="BRR"){
       if(dim(gpData$pheno)[3] > 1) stop("This method is not developed for a one-stage analysis yet. \nA phenotypic analysis have to be done fist.")
-        X <-  gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
-        y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
-        capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
-        if(!is.null(kin))  capture.output(res <- BLR(y=y,XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
-        else kin <- NULL
-        genVal <- res$yHat
-        names(genVal) <- rownames(X)
-        m <- res$bR
+      X <-  gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
+      y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
+      capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
+      if(!is.null(kin))  capture.output(res <- BLR(y=y,XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
+      else kin <- NULL
+      genVal <- res$yHat
+      names(genVal) <- rownames(X)
+      m <- res$bR
+      if(predict){
+        prediction <- gpData$geno[!rownames(geno) %in% names(genVal), ] %*% m
       }
+    }
 
     y <- df.trait[,yName]
     names(y) <- df.trait[,"ID"]
-    ret <- list(fit=res,model=model,y=y,g=genVal,m=m,kin=kin)
+    ret <- list(fit=res,model=model,y=y,g=genVal,predicton=prediction, m=m,kin=kin)
     class(ret) = "gpMod"
     ans[[i]] <- ret
     names(ans)[length(ans)] <- yName
@@ -137,6 +152,7 @@ summary.gpMod <- function(object,...){
     ans$n <- sum(!is.na(object$y))
     ans$sumNA <- sum(is.na(object$y))
     ans$summaryG <- summary(as.numeric(object$g))
+    if(is.null(object$prediction)) ans$summaryP <- NULL else ans$summaryP <- summary(as.numeric(object$prediction))
     class(ans) <- "summary.gpMod"
     ans
 }
@@ -158,6 +174,11 @@ print.summary.gpMod <- function(x,...){
     cat("Genetic performances: \n")
     cat("  Min.    1st Qu. Median  Mean    3rd Qu. Max    \n")
     cat(format(x$summaryG,width=7,trim=TRUE), "\n",sep=" ")
+    if(!is.null(x$summaryP)){
+      cat("\nGenetic performances of predicted individuals: \n", sep=" ")
+      cat("  Min.    1st Qu. Median  Mean    3rd Qu. Max    \n")
+      cat(format(x$summaryP,width=7,trim=TRUE), "\n",sep=" ")
+    }
     cat("--\n")
     cat("Model fit \n")
     if(x$model %in% c("BLUP")) 

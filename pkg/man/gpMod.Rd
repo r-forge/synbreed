@@ -9,11 +9,9 @@ This function can be used to fit genomic prediction models to an object of class
 BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2011). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
 
 
-}
-\usage{
-gpMod(gpData, model = c("BLUP","BL","BRR"), kin = NULL, trait = 1,
-      repl = NULL, markerEffects = FALSE, fixed = NULL, random = NULL, ...)
-}
+} \usage{
+gpMod(gpData, model=c("BLUP","BL","BRR"), kin=NULL, predict=FALSE, trait=1,
+      repl=NULL, markerEffects=FALSE, fixed=NULL, random=NULL, ...) }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
@@ -24,6 +22,9 @@ object of class \code{gpData}
 }
   \item{kin}{
 object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as additional polygenic effect \eqn{u} in the Bayesian regression models.
+}
+  \item{predict}{
+\code{logical}. If \code{TRUE}, genetic values will predict for genotyped but non phenotyped individuals. Default is \code{FALSE}.
 }
   \item{trait}{
 \code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model
