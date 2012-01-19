@@ -3,10 +3,12 @@
 
 # author: Valentin Wimmer
 # date: 2011 - 05 - 03
-# changes: Hans-Jürgen Auinger
+# changes: Hans-Juergen Auinger
 # date: 2011 - 11 - 21
 # changes: return argument by Valentin Wimmer
 # date: 2011 - 11 - 30
+# changes: Hans-Juergen Auinger
+# date: 2011 - 01 - 16
 
 gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait=1,repl=NULL,markerEffects=FALSE,fixed=NULL,random=NULL,...){
   ASReml <- FALSE
@@ -20,9 +22,9 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
   if(model == "BLUP"){
     if (is.null(kin)){
       if(!gpData$info$codeGeno) stop("Missing object 'kin', or use function codeGeno first!")
-      # transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP 
+      # transposed crossproduct of the genotype matrix is used as relationship to obtain the variance components and mean of RR-BLUP
       if(markerEffects) kin <- tcrossprod(gpData$geno) else kin <- kin(gpData, ret="realized")
-    } else { 
+    } else {
       if(markerEffects) kin <- tcrossprod(gpData$geno)
     }
   }
@@ -32,7 +34,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
     if(i %in% 1:(dim(gpData$pheno)[2]+ dim(gpData$phenoCovars)[2])) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
-      vec.bool[colnames(df.trait) %in% yName] <- TRUE 
+      vec.bool[colnames(df.trait) %in% yName] <- TRUE
     } else {
       vec.bool <- vec.bool | colnames(df.trait) == i
       yName <- i
@@ -65,15 +67,15 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
           cat(" ", colnames(df.trait)[i], sep= "", file = "Model.as", append=TRUE)
           if(gpData$info$attrPhenoCovars[colnames(df.trait)[i]] == "numeric") cat("   !D*\n", file="Model.as",append=TRUE) else cat("   !A*\n", file="Model.as",append=TRUE)
         }
-        if(!is.null(fixed)){ 
+        if(!is.null(fixed)){
           fixedC <- as.character(fixed)[2]
           fixedC <- paste(unlist(strsplit(fixedC, "+", fixed=TRUE)), collapse=" ")
         } else fixedC <- NULL
-        if(!is.null(random)){ 
+        if(!is.null(random)){
           randomC <- as.character(random)[2]
           randomC <- paste(unlist(strsplit(randomC, "+", fixed=TRUE)), collapse=" ")
         } else randomC <- NULL
-        cat(paste("Kins.giv \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu ", fixedC, 
+        cat(paste("Kins.giv \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu ", fixedC,
             " !r ", random, " giv(ID,1)",sep=""),file="Model.as", append=TRUE)
         cat("",file="Model.pin")
         system("asreml -ns10000 Model.as",TRUE)
@@ -181,7 +183,7 @@ print.summary.gpMod <- function(x,...){
     }
     cat("--\n")
     cat("Model fit \n")
-    if(x$model %in% c("BLUP")) 
+    if(x$model %in% c("BLUP"))
       cat(print(x$summaryFit),"\n")
     else {
       cat("MCMC options: nIter = ",x$summaryFit$nIter,", burnIn = ",x$summaryFit$burnIn,", thin = ",x$summaryFit$thin,"\n",sep="")
@@ -201,7 +203,7 @@ print.summary.gpMod <- function(x,...){
 print.summary.gpModList <- function(x,...) {
   for(i in 1:length(x)){
     cat(paste("\n\tTrait ", names(x)[i], "\n\n\n"))
-    print(x[[i]]) 
-    if(i != length(x)) cat("-------------------------------------------------\n") 
+    print(x[[i]])
+    if(i != length(x)) cat("-------------------------------------------------\n")
   }
 }
