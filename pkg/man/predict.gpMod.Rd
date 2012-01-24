@@ -75,11 +75,11 @@ RI <- diag(4)
 res <- MME(X,Z,AI,RI,y)
 res$b + res$u[1:2]
 
-# prediction of genetic performance of the last 50 individuals in the maize data set
-data(maize)
-maizeC <- codeGeno(maize)
-U <- kin(maizeC,ret="realized")
-maizeC2 <- discard.individuals(maizeC,rownames(maizeC$pheno)[1201:1250])
-modU <- gpMod(maizeC2,model="BLUP",kin=U)
-predict(modU,rownames(maizeC$pheno)[1201:1250])
+%# prediction of genetic performance of the last 50 individuals in the maize data set
+%data(maize)
+%maizeC <- codeGeno(maize)
+%U <- kin(maizeC,ret="realized")
+%maizeC2 <- discard.individuals(maizeC,rownames(maizeC$pheno)[1201:1250])
+%modU <- gpMod(maizeC2,model="BLUP",kin=U)
+%predict(modU,rownames(maizeC$pheno)[1201:1250])
 }
