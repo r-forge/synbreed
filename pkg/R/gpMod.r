@@ -114,7 +114,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       names(genVal) <- rownames(X)
       m <- res$bL
       if(predict){
-        prediction <- gpData$geno[!rownames(geno) %in% names(genVal), ] %*% m
+        prediction <- gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m
       }
     }
     if(model=="BRR"){
@@ -128,7 +128,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       names(genVal) <- rownames(X)
       m <- res$bR
       if(predict){
-        prediction <- gpData$geno[!rownames(geno) %in% names(genVal), ] %*% m
+        prediction <- gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m
       }
     }
 
