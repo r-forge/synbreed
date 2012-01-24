@@ -32,7 +32,9 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
     df.trait <- gpData2data.frame(gpData, i, onlyPheno=TRUE, repl=repl)
     # take data from gpData object
     vec.bool <- colnames(df.trait) == "ID" | colnames(df.trait) %in% unlist(strsplit(paste(fixed), " ")) | colnames(df.trait) %in% unlist(strsplit(paste(random), " "))
-    if(i %in% 1:(dim(gpData$pheno)[2]+ dim(gpData$phenoCovars)[2])) {
+    cnt <- dim(gpData$pheno)[2]
+    if(!is.null(gpData$phenoCovars)) cnt <- cnt + dim(gpData$phenoCovars)[2]
+    if(i %in% 1:cnt) {
       yName <- dimnames(gpData$pheno)[[2]][as.numeric(i)]
       vec.bool[colnames(df.trait) %in% yName] <- TRUE
     } else {
