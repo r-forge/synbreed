@@ -9,7 +9,7 @@ Create a \code{data.frame} out of phenotypic and genotypic data in object of cla
 }
 \usage{
 gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,
-                  all.geno=FALSE,repl=NULL,...)
+                  all.geno=FALSE,repl=NULL,phenoCovars=TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,13 +28,17 @@ scalar \code{logical}. Include all individuals with genotypes in the \code{data.
   \item{all.geno}{
 scalar \code{logical}. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
 }
-  \item{repl}{\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are taken.
+  \item{repl}{
+\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are taken.
+}
+\item{phenoCovars}{
+\code{logical}. If \code{TRUE} columns with the phenotypic covariables are attached to the \code{data.frame}
 }
   \item{...}{
 further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename levels of grouping variable.
 }
 }
-\details{                                        
+\details{
 Argument \code{all.geno} can be used to predict the genetic value of individuals without phenotypic records using the \code{BLR} package. Here, the genetic value of individuals with \code{NA} as phenotype is predicted by the marker profile.
 
 
@@ -99,4 +103,3 @@ gpData2data.frame(gp,onlyPheno=FALSE,times=letters[1:3])
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{manip}
-

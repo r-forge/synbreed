@@ -1,12 +1,13 @@
-plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ...)
-{
+plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ...){
+    oldPar <- par()
     if (class(map) == "gpData"){
        map.unit <- map$info$map.unit
        map <- map$map
-    }
-    else map.unit <- "unit"
+    } else map.unit <- "unit"
+    
     chr <- unique(map$chr)
     chr <- chr[!is.na(chr)]
+    if(class(chr) =="factor") bord <- "transparent" else bord <- NULL
     map <- map[!is.na(map$chr), ]
 
     # centromere positions of maize
@@ -57,12 +58,11 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ..
 
    # make an empty plot 
     if(!is.null(centr)) {
-	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
-        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
-    }
-    else{
-	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
-        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
+        plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) + 0.5), border = bord,
+             ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
+    } else{
+        plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) + 0.5), border = bord,
+             ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
     }    
    # x-axis     
     axis(side = 1, at = seq(along = chr), labels = chr)
@@ -76,28 +76,27 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ..
     for (i in seq(along = chr)) {
 
         if (dense) {
-                image(seq(i - 0.35, i + 0.35, length = 20), x.grid[[i]],
-                matrix(rep(y.grid[[i]], 20), nrow = 20, byrow = TRUE),
-                col = cols, breaks=round(seq(0,maxDens,length=7)), add = TRUE)
-    		if(!is.null(centr)){
-        		# centromere
-        		polygon(x=c(i-0.4,i-0.1,i-0.1,i-0.4,i-0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
-        		polygon(x=c(i+0.4,i+0.1,i+0.1,i+0.4,i+0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
-		}
-        }
-        else {
+            image(seq(i - 0.35, i + 0.35, length = 20), x.grid[[i]],
+                 matrix(rep(y.grid[[i]], 20), nrow = 20, byrow = TRUE),
+                 col = cols, breaks=round(seq(0,maxDens,length=7)), add = TRUE)
+            if(!is.null(centr)){
+                # centromere
+                polygon(x=c(i-0.4,i-0.1,i-0.1,i-0.4,i-0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+                polygon(x=c(i+0.4,i+0.1,i+0.1,i+0.4,i+0.4),y=c(-10,-1,1,10,-10),col="white",border="white")
+            }
+        } else {
             n <- sum(map$chr == chr[i], na.rm = TRUE)
             start <- min(map$pos[map$chr == chr[i]], na.rm = TRUE)
             end <- max(map$pos[map$chr == chr[i]], na.rm = TRUE)
             lines(x = c(i, i), y = c(start, end))
             for (j in 1:n) {
-                lines(x = c(i - 0.4, i + 0.4), y = rep(map$pos[map$chr ==
-                  chr[i]][j], 2))
+                lines(x = c(i - 0.4, i + 0.4), y = rep(map$pos[map$chr == chr[i]][j], 2))
             }
         }
         # add nr. of markers
         if (nMarker)
             text(i, max(map$pos,na.rm=TRUE) * 1.05, sum(map$chr == chr[i],na.rm=TRUE))
     }
-
+  oldPar$cin <- oldPar$cra <- oldPar$csi <- oldPar$cxy <- oldPar$din <- NULL
+  par(oldPar)
 }

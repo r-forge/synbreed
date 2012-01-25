@@ -1,6 +1,6 @@
 # conversion of object class 'gpData' to data.frame
 
-gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,repl=NULL,...){
+gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all.geno=FALSE,repl=NULL,phenoCovars=TRUE,...){
 
       # check for class
       if(class(gpData)!="gpData") stop("object '",substitute(gpData),"' not of class 'gpData'")
@@ -14,10 +14,11 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
       pheno <- array(pheno[, c("ID", trait), ], dim=c(dim(pheno)[1], length(trait)+1, dim(pheno)[3]))
       dimnames(pheno) <- list(IDs, c("ID", trait), reps)
       # look for covariables
-      if(!is.null(gpData$phenoCovars)){
-        pheno <- abind(pheno, gpData$phenoCovars, along=2)
-      }
-      # append column for each replication
+      if(phenoCovars)
+        if(!is.null(gpData$phenoCovars)){
+          pheno <- abind(pheno, gpData$phenoCovars, along=2)
+        }
+       # append column for each replication
       if(dim(pheno)[3]>1){
         pheno <- abind(matrix(rep(reps, each=dim(gpData$pheno)[1]), ncol=dim(gpData$pheno)[3], nrow=dim(gpData$pheno)[1], byrow=FALSE), pheno, along=2)
         dimnames(pheno)[[2]][1] <- "repl"
@@ -41,7 +42,9 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
         # merge genotypic and phenotypic data
         mergeData <- merge(pheno,geno,by.x="ID", by.y="row.names",all.x=all.pheno,all.y=all.geno)
         # omit row.names column
-       } else mergeData <- pheno[, c("ID", colnames(pheno)[!colnames(pheno) %in% "ID"])]
+       } else mergeData <- pheno
+       mergeData <- mergeData[, c("ID", trait, ("repl")["repl" %in% colnames(mergeData)], colnames(mergeData)[colnames(mergeData) %in% colnames(gpData$geno)], 
+                                   colnames(mergeData)[colnames(mergeData) %in% dimnames(gpData$phenoCovars)[[2]]])]
      # sort by ID
      for(i in trait)
        mergeData[, i] <- as.numeric(as.character(mergeData[, i]))
