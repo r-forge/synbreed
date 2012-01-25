@@ -49,10 +49,10 @@ maize.cross <- gpData2cross(maizeC)
 summary(maize.cross)
 plot(maize.cross)
 
-# search for QTL on chr 1
+# use function scanone
 maize.cross <- calc.genoprob(maize.cross, step=2.5)
-result <- scanone(maize.cross, pheno.col=1,method="em")
-# display of LOD curve
+result <- scanone(maize.cross, pheno.col=1, method="em")
+# display of LOD curve along the chromosome
 plot(result) 
 
 
@@ -60,8 +60,6 @@ plot(result)
 data(fake.f2)
 fake.f2.gpData <- cross2gpData(fake.f2)
 summary(fake.f2.gpData)
-
-
 
 
 }
