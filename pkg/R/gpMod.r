@@ -16,7 +16,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
   model <- match.arg(model)
   m <- NULL
   prediction <- NULL
-  if(length(trait) > 1) warning("\n   The return will be a list of gpMod-objects!\n")
+  if(length(trait) > 1) cat("\n\tNOTE:   The return object will be a list of gpMod-objects!\n")
   if(is.null(fixed)) fixed <- " ~ 1"
   if(is.null(random)) random <- "~ " else random <- paste(paste(random, collapse=" "), "+ ")
   if(model == "BLUP"){
