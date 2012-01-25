@@ -9,9 +9,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
     
     # constructing design matrices
-    y <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=TRUE)
-    if (colnames(y)[2]=="repl") colnames(y)[3] <- "TRAIT"
-    else colnames(y)[2] <- "TRAIT"
+    y <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=TRUE, phenoCovars=FALSE)
+    colnames(y)[2] <- "TRAIT"
     # remove observations with missing values in the trait
     y <- na.omit(y)
     dataSet <- dataSet[dataSet  %in% unique(y$ID)]
@@ -20,25 +19,25 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # number of individuals
     n <- length(dataSet)
 
-    if (colnames(y)[2]!="repl"){
-	X <- matrix(rep(1,n,ncol=1))
-	rownames(X) <- unique(y[,1])
+    if (ncol(y) <=2){
+    X <- matrix(rep(1,n,ncol=1))
+    rownames(X) <- unique(y$ID)
     }else{
-	fixEff <- unique(y$repl)
-	X <- outer(y[,2],fixEff,"==")+0
-	colnames(X) <- fixEff
-    	rownames(X) <- y[,1]
-	#X <- cbind(X,rep(1,n))
+    fixEff <- unique(y$repl)
+    X <- outer(y$repl,fixEff,"==")+0
+    colnames(X) <- fixEff
+        rownames(X) <- y$ID
+    #X <- cbind(X,rep(1,n))
     }
-    if (colnames(y)[2]!="repl"){
-    	Z <- diag(n)
-    	rownames(Z) <- unique(y[,1])
+    if ("repl" %in% colnames(y)){
+        ranEff <- unique(y$ID)
+        Z <- outer(y$ID,ranEff,"==")+0
+        rownames(Z) <- y$ID
     }else{
-	ranEff <- unique(y$ID)
-	Z <- outer(y$ID,ranEff,"==")+0
-    	rownames(Z) <- y[,1]
+        Z <- diag(n)
+        rownames(Z) <- unique(y$ID)
     }
-    colnames(Z) <- unique(y[,1])
+    colnames(Z) <- unique(y$ID)
     if(length(cov.matrix)>1){
 	Z1 <- NULL
 	for (i in 1:length(cov.matrix)){
@@ -56,11 +55,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     RR <- FALSE
     if (is.null(cov.matrix) ){
-	y.sampGeno <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=FALSE)
-	Z <- as.matrix(y.sampGeno[, (ncol(y.sampGeno)-ncol(gpData$geno)+1):ncol(y.sampGeno)])
-    	rownames(Z) <- y[,1]
-	if (VC.est %in% c("commit","ASReml")) cov.matrix <- list(kin=diag(ncol(Z)))
-	RR <- TRUE
+        y.sampGeno <- gpData2data.frame(gpData=gpData, trait=trait, onlyPheno=FALSE, phenoCovars=FALSE)
+        Z <- as.matrix(y.sampGeno[, (ncol(y.sampGeno)-ncol(gpData$geno)+1):ncol(y.sampGeno)])
+        rownames(Z) <- y$ID
+        if (VC.est %in% c("commit","ASReml")) cov.matrix <- list(kin=diag(ncol(Z)))
+        RR <- TRUE
     }
 
     if(!is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(colnames(X),colnames(Z))
@@ -160,59 +159,59 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     rownames(mse) <- paste("fold",1:k,sep="")
     for (i in 1:Rep){ 
 
-	# sampling of k sets
-	# random sampling
-	if(verbose) cat(sampling," sampling \n")
-	if(sampling=="random"){
-	  y.u <- unique(y[,1])
-	  set.seed(seed2[i])
-	  modu<-n%%k
-	  val.samp2<-sample(c(rep(1:k,each=(n-modu)/k),sample(1:k,modu)),n,replace=FALSE)
-	  val.samp3 <- data.frame(y.u,val.samp2)
-	  }
+    # sampling of k sets
+    # random sampling
+    if(verbose) cat(sampling," sampling \n")
+    if(sampling=="random"){
+      y.u <- unique(y$ID)
+      set.seed(seed2[i])
+      modu<-n%%k
+      val.samp2<-sample(c(rep(1:k,each=(n-modu)/k),sample(1:k,modu)),n,replace=FALSE)
+      val.samp3 <- data.frame(y.u,val.samp2)
+      }
 
-	# within family sampling
-	if(sampling=="within popStruc"){
-	   which.pop <- unique(popStruc)# nr of families
-	   y.u <- unique(y[,1])
-	   val.samp3<- NULL
-	   for (j in 1:length(which.pop)){
-		y2<-matrix(y.u[popStruc==which.pop[j]],ncol=1)# select each family
-		set.seed(seed2[i]+j) # in each family a different seed is used to result in more equal TS sizes
-		modu<-nrow(y2)%%k
-		if(!modu==0) val.samp<-sample(c(rep(1:k,each=(nrow(y2)-modu)/k),sample(1:k,modu)),nrow(y2),replace=FALSE)
-		if(modu==0) val.samp<-sample(rep(1:k,each=(nrow(y2))/k),nrow(y2),replace=FALSE)
-		val.samp2 <- data.frame(y2,val.samp)		
-		val.samp3 <- as.data.frame(rbind(val.samp3,val.samp2))
-	   }
-	   val.samp3 <- val.samp3[order(as.character(val.samp3[,1])),]
-	}
+    # within family sampling
+    if(sampling=="within popStruc"){
+       which.pop <- unique(popStruc)# nr of families
+       y.u <- unique(y$ID)
+       val.samp3<- NULL
+       for (j in 1:length(which.pop)){
+        y2<-matrix(y.u[popStruc==which.pop[j]],ncol=1)# select each family
+        set.seed(seed2[i]+j) # in each family a different seed is used to result in more equal TS sizes
+        modu<-nrow(y2)%%k
+        if(!modu==0) val.samp<-sample(c(rep(1:k,each=(nrow(y2)-modu)/k),sample(1:k,modu)),nrow(y2),replace=FALSE)
+        if(modu==0) val.samp<-sample(rep(1:k,each=(nrow(y2))/k),nrow(y2),replace=FALSE)
+        val.samp2 <- data.frame(y2,val.samp)        
+        val.samp3 <- as.data.frame(rbind(val.samp3,val.samp2))
+       }
+       val.samp3 <- val.samp3[order(as.character(val.samp3[,1])),]
+    }
 
-	# across family sampling
-	if(sampling=="across popStruc"){
-	  which.pop <- unique(popStruc)
-	  y.u <- unique(y[,1])
-	  y2 <- matrix(y.u[order(popStruc)],ncol=1)
-	  b <- table(popStruc)
-	  modu<-length(which.pop)%%k
-	  set.seed(seed2[i])
-	  val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
-	  val.samp2<- rep(val.samp,b)
-	  val.samp3 <- data.frame(y2,val.samp2)
-	  val.samp3 <- 	as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
-	 #print(head(val.samp3))
-	 }
-	
-	# sampling with committed TS
-	if(sampling=="commit"){
-	  val.samp2 <- as.data.frame(y[,1])
-	  val.samp2$val.samp <- rep(NA,n)
-	  k <- length(names(TS[[i]]))
-	  for (ii in 1:k){	  
-	    val.samp2[val.samp2[,1] %in% TS[[i]][[ii]],2] <- ii
-	  }
-	  val.samp3 <- val.samp2
-	}
+    # across family sampling
+    if(sampling=="across popStruc"){
+      which.pop <- unique(popStruc)
+      y.u <- unique(y$ID)
+      y2 <- matrix(y.u[order(popStruc)],ncol=1)
+      b <- table(popStruc)
+      modu<-length(which.pop)%%k
+      set.seed(seed2[i])
+      val.samp<-sample(c(rep(1:k,each=(length(which.pop)-modu)/k),sample(1:k,modu)),length(which.pop),replace=FALSE)
+      val.samp2<- rep(val.samp,b)
+      val.samp3 <- data.frame(y2,val.samp2)
+      val.samp3 <-  as.data.frame(val.samp3[order(as.character(val.samp3[,1])),])
+     #print(head(val.samp3))
+     }
+    
+    # sampling with committed TS
+    if(sampling=="commit"){
+      val.samp2 <- as.data.frame(y$ID)
+      val.samp2$val.samp <- rep(NA,n)
+      k <- length(names(TS[[i]]))
+      for (ii in 1:k){    
+        val.samp2[val.samp2[,1] %in% TS[[i]][[ii]],2] <- ii
+      }
+      val.samp3 <- val.samp2
+    }
 
      # start k folds
      bu2 <- matrix(NA,ncol=k,nrow=(ncol(X)+ncol(Z)))
@@ -248,28 +247,28 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	samp.kf[is.na(samp.kf)] <- TRUE
 	y.samp[samp.kf,"TRAIT"] <- NA  # set values of TS to NA
 
-	   # CV in R with committing variance components
-	   if (VC.est=="commit"){
-		# vectors and matrices for MME
-		y1 <- y[y[,1] %in% samp.es[,1],"TRAIT"]
-		Z1 <-Z[rownames(Z) %in% samp.es[,1],]
-		X1 <-X[rownames(X) %in% samp.es[,1],]
-		# crossproducts
-		XX <- crossprod(X1)
-		XZ <- crossprod(X1,Z1)
-		ZX <- crossprod(Z1,X1)
-		ZZGI <-  crossprod(Z1)+ GI
-		Xy <- crossprod(X1,y1)
-		Zy <- crossprod(Z1,y1)
-		# Left hand side	
-		LHS <- rbind(cbind(XX, XZ),cbind(ZX,ZZGI))
-		# Right hand side
-		RHS <- rbind(Xy,Zy)
-		
-		# solve MME
-		bu <-  as.vector(ginv(LHS)%*%RHS)
-		#print(length(bu))
-	   }
+       # CV in R with committing variance components
+       if (VC.est=="commit"){
+        # vectors and matrices for MME
+        y1 <- y[y$ID %in% samp.es[,1],"TRAIT"]
+        Z1 <-Z[rownames(Z) %in% samp.es[,1],]
+        X1 <-X[rownames(X) %in% samp.es[,1],]
+        # crossproducts
+        XX <- crossprod(X1)
+        XZ <- crossprod(X1,Z1)
+        ZX <- crossprod(Z1,X1)
+        ZZGI <-  crossprod(Z1)+ GI
+        Xy <- crossprod(X1,y1)
+        Zy <- crossprod(Z1,y1)
+        # Left hand side    
+        LHS <- rbind(cbind(XX, XZ),cbind(ZX,ZZGI))
+        # Right hand side
+        RHS <- rbind(Xy,Zy)
+        
+        # solve MME
+        bu <-  as.vector(ginv(LHS)%*%RHS)
+        #print(length(bu))
+       }
 
 	   # estimation of variance components with ASReml for every ES
    	   if (VC.est=="ASReml"){
@@ -344,12 +343,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 			if (!any(BRRTest %in% "BRR")) shell(paste("md BRR"))
 		}
 
-		# BRR function
-		if(RR) capture.output(mod50k <- BLR(y=y.samp[,2],XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!RR){
-		    covM <- as.matrix(cov.matrix[[1]])
-   		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
-		}
+        # BRR function
+        if(RR) capture.output(mod50k <- BLR(y=y.samp$TRAIT,XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+        if(!RR){
+            covM <- as.matrix(cov.matrix[[1]])
+            capture.output(mod50k <- BLR(y=y.samp$TRAIT,GF=list(ID=1:n,A=covM),saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
+        }
 
 		# solution
 		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
@@ -369,12 +368,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 			if (!any(BLTest %in% "BL")) shell(paste("md BL"))
 		}
 
-		# BL function
-		if(RR) capture.output(mod50k <- BLR(y=y.samp[,2],XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
-		if(!RR){
-		    covM <- as.matrix(cov.matrix[[1]])
-		    capture.output(mod50k <- BLR(y=y.samp[,2],GF=list(ID=1:n,A=covM),saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
-		}
+        # BL function
+        if(RR) capture.output(mod50k <- BLR(y=y.samp$TRAIT,XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+        if(!RR){
+            covM <- as.matrix(cov.matrix[[1]])
+            capture.output(mod50k <- BLR(y=y.samp$TRAIT,GF=list(ID=1:n,A=covM),saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
+        }
 
 		# solutions of BL
 		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
@@ -382,23 +381,23 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 		#print(length(bu))
 	  }
 
-	  # solution vector
-	  #if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
-	  bu2[ ,ii] <- bu
-	  # TS
-	  Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
-	  X2 <- X[(rownames(X) %in% samp.ts[,1]),]
-	  XZ2 <- cbind(X2,Z2)
-	  #print(dim(XZ2))
-	  #print(dim(XZ2))
-	  y2 <- y[(y[,1] %in% samp.ts[,1]),"TRAIT"]
-	  y.dach <- XZ2%*%bu
-	  if(ncol(y)>2) rownames(y.dach) <- paste(rownames(X2),colnames(X2),sep="_")
-	  #print(head(y.dach))
-	  #print(dim(y.dach))
-	  n.TS[ii,i] <- nrow(y.dach)
-	  # save DS size
-	  n.DS[ii,i] <- length(namesDS)
+      # solution vector
+      #if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
+      bu2[ ,ii] <- bu
+      # TS
+      Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
+      X2 <- X[(rownames(X) %in% samp.ts[,1]),]
+      XZ2 <- cbind(X2,Z2)
+      #print(dim(XZ2))
+      #print(dim(XZ2))
+      y2 <- y[(y$ID %in% samp.ts[,1]),"TRAIT"]
+      y.dach <- XZ2%*%bu
+      if(ncol(y)>2) rownames(y.dach) <- paste(rownames(X2),colnames(X2),sep="_")
+      #print(head(y.dach))
+      #print(dim(y.dach))
+      n.TS[ii,i] <- nrow(y.dach)
+      # save DS size
+      n.DS[ii,i] <- length(namesDS)
           # Predicted breeding/testcross values
           y.TS <- rbind(y.TS,y.dach)
 	  # predictive ability
