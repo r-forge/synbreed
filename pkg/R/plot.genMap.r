@@ -7,7 +7,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ..
     
     chr <- unique(map$chr)
     chr <- chr[!is.na(chr)]
-    if(class(chr) =="factor") bord <- "transparent" else bord <- NULL
+    if(class(map$chr) == "factor") bord <- "transparent" else bord <- NULL
     map <- map[!is.na(map$chr), ]
 
     # centromere positions of maize
