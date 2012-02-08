@@ -182,12 +182,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     cnames <- cnames[!which.duplicated]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
     step1<- sum(which.duplicated)
-    which.duplicated <- rep(FALSE, ncol(res))
+    which.duplicated <- rep(FALSE, ncol(res))  
     which.miss <- apply(is.na(res),2,sum)>0
     which.miss <- (1:length(which.miss))[which.miss]
     if(length(which.miss[which.miss]) == ncol(res)) which.miss <- which.miss[1:(length(which.miss)-1)]
     for(i in which.miss){
-      if(which.duplicated[i]) next
+      if(which.duplicated[i]) next  
       for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]])
         if(all(res[, i] == res[, j], na.rm = TRUE)){
           if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){
@@ -278,7 +278,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                    }
                  if (impute.type=="beagleAfterFamily"){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
-                     res[is.na(res[,j]) & popStruc == i ,j] <- sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE)
+                     res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                      # update counter
                      ifelse(polymorph[i],cnt3 <- cnt3 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
                    } else{ # use Beagle and impute NA for polymorphic families
