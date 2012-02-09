@@ -11,7 +11,7 @@ manhattanPlot <- function(b,gpData=NULL,colored=FALSE,add=FALSE,pch=19,ylab=NULL
     namChrs <- names(chrs)
     chrs <- c(0,chrs[1:(length(chrs)-1)])
     names(chrs) <- namChrs
-    chr <- as.numeric(chrs[gpData$map$chr]) + as.numeric(gpData$map$pos)+ as.numeric(gpData$map$chr)*0.01
+    chr <- as.numeric(chrs[gpData$map$chr]) + as.numeric(gpData$map$pos)+ as.numeric(as.factor(gpData$map$chr))*0.01
     if(!add){
       plot(chr,b,col=cols[(as.numeric(gpData$map$chr)-1)%%6+1],type="p",axes=FALSE,pch=pch,ylab=ylab,cex.axis=.9,...)
       axis(side=1,at=c(chr[!duplicated(gpData$map$chr)],max(chr,na.rm=TRUE)),labels=NA, cex=.9, lwd.ticks=2)

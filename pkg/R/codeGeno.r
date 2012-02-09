@@ -270,9 +270,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  for ( i in rownames(poptab)[nmissfam>0] ){                          
                    # impute values for impute.type="family" : all missing genotypes
                    allTab <- table(res[popStruc == i, j])
-                   if(all(names(allTab) == c(0, 2)) & noHet == FALSE)  allTab <- table(c(0,1,1,2))
-                   if (impute.type=="family"){
-                     res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
+                   if(length(allTab) == 0 & noHet) {allTab <- table(c(0,2))
+                   } else if(all(names(allTab) == c(0, 2)) & !noHet)  allTab <- table(c(0,1,1,2))
+                    if (impute.type=="family"){
+                      res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                      # update counter
                      ifelse(polymorph[i],cnt3 <- cnt3 + nmissfam[i],cnt1 <- cnt1 + nmissfam[i])  
                    }
@@ -290,7 +291,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  }  
                }
              }
-             if(j==ceiling(M/100)) cat("          approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep="")
+             if(verbose) if(j==ceiling(M/100)) cat("          approximative run time ",(proc.time()[3] - ptm)*99," seconds ... \n",sep="")
           }) # end try
         }   # end of if(sum(!is.na(res[,j]))>0)
       }  # end of marker loop

@@ -22,6 +22,9 @@ predict.gpMod <- function(object,newdata=NULL,...){
      prediction <- mu + X %*% m
   }
   if(model == "BLUP"){
+#      prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+#      prediction <- prediction[!names(prediction) %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
+
       G <- object$kin[c(names(object$y),newdata),c(names(object$y),newdata)]
       y <- object$y
       n <- length(y) # size of the training set
