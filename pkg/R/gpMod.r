@@ -91,14 +91,17 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       }
       # genVal <- NULL
       if(markerEffects){
-        m <- t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+        m <- as.numeric(t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)])
+        names(m) <- colnames(gpData$geno)
       }
       if(predict){
         if(markerEffects){
-          prediction <- gpData$geno[!rownames(gpData$geno) %in% rownames(kin), ] %*% m
+          prediction <- as.numeric(gpData$geno[!rownames(gpData$geno) %in% rownames(kin), ] %*% m)
+          names(prediction) <- rownames(gpData$geno)[!rownames(gpData$geno) %in% rownames(kin)]
         } else {
           prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
-          prediction <- prediction[!names(prediction) %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
+          names(prediction) <- rownames(gpData$geno)
+          prediction <- prediction[!dimnames(prediction)[[1]] %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
         }
       }
     }
@@ -114,7 +117,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       names(genVal) <- rownames(X)
       m <- res$bL
       if(predict){
-        prediction <- gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m
+        prediction <- as.numeric(gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m)
+        names(prediction) <- rownames(gpData$geno)[!rownames(gpData$geno) %in% names(genVal)]
       }
     }
     if(model=="BRR"){
@@ -128,7 +132,8 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       names(genVal) <- rownames(X)
       m <- res$bR
       if(predict){
-        prediction <- gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m
+        prediction <- as.numeric(gpData$geno[!rownames(gpData$geno) %in% names(genVal), ] %*% m)
+        names(prediction) <- rownames(gpData$geno)[!rownames(gpData$geno) %in% names(genVal)]
       }
     }
 
@@ -206,6 +211,6 @@ print.summary.gpModList <- function(x,...) {
   for(i in 1:length(x)){
     cat(paste("\n\tTrait ", names(x)[i], "\n\n\n"))
     print(x[[i]])
-    if(i != length(x)) cat("-------------------------------------------------\n")
+    if(i != length(x)) cat("-------------------------------------------------\n\n")
   }
 }

@@ -182,8 +182,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
       nv <- ncol(res)
       part <- round(seq(0,nv, length.out=ceiling(nv/50000)+1))
-      for(i in length(part):2)
+      for(i in length(part):2){
          res <- res[, part[i-1]+((part[i-1]+1):part[i])[colMeans(res, na.rm=TRUE)!=0]]
+         cnames <- cnames[part[i-1]+((part[i-1]+1):part[i])[colMeans(res, na.rm=TRUE)!=0]]
+      }
       nv <- nv-ncol(res)
     }
     which.duplicated <- duplicated(res,MARGIN=2)
