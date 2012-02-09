@@ -322,8 +322,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(!is.null(tester)) 
         res <- res*2
       rownames(res) <- rownames(gpData$geno)
-      print(colnames(res))
-#      colnames(res) <- rownames(gpData$map) 
+      colnames(res) <- rownames(gpData$map) 
       # loop over chromosomses
       for (lg in seq(along=chr)){
         if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
