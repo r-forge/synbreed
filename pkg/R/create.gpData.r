@@ -85,14 +85,14 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
       dimnames(arrPheno) <- list(rownam, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1], as.character(apply(dim3, 1, paste, collapse = "_")))
       for(i in 1:nrow(dim3)){
         vec.bool <- apply(as.matrix(pheno[, colnames(dim3)]) == as.matrix(dim3[rep(i, nrow(pheno)), ]), 1, all)
-        arrPheno[pheno[vec.bool, 1], , i] <- as.matrix(pheno[vec.bool, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1]])
+        arrPheno[as.character(pheno[vec.bool, 1]), , i] <- as.matrix(pheno[vec.bool, (colnames(pheno)[!colnames(pheno) %in% repeated])[-1]])
       }
       if(!is.null(modCovar)){ # strip out covariates
         arrModCovars <- arrPheno[,rep(1, length(modCovar)), ]
         dimnames(arrModCovars)[[2]] <- colnames(pheno)[colnames(pheno) %in% modCovar]
         for(i in 1:nrow(dim3)){
           vec.bool <- apply(matrix(pheno[, colnames(dim3)] == dim3[rep(i, nrow(pheno)), ], ncol=ncol(dim3)), 1, all)
-          arrModCovars[pheno[vec.bool, 1], , i] <- as.matrix(pheno[vec.bool, colnames(pheno)[colnames(pheno) %in% modCovar]])
+          arrModCovars[as.character(pheno[vec.bool, 1]), , i] <- as.matrix(pheno[vec.bool, colnames(pheno)[colnames(pheno) %in% modCovar]])
         }
       }
     }
