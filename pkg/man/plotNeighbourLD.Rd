@@ -46,10 +46,12 @@ Theresa Albrecht
 \code{\link{plotGenMap}}, \code{\link{pairwiseLD}}
 }
 \examples{
+\dontrun{
 data(maize)
 maize2 <-codeGeno(maize)
 LD <- pairwiseLD(maize2,chr=1:10,type="matrix")
 plotNeighbourLD(LD,maize2,nMarker=FALSE)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

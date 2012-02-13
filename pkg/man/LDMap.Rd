@@ -34,12 +34,13 @@ Further arguments that could be passed to function \code{LDheatmap}.
 \code{\link{pairwiseLD}}, \code{\link[LDheatmap]{LDheatmap}}, \code{\link{LDDist}}
 }
 \examples{
+\dontrun{
 data(maize)
 maizeC <- codeGeno(maize)
 
 # LD for chr 1
 maizeLD <- pairwiseLD(maizeC,chr=1,type="matrix")
 LDMap(maizeLD,maizeC)
-
+}
 }
 \keyword{hplot}

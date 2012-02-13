@@ -60,7 +60,9 @@ Valentin Wimmer
 \code{\link{LDDist}}, \code{\link{LDMap}}
 }
 \examples{
+\dontrun{
 data(maize)
 maizeC <- codeGeno(maize)
 maizeLD <- pairwiseLD(maizeC,chr=1,type="data.frame")
+}
 }

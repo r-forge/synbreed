@@ -43,6 +43,7 @@ Hill WG, Weir BS (1988) Variances and covariances of squared linkage disequilibr
 \code{\link{pairwiseLD}}, \code{\link{LDMap}}
 }
 \examples{
+\dontrun{
 # maize data example
 data(maize)
 maizeC <- codeGeno(maize)
@@ -58,7 +59,7 @@ LDDist(maizeLD,type="bars")
 # stacked bars  with user-defined categories
 LDDist(maizeLD,type="bars",breaks=list(dist=c(0,10,20,40,60,180),
 r2=c(1,0.6,0.4,0.3,0.1,0)))
-
+}
 }
 \keyword{hplot}
 

@@ -32,12 +32,14 @@ A <- kin(gp,ret="add")
 plot(A)
 
 # big pedigree
+\dontrun{
 data(maize)
 K <- kin(maize,ret="kin")
 U <- kin(codeGeno(maize),ret="realized")/2
 # equal colorkeys
 plot(K,at=seq(0,2,length=9))
 plot(U,at=seq(0,2,length=9))
+}
 }
 
 \keyword{hplot}
