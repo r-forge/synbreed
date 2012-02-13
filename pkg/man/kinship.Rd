@@ -81,10 +81,11 @@ J. Anim. Sci. 86
 #=========================
 # (1) pedigree based relatedness
 #=========================
-
+\dontrun{
 data(maize)
 K <- kin(maize,ret="kin")
 plot(K)
+}
 
 #=========================
 # (2) marker based relatedness

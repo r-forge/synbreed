@@ -103,6 +103,7 @@ Crossa J, de los Campos G, Perez P, Gianola D, Burgueno J, et al. (2010) Predict
 
 \examples{
 # loading the maize data set
+\dontrun{
 data(maize)
 maize2 <- codeGeno(maize)
 rad <- kin(maize2,ret="realized")
@@ -117,6 +118,7 @@ cv.maize$PredAbi
 cv.maize2$PredAbi
 summary(cv.maize) 
 summary(cv.maize2) 
+}
 }
 
 
