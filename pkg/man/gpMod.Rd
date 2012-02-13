@@ -76,6 +76,7 @@ Valentin Wimmer, Hans-Juergen Auinger, and Theresa Albrecht
 \code{\link{kin}}, \code{\link{crossVal}}
 }
 \examples{
+\dontrun{
 data(maize)
 maizeC <- codeGeno(maize)
 
@@ -99,5 +100,5 @@ prior <- list(varE=list(df=3,S=35),lambda = list(shape=0.52,rate=1e-4,value=20,t
 
 summary(mod1)
 summary(mod2)
-\dontrun{summary(mod3)}
+summary(mod3)}
 }
