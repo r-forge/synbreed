@@ -26,7 +26,9 @@ Valdar W, Solberg LC, Gauguier D, Burnett S, Klenerman P, Cookson WO, Taylor MS,
 Valdar W, Solberg LC, Gauguier D, Cookson WO, Rawlins NJ, Mott R, Flint J.(2006b) Genetic and environmental effects on complex traits in mice. Genetics. 2006 Aug 3;
 }                             
 \examples{
+\dontrun{
 data(mice)
-summary(mice)                                       
+summary(mice)
+}
 }                                  
 \keyword{datasets}

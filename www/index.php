@@ -101,6 +101,18 @@ To install the package <tt>synbreed</tt> from R (if you are running a recent R v
  <a href="https://r-forge.r-project.org/R/?group_id=710">https://r-forge.r-project.org/R/?group_id=710 </a>
     <br>
       <br><p>
+<br>
+ Source code for version 0.8-1 is available  <a href="synbreed_0.8-1.tar.gz"> here </a>
+<br>
+ To install source code in R, use (with file <tt>  synbreed_0.8-1.tar.gz </tt> in the working directory)
+ <br>
+ <br>
+ <br>
+  <tt> install.packages(c("lattice", "igraph", "MASS", "LDheatmap", "qtl", "doBy", "BLR", "regress", "abind"))  </tt>
+<br>
+ <tt>  system("Rcmd INSTALL synbreed_0.8-1.tar.gz")  </tt>
+<br>
+
     </blockquote>
   </blockquote>
 </blockquote>

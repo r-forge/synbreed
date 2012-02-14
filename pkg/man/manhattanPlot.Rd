@@ -41,10 +41,12 @@ Valentin Wimmer
 }
 
 \examples{
+\dontrun{
 data(mice)
 # plot only random noise
 b <- rexp(ncol(mice$geno),3)
 manhattanPlot(b,mice)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
