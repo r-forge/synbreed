@@ -35,6 +35,7 @@ Valentin Wimmer and Hans-Juergen Auinger
 \code{\link{create.gpData}}
 }
 \examples{
+\dontrun{
 # example data
 set.seed(311)
 pheno <- data.frame(Yield = rnorm(10,200,5),Height=rnorm(10,100,1))
@@ -57,7 +58,7 @@ summary(gp2)
 # discard genotypes with missing values in the marker matrix
 gp3 <- discard.individuals(gp,names(which(rowSums(is.na(gp$geno))>0)))
 summary(gp3)
-
+}
  
 }
 \keyword{manip}

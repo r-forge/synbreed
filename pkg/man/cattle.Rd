@@ -23,7 +23,9 @@ Object of class \code{gpData}
 %%}
 
 \examples{
+\dontrun{
 data(cattle)
 summary(cattle)
+}
 }
 \keyword{datasets}

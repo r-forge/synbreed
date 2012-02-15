@@ -17,8 +17,10 @@ Object of class \code{gpData}
 }
                                 
 \examples{
+\dontrun{
 data(maize)
 summary(maize)                                       
+}
 }                                  
 \keyword{datasets}
                                   

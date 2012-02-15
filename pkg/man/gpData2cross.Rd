@@ -41,6 +41,7 @@ Valentin Wimmer and Hans-Juergen Auinger
 \code{\link{create.gpData}},  \code{\link[qtl]{read.cross}} ,  \code{\link{codeGeno}}
 }
 \examples{
+\dontrun{
 # from gpData to cross
 data(maize)
 maizeC <- codeGeno(maize)
@@ -60,6 +61,5 @@ plot(result)
 data(fake.f2)
 fake.f2.gpData <- cross2gpData(fake.f2)
 summary(fake.f2.gpData)
-
-
+}
 }

@@ -109,6 +109,7 @@ Hans-Juergen Auinger and Valentin Wimmer
 
 
 \examples{
+\dontrun{
 # create marker data for 9 SNPs and 10 homozygous individuals
 snp9 <- matrix(c(
   "AA",   "AA",   "AA",   "BB",   "AA",   "AA",   "AA",   "AA",  NA,
@@ -138,7 +139,7 @@ gp.coded <- codeGeno(gp,impute=TRUE,impute.type="random")
 data(mice)
 summary(mice)
 # heterozygous values must be labeled  (may run some seconds)
-\dontrun{mice.coded <- codeGeno(mice,label.heter=function(x) substr(x,1,1)!=substr(x,3,3))}
+mice.coded <- codeGeno(mice,label.heter=function(x) substr(x,1,1)!=substr(x,3,3))
 
 
 # example with maize data and imputing by family
@@ -169,5 +170,6 @@ imputed2 <- maize.random$geno[cbind(ind1,ind2)]
 (t2 <- table(original,imputed2) )
 # sum of correct replacements
 sum(diag(t2))/sum(t2)
+}
 }
 \keyword{manip}

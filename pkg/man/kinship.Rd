@@ -90,10 +90,11 @@ plot(K)
 #=========================
 # (2) marker based relatedness
 #=========================
-
+\dontrun{
 data(maize)
 U <- kin(codeGeno(maize),ret="realized")
 plot(U)
+}
 
 
 ### Example for Legarra et al. (2009), J. Dairy Sci. 92: p. 4660

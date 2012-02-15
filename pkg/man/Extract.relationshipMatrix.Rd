@@ -19,7 +19,9 @@ indices
 }
 }
 \examples{
+\dontrun{
 data(maize)
 U <- kin(codeGeno(maize),ret="realized")
 U[1:3,1:3]
+}
 }

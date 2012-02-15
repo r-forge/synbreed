@@ -96,7 +96,7 @@ mod2 <- gpMod(maizeC,model="BLUP",kin=U)
 
 # Bayesian Lasso
 prior <- list(varE=list(df=3,S=35),lambda = list(shape=0.52,rate=1e-4,value=20,type='random'))
-\dontrun{mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)}
+mod3 <- gpMod(maizeC,model="BL",prior=prior,nIter=6000,burnIn=1000,thin=5)
 
 summary(mod1)
 summary(mod2)
