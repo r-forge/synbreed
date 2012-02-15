@@ -26,9 +26,10 @@ Valentin Wimmer
 }
 
 \examples{
+\dontrun{
 data(maize)
 summary(maize)
-
+}
 }
 \keyword{methods}
 

@@ -26,9 +26,11 @@ Valentin Wimmer
 }
 
 \examples{
+\dontrun{
 data(maize)
 U <- kin(codeGeno(maize),ret="realized")
 summary(U)
+}
 }
 \keyword{methods}
 

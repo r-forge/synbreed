@@ -47,6 +47,7 @@ Valentin Wimmer
 \code{\link{create.gpData}}
 }
 \examples{
+\dontrun{
 # low density plot
 data(maize)
 plotGenMap(maize)
@@ -54,7 +55,7 @@ plotGenMap(maize)
 # high density plot  
 data(mice)
 plotGenMap(mice,dense=TRUE,nMarker=FALSE)
-
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

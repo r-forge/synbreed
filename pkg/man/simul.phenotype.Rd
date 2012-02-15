@@ -60,6 +60,7 @@ Valentin Wimmer
 \code{\link{simul.pedigree}}
 }
 \examples{
+\dontrun{
 ped <- simul.pedigree(gener=5)
 varcom <- list(sigma2e=25,sigma2a=36,sigma2l=9,sigma2b=4)
 # field trial with 3 locations and 2 blocks within locations
@@ -67,5 +68,6 @@ data.simul <- simul.phenotype(ped,mu=10,vc=varcom,Nloc=3,Nrepl=2)
 head(data.simul)
 # analysis of variance
 anova(lm(Trait~ID+Loc+Loc:Block,data=data.simul))
+}
 }
 

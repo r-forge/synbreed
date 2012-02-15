@@ -34,6 +34,8 @@ Valentin Wimmer
 \code{\link{create.gpData}}
 }
 \examples{
+\dontrun{
 data(maize)
 summaryGenMap(maize)
+}
 }
