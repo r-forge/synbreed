@@ -17,7 +17,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ..
     if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
 
     # add legend to the left side
-    if (dense)  layout(matrix(2:1, ncol = 2), width = c(0.82, 0.25))
+    if (dense)  layout(matrix(2:1, ncol = 2), widths = c(0.82, 0.25))
 
     # colors from RColorBrewer red - green
     # display.brewer.pal(11, "RdYlGn")

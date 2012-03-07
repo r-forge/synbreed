@@ -16,7 +16,7 @@ plotNeighbourLD <- function(LD,map,dense=FALSE,nMarker=TRUE,centr=NULL,...){
     if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
     
     # initialize map
-    layout(matrix(1:2,ncol=2),width=c(0.82,0.18))
+    layout(matrix(1:2,ncol=2),widths=c(0.82,0.18))
     # make an empty plot 
     if(!is.null(centr)) {
 	plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +

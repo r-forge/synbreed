@@ -92,6 +92,7 @@ In the first step, missing genotypes are imputed according to the algorithm with
 
 Information about imputing is reported after a call of \code{codeGeno}.
 
+Note: Beagle is included in the synbreed package. Once required, Beagle is called using \code{path.package()}. To avoid problems running Beagle, we recommend (as it is the general recommendation in R) to install the \code{synbreed} package to a directory not containing a space (e.g. 'Program Files').
 }
 \value{
 An object of class \code{gpData} containing the recoded marker matrix. If \code{maf} or \code{nmiss} were specified or \code{keep.identical=FALSE}, dimension of \code{geno} and \code{map} may be reduced due to selection of markers.  The genotype which is homozygous for the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.
