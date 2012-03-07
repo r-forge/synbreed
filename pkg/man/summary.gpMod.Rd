@@ -25,7 +25,8 @@ not used
 \code{\link{gpMod}}
 }
 \examples{
-\dontrun{data(maize)
+\dontrun{
+data(maize)
 maizeC <- codeGeno(maize)
 # marker-based (realized) relationship matrix
 U <- kin(maizeC,ret="realized")/2
