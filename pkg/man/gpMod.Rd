@@ -87,7 +87,6 @@ K <- kin(maizeC,ret="kin",DH=maize$covar$DH)
 # divide by an additional factor 2
 # because for testcross prediction the kinship of DH lines is used
 U <- kin(maizeC,ret="realized")/2
-
 # BLUP models
 # P-BLUP
 mod1 <- gpMod(maizeC,model="BLUP",kin=K)

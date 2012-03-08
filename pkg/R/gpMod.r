@@ -48,7 +48,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       df.trait <- df.trait[!df.trait$ID %in% kinNames,]
       warning("Some phenotyped IDs are not in the kinship matrix!\nThese are removed from the analysis")
     }
-    kin <- kin[unique(df.trait$ID), unique(df.trait$ID)]
+    kinNew <- kin[unique(df.trait$ID), unique(df.trait$ID)]
     kinTS <- kin[df.trait$ID, df.trait$ID]# expand the matrix to what is needed
     if(model == "BLUP"){
       if(!ASReml){
@@ -61,7 +61,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
         system("mkdir ASReml")
         oldwd <- getwd()
         setwd(paste(oldwd, "ASReml", sep="/"))
-        kinTS <- kin[dimnames(gpData$pheno)[[1]], dimnames(gpData$pheno)[[1]]]
+        kinTS <- kinNew[dimnames(gpData$pheno)[[1]], dimnames(gpData$pheno)[[1]]]
         write.relationshipMatrix(kinTS+diag(x=10**(-7), nrow(kinTS)),file="Kins.giv",type="inv",sorting="ASReml",digits=10)
         write.table(df.trait, file="Pheno.txt", col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
         cat("Model \n ID        !A \n TRAIT     !D* \n", file = "Model.as")
@@ -91,15 +91,15 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       }
       # genVal <- NULL
       if(markerEffects){
-        m <- as.numeric(t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)])
+        m <- as.numeric(t(gpData$geno[rownames(kinNew), ]) %*% ginv(kinNew) %*% genVal[rownames(kinNew)])
         names(m) <- colnames(gpData$geno)
       }
       if(predict){
         if(markerEffects){
-          prediction <- as.numeric(gpData$geno[!rownames(gpData$geno) %in% rownames(kin), ] %*% m)
-          names(prediction) <- rownames(gpData$geno)[!rownames(gpData$geno) %in% rownames(kin)]
+          prediction <- as.numeric(gpData$geno[!rownames(gpData$geno) %in% rownames(kinNew), ] %*% m)
+          names(prediction) <- rownames(gpData$geno)[!rownames(gpData$geno) %in% rownames(kinNew)]
         } else {
-          prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
+          prediction <- gpData$geno %*% t(gpData$geno[rownames(kinNew), ]) %*% ginv(kinNew) %*% genVal[rownames(kinNew)]
           names(prediction) <- rownames(gpData$geno)
           prediction <- prediction[!dimnames(prediction)[[1]] %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
         }
@@ -126,7 +126,7 @@ gpMod <- function(gpData,model=c("BLUP","BL","BRR"),kin=NULL,predict=FALSE,trait
       X <-  gpData$geno[rownames(gpData$geno) %in% df.trait$ID,]
       y <- df.trait[df.trait$ID %in% rownames(gpData$geno), yName]
       capture.output(res <- BLR(y=y,XR=X,...),file="BLRout.txt")
-      if(!is.null(kin))  capture.output(res <- BLR(y=y,XR=X,GF=list(ID=df.trait$ID,A=kin),...),file="BLRout.txt")
+      if(!is.null(kin))  capture.output(res <- BLR(y=y,XR=X,GF=list(ID=df.trait$ID,A=kinTS),...),file="BLRout.txt")
       else kin <- NULL
       genVal <- res$yHat
       names(genVal) <- rownames(X)

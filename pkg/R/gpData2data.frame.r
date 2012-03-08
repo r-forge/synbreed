@@ -28,10 +28,11 @@ gpData2data.frame <- function(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,all
         else if(!all(repl %in% dimnames(pheno)[[3]])) stop("wrong replication names used")
       } else repl <- dimnames(pheno)[[3]]
       pheno <- as.data.frame(apply(pheno[, ,repl], 2, cbind))
-      for(i in names(gpData$info$attrPhenoCovars)){
-        if(gpData$info$attrPhenoCovars[i] == "numeric")
-          pheno[, i] <- as(as.character(pheno[, i]), gpData$info$attrPhenoCovars[i])
-      }
+      if(phenoCovars)
+        for(i in names(gpData$info$attrPhenoCovars)){
+          if(gpData$info$attrPhenoCovars[i] == "numeric")
+            pheno[, i] <- as(as.character(pheno[, i]), gpData$info$attrPhenoCovars[i])
+        }
       if(!is.null(repl))
         for(i in colnames(pheno))
           if(class(pheno[, i]) == "factor")

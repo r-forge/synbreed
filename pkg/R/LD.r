@@ -20,6 +20,12 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
     gpData$map <- gpData$map[mapped,]
     
     linkageGroup <- as.character(gpData$map$chr)
+    if(!rm.unmapped){
+      gpData$map$chr <- as.character(gpData$map$chr)
+      gpData$map$chr[is.na(linkageGroup)] <- "NA"
+      gpData$map$chr <- as.factor(gpData$map$chr)
+      linkageGroup[is.na(linkageGroup)] <- "NA"
+    }
     pos <- gpData$map$pos
     names(pos) <- rownames(gpData$map)
    
@@ -76,7 +82,8 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
            posi <- pos[linkageGroup==lg[i]]
        
            ld.r2 <- cor(markeri,method="spearman",use="pairwise.complete.obs")^2
-          if(type=="data.frame"){
+ 
+           if(type=="data.frame"){
               ld.r2i <- ld.r2[lower.tri(ld.r2)]
               # index vectors for LD data.frame
               rowi <- rep(1:p,times=(p:1)-1)
@@ -84,7 +91,20 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
               coli <- coli[length(coli):1]
               # distance between markers
               disti <- abs(posi[rowi] - posi[coli])
-              ld.r2.df <- data.frame(marker1=mn[rowi],marker2=mn[coli],r2=ld.r2i,dist=disti)
+              ld.r2.df <- data.frame(marker1=mn[rowi],
+                                     marker2=mn[coli],
+                                     r2=ld.r2i,
+                                     dist=disti,
+                                     stringsAsFactors=FALSE)
+              if(i==length(lg)) if(!rm.unmapped) {
+                ld.r2ini <- cor(gpData$geno[,linkageGroup!=lg[i]],markeri,method="spearman",use="pairwise.complete.obs")^2
+                ld.r2.dfini <- data.frame(marker1=rep(colnames(ld.r2ini), each=nrow(ld.r2ini)), 
+                                          marker2=rep(rownames(ld.r2ini), ncol(ld.r2ini)), 
+                                          r2=as.numeric(ld.r2ini), 
+                                          dist=rep(NA,ncol(ld.r2ini)*nrow(ld.r2ini)), 
+                                          stringsAsFactors=FALSE)
+                ld.r2.df <- rbind(ld.r2.df, ld.r2.dfini)
+              }
           }
           if(type=="matrix"){
               # matrix of distances 

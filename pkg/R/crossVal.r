@@ -39,18 +39,18 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     }
     colnames(Z) <- unique(y$ID)
     if(length(cov.matrix)>1){
-	Z1 <- NULL
-	for (i in 1:length(cov.matrix)){
-		 Z1 <- cbind(Z1,Z)
-	}
-	Z <- Z1
-    }	
+    Z1 <- NULL
+    for (i in 1:length(cov.matrix)){
+         Z1 <- cbind(Z1,Z)
+    }
+    Z <- Z1
+    }   
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
-   	   for( i in 1:length(cov.matrix)){
-	     covM <- as.matrix(cov.matrix[[i]])
-	     cov.matrix[[i]] <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
-	   }
+       for( i in 1:length(cov.matrix)){
+         covM <- as.matrix(cov.matrix[[i]])
+         cov.matrix[[i]] <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+       }
     }
     # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     RR <- FALSE
@@ -66,12 +66,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     if(is.null(colnames(X)) & !is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),colnames(Z))
     if(is.null(colnames(X)) & is.null(colnames(Z))) names.eff <- c(paste("X",1:ncol(X),sep=""),paste("Z",1:ncol(Z),sep=""))
 
-    # catch errors	
+    # catch errors  
     if(is.null(varComp) & VC.est=="commit") stop("Variance components have to be specified")
     if(VC.est=="commit" & length(varComp)<2) stop("Variance components should be at least two, one for the random effect and one residual variance")
     if(!sampling %in% c("random","commit") & is.null(popStruc) & is.null(gpData$covar$family)) stop("no popStruc was given")
     if(!sampling %in% c("random","commit") & is.null(popStruc)){
-	popStruc <- gpData$covar$family[gpData$covar$genotyped & gpData$covar$phenotyped]
+    popStruc <- gpData$covar$family[gpData$covar$genotyped & gpData$covar$phenotyped]
     }
     if(sampling!="random" & !is.null(popStruc)){
       if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in data")
@@ -84,16 +84,16 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 
     # prepare covariance matrices
     if (!is.null(cov.matrix)){
-	m <- length(cov.matrix)
-	if(verbose) cat("Model with ",m," covariance matrix/ces \n")
-	if (VC.est=="commit"){
-	   # function for constructing GI
-	   rmat<-NULL
-   	   for( i in 1:length(cov.matrix)){
-	   covM <- as.matrix(cov.matrix[[i]])
-       	   m <- solve(covM)*(varComp[length(varComp)]/varComp[i])
-       	     if(i==1) rmat <- m
-       	     else
+    m <- length(cov.matrix)
+    if(verbose) cat("Model with ",m," covariance matrix/ces \n")
+    if (VC.est=="commit"){
+       # function for constructing GI
+       rmat<-NULL
+       for( i in 1:length(cov.matrix)){
+       covM <- as.matrix(cov.matrix[[i]])
+           m <- solve(covM)*(varComp[length(varComp)]/varComp[i])
+             if(i==1) rmat <- m
+             else
              {
               nr <- dim(m)[1]
               nc <- dim(m)[2]
@@ -101,31 +101,31 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
               rmat <- cbind(rmat,matrix(0,dim(rmat)[1],nc))
               rmat <- rbind(rmat,aa)
              }
-       	   }
+           }
          GI <- rmat
          }
-	# covariance matrices for ASReml
-	else { 
-	   if(VC.est=="ASReml"){
-      	     if(!RR){	
-		for ( i in 1:length(cov.matrix)){
-	   	covM <- as.matrix(cov.matrix[[i]])
-	   	write.relationshipMatrix(covM,file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
-	   	}
-	   	ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
-	   	ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
-	     }
-	     if(!RR){
-		cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r ",ID2,sep=""),file="Model.as")
-		if (colnames(y)[2]=="repl") cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r ",ID2,sep=""),file="Model.as")
-	     }
-	     else{
-		cat(paste("Model \n ID     	  !A \n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r M",sep=""),file="Model.as")
-		if (colnames(y)[2]=="repl") cat(paste("Model \n ID     	  !A \n FIX   	  !A\n TRAIT  	  !D* \n M   	    !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r M",sep=""),file="Model.as")
-	     }
-	     cat("",file="Model.pin")
-	  }
-	}
+    # covariance matrices for ASReml
+    else { 
+       if(VC.est=="ASReml"){
+             if(!RR){   
+        for ( i in 1:length(cov.matrix)){
+        covM <- as.matrix(cov.matrix[[i]])
+        write.relationshipMatrix(covM,file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
+        }
+        ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
+        ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
+         }
+         if(!RR){
+        cat(paste("Model \n ID        !A \n TRAIT     !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r ",ID2,sep=""),file="Model.as")
+        if (colnames(y)[2]=="repl") cat(paste("Model \n ID        !A \n FIX       !A\n TRAIT      !D* \n",ID1,"Pheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r ",ID2,sep=""),file="Model.as")
+         }
+         else{
+        cat(paste("Model \n ID        !A \n TRAIT     !D* \n M          !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ mu !r M",sep=""),file="Model.as")
+        if (colnames(y)[2]=="repl") cat(paste("Model \n ID        !A \n FIX       !A\n TRAIT      !D* \n M          !G ",ncol(Z)," \nPheno.txt !skip 1 !AISING !maxit 11\n!MVINCLUDE \n \nTRAIT  ~ FIX !r M",sep=""),file="Model.as")
+         }
+         cat("",file="Model.pin")
+      }
+    }
     }
     # set seed for replications
     if(sampling=="commit") Rep <- length(names(TS)) # if TS is committed
@@ -220,32 +220,32 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
      y.TS <- NULL
      id.TS <- list()
      for (ii in 1:k){
-	if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
-	# select ES, k-times
-	samp.es <- val.samp3[!(val.samp3[,2] %in% ii),] 
-	samp.ts <- val.samp3[!is.na(val.samp3[,2]),] 
-	samp.ts <- samp.ts[samp.ts[,2]==ii,] 
-	#cat("samp.ts",dim(samp.ts),"\n")
-	namesDS <- c(samp.es[,1],samp.ts[,1])
-	y.samp <- y
-	if(!is.null(ES)){ # if ES is committed
-	  samp.es <- samp.es[samp.es[,1] %in% ES[[i]][[ii]], ]
-	  #cat("samp.es",dim(samp.es),"\n")
-	  namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1])) # new DS
-	  y.samp[ !( y.samp[,1] %in% namesDS),"TRAIT"] <- NA  # set values of not-DS to NA
-	  #cat("y.samp ",dim(y.samp), "\n")
-	  #if (!RR & VC.est=="commit") {  
-	  # contruct new Z matrix
-		#Z <- diag(length(namesDS))
-	   	#rownames(Z) <- colnames(Z) <- namesDS
-		#cat("Z",dim(Z),"\n")
-	  # cut out G-inverse
-		#GI1 <- GI[rownames(GI) %in% namesDS, colnames(GI) %in% namesDS]
-	  #} 
-	}
-	samp.kf <- val.samp3[,2]==ii
-	samp.kf[is.na(samp.kf)] <- TRUE
-	y.samp[samp.kf,"TRAIT"] <- NA  # set values of TS to NA
+    if (verbose) cat("Replication: ",i,"\t Fold: ",ii," \n")
+    # select ES, k-times
+    samp.es <- val.samp3[!(val.samp3[,2] %in% ii),] 
+    samp.ts <- val.samp3[!is.na(val.samp3[,2]),] 
+    samp.ts <- samp.ts[samp.ts[,2]==ii,] 
+    #cat("samp.ts",dim(samp.ts),"\n")
+    namesDS <- c(samp.es[,1],samp.ts[,1])
+    y.samp <- y
+    if(!is.null(ES)){ # if ES is committed
+      samp.es <- samp.es[samp.es[,1] %in% ES[[i]][[ii]], ]
+      #cat("samp.es",dim(samp.es),"\n")
+      namesDS <- c(ES[[i]][[ii]],as.vector(samp.ts[,1])) # new DS
+      y.samp[ !( y.samp[,1] %in% namesDS),"TRAIT"] <- NA  # set values of not-DS to NA
+      #cat("y.samp ",dim(y.samp), "\n")
+      #if (!RR & VC.est=="commit") {  
+      # contruct new Z matrix
+        #Z <- diag(length(namesDS))
+        #rownames(Z) <- colnames(Z) <- namesDS
+        #cat("Z",dim(Z),"\n")
+      # cut out G-inverse
+        #GI1 <- GI[rownames(GI) %in% namesDS, colnames(GI) %in% namesDS]
+      #} 
+    }
+    samp.kf <- val.samp3[,2]==ii
+    samp.kf[is.na(samp.kf)] <- TRUE
+    y.samp[samp.kf,"TRAIT"] <- NA  # set values of TS to NA
 
        # CV in R with committing variance components
        if (VC.est=="commit"){
@@ -270,78 +270,78 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
         #print(length(bu))
        }
 
-	   # estimation of variance components with ASReml for every ES
-   	   if (VC.est=="ASReml"){
+       # estimation of variance components with ASReml for every ES
+       if (VC.est=="ASReml"){
 
-		# for unix
-		if(.Platform$OS.type == "unix"){
+        # for unix
+        if(.Platform$OS.type == "unix"){
 
-			# checking directories for ASReml
-			ASTest <- system(paste("ls"),intern=TRUE)
-			if (!any(ASTest %in% "ASReml")) system(paste("mkdir ASReml"))
+            # checking directories for ASReml
+            ASTest <- system(paste("ls"),intern=TRUE)
+            if (!any(ASTest %in% "ASReml")) system(paste("mkdir ASReml"))
 
-			# data output for ASReml
-			if(RR){
-			   if (colnames(y)[2]=="repl") y.samp <- cbind(y.samp[ ,1:3],Z)
-			   else y.samp <- cbind(y.samp,Z)
-			}
-			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+            # data output for ASReml
+            if(RR){
+               if (colnames(y)[2]=="repl") y.samp <- cbind(y.samp[ ,1:3],Z)
+               else y.samp <- cbind(y.samp,Z)
+            }
+            write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
 
-			# ASReml function
-			asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
-			system(paste('asreml -p Model.pin',sep='')) # for variance components in an extra file
+            # ASReml function
+            asreml <- system(paste('asreml -ns10000 Model.as',sep=''),TRUE)
+            system(paste('asreml -p Model.pin',sep='')) # for variance components in an extra file
 
-			system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
-			system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
-			system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
-			system(paste('mv Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''))
-			system(paste('mv Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''))				
-		}
+            system(paste('mv Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''))
+            system(paste('mv Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''))
+            system(paste('mv Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''))
+            system(paste('mv Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''))
+            system(paste('mv Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''))                
+        }
 
-		# for windows
-		if(.Platform$OS.type == "windows"){
+        # for windows
+        if(.Platform$OS.type == "windows"){
 
-			# checking directories for ASReml
-			ASTest <- shell(paste("dir /b"),intern=TRUE)
-			if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
+            # checking directories for ASReml
+            ASTest <- shell(paste("dir /b"),intern=TRUE)
+            if (!any(ASTest %in% "ASReml")) shell(paste("md ASReml"))
 
-			# data output for ASReml
-			if(RR){
-			  if (colnames(y)[2]=="repl") y.samp <- cbind(y.samp[ ,1:3],Z)
-			  else y.samp <- cbind(y.samp,Z)
-			}
+            # data output for ASReml
+            if(RR){
+              if (colnames(y)[2]=="repl") y.samp <- cbind(y.samp[ ,1:3],Z)
+              else y.samp <- cbind(y.samp,Z)
+            }
 
-			# data output for ASReml
-			write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
-			# ASReml function
-			system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
-			system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
+            # data output for ASReml
+            write.table(y.samp,'Pheno.txt',col.names=TRUE,row.names=FALSE,quote=FALSE,sep='\t')
+            # ASReml function
+            system(paste('ASReml.exe -ns10000 Model.as',sep=''),wait=TRUE,show.output.on.console=FALSE)
+            system(paste('ASReml.exe -p Model.pin',sep=''),wait=TRUE,show.output.on.console=FALSE)
 
-			shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
-			shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)				
-		}
+            shell(paste('move Model.asr ','ASReml/Model_rep',i,'_fold',ii,'.asr',sep=''),wait=TRUE,translate=TRUE)
+            shell(paste('move Model.sln ','ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),wait=TRUE,translate=TRUE)
+            shell(paste('move Model.vvp ','ASReml/Model_rep',i,'_fold',ii,'.vvp',sep=''),wait=TRUE,translate=TRUE)
+            shell(paste('move Model.yht ','ASReml/Model_rep',i,'_fold',ii,'.vht',sep=''),wait=TRUE,translate=TRUE)
+            shell(paste('move Model.pvc ','ASReml/Model_rep',i,'_fold',ii,'.pvc',sep=''),wait=TRUE,translate=TRUE)              
+        }
 
-		# read in ASReml solutions
-		asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
-		# solve MME
-		bu <-  as.numeric(asreml.sln[,3])
-	   }
+        # read in ASReml solutions
+        asreml.sln<-matrix(scan(paste('ASReml/Model_rep',i,'_fold',ii,'.sln',sep=''),what='character'),ncol=4,byrow=TRUE)
+        # solve MME
+        bu <-  as.numeric(asreml.sln[,3])
+       }
 
-	   # estimation of variance components with Bayesian ridge regression for every ES
-   	   if (VC.est=="BRR"){
+       # estimation of variance components with Bayesian ridge regression for every ES
+       if (VC.est=="BRR"){
 
-		# checking directories for BRR
-		if(.Platform$OS.type == "unix"){
-			BRRTest <- system(paste("ls"),intern=TRUE)
-			if (!any(BRRTest %in% "BRR")) system(paste("mkdir BRR"))
-		}
-		if(.Platform$OS.type == "windows"){
-			BRRTest <- shell(paste("dir /b"),intern=TRUE)
-			if (!any(BRRTest %in% "BRR")) shell(paste("md BRR"))
-		}
+        # checking directories for BRR
+        if(.Platform$OS.type == "unix"){
+            BRRTest <- system(paste("ls"),intern=TRUE)
+            if (!any(BRRTest %in% "BRR")) system(paste("mkdir BRR"))
+        }
+        if(.Platform$OS.type == "windows"){
+            BRRTest <- shell(paste("dir /b"),intern=TRUE)
+            if (!any(BRRTest %in% "BRR")) shell(paste("md BRR"))
+        }
 
         # BRR function
         if(RR) capture.output(mod50k <- BLR(y=y.samp$TRAIT,XR=Z,saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
@@ -350,23 +350,23 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
             capture.output(mod50k <- BLR(y=y.samp$TRAIT,GF=list(ID=1:n,A=covM),saveAt=paste("BRR/rep",i,"_fold",ii,sep=""),...),file=paste("BRR/BRRout_rep",i,"_fold",ii,".txt",sep=""))
         }
 
-		# solution
-		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
-		if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
-	  }
+        # solution
+        if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bR))
+        if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
+      }
 
-	  # estimation of variance components with Baysian Lasso for every ES
-   	  if (VC.est=="BL"){
+      # estimation of variance components with Baysian Lasso for every ES
+      if (VC.est=="BL"){
 
-		# checking directory for BL
-		if(.Platform$OS.type == "unix"){
-			BLTest <- system(paste("ls"),intern=TRUE)
-			if (!any(BLTest %in% "BL")) system(paste("mkdir BL"))
-		}
-		if(.Platform$OS.type == "windows"){
-			BLTest <- shell(paste("dir /b"),intern=TRUE)
-			if (!any(BLTest %in% "BL")) shell(paste("md BL"))
-		}
+        # checking directory for BL
+        if(.Platform$OS.type == "unix"){
+            BLTest <- system(paste("ls"),intern=TRUE)
+            if (!any(BLTest %in% "BL")) system(paste("mkdir BL"))
+        }
+        if(.Platform$OS.type == "windows"){
+            BLTest <- shell(paste("dir /b"),intern=TRUE)
+            if (!any(BLTest %in% "BL")) shell(paste("md BL"))
+        }
 
         # BL function
         if(RR) capture.output(mod50k <- BLR(y=y.samp$TRAIT,XL=Z,saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
@@ -375,11 +375,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
             capture.output(mod50k <- BLR(y=y.samp$TRAIT,GF=list(ID=1:n,A=covM),saveAt=paste("BL/rep",i,"_fold",ii,sep=""),...),file=paste("BL/BLout_rep",i,"_fold",ii,".txt",sep=""))
         }
 
-		# solutions of BL
-		if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
-		if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
-		#print(length(bu))
-	  }
+        # solutions of BL
+        if(is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$bL))
+        if(!is.null(cov.matrix)) bu <-  as.numeric(c(mod50k$mu,mod50k$u))
+        #print(length(bu))
+      }
 
       # solution vector
       #if(!RR & VC.est=="commit") bu2[rownames(bu2) %in% c(names.eff[1],namesDS),ii] <- bu
@@ -400,49 +400,49 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
       n.DS[ii,i] <- length(namesDS)
           # Predicted breeding/testcross values
           y.TS <- rbind(y.TS,y.dach)
-	  # predictive ability
-	  COR <- round(cor(y2,y.dach),digits=4)
-	  COR2[ii,i] <- COR
-	  # spearman rank correlation
-	  rCOR <- round(cor(y2,y.dach,method="spearman"),digits=4)
-	  rCOR2[ii,i] <- rCOR
-	  # regression = bias
-	  lm1 <- lm(y2~as.numeric(y.dach))
-	  #print(lm1)
-	  #print(y.dach)
- 	  lm.coeff[ii,i] <- lm1$coefficients[2]
-	  # Mean squared error
-	  mse[ii,i] <- mean((y2-as.numeric(y.dach))^2) 
-	  # save IDs of TS
-	  id.TS[[ii]] <- unique(rownames(Z2))
-	  names(id.TS)[[ii]] <- paste("fold",ii,sep="")
-	  
-   	}  # end loop for k-folds
+      # predictive ability
+      COR <- round(cor(y2,y.dach),digits=4)
+      COR2[ii,i] <- COR
+      # spearman rank correlation
+      rCOR <- round(cor(y2,y.dach,method="spearman"),digits=4)
+      rCOR2[ii,i] <- rCOR
+      # regression = bias
+      lm1 <- lm(y2~as.numeric(y.dach))
+      #print(lm1)
+      #print(y.dach)
+      lm.coeff[ii,i] <- lm1$coefficients[2]
+      # Mean squared error
+      mse[ii,i] <- mean((y2-as.numeric(y.dach))^2) 
+      # save IDs of TS
+      id.TS[[ii]] <- unique(rownames(Z2))
+      names(id.TS)[[ii]] <- paste("fold",ii,sep="")
+      
+    }  # end loop for k-folds
 
-	y.TS <- y.TS[order(rownames(y.TS)),]
-    	y.TS2 <- cbind(y.TS2,y.TS)
-	#print(dim(y.TS2))
-    	colnames(y.TS2)[i] <- paste("rep",i,sep="")
-    	bu3 <- cbind(bu3,bu2)
- 	# save IDs of TS
-	id.TS2[[i]] <- id.TS
-	names(id.TS2)[[i]] <- paste("rep",i,sep="")
-	# 10% best predicted
-	#print(head(y.TS))
-	TS10 <- y.TS[order(-y.TS)]
-	n10 <- round(0.1 * length(y.TS))
-	TS10sel <- TS10[1:n10 ]
-	if(ncol(y)>2){ 
-	rownames(y) <- paste(rownames(Z),colnames(X),sep="_")
-	m10[i,1] <- mean(y[rownames(y) %in% names(TS10sel), "TRAIT"])
-	}else{
-	m10[i,1] <- mean(y[y$ID %in% names(TS10sel), "TRAIT"])
-	}
+    y.TS <- y.TS[order(rownames(y.TS)),]
+        y.TS2 <- cbind(y.TS2,y.TS)
+    #print(dim(y.TS2))
+        colnames(y.TS2)[i] <- paste("rep",i,sep="")
+        bu3 <- cbind(bu3,bu2)
+    # save IDs of TS
+    id.TS2[[i]] <- id.TS
+    names(id.TS2)[[i]] <- paste("rep",i,sep="")
+    # 10% best predicted
+    #print(head(y.TS))
+    TS10 <- y.TS[order(-y.TS)]
+    n10 <- round(0.1 * length(y.TS))
+    TS10sel <- TS10[1:n10 ]
+    if(ncol(y)>2){ 
+    rownames(y) <- paste(rownames(Z),colnames(X),sep="_")
+    m10[i,1] <- mean(y[rownames(y) %in% names(TS10sel), "TRAIT"])
+    }else{
+    m10[i,1] <- mean(y[y$ID %in% names(TS10sel), "TRAIT"])
+    }
     }  # end loop for replication
     
     # return object
     if(VC.est=="commit") est.method <- "committed" else est.method <- paste("reestimated with ",VC.est,sep="")
-    obj <- list( n.TS=n.TS,n.DS=n.DS,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR2,rankCor=rCOR2,bias=lm.coeff,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = ncol(Z),VC.est.method=est.method,m10=m10,mse=mse)
+    obj <- list(n.SNP=ncol(gpData$geno), n.TS=n.TS,n.DS=n.DS,id.TS=id.TS2,bu=bu3,y.TS=y.TS2,PredAbi=COR2,rankCor=rCOR2,bias=lm.coeff,k=k, Rep=Rep, sampling=sampling,Seed=Seed, rep.seed=seed2,nr.ranEff = ncol(Z),VC.est.method=est.method,m10=m10,mse=mse)
     class(obj) <- "cvData"
     return(obj)
 }
