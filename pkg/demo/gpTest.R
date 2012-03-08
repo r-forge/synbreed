@@ -1,6 +1,6 @@
 #############################################
 ## Test gpData object and regress
-## 
+##
 ##
 ## author : Hans-Juergen Auinger
 ## date : 2011 - 11 - 30
@@ -8,6 +8,7 @@
 ##############################################
 rm(list=ls())
 set.seed(19810703)
+library(synbreed)
 # number of locations
 nLoc <- 3
 # number of genotypes
@@ -15,11 +16,11 @@ nEntry <- 10
 # number of replications
 nRep <- 2
 # phenotypic residuals
-pheno <- data.frame(ID = rep(1:nEntry, nRep*nLoc), 
-                    Trait1 = rnorm(nRep*nLoc*nEntry, sd=3), 
-                    Trait2 = rnorm(nRep*nLoc*nEntry)*2, 
-                    Trait3 = rnorm(nRep*nLoc*nEntry, sd=5), 
-                    loc = rep(1:nLoc, each=nRep*nEntry), 
+pheno <- data.frame(ID = rep(1:nEntry, nRep*nLoc),
+                    Trait1 = rnorm(nRep*nLoc*nEntry, sd=3),
+                    Trait2 = rnorm(nRep*nLoc*nEntry)*2,
+                    Trait3 = rnorm(nRep*nLoc*nEntry, sd=5),
+                    loc = rep(1:nLoc, each=nRep*nEntry),
                     wdh = rep(rep(1:nRep, each=nEntry), nLoc))
 # individual values
 IDvals <- matrix(c(rnorm(nEntry, sd=1),rnorm(nEntry, sd=2),rnorm(nEntry, sd=4)), ncol=3, byrow=FALSE)
@@ -58,12 +59,8 @@ testMod3 <- gpMod (gpData=gpTest, model="BLUP", trait=1:3, repl=NULL, markerEffe
 summary(testMod3)
 
 mod1 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
-source("D:/Pflanzenzuechtung/R-Codes/regress/R/reml.R")
+
 mod1a <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
-source("D:/Rsynbreed/pkg/R/gpMod.r")
-source("D:/Pflanzenzuechtung/R-Codes/regress1.2.R")
 mod2 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=2, repl=NULL, markerEffects=FALSE)
-source("D:/Pflanzenzuechtung/R-Codes/regress1.3.R")
 mod3 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=1, repl=NULL, markerEffects=FALSE, fixed=~loc, random=~repl)
-source("D:/Pflanzenzuechtung/R-Codes/regress1.3-2.R")
 mod4 <- gpMod(gpData=gpTest, kin=kinRel, model="BLUP", trait=1, repl=NULL, markerEffects=FALSE, fixed=~loc, random=~repl)
