@@ -214,7 +214,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     res <- res[,!which.duplicated]
     cnames <- cnames[!which.duplicated]
     if (verbose) cat("step 2.1:",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
-    if(nv>0) cat("         and", nv, "monomorphic marker(s)\n")
+    if (verbose) if(nv>0) cat("         and", nv, "monomorphic marker(s)\n")
     # update map 
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   } else {
