@@ -60,15 +60,16 @@ Valentin Wimmer
 data(maize)
 
 # realized kinship matrix
-U <- kin(codeGeno(maize),ret="realized")/2
+maizeC <- codeGeno(maize)
+U <- kin(maizeC,ret="realized")/2
 
 # solution with gpMod
-m <- gpMod(maize,kin=U,model="BLUP")
+m <- gpMod(maizeC,kin=U,model="BLUP")
 
 # solution with MME
 diag(U) <- diag(U) + 0.000001
 GI <- solve(U)*(m$fit$sigma[2]/ m$fit$sigma[1])
-y <- maize$pheno[,1,]
+y <- maizeC$pheno[,1,]
 n <- length(y)
 X <- matrix(1,ncol=1,nrow=n)
 mme <- MME(y=y,Z=diag(n),GI=GI,X=X,RI=diag(n))
