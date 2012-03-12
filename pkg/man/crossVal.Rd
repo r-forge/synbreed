@@ -20,7 +20,7 @@ crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
   \item{trait}{\code{numeric} or \code{character}. The name or number of the trait to be selected out of \code{gpData}
 }
   \item{cov.matrix}{\code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
-If no covariance is given, an identity matrix and genotypes are used for a marker regression.
+If no covariance is given, an identity matrix and marker genotypes are used for a marker regression. In general, a covariance matrix should be non-singular and positive definit to be invertible, if this is not the case, a constant of \code{1e-5} is added to the diagonal elements of the covariance matrix.
 }
   \item{k}{Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}].
 }
