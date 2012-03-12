@@ -79,7 +79,7 @@ High-throughput genotyping and large scale phenotyping produces massive amounts 
 %Put all in another directory
 %\SweaveOpts{prefix.string=figs/article}
 \setkeys{Gin}{width=0.9\textwidth}
-\SweaveOpts{prefix.string=figs/synbreed}
+\SweaveOpts{prefix.string=figs/IntroSyn}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initial R code
