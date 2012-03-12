@@ -90,8 +90,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
        # function for constructing GI
        rmat<-NULL
        for( i in 1:length(cov.matrix)){
-       covM <- as.matrix(cov.matrix[[i]])
-           m <- solve(covM)*(varComp[length(varComp)]/varComp[i])
+	   covM <- as.matrix(cov.matrix[[i]])
+	   covM.I <- try(solve(covM),TRUE)
+	   # adding constant to diagonal, if covM is singular
+	   if(class(covM.I)=="try-error") covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+           m <- covM.I * (varComp[length(varComp)]/varComp[i])
+	   rm(covM.I,covM)
              if(i==1) rmat <- m
              else
              {
@@ -109,8 +113,12 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
        if(VC.est=="ASReml"){
              if(!RR){   
         for ( i in 1:length(cov.matrix)){
-        covM <- as.matrix(cov.matrix[[i]])
-        write.relationshipMatrix(covM,file=paste("ID",i,".giv",sep=""),type="inv",sorting="ASReml",digits=10)
+           covM <- as.matrix(cov.matrix[[i]])
+	   covM.I <- try(solve(covM),TRUE)
+	   # adding constant to diagonal, if covM is singular
+	   if(class(covM.I)=="try-error") covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+           write.relationshipMatrix(covM.I,file=paste("ID",i,".giv",sep=""),type="none",sorting="ASReml",digits=10)
+	   rm(covM.I,covM)
         }
         ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
         ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
