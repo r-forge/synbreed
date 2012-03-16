@@ -1,1 +1,0 @@
-load("cattle.RData")
