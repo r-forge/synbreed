@@ -5,7 +5,7 @@
 Prepare data for PLINK
 }
 \description{
-Create input files and corresponding script for PLINK (Purcell et al. 2007) to compute the pairwise LD.
+Create input files and corresponding script for PLINK (Purcell et al. 2007) to estimate pairwise LD through function \code{pairwiseLD}.
 }
 \usage{
 write.plink(gp, wdir = getwd(), prefix = paste(substitute(gp)),

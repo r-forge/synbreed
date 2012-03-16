@@ -5,7 +5,7 @@
 Merge of phenotypic and genotypic data
 }
 \description{
-Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}.
+Create a \code{data.frame} out of phenotypic and genotypic data in object of class \code{gpData} by merging datasets using the common id. The shared data set could either include individuals with phenotypes and genotypes (default) or additional unphenotyped or ungenotyped individuals. In the latter cases, the missing observations are filled by \code{NA}'s.
 }
 \usage{
 gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,
@@ -23,33 +23,32 @@ object of class \code{gpData}
 scalar \code{logical}. Only return phenotypic data.
 }
   \item{all.pheno}{
-scalar \code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the genotypic data with \code{NA}.
+scalar \code{logical}. Include all individuals with phenotypes in the \code{data.frame} and fill the genotypic data with \code{NA}.
 }
   \item{all.geno}{
-scalar \code{logical}. Include all individuals with phenotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
+scalar \code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
 }
   \item{repl}{
-\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are taken.
+\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are used.
 }
 \item{phenoCovars}{
-\code{logical}. If \code{TRUE} columns with the phenotypic covariables are attached to the \code{data.frame}
+\code{logical}. If \code{TRUE} columns with the phenotypic covariables are attached from element \code{phenoCovars} to the \code{data.frame}. Only required for repeated measurements.
 }
   \item{...}{
-further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename levels of grouping variable.
+further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename the levels of the grouping variable (such as locations or environments).
 }
 }
 \details{
 Argument \code{all.geno} can be used to predict the genetic value of individuals without phenotypic records using the \code{BLR} package. Here, the genetic value of individuals with \code{NA} as phenotype is predicted by the marker profile.
 
 
-For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates in an \code{array}. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable are added.
+For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates in an \code{array}. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable (such as replications, years of loactions in multi-environment trials) are added.
 }
 \value{
 A \code{data.frame} with the individuals names in the first column, the phenotypes in the next column(s) and the marker genotypes in subsequent columns.
 }
 \author{
-Valentin Wimmer
-Hans-Juergen Auinger
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

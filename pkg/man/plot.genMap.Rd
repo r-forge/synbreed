@@ -22,17 +22,17 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{logical}. Print number of markers for each chromosome?
 }
   \item{bw}{
-\code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution.
+\code{numeric}. Bandwith to use for  \code{dense=TRUE} to control the resolution (default = 1 [map unit]).
 }
   \item{centr}{
-\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
+\code{numeric} vector. Positions for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
 }
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
 }
 \details{
-In the low density plot, the unique position of markers are plotted as horizontal lines. In the  high-density plot, the distribution of the markers is visualized as a heatmap of density estimation together with a color key. In this case, the number of markers within a interval of equal bandwith \code{bw} is counted. The high density plot is typically useful if number of makers exceeds 200 on average per chromosome.
+In the low density plot, the unique position of markers are plotted as horizontal lines. In the  high-density plot, the distribution of the markers is visualized as a heatmap of density estimation together with a color key. In this case, the number of markers within a interval of equal bandwith \code{bw} is counted. The high density plot is typically useful if number of makers exceeds 200 per chromosome on average.
 }
 \value{
 Plot of the marker positions within  each chromosome. One chromosome is displayed from the first to the last marker.

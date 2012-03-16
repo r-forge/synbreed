@@ -69,7 +69,7 @@ summary.cvData <- function(object,...){
 # print method for summary.pedigree
 print.summary.cvData <- function(x,...){
     cat("Object of class 'cvData' \n")
-    cat("\n",x$k,"-fold cross validation with",x$Rep,"replications \n")
+    cat("\n",x$k,"-fold cross validation with",x$Rep,"replication(s) \n")
     cat("     Sampling:                ",x$sampling,"\n")
     cat("     Variance components:     ",x$est.method,"\n")
     cat("     Number of random effects:",x$nr.ranEff,"\n")

@@ -13,7 +13,7 @@ add.markers(gpData, geno, map)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-object of class \code{gpData}
+object of class \code{gpData} to be updated
 }
   \item{geno}{
 \code{matrix} with new columns

@@ -5,7 +5,7 @@
 Adding new individuals to objects of class gpData
 }
 \description{
-This function adds new data for individuals to an object of class \code{gpData} by adding new phenotypes, genotypes and pedigree.
+This function extends an object of class \code{gpData} by adding new phenotypes, genotypes and pedigree.
 }
 \usage{
 add.individuals(gpData, pheno = NULL, geno = NULL,
@@ -14,19 +14,19 @@ add.individuals(gpData, pheno = NULL, geno = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-object of class \code{gpData}
+object of class \code{gpData}to be updated
 }
   \item{pheno}{
-\code{data.frame} with new rows for phenotypes. For unrepeated values the ID of the Genotypes can be the rownames. Otherwise a column with name \code{"ID"} is expected.
+\code{data.frame} with new rows for phenotypes with \code{rownames} indicating individuals. For repeated values the ID should be stored in a column with name \code{"ID"}.
 }
   \item{geno}{
-\code{matrix} with new rows for genotypic data
+\code{matrix} with new rows for genotypic data  with \code{rownames} indicating individuals
 }
   \item{pedigree}{
 \code{data.frame} with new rows for pedigree data
 }
   \item{covar}{
-\code{data.frame} with new rows for \code{covar} information
+\code{data.frame} with new rows for \code{covar} information with \code{rownames} indicating individuals
 }
   \item{repl}{
 The column of the pheno \code{data.frame} for the replicated measures. If the values are unrepeated or  this column is named \code{"repl"} this argument is not needed.
@@ -46,7 +46,7 @@ Valentin Wimmer
 \code{\link{add.markers}}, \code{\link{discard.individuals}}
 }
 \examples{
-# adding one new DH line to maize data
+# add one new DH line to maize data
 data(maize)
 newDHpheno <- data.frame(Trait=1000,row.names="newDH")
 # simulating genotypic data

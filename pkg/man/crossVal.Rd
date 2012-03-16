@@ -17,16 +17,16 @@ crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
 \arguments{
   \item{gpData}{Object of class \code{gpData}
 }
-  \item{trait}{\code{numeric} or \code{character}. The name or number of the trait to be selected out of \code{gpData}
+  \item{trait}{\code{numeric} or \code{character}. The name or number of the trait in the \code{gpData} object to be used as trait. 
 }
   \item{cov.matrix}{\code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
 If no covariance is given, an identity matrix and marker genotypes are used for a marker regression. In general, a covariance matrix should be non-singular and positive definit to be invertible, if this is not the case, a constant of \code{1e-5} is added to the diagonal elements of the covariance matrix.
 }
-  \item{k}{Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}].
+  \item{k}{\code{numeric}. Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}] (default=2).
 }
-  \item{Rep}{Number of replications.
+  \item{Rep}{\code{numeric}. Number of replications (default = 1).
 }
-  \item{Seed}{Number for \code{set.seed()} to make results reproducable.
+  \item{Seed}{\code{numeric}.Number for \code{set.seed()} to make results reproducable.
 }
   \item{sampling}{Different sampling strategies can be \code{"random"}, \code{"within popStruc"} or \code{"across popStruc"}. If sampling is \code{"commit"} test sets have to specified in TS.
 }
@@ -37,9 +37,9 @@ If no covariance is given, an identity matrix and marker genotypes are used for 
   \item{varComp}{A \code{vector} of variance components for the random effects, which has to be specified if \code{VC.est="commit"}. The first variance components should be 
 the same order as the given covariance matrices, the last given variance component is for the residuals.
 }
-  \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no popStruc is defined, family information of \code{gpData} is used.
+  \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no popStruc is defined, family information of \code{gpData} is used. Only required for options \code{sampling="within popStruc"} or  \code{sampling="across popStruc"}
 }
-  \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with a Bayesian approach "\code{BRR}" and "\code{BL}" within the estimation set of each fold in the cross validation? If
+  \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with Bayesian Ridge Regression "\code{BRR}" or Bayesian Lasso "\code{BL}" of the \code{BLR} package within the estimation set of each fold in the cross validation? If
 \code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system.
 }
   \item{verbose}{Logical. Whether output shows replications and folds.
@@ -49,7 +49,7 @@ further arguments to be used by the genomic prediction models, i.e. prior values
 }
 }
 \details{
-In cross validation the data set is splitted into an estimation (ES) and a test set (TS). The effects are estimated with the ES to predict observations in the TS.
+In cross validation the data set is splitted into an estimation (ES) and a test set (TS). The effects are estimated with the ES and used to predict observations in the TS.
 For sampling into ES and TS, k-fold cross validation is applied, where the data set is splitted into k subsets and k-1 comprising the ES and 1 is the TS, repeated for each subset.
 
 To account for the family structure, \code{sampling} can be defined as:
@@ -94,6 +94,10 @@ Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Meas
 
 Crossa J, de los Campos G, Perez P, Gianola D, Burgueno J, et al. (2010) Prediction of genetic values of quantitative traits in plant breeding using pedigree and molecular markers, Genetics 186:713-724
 
+Gustavo de los Campos and Paulino Perez Rodriguez, (2010). BLR:
+Bayesian Linear Regression. R package version 1.2.
+http://CRAN.R-project.org/package=BLR
+
 }
 \author{Theresa Albrecht
 }
@@ -106,10 +110,9 @@ Crossa J, de los Campos G, Perez P, Gianola D, Burgueno J, et al. (2010) Predict
 \dontrun{
 data(maize)
 maize2 <- codeGeno(maize)
-rad <- kin(maize2,ret="realized")
-diag(rad) <- diag(rad)+0.00001 # to avoid singularities
+U <- kin(maize2,ret="realized")
 # cross validation
-cv.maize  <- crossVal(maize2,cov.matrix=list(rad),k=5,Rep=1,
+cv.maize  <- crossVal(maize2,cov.matrix=list(U),k=5,Rep=1,
             Seed=123,sampling="random",varComp=c(26.5282,48.5785),VC.est="commit")
 cv.maize2 <- crossVal(maize2,k=5,Rep=1,
              Seed=123,sampling="random",varComp=c(0.0704447,48.5785),VC.est="commit")

@@ -5,7 +5,7 @@
 Visualization of pedigree
 }
 \description{
-A function to visualize pedigree structure by a graph. Each genotype is represented as vertex and direct offsprings are linked by an edge. 
+A function to visualize pedigree structure by a graph using the \code{igraph} package. Each genotype is represented as vertex and direct offsprings are linked by an edge. 
 }
 \usage{
 \method{plot}{pedigree}(x, effect = NULL, \dots)
@@ -23,7 +23,7 @@ Other arguments for function \code{igraph.plotting}
 }
 }                                                                    
 \details{
- The pedigree is structured top-bottom. In the first line the first generation is printed. Links over more than one generation are possible as well as genotypes with only one (known) parent. Usually, no structure in one generation is plotted. If an \code{effect} is given, the genotypes are ordered by this effect and a labeled axis is plotted at the bottom.
+ The pedigree is structured top-bottom. In the first line the first generation is printed. Links over more than one generation are possible as well as genotypes with only one (known) parent. Usually, no structure in one generation is plotted. If an \code{effect} is given, the genotypes are ordered by this effect in the horizontal direction and a labeled axis is plotted at the bottom.
 }                                
 \value{
 A named graph visualizing the pedigree structure

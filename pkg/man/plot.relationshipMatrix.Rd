@@ -5,7 +5,7 @@
 Heatmap for relationship Matrix
 }
 \description{
-Visualization for objects of class \code{relationshipMatrix}.  
+Visualization for objects of class \code{relationshipMatrix} using a heatmap of pairwise relatedness coefficients.  
 }
 \usage{
 \method{plot}{relationshipMatrix}(x, \ldots) 

@@ -4,7 +4,7 @@
 Plot neighbour linkage disequilibrium
 }
 \description{
-A function to visualize LD between adjacent markers.
+A function to visualize Linkage Disequilibrium estimates between adjacent markers.
 }
 \usage{
 plotNeighbourLD(LD, map, dense=FALSE, nMarker = TRUE, centr=NULL, ...)
@@ -24,7 +24,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{logical}. Print number of markers for each chromosome?
 }
   \item{centr}{
-\code{numeric} vector. Position for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
+\code{numeric} vector. Positions for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
 }
   \item{\dots}{
 further graphical arguments for function \code{plot}
@@ -32,7 +32,7 @@ further graphical arguments for function \code{plot}
 
 }
 \details{
-The graph is similar to \code{plotGenMap} with the option \code{dense=TRUE}, but here the LD between adjacent markers is plotted along the chromosomes. 
+The plot is similar to \code{plotGenMap} with the option \code{dense=TRUE}, but here the LD between adjacent markers is plotted along the chromosomes. 
 }
 \value{
 Plot of neighbour LD along each chromosome. One chromosome is displayed from the first to the last marker.

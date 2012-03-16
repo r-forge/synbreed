@@ -6,7 +6,7 @@
 Subsets for objects of class gpData
 }
 \description{
-Both functions could be used to get subsets of objects of class \code{gpData}. Use function \code{discard.markers} to discard markers from an object of class \code{gpData}. Note that markers will also be removed from \code{map}, if available. Use function \code{discard.individuals} to discard individuals from the object of class \code{gpData}. Note that individuals will also be removed from \code{covar}, \code{pheno} and \code{pedigree}.
+Both functions could be used to get subsets from an object of class \code{gpData}. Use function \code{discard.markers} to discard markers from elements \code{geno} and \code{map} of an object of class \code{gpData}.  Use function \code{discard.individuals} to discard individuals from elements  \code{covar}, \code{pheno}, \code{geno} and \code{pedigree} of an object of class \code{gpData}.
 }                      
 \usage{
 discard.markers(gpData, which)
@@ -21,7 +21,7 @@ object of class \code{gpData}
 character vector either identifying the \code{colnames} of markers in \code{geno} to discard (function \code{discard.markers}) or the \code{rownames} of individuals to discard (function \code{discard.individuals}).
 }
   \item{keepPedigree}{
-\code{logical}. Should the individual kept in the pedigree?
+\code{logical}. Should the individual only be removed from elements \code{geno} and \code{pheno} but kept in the pedigree?
 }
 }
 \value{

@@ -13,7 +13,7 @@ create.pedigree(ID, Par1, Par2, gener=NULL,sex=NULL,add.ancestors=FALSE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{ID}{
-vector of unique IDs identifying e.g. each genotype.
+vector of unique IDs identifying individuals
 }
   \item{Par1}{
 vector of IDs identifying parent 1 (with animals: sire) 
@@ -32,7 +32,7 @@ vector identifying the sex (female=0 and male=1).
 }
 }
 \details{
-Missing values for pedigree should be coded with 0 for numeric ID or \code{NA} for character ID. 
+Missing values for parents in the pedigree should be coded with 0 for numeric ID or \code{NA} for character ID. 
 }
 \value{
 An object of class \code{pedigree}. Column \code{gener} starts from 0 and pedigree is sorted by generation.

@@ -5,8 +5,8 @@
 Genomic predictions models for objects of class gpData
 }
 \description{
-This function can be used to fit genomic prediction models to an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
-BLUP models are fitted using the implementation of the \code{regress} package (Clifford and McCullagh, 2011). The Bayesian regression models are fitted using the implementaion of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set.
+This function fits genomic prediction modelsbased on phenotypic and genotypic data in an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrices and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
+BLUP models are fitted using the REML implementation of the \code{regress} package (Clifford and McCullagh, 2012). The Bayesian regression models are fitted using the Gibbs-Sampler of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set used to fit the model.
 
 
 } \usage{
@@ -18,13 +18,13 @@ gpMod(gpData, model=c("BLUP","BL","BRR"), kin=NULL, predict=FALSE, trait=1,
 object of class \code{gpData}
 }
   \item{model}{
-\code{character}. The model to use. \code{"BL"} and \code{"BRR"} are at the moment only for two-stage analysis. So you have to fit a model for phenotypic covariats first.
+\code{character}. Type of genomic prediction model. \code{"BLUP"} indicates best linear unbiased prediction (BLUP) using REML for both pedigree-based (P-BLUP) and marker-based (G-BLUP) model. \code{"BL"} and \code{"BRR"} indicate Bayesian Lasso and Bayesian Ridge Regression, respectively.
 }
   \item{kin}{
-object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as additional polygenic effect \eqn{u} in the Bayesian regression models.
+object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as additional polygenic effect \eqn{u} in the Bayesian regression models (see \code{BLR} package).
 }
   \item{predict}{
-\code{logical}. If \code{TRUE}, genetic values will predict for genotyped but non phenotyped individuals. Default is \code{FALSE}.
+\code{logical}. If \code{TRUE}, genetic values will predict for genotyped but not phenotyped individuals. Default is \code{FALSE}.
 }
   \item{trait}{
 \code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model
@@ -33,20 +33,23 @@ object of class \code{relationshipMatrix}. Kinship structure to be used in the B
 \code{numeric} or \code{character}. A vector with names or numbers of the repeated values of \code{gpData$pheno} to fit the model
 }
   \item{markerEffects}{
-  If fitted a BLUP model the effects of markers can be calculated, i.e. Random Regression BLUP. In this case, the matrix \code{kin} is calculated as the transposed crossproduct of the genotype matrix.
+  \code{logical}. 
+ Should marker effects be estimated for a G-BLUP model, i.e. RR-BLUP?
 }
   \item{fixed}{
-  A formula for fixed effects. The details of model specification are the same as for \code{lm} exept that you do not have to specify the left side of the model.
+  A formula for fixed effects. The details of model specification are the same as for \code{lm} (only right hand side required). Only for \code{model="BLUP"}.
 }
   \item{random}{
-  A formula for random effects of the model. Specifies the matrices to include in the covariance structure. Each term is either a symmetric matrix, or a factor. Independent Gaussian random effects are included by passing the corresponding block factor. For mor details see \code{\link[regress]{regress}}.
+  A formula for random effects of the model. Specifies the matrices to include in the covariance structure. Each term is either a symmetric matrix, or a factor. Independent Gaussian random effects are included by passing the corresponding block factor. For mor details see \code{\link[regress]{regress}}. Only for \code{model="BLUP"}
 }
   \item{\dots}{
-further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BLR]{BLR}}).
+further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BLR]{BLR}}) or parameters for the REML algorithm in regress.
 }
 }
 \details{
-Only a subset of the individuals - the training set - is used for the model fit. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen. Marker effects for \code{model=BLUP} are extracted from the corresponding G-BLUP model using their functional relationship. In this case, \code{fit} reports the G-BLUP model
+By default, on overall mean is added to the model. For BLUP, further fixed and random effects can be added through the arguments \code{fixed} and \code{random}.
+
+Only a subset of the individuals - the training set - is used fit the model. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen. Marker effects for \code{model=BLUP} are extracted from the corresponding G-BLUP model using their functional relationship. In this case, \code{fit} reports the G-BLUP model
 }
 \value{
 Object of class \code{gpMod} which is a list of
@@ -58,11 +61,11 @@ Object of class \code{gpMod} which is a list of
 \item{kin}{Matrix \code{kin}}
 }
 \note{
-The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} to prevent the screen output from overload.
+The verbose output of the \code{BLR} function is written to a file \code{BLRout.txt} in the working directory to prevent the screen output from overload.
 }
 \references{
-Clifford D, McCullagh P (2011). regress: Gaussian Linear Models with Linear Covariance
-Structure. R package version 1.3-4, URL http://www.csiro.au.
+Clifford D, McCullagh P (2012). regress: Gaussian Linear Models with Linear Covariance
+Structure. R package version 1.3-7, URL http://www.csiro.au.
 
 Gustavo de los Campos and Paulino Perez Rodriguez, (2010). BLR:
 Bayesian Linear Regression. R package version 1.2.
