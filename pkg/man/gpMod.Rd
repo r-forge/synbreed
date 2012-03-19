@@ -65,7 +65,7 @@ The verbose output of the \code{BLR} function is written to a file \code{BLRout.
 }
 \references{
 Clifford D, McCullagh P (2012). regress: Gaussian Linear Models with Linear Covariance
-Structure. R package version 1.3-7, URL http://www.csiro.au.
+Structure. R package version 1.3-8, URL http://www.csiro.au.
 
 Gustavo de los Campos and Paulino Perez Rodriguez, (2010). BLR:
 Bayesian Linear Regression. R package version 1.2.
