@@ -26,7 +26,7 @@ Other arguments for function \code{igraph.plotting}
  The pedigree is structured top to bottom. In the first line the first generation is printed. Links over more than one generation are possible as well as genotypes with only one (known) parent. Usually, no structure in one generation is plotted. If an \code{effect} is given, the genotypes are ordered by this effect in the horizontal direction and a labeled axis is plotted at the bottom.
 }                                
 \value{
-A named graph visualizing the pedigree structure
+A named graph visualizing the pedigree structure. Color is used to distinguish sex.
 }
 
 \author{

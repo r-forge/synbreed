@@ -18,7 +18,7 @@ write.relationshipMatrix(relationshipMatrix, file = NULL,
 Object of class "relationshipMatrix" 
 }
   \item{file}{
-Path were the output should be written . If \code{NULL} the result is returned in R.
+Path where the output should be written . If \code{NULL} the result is returned in R.
 }
   \item{sorting}{
 Type of sorting. Use "WOMBAT" for 'row-wise' sorting of the table and "ASReml" for 'column-wise' sorting.

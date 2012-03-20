@@ -26,7 +26,7 @@ simul.pedigree(generations = 2, ids = 4, animals=FALSE,familySize=1)
 }  
 }
 \details{                                
-If \code{animals=FALSE} the parents for the current generation will be randomly chosen out of the genotypes in the last generation. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE} each  ID is either sire or dam. Each ID is progeny of one sire and one dam.
+If \code{animals=FALSE}, the parents for the current generation will be randomly chosen out of the genotypes in the last generation. If Par1 = Par2, an inbreed is generated. If \code{animal=TRUE}, each  ID is either sire or dam. Each ID is progeny of one sire and one dam.
 }
 \value{
 An object of class \code{pedigree} with N=sum(ids) genotypes.

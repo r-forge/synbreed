@@ -20,10 +20,10 @@ object of class \code{gpMod} with marker effects or numeric vector of marker eff
 object of class \code{gpData} with map position
 }
   \item{colored}{
-  Is the plot colored or in grey. The \code{default} is "\code{grey}"
+  \code{logical}. Color the chromosomes?. The \code{default} is \code{FALSE} with chromosomes distinguished by grey tones.
 }
   \item{add}{
-  If \code{TRUE} the plot is added to an existing plot. The default is \code{FALSE}.
+  If \code{TRUE}, the plot is added to an existing plot. The default is \code{FALSE}.
 }
   \item{pch}{
   a vector of plotting characters or symbols: see \code{\link[graphics]{points}}. The default is an open circle.

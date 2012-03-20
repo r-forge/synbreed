@@ -30,7 +30,7 @@ write.plink(gp, wdir = getwd(), prefix = paste(substitute(gp)),
 }
 }
 \value{
-no value returned. Files \code{prefix.map}, \code{prefix.ped} and \code{prefixPlinkScript.txt} are created in the working directory 
+No value returned. Files \code{prefix.map}, \code{prefix.ped} and \code{prefixPlinkScript.txt} are created in the working directory
 }
 \references{
 Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ & Sham PC (2007)
