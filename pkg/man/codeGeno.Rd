@@ -111,7 +111,6 @@ Valentin Wimmer and Hans-Juergen Auinger
 
 
 \examples{
-\dontrun{
 # create marker data for 9 SNPs and 10 homozygous individuals
 snp9 <- matrix(c(
   "AA",   "AA",   "AA",   "BB",   "AA",   "AA",   "AA",   "AA",  NA,
