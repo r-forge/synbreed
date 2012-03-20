@@ -86,7 +86,7 @@ A regression coefficient \eqn{< 1} implies extreme high (low) values of the pred
 \item{VC.est.method}{Method for the variance components (\code{committed} or \code{reestimated with ASReml/BRR/BL})}
 }
 \references{
-Albrecht T, Wimmer V, Auinger HJ, Erbe M, Knaak C, Ouzunova M, Simianer H, Schön CC (2011) Genome-based prediction of testcross values in maize. Theor Appl Genet 123:339-350
+Albrecht T, Wimmer V, Auinger HJ, Erbe M, Knaak C, Ouzunova M, Simianer H, Schoen CC (2011) Genome-based prediction of testcross values in maize. Theor Appl Genet 123:339-350
 
 Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Measurement 11:5-11
 
