@@ -86,12 +86,6 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
 <blockquote>
   <blockquote>
     <blockquote> 
-       The <tt>synbreed</tt> package is hosted through R-Forge:<br>
-      <br>
-      <div style="text-align: center;"><a
- href="https://r-forge.r-project.org/projects/synbreed/">https://r-forge.r-project.org/projects/synbreed/</a><br>
-      </div>
-      <br>
 To install the package <tt>synbreed</tt> from R (if you are running a recent R version), use<br>
 <br>
 <div style="text-align: center;"> <tt>install.packages("synbreed",repos="http://r-forge.r-project.org")</tt></div>
