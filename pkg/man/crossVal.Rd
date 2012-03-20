@@ -52,7 +52,7 @@ further arguments to be used by the genomic prediction models, i.e. prior values
 In cross validation the data set is splitted into an estimation (ES) and a test set (TS). The effects are estimated with the ES and used to predict observations in the TS.
 For sampling into ES and TS, k-fold cross validation is applied, where the data set is splitted into k subsets and k-1 comprising the ES and 1 is the TS, repeated for each subset.
 
-To account for the family structure, \code{sampling} can be defined as:
+To account for the family structure (Albrecht et al. 2011), \code{sampling} can be defined as:
 \describe{
 \item{random}{ Does not account for family structure, random sampling within the complete data set}
 \item{within popStruc}{ Accounts for within population structure information, e.g. each family is splitted into k subsets}
@@ -86,9 +86,7 @@ A regression coefficient \eqn{< 1} implies extreme high (low) values of the pred
 \item{VC.est.method}{Method for the variance components (\code{committed} or \code{reestimated with ASReml/BRR/BL})}
 }
 \references{
-Legarra A, Robert-Granie C, Manfredi E, Elsen J (2008) Performance of genomic selection in mice. Genetics 180:611-618
-
-Luan T, Wooliams JA, Lien, S, Kent M, Svendsen M, Meuwissen THE (2009) The accuracy of genomic selection in Norwegian red cattle assessed by cross-validation. Genetics 183:1119-1126
+Albrecht T, Wimmer V, Auinger HJ, Erbe M, Knaak C, Ouzunova M, Simianer H, Schön CC (2011) Genome-based prediction of testcross values in maize. Theor Appl Genet 123:339-350
 
 Mosier CI (1951) I. Problems and design of cross-validation 1. Educ Psychol Measurement 11:5-11
 
@@ -110,7 +108,11 @@ http://CRAN.R-project.org/package=BLR
 \dontrun{
 data(maize)
 maize2 <- codeGeno(maize)
+<<<<<<< .mine
+rad <- kin(maize2,ret="realized")
+=======
 U <- kin(maize2,ret="realized")
+>>>>>>> .r361
 # cross validation
 cv.maize  <- crossVal(maize2,cov.matrix=list(U),k=5,Rep=1,
             Seed=123,sampling="random",varComp=c(26.5282,48.5785),VC.est="commit")
