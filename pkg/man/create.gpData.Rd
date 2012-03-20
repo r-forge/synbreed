@@ -19,10 +19,10 @@ create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL,
 unrepeated measures unique \code{rownames} should identify individuals. For repeated measures, the first
 column identifies individuals and a second column indicates repetitions (see also argument \code{repeated}).}
   \item{geno}{
-\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be coded arbitrarily. Missing values should be coded as \code{NA}. Colums or rows with only missing values not allowed. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimensions match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension match.
+\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be coded arbitrarily. Missing values should be coded as \code{NA}. Colums or rows with only missing values not allowed. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimension match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension match.
 }
   \item{map}{
-\code{data.frame} with one row for each marker and two columns (named \code{chr} and \code{pos}). First columns gives the chromosome (\code{numeric} or \code{character} but not \code{factor}) and second column the position  on the chromosome in centimorgan or the physical distance relative to the reference sequence in basepairs. Unique \code{rownames} indicated the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to the order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} to ensure the same number and order as in element \code{geno} of the resulting \code{gpData} object.
+\code{data.frame} with one row for each marker and two columns (named \code{chr} and \code{pos}). First columns gives the chromosome (\code{numeric} or \code{character} but not \code{factor}) and second column the position  on the chromosome in centimorgan or the physical distance relative to the reference sequence in basepairs. Unique \code{rownames} indicate the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to the order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} to ensure the same number and order as in element \code{geno} of the resulting \code{gpData} object.
 }
   \item{pedigree}{
 Object of class \code{pedigree}.
@@ -49,13 +49,13 @@ Character. Unit of position in \code{map}, i.e. 'cM' for genetic distance or 'bp
 \details{
 The class \code{gpData} is designed to provide a unified framework for data related to genomic prediction analysis. Every data source can be omitted. In this case, the corresponding argument must be \code{NULL}. By default (argument \code{reorderMap}), markers in \code{geno} are ordered by their position in \code{map}. Individuals are ordered in alphabetical order.
 
-An object of class \code{gpData} can contain different subsets of individuals or markeres  in  the elements \code{pheno}, \code{geno} and \code{pedigree}. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} are automatically generated to identify individuals that appear in the corresponding \code{gpData} object.   
+An object of class \code{gpData} can contain different subsets of individuals or markers  in  the elements \code{pheno}, \code{geno} and \code{pedigree}. In this case the \code{id} in \code{covar} comprises all individuals that either appear in \code{pheno}, \code{geno} and \code{pedigree}. Two additional columns in \code{covar} named \code{phenotyped} and \code{genotyped} are automatically generated to identify individuals that appear in the corresponding \code{gpData} object.
 }
 \value{
 Object of class \code{gpData} which is a \code{list} with the following elements
 \item{covar}{\code{data.frame} with information on individuals}
 \item{pheno}{\code{array} (individuals x traits x replications) with phenotypic data}
-\item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map} (if \code{reorderMap=TRUE}. }
+\item{geno}{\code{matrix} marker matrix containing genotypic data. Columns (marker) are in the same order as in \code{map} (if \code{reorderMap=TRUE}.) }
 \item{pedigree}{object of class \code{pedigree}}
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
 \item{phenoCovars}{\code{array} with phenotypic covariates}
@@ -65,7 +65,7 @@ Object of class \code{gpData} which is a \code{list} with the following elements
 Valentin Wimmer and Hans-Juergen Auinger
 }
 \note{
-In case of missing row names or column names in one item, information is substituted from other elements (assuming the same order of individuals/markers) and a warning specifying the assumnptions is returned. Please check them carefully.
+In case of missing row names or column names in one item, information is substituted from other elements (assuming the same order of individuals/markers) and a warning specifying the assumptions is returned. Please check them carefully.
 }
                                 
 \seealso{
@@ -85,7 +85,7 @@ rownames(geno) <-  letters[n:1]
 colnames(geno) <- paste("M",1:12,sep="")
 
 # genetic map
-# one SNP is not mapped (M5)
+# one SNP is not mapped (M5) and will therefore be removed
 map <- data.frame(chr=rep(1:3,each=4),pos=rep(1:12))
 map  <- map[-5,]
 rownames(map) <- paste("M",c(1:4,6:12),sep="") 

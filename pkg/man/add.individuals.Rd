@@ -14,7 +14,7 @@ add.individuals(gpData, pheno = NULL, geno = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gpData}{
-object of class \code{gpData}to be updated
+object of class \code{gpData} to be updated
 }
   \item{pheno}{
 \code{data.frame} with new rows for phenotypes with \code{rownames} indicating individuals. For repeated values the ID should be stored in a column with name \code{"ID"}.

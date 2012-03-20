@@ -27,7 +27,7 @@ individuals for the training set are returned.
 }
 }
 \details{
-For models, \code{model="RR"} and \code{"BL"} the prediction for the unphenotyped individuals 
+For models, \code{model="RR"} and \code{"BL"}, the prediction for the unphenotyped individuals
 is given by \deqn{\hat{g}'=\hat{\mu} + W'\hat{m}}{ghat=muhat + W mhat} with the estimates taken 
 from the \code{gpMod} object. For the prediction using \code{model="BLUP"}, the full 
 relationship matrix including individuals of the training set and the prediction set must be 

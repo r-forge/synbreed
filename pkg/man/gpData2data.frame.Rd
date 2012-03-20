@@ -29,10 +29,10 @@ scalar \code{logical}. Include all individuals with phenotypes in the \code{data
 scalar \code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
 }
   \item{repl}{
-\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenoypic values and covariates. Default is \code{NULL}, that means all values are used.
+\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenotypic values and covariates. Default is \code{NULL}, that means all values are used.
 }
 \item{phenoCovars}{
-\code{logical}. If \code{TRUE} columns with the phenotypic covariables are attached from element \code{phenoCovars} to the \code{data.frame}. Only required for repeated measurements.
+\code{logical}. If \code{TRUE}, columns with the phenotypic covariables are attached from element \code{phenoCovars} to the \code{data.frame}. Only required for repeated measurements.
 }
   \item{...}{
 further arguments to be used in function \code{reshape}. The argument \code{times} could be useful to rename the levels of the grouping variable (such as locations or environments).
@@ -72,9 +72,10 @@ colnames(geno) <- paste("M",1:12,sep="")
 # create 'gpData' object
 gp <- create.gpData(pheno=pheno,geno=geno)
 summary(gp)
+gp$covar
 
 # as data.frame with individuals with genotypes and phenotypes
-gpData2data.frame(gp,1:2)
+gpData2data.frame(gp,trait=1:2)
 # as data.frame with all individuals with phenotypes
 gpData2data.frame(gp,1:2,all.pheno=TRUE)
 # as data.frame with all individuals with genotypes

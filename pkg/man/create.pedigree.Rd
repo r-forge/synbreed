@@ -22,7 +22,7 @@ vector of IDs identifying parent 1 (with animals: sire)
 vector of IDs identifying parent 2 (with animals: dam)
 }
   \item{gener}{
-vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 ofor generations 1,... .
+vector identifying the generation. If \code{NULL} gener will be 0 for unknown parents and max(gener(Par1),gener(Par2))+1 for generations 1,... .
 }
   \item{sex}{
 vector identifying the sex (female=0 and male=1). 

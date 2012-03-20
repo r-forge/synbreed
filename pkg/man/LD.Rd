@@ -26,14 +26,14 @@ object of class \code{gpData} with elements \code{geno} and \code{map}
 \code{logical}. Should the software PLINK be used for the computation?
 }
   \item{ld.threshold}{
-\code{numeric}. Threshold for the LD to thin the output. Only pairwise LD>\code{ld.threshold} is reported when PLINK is used. This argument is can only be used for \code{type="data.frame"}.
+\code{numeric}. Threshold for the LD to thin the output. Only pairwise LD>\code{ld.threshold} is reported when PLINK is used. This argument can only be used for \code{type="data.frame"}.
 }
   \item{rm.unmapped}{
 \code{logical}. Remove markers with unknown postion in \code{map} before using PLINK?
 }
 }
 \details{
-The function \code{write.plink} is called to prepare the input files and the script for PLINK. The executive PLINK file \code{plink.exe} must be available (e.g. in the working directory or through path variables). The function \code{pairwiseLD} calls PLINK and reads the results. The evaluation is performed separate for every chromosome. The measure for LD is \eqn{r^2}{r2}. This is defined as
+The function \code{write.plink} is called to prepare the input files and the script for PLINK. The executive PLINK file \code{plink.exe} must be available (e.g. in the working directory or through path variables). The function \code{pairwiseLD} calls PLINK and reads the results. The evaluation is performed separately for every chromosome. The measure for LD is \eqn{r^2}{r2}. This is defined as
 \deqn{D= p_{AB} - p_Ap_B }{D = p(AB) - p(A)*p(B)} and
 \deqn{r^2=\frac{D^2}{p_Ap_Bp_ap_b}}{r2=D2/p(A)p(B)p(a)p(b)}
 where \eqn{p_{AB}}{p(AB)} is defined as the observed frequency of haplotype \eqn{AB}, \eqn{p_A=1-p_a} and \eqn{p_B=1-p_b} the observed frequencies of alleles \eqn{A} and \eqn{B}. 
@@ -48,9 +48,9 @@ Default PLINK options used
 
 }
 \value{
-For \code{type="data.frame"} an object of class \code{LDdf} with one element for each chromosome. Each element is a \code{data.frame} with columns \code{marker1}, \code{marker2}, \code{r2} and \code{distance} for all \eqn{p(p-1)/2} marker pairs (or thinned, see 'Details').
+For \code{type="data.frame"} an object of class \code{LDdf} with one element for each chromosome is returned. Each element is a \code{data.frame} with columns \code{marker1}, \code{marker2}, \code{r2} and \code{distance} for all \eqn{p(p-1)/2} marker pairs (or thinned, see 'Details').
 
-For \code{type="matrix"} an object of class \code{LDmat} with one element for each chromosome. Each element is a list of 2: a \eqn{p \times p}{p x p} \code{matrix} with pairwise LD and the corresponding \eqn{p \times p}{p x p} \code{matrix} with pairwise distances.
+For \code{type="matrix"} an object of class \code{LDmat} with one element for each chromosome is returned. Each element is a list of 2: a \eqn{p \times p}{p x p} \code{matrix} with pairwise LD and the corresponding \eqn{p \times p}{p x p} \code{matrix} with pairwise distances.
 
 }
 \references{

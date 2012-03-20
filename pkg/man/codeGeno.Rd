@@ -30,7 +30,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{numeric} scalar to replace missing values in case \code{impute.type="fix"}.
 }
   \item{maf}{
-\code{numeric} scalar. Threshold to discard markers due to the minor allle frequency (MAF). Markers with a MAF < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
+\code{numeric} scalar. Threshold to discard markers due to the minor allele frequency (MAF). Markers with a MAF < \code{maf} are discarded, thus  \code{maf} in [0,0.5]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{nmiss}{
 \code{numeric} scalar.  Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
@@ -74,12 +74,12 @@ the value is 0 with probability 0.5 and 2 with probability 0.5. To use this algo
     markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
     Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle
     input and output files and run Beagle with default settings. The information on marker
-    postion is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be
+    position is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be
     available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the
     imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle.}
-\item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (t force this option, use \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}.  In the standardd case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2} assuming Hardy-Weinberg equilibrium for all loci.}
+\item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (to force this option, use \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}.  In the standardd case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2} assuming Hardy-Weinberg equilibrium for all loci.}
 \item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}
 }
 
@@ -136,8 +136,12 @@ gp <- create.gpData(geno=snp9)
 # code genotypic data
 gp.coded <- codeGeno(gp,impute=TRUE,impute.type="random")
 
+# comparison
+gp.coded$geno
+gp$geno
 
 # example with heterogeneous stock mice
+\dontrun{
 data(mice)
 summary(mice)
 # heterozygous values must be labeled  (may run some seconds)

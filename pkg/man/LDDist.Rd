@@ -17,7 +17,7 @@ LDDist(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...)
 object of class \code{LDdf} which is the output of function \code{pairwiseLD} and argument \code{type="data.frame"}
 }
   \item{chr}{
-\code{numeric} scalar of vector. Return value is a plot for each chromosome in \code{chr}.
+\code{numeric} scalar or vector. Return value is a plot for each chromosome in \code{chr}.
 }  
   \item{type}{
 Character string to specify the type of plot. Use \code{"p"} for a scatterplot, \code{"bars"} for stacked bars or \code{"nls"} for scatterplot together with nonlinear regression curve according to Hill and Weir (1988). 

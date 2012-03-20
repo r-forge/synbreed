@@ -26,7 +26,7 @@ write.beagle(gp, wdir = getwd(), prefix)
 The Beagle software must be used chromosomewise. Consequently, \code{gp} should contain only data from one chromosome (use \code{discard.markers, see Examples}).
 }
 \value{
-Create files \code{[prefix]ingput.bgl} with genotypic data in Beagle input format and \code{[prefix]marker.txt} with marker information used by Beagle.
+No value is returned. Function creates files \code{[prefix]ingput.bgl} with genotypic data in Beagle input format and \code{[prefix]marker.txt} with marker information used by Beagle.
 }
 \references{
 B L Browning and S R Browning (2009) A unified approach to genotype imputation and haplotype phase inference for large data sets of trios and unrelated individuals. Am J Hum Genet 84:210-22

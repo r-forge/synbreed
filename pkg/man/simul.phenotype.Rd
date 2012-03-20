@@ -42,7 +42,7 @@ use identity matrix for \code{A}. True breeding values for \eqn{N} individuals i
 \deqn{tbv \sim N(0,\bf A \sigma_a^2)}{tbv = chol(A)*sigma2a*rnorm(N,0,1)}       
 Observations are simulated according to
 \deqn{y \sim N(mu + tbv + block +loc,\sigma^2_e)}{}
-If now location or block effects should appear, use \code{sigma2l=0} and/or \code{sigma2b=0}.
+If no location or block effects should appear, use \code{sigma2l=0} and/or \code{sigma2b=0}.
 }
 \value{
 A \code{data.frame} with containing the simulated values for trait and the following variables
@@ -51,7 +51,7 @@ A \code{data.frame} with containing the simulated values for trait and the follo
 \item{Block}{Factor for Block within Location}
 \item{Trait}{trait observations}
 \item{TBV}{Simulated values for true breeding values of individuals}
-Result is sorted for locations within individuals.
+Results are sorted for locations within individuals.
 }
 \author{
 Valentin Wimmer

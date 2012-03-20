@@ -62,6 +62,7 @@ rownames(map2) <- colnames(geno2) <- c("M13","M14")
 # adding new markers
 gp2 <- add.markers(gp,geno2,map2)
 summary(gp2)
+summary(gp)
                                                                                        
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

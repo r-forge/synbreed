@@ -26,9 +26,9 @@ If no covariance is given, an identity matrix and marker genotypes are used for 
 }
   \item{Rep}{\code{numeric}. Number of replications (default = 1).
 }
-  \item{Seed}{\code{numeric}.Number for \code{set.seed()} to make results reproducable.
+  \item{Seed}{\code{numeric}. Number for \code{set.seed()} to make results reproducable.
 }
-  \item{sampling}{Different sampling strategies can be \code{"random"}, \code{"within popStruc"} or \code{"across popStruc"}. If sampling is \code{"commit"} test sets have to specified in TS.
+  \item{sampling}{Different sampling strategies can be \code{"random"}, \code{"within popStruc"} or \code{"across popStruc"}. If sampling is \code{"commit"} test sets have to specified in TS (see Details).
 }
   \item{TS}{A (optional) list of vectors with IDs for the test set in each fold within a list of replications, same layout as output for \code{id.TS} .
 }
@@ -40,7 +40,7 @@ the same order as the given covariance matrices, the last given variance compone
   \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no popStruc is defined, family information of \code{gpData} is used. Only required for options \code{sampling="within popStruc"} or  \code{sampling="across popStruc"}
 }
   \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with Bayesian Ridge Regression "\code{BRR}" or Bayesian Lasso "\code{BL}" of the \code{BLR} package within the estimation set of each fold in the cross validation? If
-\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software have to be installed on the system.
+\code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software has to be installed on the system.
 }
   \item{verbose}{Logical. Whether output shows replications and folds.
 }
@@ -61,17 +61,17 @@ To account for the family structure (Albrecht et al. 2011), \code{sampling} can 
 The following mixed model equation is used for \code{VC.est="commit"}:
 
 \deqn{\bf y=\bf{Xb}+\bf{Zu}+\bf e}{y=Xb+Zu+e} with \deqn{\bf u \sim N(0,G\sigma^2_u)}{u=N(0,Gsigma2u)}
-
+     gives the mixed model equations
 \deqn{\left(\begin{array}{cc} \bf X'\bf X & \bf X'\bf Z \\ \bf Z'\bf X & \bf Z'\bf Z + \bf G^{-1}\frac{\sigma^2_e}{\sigma^2_u} \end{array} \right) \left( \begin{array}{c} \bf b \\ \bf  u \end{array}\right) = \left(\begin{array}{c}\bf  X'\bf y \\ \bf Z'\bf y \end{array} \right)}{(X'X,X'Z,Z'X,ZZ+GIsigma2e/sigma2u)(b,u)=(X'y,Z'y)}
 }
 \value{
-A object of class \code{list} with following items:
+An object of class \code{list} with following items:
 \item{bu }{Estimated fixed and random effects of each fold within each replication.}
 \item{n.DS}{Size of the data set (ES+TS) in each fold.}
 \item{y.TS}{Predicted values of all test sets within each replication.}
 \item{n.TS}{Size of the test set in each fold.}
 \item{id.TS}{List of IDs of each test sets within a list of each replication.}
-\item{PredAbi}{Predictive ability of each fold within each replication calculated as \eqn{r(y_{TS},\hat y_{TS})}.}
+\item{PredAbi}{Predictive ability of each fold within each replication calculated as correlation coefficient \eqn{r(y_{TS},\hat y_{TS})}.}
 \item{rankCor}{Spearman's rank correlation of each fold within each replication calculated between \eqn{y_{TS}} and \eqn{\hat y_{TS}}.}
 \item{mse}{Mean squared error of each fold within each replication calculated between \eqn{y_{TS}} and \eqn{\hat y_{TS}}.}
 \item{bias}{Regression coefficients of a regression of the observed values on the predicted values in the TS. 

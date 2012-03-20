@@ -14,7 +14,7 @@ S3 \code{summary} method for objects of class \code{gpData}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-object of class \code{gpMod}
+object of class \code{gpData}
 }
 \item{...}{
 not used

@@ -5,7 +5,7 @@
 Genomic predictions models for objects of class gpData
 }
 \description{
-This function fits genomic prediction modelsbased on phenotypic and genotypic data in an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or marker-based genetic relationship matrices and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
+This function fits genomic prediction models based on phenotypic and genotypic data in an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or a marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
 BLUP models are fitted using the REML implementation of the \code{regress} package (Clifford and McCullagh, 2012). The Bayesian regression models are fitted using the Gibbs-Sampler of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set used to fit the model.
 
 
@@ -24,7 +24,7 @@ object of class \code{gpData}
 object of class \code{relationshipMatrix}. Kinship structure to be used in the BLUP model or as additional polygenic effect \eqn{u} in the Bayesian regression models (see \code{BLR} package).
 }
   \item{predict}{
-\code{logical}. If \code{TRUE}, genetic values will predict for genotyped but not phenotyped individuals. Default is \code{FALSE}.
+\code{logical}. If \code{TRUE}, genetic values will be predicted for genotyped but not phenotyped individuals. Default is \code{FALSE}.
 }
   \item{trait}{
 \code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model
@@ -47,9 +47,9 @@ further arguments to be used by the genomic prediction models, i.e. prior values
 }
 }
 \details{
-By default, on overall mean is added to the model. For BLUP, further fixed and random effects can be added through the arguments \code{fixed} and \code{random}.
+By default, an overall mean is added to the model. For BLUP, further fixed and random effects can be added through the arguments \code{fixed} and \code{random}.
 
-Only a subset of the individuals - the training set - is used fit the model. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen. Marker effects for \code{model=BLUP} are extracted from the corresponding G-BLUP model using their functional relationship. In this case, \code{fit} reports the G-BLUP model
+Only a subset of the individuals - the training set - is used to fit the model. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen. Marker effects for \code{model=BLUP} are extracted from the corresponding G-BLUP model using their functional relationship. In this case, \code{fit} reports the G-BLUP model.
 }
 \value{
 Object of class \code{gpMod} which is a list of
@@ -73,7 +73,7 @@ http://CRAN.R-project.org/package=BLR
 
 }
 \author{
-Valentin Wimmer, Hans-Juergen Auinger, and Theresa Albrecht
+Valentin Wimmer, Hans-Juergen Auinger and Theresa Albrecht
 }
 \seealso{
 \code{\link{kin}}, \code{\link{crossVal}}
