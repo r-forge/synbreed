@@ -2,7 +2,7 @@
 \alias{summary.cvData}
 \alias{print.summary.cvData}
 \title{
-Summarizing options and results of the cross validation procedure
+Summary of options and results of the cross validation procedure
 }
 \description{
 \code{summary} method for class "cvData"

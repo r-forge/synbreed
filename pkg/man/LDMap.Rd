@@ -23,7 +23,7 @@ Object of class \code{gpData} that was used in \code{pairwiseLD}
 \code{numeric}. Return value is a plot for each chromosome in \code{chr}.
 }  
   \item{file}{
-Optionally a path to a file were plot is saved as \code{pdf}
+Optionally a path to a file where plot is saved as \code{pdf}
 }
   \item{\dots}{
 Further arguments that could be passed to function \code{LDheatmap}

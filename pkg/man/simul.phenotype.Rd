@@ -6,7 +6,7 @@
 Simulation of a field trial with single trait
 }
 \description{
-Simulate observations from a field trial using an animal model.
+Simulates observations from a field trial using an animal model.
 The field trial consists of multiple locations and randomized complete block design within locations. 
 A single quantitative trait is simulated according to the model \code{Trait ~ id(A) + block + loc + e}.
 }
@@ -49,7 +49,7 @@ A \code{data.frame} with containing the simulated values for trait and the follo
 \item{ID}{Factor identifying the individuals. Names are extracted from \code{pedigree} or rownames of \code{A}}
 \item{Loc}{Factor for Location}
 \item{Block}{Factor for Block within Location}
-\item{Trait}{trait observations}
+\item{Trait}{Trait observations}
 \item{TBV}{Simulated values for true breeding values of individuals}
 Results are sorted for locations within individuals.
 }

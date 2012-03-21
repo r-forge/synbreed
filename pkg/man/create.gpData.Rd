@@ -5,7 +5,7 @@
 Create genomic prediction data object
 }
 \description{                                                                                                            
-This function combines all raw data sources in a single, unified data object of class \code{gpData}. This is a \code{list} with elements for phenotypic, genotypic, marker map, pedigree and further covariate data. Any element is optional.
+This function combines all raw data sources in a single, unified data object of class \code{gpData}. This is a \code{list} with elements for phenotypic, genotypic, marker map, pedigree and further covariate data. All elements are optional.
 }
 \usage{                                                                                         
 create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL,
@@ -19,10 +19,10 @@ create.gpData(pheno = NULL, geno = NULL, map = NULL, pedigree = NULL,
 unrepeated measures unique \code{rownames} should identify individuals. For repeated measures, the first
 column identifies individuals and a second column indicates repetitions (see also argument \code{repeated}).}
   \item{geno}{
-\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be coded arbitrarily. Missing values should be coded as \code{NA}. Colums or rows with only missing values not allowed. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimension match).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension match.
+\code{matrix} with individuals organized in rows and markers organized in columns. Genotypes could be coded arbitrarily. Missing values should be coded as \code{NA}. Colums or rows with only missing values not allowed. Unique \code{rownames} identify individuals and unique \code{colnames} markers. If no \code{rownames} are available, they are taken from element \code{pheno} (if available and if dimension matches).  If no \code{colnames} are used, the \code{rownames} of \code{map} are used if dimension matches.
 }
   \item{map}{
-\code{data.frame} with one row for each marker and two columns (named \code{chr} and \code{pos}). First columns gives the chromosome (\code{numeric} or \code{character} but not \code{factor}) and second column the position  on the chromosome in centimorgan or the physical distance relative to the reference sequence in basepairs. Unique \code{rownames} indicate the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical to the order in \code{geno}. If this is the case, gaps in map are filled with \code{NA} to ensure the same number and order as in element \code{geno} of the resulting \code{gpData} object.
+\code{data.frame} with one row for each marker and two columns (named \code{chr} and \code{pos}). First columns gives the chromosome (\code{numeric} or \code{character} but not \code{factor}) and second column the position  on the chromosome in centimorgan or the physical distance relative to the reference sequence in basepairs. Unique \code{rownames} indicate the marker names which should match with marker names in \code{geno}. Note that order and number of markers must not be identical with the order in \code{geno}. If this is the case, gaps in the map are filled with \code{NA} to ensure the same number and order as in element \code{geno} of the resulting \code{gpData} object.
 }
   \item{pedigree}{
 Object of class \code{pedigree}.

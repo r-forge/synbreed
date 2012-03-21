@@ -3,10 +3,10 @@
 \alias{print.summary.pedigree}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Summarizing pedigree information
+Summary of pedigree information
 }
 \description{
-\code{summary} method for class ''pedigree''
+\code{Summary} method for class ''pedigree''
 }
 \usage{
 \method{summary}{pedigree}(object,...) 

@@ -41,7 +41,7 @@ A list with the following arguments
 \item{LHS}{left hand side of MME}
 \item{RHS}{right hand side of MME}
 \item{C}{Generalized inverse of LHS. This is the prediction error variance matrix}
-\item{SEP}{Standard error of preciction for fixed and random effects}
+\item{SEP}{Standard error of prediction for fixed and random effects}
 \item{SST}{Sum of Squares Total}
 \item{SSR}{Sum of Squares due to Regression}
 \item{residuals}{Vector of residuals}

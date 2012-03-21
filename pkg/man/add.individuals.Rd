@@ -2,7 +2,7 @@
 \alias{add.individuals}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Adding new individuals to objects of class gpData
+Add new individuals to objects of class gpData
 }
 \description{
 This function extends an object of class \code{gpData} by adding new phenotypes, genotypes and pedigree.
@@ -29,11 +29,11 @@ object of class \code{gpData} to be updated
 \code{data.frame} with new rows for \code{covar} information with \code{rownames} indicating individuals
 }
   \item{repl}{
-The column of the pheno \code{data.frame} for the replicated measures. If the values are unrepeated or  this column is named \code{"repl"} this argument is not needed.
+The column of the pheno \code{data.frame} for the replicated measures. If the values are not repeated or  this column is named \code{"repl"} this argument is not needed.
 }
 }
 \details{
-\code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} must match with existing names in \code{gpData} object.
+\code{colnames} in \code{geno}, \code{pheno} and \code{pedigree} must match existing names in \code{gpData} object.
 }
 \value{
 object of class \code{gpData} with new individuals

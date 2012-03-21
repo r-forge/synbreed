@@ -41,10 +41,10 @@ where \eqn{(A1,C1)} denotes the element [A1,C1] in the gametic relationship matr
 Function \code{kin} provides different types of measures for marker based relatedness. An element \code{geno} must be available in the object of class \code{gpData}. Furthermore, genotypes must be coded by the number of copies of the minor allele, i.e. function \code{codeGeno} must be applied in advance.
 
 If \code{ret="realized"}, the realized relatedness between individuals is computed according to the formulas in Habier et al. (2007) or vanRaden (2008)
-\deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=W-P} and \eqn{W} is the marker matrix and \eqn{P} contains the allele frequencies multiplied by 2 and \eqn{p_i}{pi} is the allele frequency of marker \eqn{i} and the sum is over all loci. 
+\deqn{U = \frac{ZZ'}{2\sum p_i(1-p_i)}}{ZZ'/(2\sum pi(1-pi))} where \eqn{Z=W-P}, \eqn{W} is the marker matrix, \eqn{P} contains the allele frequencies multiplied by 2, \eqn{p_i}{pi} is the allele frequency of marker \eqn{i}, and the sum is over all loci.
 
 If \code{ret="realizedAB"}, the realized relatedness between individuals is computed according to the formula in Astle and Balding (2009)
-\deqn{U = \frac{1}{M} \sum \frac{(w_i-2p_i)(w_i-2p_i)'}{2p_i(1-p_i)}}{1/M sum((wi-2pi)(wi-2pi)'/(2pi(1-pi)))} where \eqn{w_i}{wi} is the marker genotype, \eqn{p_i}{pi} is the allele frequency at marker locus \eqn{i}, and \eqn{M} is the number of marker loci and the sum is over all loci. 
+\deqn{U = \frac{1}{M} \sum \frac{(w_i-2p_i)(w_i-2p_i)'}{2p_i(1-p_i)}}{1/M sum((wi-2pi)(wi-2pi)'/(2pi(1-pi)))} where \eqn{w_i}{wi} is the marker genotype, \eqn{p_i}{pi} is the allele frequency at marker locus \eqn{i}, and \eqn{M} is the number of marker loci, and the sum is over all loci.
 
 If \code{ret="sm"}, the realized relatedness between individuals is computed according to the simple matching coefficient (Reif et al. 2005). The simple matching coefficient counts the number of shared alleles across loci. It can only be applied to homozygous inbred lines, i.e. only genotypes 0 and 2. To account for loci that are alike in state but not identical by descent (IBD),  Hayes and Goddard (2008) correct the simple matching coefficient by the minimum of observed simple matching coefficients
 \deqn{\frac{s-s_{min}}{1-s_{min}}}{s-smin/(1-smin)}

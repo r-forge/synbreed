@@ -3,10 +3,10 @@
 \alias{print.summary.relationshipMatrix}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Summarizing relationship matrices
+Summary of relationship matrices
 }
 \description{
-\code{summary} method for class ''relationshipMatrix''
+\code{Summary} method for class ''relationshipMatrix''
 }
 \usage{
 \method{summary}{relationshipMatrix}(object,...) 

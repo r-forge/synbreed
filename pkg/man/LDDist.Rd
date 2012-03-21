@@ -26,7 +26,7 @@ Character string to specify the type of plot. Use \code{"p"} for a scatterplot, 
 \code{list} containing breaks for stacked bars (optional, only for \code{type="bars"}). Components are \code{dist} with breaks for distance on x-axis and \code{r2} for breaks on for r2 on y-axis. By default, 5 equal spaced categories for dist and r2 are used.  
 }
   \item{file}{
-\code{character}. path to a file were plot is saved as \code{pdf} (optional).
+\code{character}. path to a file where plot is saved as \code{pdf} (optional).
 }
   \item{n}{
 \code{numeric}. Number of observations used to estimate LD. Only required for \code{type="nls"}.

@@ -17,7 +17,7 @@ gpData2data.frame(gpData,trait=1,onlyPheno=FALSE,all.pheno=FALSE,
 object of class \code{gpData}
 }
   \item{trait}{
-\code{numeric} or \code{character}. A vector with the names or numbers of the trait that should be extracted of pheno. Default is \code{1}.
+\code{numeric} or \code{character}. A vector with the names or numbers of the trait that should be extracted from pheno. Default is \code{1}.
 }
   \item{onlyPheno}{
 scalar \code{logical}. Only return phenotypic data.
@@ -29,7 +29,7 @@ scalar \code{logical}. Include all individuals with phenotypes in the \code{data
 scalar \code{logical}. Include all individuals with genotypes in the \code{data.frame} and fill the phenotypic data with \code{NA}.
 }
   \item{repl}{
-\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn out of the phenotypic values and covariates. Default is \code{NULL}, that means all values are used.
+\code{character} or \code{numeric}. A vector which contains names or numbers of replication that should be drawn from the phenotypic values and covariates. Default is \code{NULL}, i.e. all values are used.
 }
 \item{phenoCovars}{
 \code{logical}. If \code{TRUE}, columns with the phenotypic covariables are attached from element \code{phenoCovars} to the \code{data.frame}. Only required for repeated measurements.
@@ -42,7 +42,7 @@ further arguments to be used in function \code{reshape}. The argument \code{time
 Argument \code{all.geno} can be used to predict the genetic value of individuals without phenotypic records using the \code{BLR} package. Here, the genetic value of individuals with \code{NA} as phenotype is predicted by the marker profile.
 
 
-For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates in an \code{array}. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable (such as replications, years of loactions in multi-environment trials) are added.
+For multiple measures, phenotypic data in object \code{gpData} is arranged with replicates in an \code{array}. With \code{gpData2data.frame} this could be reshaped to "long" format with multiple observations in one column. In this case, one column for the phenotype and 2 additional columns for the \code{id} and the levels of the grouping variable (such as replications, years of locations in multi-environment trials) are added.
 }
 \value{
 A \code{data.frame} with the individuals names in the first column, the phenotypes in the next column(s) and the marker genotypes in subsequent columns.

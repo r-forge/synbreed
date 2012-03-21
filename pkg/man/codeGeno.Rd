@@ -2,12 +2,12 @@
 \alias{codeGeno}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Recoding of genotypic data, imputing of missing values and preselection of markers
+Recode genotypic data, imputation of missing values and preselection of markers
 }
 \description{
 This function combines all algorithms for processing of marker data within \code{synbreed} package.
-Raw marker data is a matrix with elements of arbitrary format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). Function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded into the number of copies of the minor allele, i.e. 0, 1 and 2.
-Imputing of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be done according to the minor allele frequency and/or fraction of missing values.
+Raw marker data is a matrix with elements of arbitrary format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). The function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded into the number of copies of the minor allele, i.e. 0, 1 and 2.
+Imputation of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be carried out according to the minor allele frequency and/or fraction of missing values.
 }
 \usage{
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
@@ -36,7 +36,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{numeric} scalar.  Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{label.heter}{
-This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. In case the heterozygous genotypes are coded like "A/T","G/C", ... \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
+This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ... then \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
 }
   \item{keep.identical}{
 \code{logical}. Should duplicated markers be kept?
@@ -48,32 +48,32 @@ This is either a scalar or vector of characters to identify heterozygous genotyp
 For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family should have at least \code{minFam} members with available information for a marker to impute missing values according to the family. The default is 5.
  }
  \item{showBeagleOutput}{
-\code{logical}. Do you like to see the output of the Beagle software package. The default is \code{FASLE}.
+\code{logical}. Would you like to see the output of the Beagle software package? The default is \code{FALSE}.
  }
  \item{tester}{
  This option is in testing mode at the moment.
  }
 }
 \details{
-Coding of genotypic data is done in the following order (depending on choice of arguments not all steps are performed):
+Coding of genotypic data is done in the following order (depending on choice of arguments; not all steps are performed):
 
 1. Discarding markers with fraction > \code{nmiss} of missing values
 
 2. Recoding alleles from character/factor/numeric into the number of copies of the minor alleles, i.e. 0, 1 and 2. In \code{codeGeno}, in the first step heterozygous genotypes are coded as 1. From the other genotypes, the less frequent genotype is coded as 2 and the remaining genotype as 0. Note that  function \code{codeGeno} will terminate with an error whenever more than three genotypes are found.
 
-3. Replace of missing values by \code{replace.value}  or impute missing values according to one of the following methods:
+3. Replace missing values by \code{replace.value}  or impute missing values according to one of the following methods:
 
 Imputing is done according to \code{impute.type}
 \describe{
 \item{"family"}{
-This option is only suitable for homozygous individuals (such as doubled-haploid lines) structured in a families.
+This option is only suitable for homozygous individuals (such as doubled-haploid lines) structured in families.
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
-the value is 0 with probability 0.5 and 2 with probability 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
+the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
 \item{"beagle"}{ Use Beagle Genetic Analysis Software Package (Browning and Browning 2007; 2009) to
-    infer missing genotypes. If you use this option, please cite in publications the original papers. Beagle uses a HMM to reconstruct missing genotypes by the flanking
+    infer missing genotypes. If you use this option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
     markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
-    Function \code{codeGeno} will create (if it does not exist) a directory \code{beagle} for Beagle
-    input and output files and run Beagle with default settings. The information on marker
+    Function \code{codeGeno} will create a directory \code{beagle} for Beagle
+    input and output files (if it does not exist) and run Beagle with default settings. The information on marker
     position is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be
     available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the
     imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
@@ -96,7 +96,7 @@ Information about imputing is reported after a call of \code{codeGeno}.
 Note: Beagle is included in the synbreed package. Once required, Beagle is called using \code{path.package()}. 
 }
 \value{
-An object of class \code{gpData} containing the recoded marker matrix. If \code{maf} or \code{nmiss} were specified or \code{keep.identical=FALSE}, dimension of \code{geno} and \code{map} may be reduced due to selection of markers.  The genotype which is homozygous for the minor allele is coded as 2, the other homozygous is coded as 0 and heterozygous genotype is coded as 1.
+An object of class \code{gpData} containing the recoded marker matrix. If \code{maf} or \code{nmiss} were specified or \code{keep.identical=FALSE}, dimension of \code{geno} and \code{map} may be reduced due to selection of markers.  The genotype which is homozygous for the minor allele is coded as 2, the other homozygous genotype is coded as 0 and heterozygous genotype is coded as 1.
 }
 
 \references{

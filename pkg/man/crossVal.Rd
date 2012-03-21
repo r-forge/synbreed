@@ -20,7 +20,7 @@ crossVal(gpData, trait=1, cov.matrix = NULL,  k = 2, Rep = 1, Seed = NULL,
   \item{trait}{\code{numeric} or \code{character}. The name or number of the trait in the \code{gpData} object to be used as trait. 
 }
   \item{cov.matrix}{\code{list} including covariance matrices for the random effects. Size and order of rows and columns should be equal to rownames of \code{y}. 
-If no covariance is given, an identity matrix and marker genotypes are used for a marker regression. In general, a covariance matrix should be non-singular and positive definit to be invertible, if this is not the case, a constant of \code{1e-5} is added to the diagonal elements of the covariance matrix.
+If no covariance is given, an identity matrix and marker genotypes are used for a marker regression. In general, a covariance matrix should be non-singular and positive definite to be invertible, if this is not the case, a constant of \code{1e-5} is added to the diagonal elements of the covariance matrix.
 }
   \item{k}{\code{numeric}. Number of folds for k-fold cross validation, thus \code{k} should be in [2,\code{nrow(y)}] (default=2).
 }
@@ -37,7 +37,7 @@ If no covariance is given, an identity matrix and marker genotypes are used for 
   \item{varComp}{A \code{vector} of variance components for the random effects, which has to be specified if \code{VC.est="commit"}. The first variance components should be 
 the same order as the given covariance matrices, the last given variance component is for the residuals.
 }
-  \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no popStruc is defined, family information of \code{gpData} is used. Only required for options \code{sampling="within popStruc"} or  \code{sampling="across popStruc"}
+  \item{popStruc}{Vector of length \code{nrow(y)} assigning individuals to a population structure. If no \code{popStruc} is defined, family information of \code{gpData} is used. Only required for options \code{sampling="within popStruc"} or  \code{sampling="across popStruc"}
 }
   \item{VC.est}{Should variance components be reestimated with "\code{ASReml}" or with Bayesian Ridge Regression "\code{BRR}" or Bayesian Lasso "\code{BL}" of the \code{BLR} package within the estimation set of each fold in the cross validation? If
 \code{VC.est="commit"}, the variance components have to be defined in \code{varComp}. For \code{ASReml}, ASReml software has to be installed on the system.

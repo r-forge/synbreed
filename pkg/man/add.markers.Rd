@@ -2,7 +2,7 @@
 \alias{add.markers}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Adding new markers to an object of class gpData
+Add new markers to an object of class gpData
 }
 \description{
 This function adds new markers to the element \code{geno} of an object of class \code{gpData} and updates the marker map.
@@ -23,7 +23,7 @@ object of class \code{gpData} to be updated
 }
 }
 \details{
-\code{rownames} in argument \code{geno} must match with \code{rownames} in the element \code{geno} object of class \code{gpData}.
+\code{rownames} in argument \code{geno} must match \code{rownames} in the element \code{geno} object of class \code{gpData}.
 
 }
 \value{
