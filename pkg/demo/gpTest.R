@@ -6,9 +6,7 @@
 ## date : 2011 - 11 - 30
 ##
 ##############################################
-rm(list=ls())
-set.seed(19810703)
-library(synbreed)
+
 # number of locations
 nLoc <- 3
 # number of genotypes

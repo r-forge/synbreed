@@ -35,24 +35,26 @@ modPMBL <- gpMod(gpWheat,trait=1,model="BL",prior=priorCrossa,nIter=15000,burnIn
 # extract predicted genetic values and plot versus phenotypic values
 plot(predict(modPMBL),gpWheat$pheno[,1,])
 
-cv <- crossVal(gpWheat,trait=1,VC.est="BL",prior=priorCrossa,k=10,Rep=1)
+cv <- crossVal(gpWheat,trait=1,VC.est="BL",prior=priorCrossa,k=10,Rep=1,Seed=123)
 summary(cv)
 #Object of class 'cvData'
 #
-# 10 -fold cross validation with 1 replications
+# 10 -fold cross validation with 1 replication(s)
 #     Sampling:                 random
 #     Variance components:      reestimated with BL
-#     Number of random effects: 0
+#     Number of random effects: 1279
 #     Number of individuals:    599 -- 599
 #     Size of the TS:           59 -- 60
 #
 #Results:
 #                      Min         Mean +- pooled SE       Max
-# Predictive ability:  0.2897      0.5212 +- NA            0.6788
-# Rank correlation:    0.2989      0.4760 +- NA            0.5985
-# Bias:                0.5041      1.0505 +- NA            1.3903
-# 10% best predicted:  0.56        0.56 +- NA      0.56
+# Predictive ability:  0.4035      0.5341 +- NA            0.6614
+# Rank correlation:    0.3519      0.4765 +- NA            0.6283
+# Mean squared error:  0.492       0.727 +- NA     0.901
+# Bias:                0.8252      1.0393 +- NA            1.2426
+# 10% best predicted:  0.58        0.58 +- NA      0.58
 #
-#Seed start:
+#Seed start:  123
 #Seed replications:
-#[1] 4178
+#[1] 28758
+

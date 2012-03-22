@@ -9,7 +9,7 @@
 
 
 
-### Example for Legarra et al. (2009), J. Dairy Sci. 92: p. 4660
+### Example from Legarra et al. (2009), J. Dairy Sci. 92: p. 4660
 id <- 1:17
 par1 <- c(0,0,0,0,0,0,0,0,1,3,5,7,9,11,4,13,13)
 par2 <- c(0,0,0,0,0,0,0,0,2,4,6,8,10,12,11,15,14)
@@ -40,7 +40,7 @@ diag(A) - 1
 
 # connection to gametic relationship
 A[16,17]
-# sum ober allele IBD
+# sum over allele IBD
 0.5*sum(G[c("16_1","16_2"),c("17_1","17_2")])
 
 
@@ -51,7 +51,7 @@ dim(D)
 
 # connection to gametic relationship
 D[16,17]
-# sum ober allele IBD
+# sum over allele IBD
 G["16_1","17_1"] *  G["16_2","17_2"] + G["16_1","17_2"] *  G["16_1","17_2"]
 
 plot(G)

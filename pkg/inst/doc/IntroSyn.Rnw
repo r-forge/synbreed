@@ -513,7 +513,7 @@ dev.off()
 \subsection{Data processing and visualization}
 
 All data sets are already given as objects of class \code{gpData}. Hence the next step is the processing of the genotypic data in element \code{geno}.  The \code{maize} data includes no missing values. Thus data processing only involves the recoding of the alleles into the number of copies of the minor allele. There are only homozygous genotypes. Hence no heterozygous genotype must be declared and genotypic data is recoded by
-<<Recode maize data,eval=FALSE>>=
+<<Recode maize data,eval=TRUE>>=
 maizeC <- codeGeno(maize)
 @  
 Resulting object \code{maizeC} is again of class \code{gpData} but with recoded genotypic data. This information is stored for further analysis as \code{codeGeno} sets \code{maizeC$info$codeGeno=TRUE}. When there are heterozygous genotypes, the argument \code{label.heter} is required. This is shown for the \code{mice} data, where genotypes are coded by the observed alleles separated by a slash symbol. A heterozygous genotype is identified whenever the first allele differs from the second allele. This can be generalized by the function
@@ -570,8 +570,8 @@ for the stacked histograms with user-specified breaks. The graphical layout is c
 
 \begin{figure}[!ht]
 \centering
-\includegraphics{figs/LDmaize.pdf}
-\caption{LD  decay as a scatter plot (left side) and stacked histogram (right side) for \Sexpr{nrow(maize$map[maize$map$chr==1,])} markers on the first chromosome for the \code{maize} data.}
+\includegraphics{figs/LDmaize.png}
+\caption{LD  decay as a scatter plot (left side) and stacked histogram (right side) for \Sexpr{nrow(maizeC$map[maizeC$map$chr==1,])} markers on the first chromosome for the \code{maize} data.}
 \label{fig:LDDist}
 \end{figure}   
                               
