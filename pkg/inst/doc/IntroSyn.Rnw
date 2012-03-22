@@ -1,6 +1,4 @@
-%\VignetteIndexEntry{Genomic prediction with the synbreed package}
-%\VignetteKeywords{Genomic prediction }
-%\VignettePackage{synbreed}
+
 
 \documentclass[nojss,article,shortnames]{jss}
 
@@ -9,6 +7,9 @@
 \usepackage{bm}
 \usepackage[latin1]{inputenc}
 
+%\VignetteIndexEntry{Genomic prediction with the synbreed package}
+%\VignetteKeywords{Genomic prediction}
+%\VignettePackage{synbreed}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

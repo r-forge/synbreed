@@ -57,6 +57,7 @@ Valentin Wimmer
 \code{\link[regress]{regress}}, \code{\link{crossVal}}
 }
 \examples{
+\dontrun{
 data(maize)
 
 # realized kinship matrix
@@ -80,5 +81,6 @@ mme <- MME(y=y,Z=diag(n),GI=GI,X=X,RI=diag(n))
 # comparison
 head(m$fit$predicted[,1]-m$fit$beta)
 head(mme$u)
+}
 }
 

@@ -7,6 +7,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   if(!is.null(geno)){
      if(class(geno) == "data.frame"){
         geno <- matrix(unlist(geno),nrow=nrow(geno),ncol=ncol(geno),dimnames=dimnames(geno))
+        #if(any(duplicated(geno,MARGIN=1))) warning("individuals with dublicated genotypes")
      }
   }
   # test if positions in map are numeric
