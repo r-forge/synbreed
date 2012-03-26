@@ -86,7 +86,7 @@ see <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/g
 <blockquote>
   <blockquote>
     <blockquote> 
-To install the package <tt>synbreed</tt> from R (if you are running a recent R version), use<br>
+To install the latest development version of package <tt>synbreed</tt> from R-Forge (if you are running a recent R version), use<br>
 <br>
 <div style="text-align: center;"> <tt>install.packages("synbreed",repos="http://r-forge.r-project.org")</tt></div>
 <br>
@@ -96,16 +96,8 @@ To install the package <tt>synbreed</tt> from R (if you are running a recent R v
     <br>
       <br><p>
 <br>
- Source code for version 0.9-0 is available  <a href="synbreed_0.9-0.tar.gz"> here </a>
-<br>
- To install source code in R, use (with file <tt>  synbreed_0.9-0.tar.gz </tt> in the working directory)
- <br>
- <br>
- <br>
-  <tt> install.packages(c("lattice", "igraph", "MASS", "LDheatmap", "qtl", "doBy", "BLR", "regress", "abind", "synbreedData"))  </tt>
-<br>
- <tt>  system("Rcmd INSTALL synbreed_0.9-0.tar.gz")  </tt>
-<br>
+ A stable release is available from   <a href="http://cran.r-project.org/web/packages/synbreed/"> CRAN </a>
+
 
     </blockquote>
   </blockquote>
@@ -115,7 +107,14 @@ To install the package <tt>synbreed</tt> from R (if you are running a recent R v
   <blockquote>
     <ul>
        <li><a href="synbreed-manual.pdf"> pdf </a> version of the manual </li>
-       <li> package vignette with detailed background information and examples: availble upon request </li>
+       <li> package vignette with detailed background information and examples: 
+        <br>
+  <tt> library(synbreed)  </tt>
+<br>
+ <tt>  vignette("IntroSyn") </tt>
+<br>
+
+        </li>
        <li><a href="synbreedPackageDescription.pdf"> overview </a> over the functions </li>
        <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
        <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
