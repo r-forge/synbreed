@@ -13,7 +13,7 @@ Imputation of missing values can be done by random sampling from allele distribu
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
          "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
          nmiss=NULL, label.heter="AB", keep.identical=TRUE, verbose=FALSE, 
-         minFam=5, showBeagleOutput=FALSE, tester=NULL)
+         minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,6 +52,9 @@ For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family s
  }
  \item{tester}{
  This option is in testing mode at the moment.
+ }
+  \item{print.report}{
+ \code{logical}. Should a file \code{SNPreport.txt} be generated containing further information on SNPs. This includes SNP name, original coding of major and minor allele, MAF and number of imputed values.
  }
 }
 \details{
