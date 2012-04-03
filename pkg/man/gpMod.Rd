@@ -34,7 +34,7 @@ object of class \code{relationshipMatrix}. Kinship structure to be used in the B
 }
   \item{markerEffects}{
   \code{logical}. 
- Should marker effects be estimated for a G-BLUP model, i.e. RR-BLUP?
+ Should marker effects be estimated for a G-BLUP model, i.e. RR-BLUP? Plose note, that in this case also the variance components pertaining to model G-BLUP are reported instead of those from the G-BLUP model (see vignette). If the variance components are committed to \code{crossVal}, it must be guaranteed that there also the RR-BLUP model is used, e.g. no \code{cov.matrix} object should be specified.
 }
   \item{fixed}{
   A formula for fixed effects. The details of model specification are the same as for \code{lm} (only right hand side required). Only for \code{model="BLUP"}.
