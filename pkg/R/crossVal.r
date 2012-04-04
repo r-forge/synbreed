@@ -93,7 +93,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 	   covM <- as.matrix(cov.matrix[[i]])
 	   covM.I <- try(solve(covM),TRUE)
 	   # adding constant to diagonal, if covM is singular
-	   if(class(covM.I)=="try-error") covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+	   if(class(covM.I)=="try-error"){
+		 warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
+		 covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+	   }
            m <- covM.I * (varComp[length(varComp)]/varComp[i])
 	   rm(covM.I,covM)
              if(i==1) rmat <- m
@@ -116,7 +119,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
            covM <- as.matrix(cov.matrix[[i]])
 	   covM.I <- try(solve(covM),TRUE)
 	   # adding constant to diagonal, if covM is singular
-	   if(class(covM.I)=="try-error") covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+	   if(class(covM.I)=="try-error"){
+		 warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
+		 covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+	   }
            write.relationshipMatrix(covM.I,file=paste("ID",i,".giv",sep=""),type="none",sorting="ASReml",digits=10)
 	   rm(covM.I,covM)
         }
@@ -396,6 +402,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
       Z2 <- Z[(rownames(Z) %in% samp.ts[,1]),]
       X2 <- X[(rownames(X) %in% samp.ts[,1]),]
       XZ2 <- cbind(X2,Z2)
+      if(length(Z2)==ncol(Z)){ 
+	XZ2 <- matrix(c(X2,Z2),ncol=(ncol(X)+ncol(Z)))
+	rownames(XZ2) <- samp.ts[,1]
+      }
       #print(dim(XZ2))
       #print(dim(XZ2))
       y2 <- y[(y$ID %in% samp.ts[,1]),"TRAIT"]
@@ -422,7 +432,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
       # Mean squared error
       mse[ii,i] <- mean((y2-as.numeric(y.dach))^2) 
       # save IDs of TS
-      id.TS[[ii]] <- unique(rownames(Z2))
+      id.TS[[ii]] <- as.character(unique(samp.ts[,1]))
       names(id.TS)[[ii]] <- paste("fold",ii,sep="")
       
     }  # end loop for k-folds
