@@ -1,0 +1,102 @@
+# Namespace Synbreed
+# Exported is everyfunction except write.*, summary.*, plot.*                    
+
+
+
+export(
+add.individuals,         
+add.markers,             
+codeGeno,                
+create.gpData ,          
+create.pedigree,         
+crossVal,                
+discard.markers, 
+discard.individuals,        
+gpData2cross,            
+gpData2data.frame,  
+cross2gpData,   
+gpMod,                
+kin, 
+LDDist,                  
+LDMap,                   
+MME,        
+manhattanPlot,             
+pairwiseLD,              
+plotGenMap,
+plotNeighbourLD,           
+simul.pedigree,         
+simul.phenotype                           
+)  
+
+#documented but not exported
+#export(
+#       plot.pedigree,
+#       plot.relationshipMatirx,
+#       predict.gpMod,
+#       summary.cvData,
+#       summary.gpData,
+#       summary.gpMod,
+#       summary.pedigree
+#       summary.relationshipMatrix,
+#       summary.GenMap, 
+#       write.beagle,
+#       write.plink,
+#       write.relationshipMatrix,
+#       [.relationshipMatrix  )
+
+
+# Import all packages listed as Imports or Depends
+import(
+  lattice,
+  igraph,
+  MASS,
+  LDheatmap,
+  qtl,
+  doBy,
+  BLR,
+  regress,
+  abind,
+  synbreedData
+)
+
+#S3method(add.individuals, gpData)
+#S3method(add.markers, gpData)
+#S3method(codeGeno, gpData)
+#S3method(create.gpData, pedigree)
+#S3method(crossval, gpData)
+#S3method(discard.markers, gpData)
+#S3method(discard.individuals, gpData)
+#S3method(gpData2cross, gpData)
+#S3method(cross2gpData, cross)
+#S3method(gpData2Data.frame, gpData)
+#S3method(gpMod, gpData)
+#S3method(gpMod, relationshipMatrix)
+#S3method(kin, gpData)
+#S3method(LDDist, LDdf)
+#S3method(LDMap, LDmat)
+#S3method(LDMap, gpData)
+#S3method(manhattanPLot, gpData)
+#S3method(pairwiseLD, gpData)
+#S3method(simul.phenotype, pedigree)
+#S3method(simul.phenotype, relationshipMatrix)
+S3method(summary, cvData)
+S3method(summary, gpData)
+S3method(summary, gpMod)
+S3method(summary, pedigree)
+S3method(summary, relationshipMatrix)
+S3method(plot, pedigree)
+S3method(plot, relationshipMatrix)
+#S3method(plot, gpData)
+#S3method(plot, LDmat)
+#S3method(plot, gpMod)
+S3method(print, summary.cvData)
+S3method(print, summary.gpData)
+S3method(print, summary.gpMod)
+#S3method(print, pedigree)
+#S3method(print, relationshipMatrix)
+#S3method([.relationshipMatrix, relationshipMatrix)
+S3method(predict, gpMod)
+#S3method(write.beagle, gpData)
+#S3method(write.plink, gpData)
+#S3method(write.relationshipMatrix, relationshipMatrix)
+
