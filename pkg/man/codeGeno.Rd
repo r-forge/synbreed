@@ -39,7 +39,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ... then \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
 }
   \item{keep.identical}{
-\code{logical}. Should duplicated markers be kept?
+\code{logical}. Should duplicated markers be kept? NOTE: Use set.seed(), if this option is TRUE!
 }
  \item{verbose}{
 \code{logical}. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is useful to obtain numbers of discarded markers due to different criteria.
@@ -63,6 +63,8 @@ Coding of genotypic data is done in the following order (depending on choice of 
 1. Discarding markers with fraction > \code{nmiss} of missing values
 
 2. Recoding alleles from character/factor/numeric into the number of copies of the minor alleles, i.e. 0, 1 and 2. In \code{codeGeno}, in the first step heterozygous genotypes are coded as 1. From the other genotypes, the less frequent genotype is coded as 2 and the remaining genotype as 0. Note that  function \code{codeGeno} will terminate with an error whenever more than three genotypes are found.
+
+2.1 Discarding duplicated markers if \code{keep.identical=FALSE} before starting of the imputing step. From identical marker based on pairwise complete oberservations one is discarded randomly. For getting identical results use the function \code{set.seed()} before \code{code.geno()}.
 
 3. Replace missing values by \code{replace.value}  or impute missing values according to one of the following methods:
 
@@ -90,7 +92,7 @@ In the first step, missing genotypes are imputed according to the algorithm with
 
 5. Discarding markers with a minor allele frequency of <= \code{maf}
 
-6. Discarding duplicated markers if \code{keep.identical=FALSE}. The first marker of a block of duplicated markers is retained.
+6. Discarding duplicated markers if \code{keep.identical=FALSE}. From identical marker based on pairwise complete oberservations one is discarded randomly. For getting identical results use the function \code{set.seed()} before \code{code.geno()}.
 
 7. Restoring original data format (\code{gpData}, \code{matrix} or \code{data.frame})
 
