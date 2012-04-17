@@ -16,13 +16,15 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
   if(class(gpData) != "gpData") 
     stop(substitute(gpData), " is not a gpData-object!")
   if(!all(which %in% gpData$covar$id)) stop("Some individuals are not in the ", substitute(gpData), "-object!")
+  if(!is.null(gpData$pheno)){
   # updata pheno
-  phenoNames <- dimnames(gpData$pheno)
-  phenoNames[[1]] <- phenoNames[[1]][!phenoNames[[1]] %in% which]
-  phenoDim <- dim(gpData$pheno)
-  phenoDim[1] <- length(phenoNames[[1]])
-  gpData$pheno <- array(gpData$pheno[!rownames(gpData$pheno) %in% which, , ], dim = phenoDim)
-  dimnames(gpData$pheno) <- phenoNames
+    phenoNames <- dimnames(gpData$pheno)
+    phenoNames[[1]] <- phenoNames[[1]][!phenoNames[[1]] %in% which]
+    phenoDim <- dim(gpData$pheno)
+    phenoDim[1] <- length(phenoNames[[1]])
+    gpData$pheno <- array(gpData$pheno[!rownames(gpData$pheno) %in% which, , ], dim = phenoDim)
+    dimnames(gpData$pheno) <- phenoNames
+  }
   # update geno
   gpData$geno <- subset(gpData$geno,!rownames(gpData$geno) %in% which) 
   if(!is.null(gpData$phenoCovars)){
