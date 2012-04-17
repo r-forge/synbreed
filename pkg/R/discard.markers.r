@@ -33,6 +33,7 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
     gpData$phenoCovars <- array(gpData$phenoCovars[!rownames(gpData$phenoCovars) %in% which, , ], dim = phenoCovarsDim)
     dimnames(gpData$phenoCovars) <- phenoCovarsNames
   }
+  
   # update pedigree 
   if(!is.null(gpData$pedigree))
     if(!keepPedigree){
@@ -44,5 +45,7 @@ discard.individuals <- function(gpData,which,keepPedigree=FALSE){
       gpData$covar[gpData$covar$id %in% which, c("phenotyped", "genotyped")] <- NA
     }
   # update covar
+  gpData$covar <- subset(gpData$covar,!gpData$covar$id %in% which)
+  
   return(gpData)
 }
