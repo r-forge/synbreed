@@ -72,7 +72,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     if(VC.est=="commit" & length(varComp)<2) stop("Variance components should be at least two, one for the random effect and one residual variance")
     if(!sampling %in% c("random","commit") & is.null(popStruc) & is.null(gpData$covar$family)) stop("no popStruc was given")
     if(!sampling %in% c("random","commit") & is.null(popStruc)){
-    popStruc <- gpData$covar$family[gpData$covar$genotyped & gpData$covar$phenotyped]
+    popStruc <- gpData$covar$family[gpData$covar$id %in% dataSet]
     }
     if(sampling!="random" & !is.null(popStruc)){
       if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in data")
