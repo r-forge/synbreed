@@ -13,7 +13,10 @@
   of missing values per SNP
 
 * bug fix in codeGeno using family imputing, polymorphic
-  families were identified partly incorrect      
+  families were identified partly incorrect 
+  
+* bug fix in predict.gpMod, when using BLUP and marker 
+  effects (2012-05-04)      
       
   
   

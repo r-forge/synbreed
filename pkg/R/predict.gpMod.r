@@ -18,10 +18,10 @@ predict.gpMod <- function(object,newdata=NULL,...){
      if(class(newdata)!="gpData") stop("object 'newdata' must be of class 'gpData'")
      X <- newdata$geno
      m <- object$m
-     mu <- object$fit$beta
+     mu <- c(object$fit$beta)
      prediction <- mu + X %*% m
   }
-  if(model == "BLUP"){
+  if(model == "BLUP" & is.null(object$m)){
 #      prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
 #      prediction <- prediction[!names(prediction) %in% names(genVal)] / mean(prediction[names(genVal)]/genVal)
 

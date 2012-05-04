@@ -108,14 +108,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     alleles <- apply(res,2,table,useNA="no")
     major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
     minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
-    if(is.numeric(res)){
-       major <- unlist(apply(alleles,2,major.allele))
-       minor <- unlist(apply(alleles,2,minor.allele))
-    }
-     if(is.character(res)){
-       major <- unlist(lapply(alleles,major.allele))
-       minor <- unlist(lapply(alleles,minor.allele))
-    }
+   
+    major <- unlist(apply(alleles,2,major.allele))
+    minor <- unlist(apply(alleles,2,minor.allele))
+    
+
     names(major) <- names(minor) <- cnames
   }
    
@@ -414,7 +411,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
             res[is.na(res[,j]),j] <- sample(c(0,1,2),size=sum(is.na(res[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
           }
           if(j==ceiling(M/100) & verbose) cat("         approximate run time ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
-        }   
+        } 
+        # update counter for Beagle, remove those counts which where imputed ranomly 
+        cnt2 <- cnt2-cnt3  
       }
       if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) res <- res/2
     
