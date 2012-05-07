@@ -24,7 +24,7 @@ object of class \code{gpData}
 object of class \code{relationshipMatrix} (only required for \code{model = "BLUP"}). Use a pedigree-based kinship to evaluate P-BLUP or a marker-based kinship to evaluate G-BLUP. For \code{"BL"} and \code{"BRR"}, also a kinship structure may be used as additional polygenic effect \eqn{u} in the Bayesian regression models (see \code{BLR} package).
 }
   \item{predict}{
-\code{logical}. If \code{TRUE}, genetic values will be predicted for genotyped but not phenotyped individuals. Default is \code{FALSE}.
+\code{logical}. If \code{TRUE}, genetic values will be predicted for genotyped but not phenotyped individuals. Default is \code{FALSE}. Note that this option is only meaningful for marker-based models. For pedigree-based model, please use function \code{predict.gpMod}.
 }
   \item{trait}{
 \code{numeric} or \code{character}. A vector with names or numbers of the traits to fit the model

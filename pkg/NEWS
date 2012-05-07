@@ -18,7 +18,9 @@
 * Bug fix in predict.gpMod, when using BLUP and marker 
   effects (2012-05-04)
   
-* Renamed return argument in gpMod: predicton -> prediction      
+* Renamed return argument in gpMod: predicton -> prediction
+
+* Added argument 'ld.window' to function pairwiseLD (2012-05-07)
       
   
   

@@ -39,7 +39,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ... then \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
 }
   \item{keep.identical}{
-\code{logical}. Should duplicated markers be kept? NOTE: Use set.seed(), if this option is TRUE!
+\code{logical}. Should duplicated markers be kept? NOTE: From a set of identical markers (with respect to the non-missing alleles) the one with the smallest number of missing values is kept. For those with an identical number of missing values, the first one is kept and all others are removed.
 }
  \item{verbose}{
 \code{logical}. If \code{TRUE} verbose output is generated during the steps of the algorithm. This is useful to obtain numbers of discarded markers due to different criteria.
