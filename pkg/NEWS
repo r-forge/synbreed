@@ -21,6 +21,8 @@
 * Renamed return argument in gpMod: predicton -> prediction
 
 * Added argument 'ld.window' to function pairwiseLD (2012-05-07)
+
+* Changed dependency: igraph -> igraph0 (2012-05-10)
       
   
   

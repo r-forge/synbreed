@@ -1,4 +1,6 @@
-
+%\VignetteIndexEntry{Introduction to the synbreed package}
+%\VignetteKeywords{Genomic prediction}
+%\VignettePackage{synbreed}
 
 \documentclass[nojss,article,shortnames]{jss}
 
