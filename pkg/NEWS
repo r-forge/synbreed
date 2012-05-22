@@ -6,6 +6,7 @@
 * Included default value for gpData$covar$family to
   avoid an error when running write.plink without
   family information, replaced error by a warning
+  (on R-Forge since 2012 - 03 - 28)
   
 * Included addtional 'print.report' argument for 
   function codeGeno to generate (optionally) a report 
@@ -16,13 +17,21 @@
   families were identified partly incorrect 
   
 * Bug fix in predict.gpMod, when using BLUP and marker 
-  effects (2012-05-04)
+  effects (on R-Forge since  2012-05-04)
   
 * Renamed return argument in gpMod: predicton -> prediction
 
-* Added argument 'ld.window' to function pairwiseLD (2012-05-07)
+* Added argument 'ld.window' to function pairwiseLD
+  (on R-Forge since  2012-05-07)
 
-* Changed dependency: igraph -> igraph0 (2012-05-10)
+* Changed dependency: igraph -> igraph0
+  (on R-Forge since  2012-05-10)
+
+* Improved color key representation for plotGenMap
+  (on R-Forge since 2012-05-22)
+
+* Report of mean values for the diagonal/off-diagonal in
+  summary.relationshipMatrix
       
   
   
