@@ -48,7 +48,7 @@ Default PLINK options used
 --no-sex 
 --no-pheno
 --allow-no-sex
---ld-window 99999
+--ld-window-kb 99999
 
 }
 \value{
