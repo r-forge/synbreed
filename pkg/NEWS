@@ -1,7 +1,7 @@
 0.9-3
 ======================
 
-* Uploaded on R-Forge 2012 - 03 - 28
+* Uploaded on R-Forge 2012 - 05 - 24
 
 * Included default value for gpData$covar$family to
   avoid an error when running write.plink without
