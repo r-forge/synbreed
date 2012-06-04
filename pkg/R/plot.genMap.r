@@ -46,7 +46,7 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, ..
     # add legend to the left margin of the plot
     if (dense) {
 
-        par(mar = c(5, 1, 4, 3.8) + 0.1)
+        par(mar = c(5, 2.8, 4, 3.8) + 0.1)
         shift <- (seq(from = 0, to = maxDens, length = 7)[2]-seq(from = 0, to = maxDens, length = 7)[1])/2
         image(seq(-0.3, 0.3, length = 20), seq(from = shift, to =  maxDens,
             length = 6), matrix(rep(seq(from = shift, to = maxDens, length = 6),
