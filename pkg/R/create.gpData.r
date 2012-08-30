@@ -169,14 +169,14 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   # family information for genotyped indviduals  
   if(!is.null(family)){
     colnames(family)[1] <- "family"
-    obj$covar <- merge(obj$covar,family,by.x=1,by.y=0,all=TRUE)
-  }
+    obj$covar <- merge(obj$covar,family,by.x="id",by.y=0,all=TRUE)
+  } else obj$covar$family <- NA
   
   # add covar from arguments, if available 
   if(!is.null(covar)){
     if(is.null(rownames(covar))) stop("missing rownames in covar")    
     # do not use any existing columns named 'genotyped', 'phenotyped' or 'id'
-    covar <- covar[!colnames(covar) %in% c("genotyped","phenotyped","id")]
+    covar <- covar[!colnames(covar) %in% c("genotyped","phenotyped","id","family")]
     # merge with existing data
     if(!is.null(covar)) obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,all=TRUE)
     else  obj$covar <- obj$covar
