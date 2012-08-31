@@ -32,7 +32,7 @@ Character string to specify the type of plot. Use \code{"p"} for a scatterplot, 
 \code{numeric}. Number of observations used to estimate LD. Only required for \code{type="nls"}.
 }
   \item{fileFormat}{
-\code{character}. At the moment two file formats are supported: pdf and png. Default is \code{pdf}.
+\code{character}. At the moment two file formats are supported: pdf and png. Default is \code{"pdf"}.
 }
   \item{\dots}{
 Further arguments for \code{plot}

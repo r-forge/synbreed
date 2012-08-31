@@ -1,4 +1,4 @@
-LDMap <- function(LDmat,gpData,chr=NULL,file=NULL,...){
+LDMap <- function(LDmat,gpData,chr=NULL,file=NULL,fileFormat="pdf",...){
 
     # catch (possible) errors
     if(class(LDmat)!="LDmat") stop("'LDmat' must be of class 'LDmat'")
@@ -10,7 +10,14 @@ LDMap <- function(LDmat,gpData,chr=NULL,file=NULL,...){
      # use LD from input arguement
     ret <- LDmat
      
-     if(!is.null(file)) pdf(file)
+    if(!is.null(file)){
+      if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat)
+        file <- paste(file, ".", fileFormat, sep="")
+      if(fileFormat == "pdf") pdf(file)
+      else if (fileFormat == "png") png(file)
+      else stop("not supported file format choosen!")
+    }
+
       for (i in lg){
      
         color = c("#7F0000","#B30000","#D7301F","#EF6548","#FC8D59","#FDBB84","#FDD49E","#FEE8C8","#FFF7EC")
