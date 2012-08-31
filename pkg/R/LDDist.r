@@ -1,4 +1,4 @@
-LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
+LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,fileFormat="pdf",...){
 
 
     if(class(LDdf)!="LDdf") stop("'LDdf' must be of class 'LDdf'")
@@ -28,7 +28,14 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,...){
     # use LD from input arguement
     ret <- LDdf
 
-    if(!is.null(file)) pdf(file)
+    if(!is.null(file)){
+      if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat)
+        file <- paste(file, ".", fileFormat, sep="")
+      if(fileFormat == "pdf") pdf(file)
+      else if (fileFormat == "png") png(file)
+      else stop("not supported file format choosen!")
+    }
+    
     # compute distances within each linkage group
     for (i in lg){
     
