@@ -8,12 +8,18 @@ Heatmap for relationship Matrix
 Visualization for objects of class \code{relationshipMatrix} using a heatmap of pairwise relatedness coefficients.  
 }
 \usage{
-\method{plot}{relationshipMatrix}(x, \ldots) 
+\method{plot}{relationshipMatrix}(x, file=NULL, fileFormat="pdf", \ldots) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
 Object of class \code{relationshipMatrix}
+}
+  \item{file}{
+Optionally a path to a file where the plot is saved to
+}
+  \item{fileFormat}{
+\code{character}. At the moment two file formats are supported: pdf and png. Default is \code{"pdf"}.
 }
   \item{\dots}{
 further graphical arguments passed to function \code{levelplot} in package \code{lattice}. To create equal colorkeys for two heatmaps, use \code{at=seq(from,to,length=9)}. 
@@ -21,7 +27,7 @@ further graphical arguments passed to function \code{levelplot} in package \code
 }
 
 \author{
-Valentin Wimmer
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 \examples{

@@ -1,5 +1,7 @@
 \name{plotNeighbourLD}
 \alias{plotNeighbourLD}
+\alias{plot.LDmat}
+\alias{plot.LDdf}
 \title{
 Plot neighbour linkage disequilibrium
 }
@@ -7,10 +9,17 @@ Plot neighbour linkage disequilibrium
 A function to visualize Linkage Disequilibrium estimates between adjacent markers.
 }
 \usage{
-plotNeighbourLD(LD, map, dense=FALSE, nMarker = TRUE, centr=NULL, ...)
+\method{plot}{LDmat}(x, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
+
+\method{plot}{LDdf}(x, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
+
+plotNeighbourLD(LD, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{x}{
+object of class \code{LDmat} or \code{LDdf}, i.e the output of function \code{pairwiseLD}.
+}
   \item{LD}{
 object of class \code{LDmat}, i.e the output of function \code{pairwiseLD} using argument \code{type="matrix"}.
 }
@@ -26,6 +35,12 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
   \item{centr}{
 \code{numeric} vector. Positions for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
 }
+  \item{file}{
+Optionally a path to a file where the plot is saved to
+}
+  \item{fileFormat}{
+\code{character}. At the moment two file formats are supported: pdf and png. Default is \code{"pdf"}.
+}
   \item{\dots}{
 further graphical arguments for function \code{plot}
 }
@@ -39,7 +54,7 @@ Plot of neighbour LD along each chromosome. One chromosome is displayed from the
 }
 
 \author{
-Theresa Albrecht
+Theresa Albrecht and Hans-Juergen Auinger
 }
 
 \seealso{

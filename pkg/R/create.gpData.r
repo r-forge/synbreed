@@ -5,6 +5,8 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   # start with some checks on data
   # geno as matrix but not data.frame (storage) 
   if(!is.null(geno)){
+    if(any(duplicated(rownames(geno)))) 
+      stop(paste("In", substitute(geno), " are duplicated names of genotypes!"))
      if(class(geno) == "data.frame"){
         geno <- matrix(unlist(geno),nrow=nrow(geno),ncol=ncol(geno),dimnames=dimnames(geno))
         #if(any(duplicated(geno,MARGIN=1))) warning("individuals with dublicated genotypes")
@@ -137,17 +139,18 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
   # sort markers by chromosome and position within chromosome
   if(!is.null(map)){
-    if(any(colnames(map) != c("chr","pos"))) stop("colnames of 'map' must be 'chr' and 'pos'")
+    if(any(colnames(map) != c("chr","pos"))) stop("colnames of", substitute(map),"must be 'chr' and 'pos'")
     if (reorderMap){
-     # first order in alphabetical oder (important for SNPs with the same position)
-     map$sor <- substr(map$chr, nchar(as.character(map$chr)), nchar(as.character(map$chr)))
-     if(!all(!unique(map$sor)[!is.na(unique(map$sor))] %in% 0:9)) map$sor <- 1
-     map <- map[order(as.character(rownames(map))),]
-     map <- orderBy(~sor+chr+pos,data=map)
-     map$sor <- NULL
+      # first order in alphabetical oder (important for SNPs with the same position)
+      map$sor <- substr(map$chr, nchar(as.character(map$chr)), nchar(as.character(map$chr)))
+      if(!all(!unique(map$sor)[!is.na(unique(map$sor))] %in% 0:9)) map$sor <- 1
+      map <- map[order(as.character(rownames(map))),]
+      map <- orderBy(~sor+chr+pos,data=map)
+      map$sor <- NULL
       # sortcolumns in geno, too
-     geno <- geno[,rownames(map)]
+      geno <- geno[,rownames(map)]
     }
+    class(map) <- c("GenMap", "data.frame")
   }
 
   # return object

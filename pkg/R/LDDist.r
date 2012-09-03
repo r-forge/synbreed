@@ -29,7 +29,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,file=NULL,n=NULL,fileForma
     ret <- LDdf
 
     if(!is.null(file)){
-      if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat)
+      if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat | nchar(file) < 5)
         file <- paste(file, ".", fileFormat, sep="")
       if(fileFormat == "pdf") pdf(file)
       else if (fileFormat == "png") png(file)
