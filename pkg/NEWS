@@ -6,10 +6,12 @@
 * Bug fix in create.gpData() to get full compatibility
   with write.plink() and other functions
 
-* In functions plot functions and LDDist and LDMap the format 
+* In plot functions and LDDist and LDMap the format
   "png" is now available for graphic files.
-  
+
 * generic plot functions for LD and maps
+
+* search for duplicated IDs in create.gpData()
 
 
 0.9-3
