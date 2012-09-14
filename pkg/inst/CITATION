@@ -26,6 +26,6 @@ citEntry(
     year = "2012",
     volume = "28",
     number = "15",
-    pages = "2087-2087",
+    pages = "2086-2087",
     textVersion ="Wimmer V, Albrecht T, Auinger HJ and Schoen CC (2012) synbreed: a framework for the analysis of genomic prediction data using R. Bioinformatics, 28: 2086-2087"
 )
