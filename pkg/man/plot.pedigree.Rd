@@ -8,7 +8,7 @@ Visualization of pedigree
 A function to visualize pedigree structure by a graph using the \code{igraph} package. Each genotype is represented as vertex and direct offsprings are linked by an edge. 
 }
 \usage{
-\method{plot}{pedigree}(x, effect = NULL, file=NULL, fileFormat="pdf", \dots)
+\method{plot}{pedigree}(x, effect = NULL,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,12 +17,6 @@ object of class \code{pedigree} or object of class \code{gpData} with element \c
 }
   \item{effect}{
 vector of length \code{nrow(pedigree)} with effects to plot on the x axis
-}
-  \item{file}{
-Optionally a path to a file where the plot is saved to
-}
-  \item{fileFormat}{
-\code{character}. At the moment two file formats are supported: pdf and png. Default is \code{"pdf"}.
 }
   \item{...}{
 Other arguments for function \code{igraph.plotting}

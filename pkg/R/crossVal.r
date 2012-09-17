@@ -1,5 +1,6 @@
 # Cross validation with different sampling and variance components estimation methods
-crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc","commit"),TS=NULL,ES=NULL, varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),verbose=FALSE,...) 
+crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampling=c("random","within popStruc","across popStruc","commit"),
+                      TS=NULL,ES=NULL,varComp=NULL,popStruc=NULL, VC.est=c("commit","ASReml","BRR","BL"),verbose=FALSE,...) 
 {
     VC.est <- match.arg(VC.est)
     sampling <- match.arg(sampling)
@@ -91,15 +92,15 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
        # function for constructing GI
        rmat<-NULL
        for( i in 1:length(cov.matrix)){
-	   covM <- as.matrix(cov.matrix[[i]])
-	   covM.I <- try(solve(covM),TRUE)
-	   # adding constant to diagonal, if covM is singular
-	   if(class(covM.I)=="try-error"){
-		 warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
-		 covM.I <- solve(covM + diag(1e-5,ncol(covM)))
-	   }
+       covM <- as.matrix(cov.matrix[[i]])
+       covM.I <- try(solve(covM),TRUE)
+       # adding constant to diagonal, if covM is singular
+       if(class(covM.I)=="try-error"){
+         warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
+         covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+       }
            m <- covM.I * (varComp[length(varComp)]/varComp[i])
-	   rm(covM.I,covM)
+       rm(covM.I,covM)
              if(i==1) rmat <- m
              else
              {
@@ -118,14 +119,14 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
              if(!RR){   
         for ( i in 1:length(cov.matrix)){
            covM <- as.matrix(cov.matrix[[i]])
-	   covM.I <- try(solve(covM),TRUE)
-	   # adding constant to diagonal, if covM is singular
-	   if(class(covM.I)=="try-error"){
-		 warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
-		 covM.I <- solve(covM + diag(1e-5,ncol(covM)))
-	   }
+       covM.I <- try(solve(covM),TRUE)
+       # adding constant to diagonal, if covM is singular
+       if(class(covM.I)=="try-error"){
+         warning("Covariance matrix is computationally singular: constant 1e-5 is added to the diagonal elements of the covariance matrix")
+         covM.I <- solve(covM + diag(1e-5,ncol(covM)))
+       }
            write.relationshipMatrix(covM.I,file=paste("ID",i,".giv",sep=""),type="none",sorting="ASReml",digits=10)
-	   rm(covM.I,covM)
+       rm(covM.I,covM)
         }
         ID1 <- paste("ID",1:length(cov.matrix),".giv \n",sep="",collapse="")
         ID2 <- paste("giv(ID,",1:length(cov.matrix),") ",sep="",collapse="")
@@ -404,8 +405,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
       X2 <- X[(rownames(X) %in% samp.ts[,1]),]
       XZ2 <- cbind(X2,Z2)
       if(length(Z2)==ncol(Z)){ 
-	XZ2 <- matrix(c(X2,Z2),ncol=(ncol(X)+ncol(Z)))
-	rownames(XZ2) <- samp.ts[,1]
+    XZ2 <- matrix(c(X2,Z2),ncol=(ncol(X)+ncol(Z)))
+    rownames(XZ2) <- samp.ts[,1]
       }
       #print(dim(XZ2))
       #print(dim(XZ2))
