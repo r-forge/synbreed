@@ -265,8 +265,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
       #} 
     }
     samp.kf <- val.samp3[,2]==ii
-    samp.kf[is.na(samp.kf)] <- TRUE
-    y.samp[samp.kf,"TRAIT"] <- NA  # set values of TS to NA
+    samp.kf[is.na(samp.kf)] <- FALSE
+    y.samp[samp.kf==TRUE,"TRAIT"] <- NA  # set values of TS to NA
 
        # CV in R with committing variance components
        if (VC.est=="commit"){
