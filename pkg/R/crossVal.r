@@ -5,7 +5,6 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     VC.est <- match.arg(VC.est)
     sampling <- match.arg(sampling)
     if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'crossVal'")
-    if(!is.list(cov.matrix)) stop(paste(substitute(cov.matrix), "is not a list!"))
 
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
@@ -22,31 +21,35 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     n <- length(dataSet)
 
     if (ncol(y) <=2){
-    X <- matrix(rep(1,n,ncol=1))
-    rownames(X) <- unique(y$ID)
-    }else{
-    fixEff <- unique(y$repl)
-    X <- outer(y$repl,fixEff,"==")+0
-    colnames(X) <- fixEff
-        rownames(X) <- y$ID
+      X <- matrix(rep(1,n,ncol=1))
+      rownames(X) <- unique(y$ID)
+    } else {
+      fixEff <- unique(y$repl)
+      X <- outer(y$repl,fixEff,"==")+0
+      colnames(X) <- fixEff
+      rownames(X) <- y$ID
     #X <- cbind(X,rep(1,n))
     }
     if ("repl" %in% colnames(y)){
         ranEff <- unique(y$ID)
         Z <- outer(y$ID,ranEff,"==")+0
         rownames(Z) <- y$ID
-    }else{
+    }  else  {
         Z <- diag(n)
         rownames(Z) <- unique(y$ID)
     }
     colnames(Z) <- unique(y$ID)
-    if(length(cov.matrix)>1){
-    Z1 <- NULL
-    for (i in 1:length(cov.matrix)){
-         Z1 <- cbind(Z1,Z)
+    if(!is.list(cov.matrix)) {
+      if(class(cov.matrix) != "relationshipMatrix") stop(paste(substitute(cov.matrix), " has to be a list!"))
+    } else {
+      if(length(cov.matrix)>1){
+        Z1 <- NULL
+        for (i in 1:length(cov.matrix)){
+          Z1 <- cbind(Z1,Z)
+        }
+        Z <- Z1
+      }   
     }
-    Z <- Z1
-    }   
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
        for( i in 1:length(cov.matrix)){
