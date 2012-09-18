@@ -61,7 +61,7 @@ write.plink <- function(gp,wdir=getwd(),prefix=paste(substitute(gp)),ld.threshol
        #sink()
        #unlink(file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
        
-       cat("--ped ",prefix,".ped \n","--map ",prefix,".map \n","--compound-genotypes \n","--out ",prefix,"\n","--no-parents \n","--no-sex \n","--no-pheno \n","--allow-no-sex \n",ifelse(type=="matrix","--matrix \n",paste("--ld-window-kb ",ld.window,"\n","--ld-window-r2 ",ld.threshold,"\n",sep="")),"--r2 \n",sep="",file=file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
+       cat("--ped ",prefix,".ped \n","--map ",prefix,".map \n","--compound-genotypes \n","--out ",prefix,"\n","--no-parents \n","--no-sex \n","--no-pheno \n","--allow-no-sex \n",ifelse(type=="matrix","--matrix \n",paste("--ld-window ",nrow(map),"\n","--ld-window-kb ",ld.window,"\n","--ld-window-r2 ",ld.threshold,"\n",sep="")),"--r2 \n",sep="",file=file.path(wdir,paste(prefix,"plinkScript.txt",sep="")))
 
 
 
