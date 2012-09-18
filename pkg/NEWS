@@ -9,9 +9,14 @@
 * In plot functions and LDDist and LDMap the format
   "png" is now available for graphic files.
 
-* generic plot functions for LD and maps
+* new class 'GenMap' for marker maps
+
+* generic plot functions for LD and GenMap
 
 * search for duplicated IDs in create.gpData()
+
+* fixed bug in print.report feature of codeGeno
+  when non-numeric coded genotypes were used
 
 
 0.9-3
