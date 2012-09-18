@@ -4,7 +4,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
 {
     VC.est <- match.arg(VC.est)
     sampling <- match.arg(sampling)
-    if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'crossVal'") 
+    if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'crossVal'")
+    if(!is.list(cov.matrix)) stop(paste(substitute(cov.matrix), "is not a list!"))
 
     # individuals with genotypes and phenotypes
     dataSet <- as.character(gpData$covar$id[gpData$covar$genotyped & gpData$covar$phenotyped])
