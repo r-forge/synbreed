@@ -2,15 +2,14 @@ plot.LDdf <- function(x,map,dense=FALSE,nMarker=TRUE,centr=NULL, file=NULL, file
     plotNeighbourLD(LD=x,map=map,dense=dense,nMarker=nMarker,centr=centr, file=file, fileFormat=fileFormat,...)   
 }
 plot.LDmat <- function(x,map,dense=FALSE,nMarker=TRUE,centr=NULL, file=NULL, fileFormat="pdf",...){
-    plotNeighbourLD(LD=x,map=map,dense=dense,nMarker=nMarker,centr=centr, file=file, fileFormat=fileFormat,...)
+    plotNeighbourLD(LD=x,map=map,dense=dense,nMarker=nMarker,centr=centr, file=fileName, fileFormat=fileFormat,...)
 }
 
 plotNeighbourLD <- function(LD,map,dense=FALSE,nMarker=TRUE,centr=NULL, file = NULL, fileFormat = "pdf",...){
-    oldPar <- par()
-
     if (class(map) == "gpData"){
        map.unit <- map$info$map.unit
        map <- map$map
+       class(map) <- "data.frame"
     }
     else map.unit <- "unit"
     chr <- unique(map$chr)
@@ -109,6 +108,4 @@ plotNeighbourLD <- function(LD,map,dense=FALSE,nMarker=TRUE,centr=NULL, file = N
       axis(side=4,at=round(seq(from=0,to=1,length=6),4),las=1)
     # close graphic device
     if(!is.null(file)) dev.off()
-    oldPar$cin <- oldPar$cra <- oldPar$csi <- oldPar$cxy <- oldPar$din <- NULL
-    par(oldPar)
 }

@@ -33,6 +33,11 @@ Further arguments that could be passed to function \code{LDheatmap}
 }
 }
 
+\details{
+Note: If you have an \code{LDmat}-object with more than one chromosome and you like to 
+plot all chromosomes, you need to put an empty line for each chromosome in your script after 
+the LDMap function! } 
+
 \references{
 Shin JH, Blay S, McNeney B, Graham J (2006). LDheatmap: An R Function for Graphical
 Display of Pairwise Linkage Disequilibria Between Single Nucleotide Polymorphisms. 

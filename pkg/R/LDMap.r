@@ -18,13 +18,13 @@ LDMap <- function(LDmat,gpData,chr=NULL,file=NULL,fileFormat="pdf",...){
       else stop("not supported file format choosen!")
     }
 
-      for (i in lg){
-     
+      for (i in lg){    
         color = c("#7F0000","#B30000","#D7301F","#EF6548","#FC8D59","#FDBB84","#FDD49E","#FEE8C8","#FFF7EC")
         #   using function LDheatmap
         MapUnit <- ifelse(gpData$info$map.unit=="cM","genetics","physical")
-        LDheatmap(LDmat$LD[[i]], LDmeasure="r", color=color, genetic.distances=pos[rownames(LDmat$LD[[i]])],distances=MapUnit,   geneMapLabelY=0.12, geneMapLabelX=0.35,...)
-         
+        LDheatmap(LDmat$LD[[i]], LDmeasure="r", color=color, genetic.distances=pos[rownames(LDmat$LD[[i]])],distances=MapUnit,   
+                  geneMapLabelY=0.12, geneMapLabelX=0.35, title=paste("Pairwise LD on chromosome", i),...)
+        if(length(ld)>1) readline() 
       }
      if(!is.null(file)) dev.off()
  
