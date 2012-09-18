@@ -40,7 +40,8 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     }
     colnames(Z) <- unique(y$ID)
     if(!is.list(cov.matrix)) {
-      if(class(cov.matrix) != "relationshipMatrix") stop(paste(substitute(cov.matrix), " has to be a list!"))
+      if(class(cov.matrix) != "relationshipMatrix") stop(paste(substitute(cov.matrix), "has to be a list!"))
+      else cov.matrix <- list(cov.matrix)
     } else {
       if(length(cov.matrix)>1){
         Z1 <- NULL
@@ -52,11 +53,11 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     }
     # checking if IDs are in cov.matrix
     if (!is.null(cov.matrix) ){
-       for( i in 1:length(cov.matrix)){
-         covM <- as.matrix(cov.matrix[[i]])
-         cov.matrix[[i]] <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
-       }
-    }
+        for( i in 1:length(cov.matrix)){
+          covM <- as.matrix(cov.matrix[[i]])
+          cov.matrix[[i]] <- covM[rownames(covM) %in% dataSet, colnames(covM) %in% dataSet ]
+        }
+      }
     # checking covariance matrices, if no covariance is given, Z matrix contains marker genotypes and covariance is an identity matrix
     RR <- FALSE
     if (is.null(cov.matrix) ){
