@@ -1,14 +1,4 @@
-plot.pedigree <- function(x,effect=NULL,file=NULL,fileFormat="pdf",...){
-
-  # set file
-    if(!is.null(file)){
-      if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat | nchar(file) < 5)
-        file <- paste(file, ".", fileFormat, sep="")
-      if(fileFormat == "pdf") pdf(file)
-      else if (fileFormat == "png") png(file)
-      else stop("not supported file format choosen!")
-    }
-
+plot.pedigree <- function(x, effect=NULL, ...){
   
   # get data
   if(any(class(x)=="gpData")) pedigree <- x$pedigree
