@@ -1,7 +1,5 @@
 \name{plotNeighbourLD}
 \alias{plotNeighbourLD}
-\alias{plot.LDmat}
-\alias{plot.LDdf}
 \title{
 Plot neighbour linkage disequilibrium
 }
@@ -9,21 +7,14 @@ Plot neighbour linkage disequilibrium
 A function to visualize Linkage Disequilibrium estimates between adjacent markers.
 }
 \usage{
-\method{plot}{LDmat}(x, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
-
-\method{plot}{LDdf}(x, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
-
-plotNeighbourLD(LD, map, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
+plotNeighbourLD(LD, gpData, dense=FALSE, nMarker = TRUE, centr=NULL, file=NULL, fileFormat="pdf", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-object of class \code{LDmat} or \code{LDdf}, i.e the output of function \code{pairwiseLD}.
-}
   \item{LD}{
 object of class \code{LDmat}, i.e the output of function \code{pairwiseLD} using argument \code{type="matrix"}.
 }
-  \item{map}{
+  \item{gpData}{
 object of class \code{gpData} with object \code{map} or a \code{data.frame} with columns 'chr' (specifying the chromosome of the marker) and 'pos' (position of the marker within chromosome measured with genetic or physical distances)
 } 
   \item{dense}{

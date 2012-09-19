@@ -7,11 +7,14 @@
   with write.plink() and other functions
 
 * In plot functions and LDDist and LDMap the format
-  "png" is now available for graphic files.
+  "png" is now available for graphic files. For fileType = "pdf"
+  the option oneFile is added.
 
 * new class 'GenMap' for marker maps
 
-* generic plot functions for LD and GenMap
+* generic plot functions for classes LDdf and LDmat. Decision 
+  can be made between "dist" and "map" respectively and for both 
+  "neighbour"
 
 * search for duplicated IDs in create.gpData()
 

@@ -54,6 +54,4 @@ plot.pedigree <- function(x, effect=NULL, ...){
   #}
   
   if (!is.null(effect)) axis(side=1,at=seq(-1,1,length=10),labels=round(seq(min(pos[,1]),max(pos[,1]),length=10),0))
-  if(!is.null(file)) dev.off()
-
 }
