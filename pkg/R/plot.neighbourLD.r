@@ -9,6 +9,7 @@ plotNeighbourLD <- function(LD,gpData,dense=FALSE,nMarker=TRUE,centr=NULL,file=N
     chr <- unique(map$chr)
     chr <- chr[!is.na(chr)]
     map <- map[!is.na(map$chr), ]
+    if(class(map$chr) != "factor") bord <- NULL else if(par()$bg == "transparent") bord <- "white" else bord <- "transparent"
 
     # centromere positions of maize
     if(!is.null(centr)) if(centr == "maize") centr <- c(133,90,95,104.6,105.5,50,55.3,46.5,68.8,59.9)
@@ -30,11 +31,11 @@ plotNeighbourLD <- function(LD,gpData,dense=FALSE,nMarker=TRUE,centr=NULL,file=N
     
     # make an empty plot 
     if(!is.null(centr)) {
-    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +0.5), col = par()$bg,
+    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +0.5), border=bord,
     ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
     }
     else{
-    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) + 0.5), col = par()$bg,
+    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) + 0.5), border=bord,
          ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
     }   
  
