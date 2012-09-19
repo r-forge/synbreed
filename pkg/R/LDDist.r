@@ -1,4 +1,4 @@
-LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileFormat="pdf",oneFile=TRUE,...){
+LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileFormat="pdf",onefile=TRUE,...){
 
 
     if(class(LDdf)!="LDdf") stop("'LDdf' must be of class 'LDdf'")
@@ -28,16 +28,16 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     # use LD from input arguement
     ret <- LDdf
 
-    if(!is.null(file) & oneFile & fileFormat == "pdf"){
+    if(!is.null(file) & onefile & fileFormat == "pdf"){
       if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat | nchar(file) < 5)
         file <- paste(file, ".", fileFormat, sep="")
-        pdf(file, onefile=oneFile)
+        pdf(file, onefile=onefile)
     }
 
     
     # compute distances within each linkage group
     for (i in lg){
-      if(!is.null(file)&(fileFormat != "pdf" | fileFormat == "pdf" & !oneFile)){
+      if(!is.null(file)&(fileFormat != "pdf" | fileFormat == "pdf" & !onefile)){
         if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat | nchar(file) < 5){
           if(length(lg) <2)  
             fileName <- paste(file, ".", fileFormat, sep="") 
@@ -87,11 +87,11 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
           barplot((tab.abs/colSum)[nrow(tab.abs):1,],col=grey(1:nrow(tab.abs)/nrow(tab.abs))[1:nrow(tab.abs)],space=c(.2),main=names(ret)[[i]],xlim=c(0,ncol(tab.abs)+2.8),ylab="Fraction of SNP pairs",...)
           legend(ncol(tab.abs)+1.2,0.95,fill=grey(1:nrow(tab.abs)/nrow(tab.abs))[nrow(tab.abs):1],legend=levels(cut.r2),title="LD (r2)",cex=1)
          }
-       if(!is.null(file)&(fileFormat != "pdf" | fileFormat == "pdf" & !oneFile)){ 
+       if(!is.null(file)&(fileFormat != "pdf" | fileFormat == "pdf" & !onefile)){ 
          dev.off() 
        } else if(is.null(file) & length(lg)>1) readline()
        }
      # close graphic device
-     if(!is.null(file) & oneFile & fileFormat == "pdf") dev.off()
+     if(!is.null(file) & onefile & fileFormat == "pdf") dev.off()
 
 }
