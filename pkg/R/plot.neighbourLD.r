@@ -47,9 +47,9 @@ plotNeighbourLD <- function(LD,gpData,dense=FALSE,nMarker=TRUE,centr=NULL,file=N
     }
 
     # loop over chromosomes
-    for (i in chr){
+    for (i in seq(along=chr)){
         LDm <- matrix(NA, ncol=10, nrow=nrow(map[map$chr == i,]))
-        mNam <- rownames(map[map$chr == i,])
+        mNam <- rownames(map[map$chr == chr[i],])
         if(class(LD) == "LDdf"){
             for(j in 1:10)
                 LDm[1:(nrow(LDm)-j), j] <- LD[[i]]$r2[paste(LD[[i]]$marker1, LD[[i]]$marker2, sep="") %in% paste(mNam[j:(length(mNam)-1)], mNam[(1+j):length(mNam)], sep="")]
