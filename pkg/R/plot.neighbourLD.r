@@ -30,12 +30,12 @@ plotNeighbourLD <- function(LD,gpData,dense=FALSE,nMarker=TRUE,centr=NULL,file=N
     
     # make an empty plot 
     if(!is.null(centr)) {
-    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
-        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
+    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +0.5), col = par()$bg,
+    ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)),axes=FALSE, ...)
     }
     else{
-    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) +
-        0.5), ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
+    plot(map, type = "n", xaxt = "n", xlim = c(0.5, length(chr) + 0.5), col = par()$bg,
+         ylim = c( max(map$pos,na.rm = TRUE) * 1.1, min(map$pos, na.rm = TRUE)), ...)
     }   
  
    # x-axis     
