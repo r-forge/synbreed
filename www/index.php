@@ -106,6 +106,12 @@ To install the latest development version of package <tt>synbreed</tt> from R-Fo
 <blockquote>
   <blockquote>
     <ul>
+       <li><Publication in href="http://bioinformatics.oxfordjournals.org/content/28/15/2086"> Bioinformatics </a>  </li>
+              <li> Citation information:
+        <br>
+        <tt> citation(package="synbreed")  </tt>
+        <br>
+
        <li><a href="synbreed-manual.pdf"> pdf </a> version of the manual </li>
        <li> package vignette with detailed background information and examples: 
         <br>
@@ -116,15 +122,7 @@ To install the latest development version of package <tt>synbreed</tt> from R-Fo
 
         </li>
        <li><a href="synbreedPackageDescription.pdf"> overview </a> over the functions </li>
-       <li><a href="Poster_synbreed_Rpackage_2011.pdf"> Poster </a> from 11th GABI status seminar, March 15th until 17th 2011 in Potsdam
-       <li> Workhshop in G&ouml;ttingen 28/29 March 2011 <br>
-         <blockquote>
-         <li> <a href="http://www.computationalgenetics.se/QTLMAS08/QTLMAS/DATA.html"> Data </a>  from XII QTL-MAS Workshop 2008, Uppsala
-         <li> <a href="R.zip"> R Code chunks </a> for the workshop </li>
-         <li> <a href="slides.pdf"> Slides </a>  from Valentin Wimmer </li>
-         <li> <a href="praesentation_Martin_Schlather.pdf"> Slides </a> from Martin Schlather </li>
-         <li> <a href="praesentation_RF_for_synbreed_2011_03_22.pdf"> Slides  </a>  from Ulrike Ober  </li>
-        </blockquote>
+       <li><a href="PosterICQG_synbreed_Rpackage_2012"> Poster </a> presented at the 4th International Conference on Quantitative Genetics, June 2012, Edinburgh
     </ul>
   </blockquote>
 </blockquote>
