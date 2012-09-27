@@ -106,7 +106,7 @@ To install the latest development version of package <tt>synbreed</tt> from R-Fo
 <blockquote>
   <blockquote>
     <ul>
-       <li><Publication in href="http://bioinformatics.oxfordjournals.org/content/28/15/2086"> Bioinformatics </a>  </li>
+       <li> Publication in <a href="http://bioinformatics.oxfordjournals.org/content/28/15/2086"> Bioinformatics </a>  </li>
               <li> Citation information:
         <br>
         <tt> citation(package="synbreed")  </tt>
@@ -122,7 +122,7 @@ To install the latest development version of package <tt>synbreed</tt> from R-Fo
 
         </li>
        <li><a href="synbreedPackageDescription.pdf"> overview </a> over the functions </li>
-       <li><a href="PosterICQG_synbreed_Rpackage_2012"> Poster </a> presented at the 4th International Conference on Quantitative Genetics, June 2012, Edinburgh
+       <li><a href="PosterICQG_synbreed_Rpackage_2012.pdf"> Poster </a> presented at the 4th International Conference on Quantitative Genetics, June 2012, Edinburgh
     </ul>
   </blockquote>
 </blockquote>
