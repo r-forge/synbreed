@@ -8,6 +8,8 @@
 
 * return original alleles in write.beagle, not
   only "A" and "B" by default in the marker file
+  
+* added summary method for LDmat and LDdf  
 
 
 
