@@ -278,7 +278,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       # initialize counter (- number of heterozygous values) 
       # loop over all markers
       probList <- list(c(1), c(.5,.5), c(.25,.5,.25))
-      for (j in 1:M){
+      vec.cols <- (1:M)[is.na(colSums(res, na.rm = FALSE))]
+      for (j in vec.cols){
         if(sum(!is.na(res[,j]))>0){
           if(j==1) ptm <- proc.time()[3]
           try({# compute population structure  as counts
