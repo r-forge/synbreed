@@ -7,19 +7,19 @@
 Summary for LD objects
 }
 \description{
-\code{Summary} method for class ''LDdf''  and  ''mat''
+\code{Summary} method for class ''LDdf''  and  ''LDmat''
 }
 \usage{
-\method{summary}{LDdf}(LDdf) 
-\method{summary}{LDmat}(LDmat) 
+\method{summary}{LDdf}(object,...)
+\method{summary}{LDmat}(object,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{LDdf}{
-object of class \code{LDdf} which is the output of function \code{pairwiseLD} and argument \code{type="data.frame"}
+  \item{object}{
+object of class \code{LDdf} or \code{LDmat} which is the output of function \code{pairwiseLD} and argument \code{type="data.frame"}  or   \code{type="matrix"}
 }
-  \item{LDmat}{
-object of class \code{LDmat} which is the output of function \code{pairwiseLD} and argument \code{type="matrix"}
+  \item{...}{
+not used
 }
 }
 \details{

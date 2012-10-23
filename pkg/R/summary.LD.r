@@ -1,6 +1,7 @@
 # summary for LD objects
 
-summary.LDdf <- function(LDdf){
+summary.LDdf <- function(object,...){
+     LDdf <- object
      # help functions
      noM <- function(x) length(unique(x$marker1))+1
      avgr2 <- function(x) mean(x$r2,na.rm=TRUE)
@@ -13,9 +14,9 @@ summary.LDdf <- function(LDdf){
      return(ret)   
 }
 
-summary.LDmat <- function(LDmat){
+summary.LDmat <- function(object,...){
+     LDmat <- object
      # help functions
-
      avgr2 <- function(x) mean(x[upper.tri(x)],na.rm=TRUE)
      minr2 <- function(x) min(x[upper.tri(x)],na.rm=TRUE)
      maxr2 <- function(x) max(x[upper.tri(x)],na.rm=TRUE)
