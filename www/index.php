@@ -126,6 +126,15 @@ To install the latest development version of package <tt>synbreed</tt> from R-Fo
     </ul>
   </blockquote>
 </blockquote>
+<hr><b>Workshop: Introduction to the synbreed R package, November 2012, TUM:</b>
+<blockquote>
+  <blockquote>
+    <ul>
+       <li> Course <a href="IntroSlides.pdf"> slides </a> (2012 - 11 - 08) </li>
+       <li> <a href="IntroSlides.R"> Code </a> of the slides (2012 - 11 - 08) </li>
+    </ul>
+  </blockquote>
+</blockquote>
 <hr><b>Developers:</b>
 <blockquote>
   <blockquote>

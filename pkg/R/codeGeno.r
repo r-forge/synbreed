@@ -237,7 +237,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     # update map 
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   } else {
-    if (verbose) cat("step 2.1: No duplicated markers discarded \n")
+    if (verbose) cat("step 2.1: No duplicated markers removed \n")
   }
 
   # coding of SNPs finished
@@ -479,7 +479,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
        
   } else{
-    if (verbose) cat("step 6  : No duplicated markers discarded \n")
+    if (verbose) cat("step 6  : No duplicated markers removed \n")
   }
      
   #============================================================
@@ -513,7 +513,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     res  <- as.data.frame(res)
   }
 
-  if (verbose) cat("End      :",ncol(res),"marker(s) remain after the check\n")
+  if (verbose) cat("End     :",ncol(res),"marker(s) remain after the check\n")
 
   #============================================================
   # print summary of imputation
