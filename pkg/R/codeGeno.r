@@ -105,19 +105,26 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   # inititialize report list
   if(print.report){
-    alleles <- apply(res,2,table,useNA="no")
-    major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
-    minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
+  
+     alleles <- apply(res,2,table,useNA="no")
+     major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
+     minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
    
-    if(class(alleles)=="matrix"){
-        major <- unlist(apply(alleles,2,major.allele))
-        minor <- unlist(apply(alleles,2,minor.allele))
+   
+     
+     
+     if(class(alleles) != "list"){
+        mytable <- function(x,...) as.data.frame(table(x,...),stringsAsFactors=FALSE)
+        alleles <- apply(res,2,mytable,useNA="no")
+        
+        major.allele <- function(x) x$x[which.max(x$Freq)]
+        minor.allele <- function(x) x$x[which.min(x$Freq)]
+  
     }
-    else{
-        major <- unlist(sapply(alleles,major.allele))
-        minor <- unlist(sapply(alleles,minor.allele))
-    }
-
+    
+    major <- unlist(sapply(alleles,major.allele))
+    minor <- unlist(sapply(alleles,minor.allele))
+    
     names(major) <- names(minor) <- cnames
   }
    
@@ -419,7 +426,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           if(j==ceiling(M/100) & verbose) cat("         approximate run time ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
         } 
         # update counter for Beagle, remove those counts which where imputed ranomly 
-        cnt2 <- cnt2-cnt3  
+        if(impute.type == "beagle") cnt2 <- cnt2-cnt3  
       }
       if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) res <- res/2
     

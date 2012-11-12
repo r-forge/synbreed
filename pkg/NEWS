@@ -11,6 +11,9 @@
   
 * added summary method for LDmat and LDdf  
 
+* Fixed bugs in write.beagle and codeGeno (counting
+  number of missing values with Beagle)
+
 
 
 0.9-4
