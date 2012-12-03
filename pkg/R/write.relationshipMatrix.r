@@ -1,4 +1,4 @@
-write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting=c("WOMBAT","ASReml"),type=c("ginv","inv","none"),digits=10){
+write.relationshipMatrix <- function(x,file=NULL,sorting=c("WOMBAT","ASReml"),type=c("ginv","inv","none"),digits=10){
         
         type <- match.arg(type)
         sorting <- match.arg(sorting)
@@ -6,9 +6,9 @@ write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting=c("WOM
         if(sorting=="WOMBAT" & type!="ginv") stop("'type' must be 'ginv' for WOMBAT")
         
         # pass (inverse) relationship matrix
-        if(type=="ginv") rMinv <- ginv(relationshipMatrix)
-        if(type=="inv")  rMinv <- solve(relationshipMatrix)
-        if(type=="none") rMinv <- relationshipMatrix
+        if(type=="ginv") rMinv <- ginv(x)
+        if(type=="inv")  rMinv <- solve(x)
+        if(type=="none") rMinv <- x
         
         rMinv <- round(rMinv,digits)
         
@@ -17,6 +17,7 @@ write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting=c("WOM
                           Column = rep(1:nrow(rMinv), each = nrow(rMinv)),
                           coeff = as.numeric(rMinv),
                           lower = as.logical(lower.tri(rMinv, diag = TRUE)))
+        rm(rMinv)
                         
       
     
@@ -32,9 +33,13 @@ write.relationshipMatrix <- function(relationshipMatrix,file=NULL,sorting=c("WOM
         }
         
         # write to given file
-        if (!is.null(file)) write.table(res, file, sep = " ", quote = FALSE, col.names = FALSE, row.names = FALSE)
-
-        else return(res)
-
+        if (!is.null(file)){
+          write.table(res, file, sep = " ", quote = FALSE, col.names = FALSE, row.names = FALSE)
+          rm(x)
+        } else {
+          attr(res, "rowNames") <- rownames(x)
+          rm(x)
+          return(res)
+        }
 
 }
