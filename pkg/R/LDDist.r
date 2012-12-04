@@ -9,7 +9,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
   
 
     # function for fit according to Hill and Weir (1988)
-    smooth.fit <- function(overallDist,overallr2,n,colL=colL){
+    smooth.fit <- function(overallDist,overallr2,n,colL){
       # nls estimate
       nonlinearoverall <- nls(overallr2 ~ ((10 + p*overallDist)) / ((2+p*overallDist) * (11 + p*overallDist) ) *
       ( 1 + ( (3+ p*overallDist) * (12 + 12 * p + p^2*overallDist^2)) / ( n*(2+p*overallDist) * (11 + p*overallDist))),
@@ -62,7 +62,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
        # scatterplot with nls curve
        if(type=="nls"){
                plot(r2~dist,data=ret[[i]],main=names(ret)[[i]],col=colD,...) 
-               smooth.fit(ret[[i]][,4],ret[[i]][,3],n=n)
+               smooth.fit(ret[[i]][,4],ret[[i]][,3],n=n,colL=colL)
        }
 
        # stacked histogramm
