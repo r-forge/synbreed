@@ -1,4 +1,5 @@
-LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileFormat="pdf",onefile=TRUE,...){
+LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileFormat="pdf",onefile=TRUE,
+                   colL=2,colD=1,...){
 
 
     if(class(LDdf)!="LDdf") stop("'LDdf' must be of class 'LDdf'")
@@ -8,7 +9,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
   
 
     # function for fit according to Hill and Weir (1988)
-    smooth.fit <- function(overallDist,overallr2,n){
+    smooth.fit <- function(overallDist,overallr2,n,colL=colL){
       # nls estimate
       nonlinearoverall <- nls(overallr2 ~ ((10 + p*overallDist)) / ((2+p*overallDist) * (11 + p*overallDist) ) *
       ( 1 + ( (3+ p*overallDist) * (12 + 12 * p + p^2*overallDist^2)) / ( n*(2+p*overallDist) * (11 + p*overallDist))),
@@ -22,7 +23,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
         ( 1 + ( (3+ p*x) * (12 + 12 * p + p^2*x^2)) / ( n*(2+p*x) * (11 + p*x)))
       }
       # fit curve to data
-      curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,col=2,lwd=2,...)
+      curve(fitcurve(x,p=p,n=n), from=min(overallDist), to = max(overallDist), add=TRUE,col=colL,lwd=2,...)
     }
     
     # use LD from input arguement
@@ -56,11 +57,11 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     
        # create plots
        # scatterplot
-       if(type=="p") plot(r2~dist,data=ret[[i]],main=names(ret)[[i]],...)
+       if(type=="p") plot(r2~dist,data=ret[[i]],main=names(ret)[[i]],col=colD,...)
 
        # scatterplot with nls curve
        if(type=="nls"){
-               plot(r2~dist,data=ret[[i]],main=paste("Linkage Group",i),...) 
+               plot(r2~dist,data=ret[[i]],main=names(ret)[[i]],col=colD,...) 
                smooth.fit(ret[[i]][,4],ret[[i]][,3],n=n)
        }
 
