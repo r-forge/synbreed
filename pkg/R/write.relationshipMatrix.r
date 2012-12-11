@@ -28,9 +28,10 @@ write.relationshipMatrix <- function(x,file=NULL,sorting=c("WOMBAT","ASReml"),ty
           res <-  res[order( res$Row,  res$Column), ] 
         }
         if (sorting=="WOMBAT"){
-          res <- res[,c(2,1,3)]
+          res <- res[, c(2,1,3)]
           res <-  res[order(res$Column,  res$Row), ]  
         }
+        res <- res[res$coeff != 0, ]
         
         # write to given file
         if (!is.null(file)){
