@@ -49,9 +49,10 @@ further arguments to be used by the genomic prediction models, i.e. prior values
 \details{
 By default, an overall mean is added to the model. If no \code{kin} is specified and  \code{model = "BLUP"}, a G-BLUP model will be fitted. For BLUP, further fixed and random effects can be added through the arguments \code{fixed} and \code{random}.
 
-The marker effects \eqn{\hat{m}}{m} in the RR-BLUP model (available with \code{markerEffects}) are calculated as \deqn{\hat{m}= X'G^{-1}\hat{g}}{m = X'*Ginv*ghat} with \eqn{X} being the marker matrix, \eqn{G=XX'} and \eqn{hat{g}}{ghat} the vector of predicted genetic values.
+The marker effects \eqn{\hat{m}}{hatm} in the RR-BLUP model (available with \code{markerEffects}) are calculated as \deqn{\hat{m}= X'G^{-1}\hat{g}}{m = X'*Ginv*ghat} with \eqn{X} being the marker matrix, \eqn{G=XX'} and \eqn{hat{g}}{ghat} the vector of predicted genetic values.
 
 Only a subset of the individuals - the training set - is used to fit the model. This contains all individuals with phenotypes and genotypes. If \code{kin} does not match the dimension of the training set (if, e.g. ancestors are included), the respective rows and columns from the trainings set are choosen.
+}
 \value{
 Object of class \code{gpMod} which is a list of
 \item{fit}{The model fit returned by the genomic prediction method}
