@@ -77,8 +77,8 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
              breaks.dist <- breaks$dist
              breaks.r2 <- breaks$r2
           }
-          cut.dist <- cut(ret[[i]]$dist,breaks=breaks.dist)
-          cut.r2 <- cut(ret[[i]]$r2,breaks=breaks.r2)
+          cut.dist <- cut(ret[[i]]$dist,breaks=breaks.dist,include.lowest=TRUE)
+          cut.r2 <- cut(ret[[i]]$r2,breaks=breaks.r2,include.lowest=TRUE)
           
           # create matrix with relative frequencies
           tab.abs <- table(cut.r2,cut.dist)
