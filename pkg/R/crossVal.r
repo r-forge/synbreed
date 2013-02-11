@@ -39,7 +39,7 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
         rownames(Z) <- unique(y$ID)
     }
     colnames(Z) <- unique(y$ID)
-    if(!is.list(cov.matrix)) {
+    if(!is.null(cov.matrix) & !is.list(cov.matrix)) {
       if(class(cov.matrix) != "relationshipMatrix") stop(paste(substitute(cov.matrix), "has to be a list!"))
       else cov.matrix <- list(cov.matrix)
     } else {

@@ -6,8 +6,13 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     if(type=="nls" & is.null(n)) stop("number of obeservations must be specified using argument 'n'")
     if(is.null(chr)) lg <- (1:length(LDdf))[!as.logical(lapply(LDdf,is.null))]
     else lg <- chr
-  
-
+    
+    if(chr=="all"){
+       LDdfall <- list() 
+       LDdfall$all <- data.frame(matrix(unlist(LDdf),ncol=ncol(LDdf[[1]]))
+       colnames(LDdfall$all) <- colnames(LDdf[[1]]) 
+       LDdf <- LDdfall 
+    }
     # function for fit according to Hill and Weir (1988)
     smooth.fit <- function(overallDist,overallr2,n,colL){
       # nls estimate
