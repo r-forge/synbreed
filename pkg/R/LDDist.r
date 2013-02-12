@@ -9,7 +9,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     
     if(chr=="all"){
        LDdfall <- list() 
-       LDdfall$all <- data.frame(matrix(unlist(LDdf),ncol=ncol(LDdf[[1]]))
+       LDdfall$all <- data.frame(matrix(unlist(LDdf),ncol=ncol(LDdf[[1]])))
        colnames(LDdfall$all) <- colnames(LDdf[[1]]) 
        LDdf <- LDdfall 
     }
