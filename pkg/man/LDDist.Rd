@@ -52,7 +52,7 @@ For nonlinear regression curve:
 Hill WG, Weir BS (1988) Variances and covariances of squared linkage disequilibria in finite populations. Theor Popul Biol 33:54-78.
 }
 \author{
- Hans-Juergen Auinger, Theresa Albrecht and Valentin Wimmer
+ Valentin Wimmer, Hans-Juergen Auinger and Theresa Albrecht
 }
 \seealso{
 \code{\link{pairwiseLD}}, \code{\link{LDMap}}
@@ -66,7 +66,7 @@ maizeC <- codeGeno(maize)
 # LD for chr 1
 maizeLD <- pairwiseLD(maizeC,chr=1,type="data.frame")
 # scatterplot 
-LDDist(maizeLD,type="p",pch=19,col=hsv(alpha=0.1,v=0))
+LDDist(maizeLD,type="p",pch=19,colD=hsv(alpha=0.1,v=0))
 
 # stacked bars  with default categories
 LDDist(maizeLD,type="bars")
