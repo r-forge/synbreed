@@ -7,7 +7,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     if(is.null(chr)) lg <- (1:length(LDdf))[!as.logical(lapply(LDdf,is.null))]
     else lg <- chr
     
-    if(chr=="all"){
+    if(lg=="all"){
        LDdfall <- list() 
        LDdfall$all <- data.frame(matrix(unlist(LDdf),ncol=ncol(LDdf[[1]])))
        colnames(LDdfall$all) <- colnames(LDdf[[1]]) 
