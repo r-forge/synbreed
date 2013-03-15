@@ -321,7 +321,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                      # update counter
                      ifelse(polymorph[i],cnt3[j] <- cnt3[j] + nmissfam[i],cnt1[j] <- cnt1[j] + nmissfam[i])
                    }
-                 if (impute.type=="beagleAfterFamily"){
+                 if(impute.type=="beagleAfterFamily"){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
                      res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                      # update counter

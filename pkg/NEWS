@@ -1,21 +1,23 @@
 0.9-5
 ======================
 
-* Uploaded on R-Forge 2012 - 09 - 27
+* Uploaded on R-Forge 2013 - 03 - 15
 
-* added warning in case of large entries in the
+* Added warning in case of large entries in the
   inverse covariance matrix of crossVal
 
-* return original alleles in write.beagle, not
+* Return original alleles in write.beagle, not
   only "A" and "B" by default in the marker file
   
-* added summary method for LDmat and LDdf  
+* Added summary method for LDmat and LDdf  
 
 * Fixed bugs in write.beagle and codeGeno (counting
   number of missing values with Beagle)
 
 * Include lowest category for r2 and dist breaks
   in LDDist and plot.LDdf
+  
+* changed function .path.package to path.package   
 
 
 
