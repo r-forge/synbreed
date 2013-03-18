@@ -31,7 +31,7 @@ object of class \code{gpData} with object \code{map} or a \code{data.frame} with
 \code{numeric}. Bandwidth to use for  \code{dense=TRUE} to control the resolution (default = 1 [map unit]).
 }
   \item{centr}{
-\code{numeric} vector. Positions for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used.
+\code{numeric} vector. Positions for the centromeres in the same order as chromosomes in \code{map}. If \code{"maize"}, centromere positions of maize in Mbp are used (according to maizeGDB, version 2).
 }
   \item{file}{
 Optionally a path to a file where the plot is saved to
