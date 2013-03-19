@@ -26,17 +26,6 @@ plotGenMap <- function (map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, fi
 
     # centromere positions of maize
     if(!is.null(centr)) if(centr == "maize") centr <- c(134.7,93.8,100.2,105.7,105.75,49.8,58.55,50.2,72.55,51.25)
-    134,40
-92,90
-99,70
-105,30
-102,30
-49,60
-54,60
-49,00
-72,20
-50,10
-
 
     # norm pos
     if (!is.null(centr)) map$pos <- map$pos - centr[map$chr]
