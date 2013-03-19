@@ -68,7 +68,7 @@ add.individuals <- function(gpData,pheno=NULL,geno=NULL,pedigree=NULL,covar=NULL
         if(!"ID" %in% colnames(pheno))  stop("In", substitute(pheno), "the columns 'ID' and/or 'repl' are/is missing!")
       }
       if(!is.null(pheno))
-        if(any(!colnames(pheno)[colnames(pheno)!="ID"]%in%dimnames(gpData$pheno)[[2]]) |
+        if(any(!colnames(pheno)[colnames(pheno)!="ID"]%in%dimnames(gpData$pheno)[[2]] |
                !colnames(pheno)[colnames(pheno)!="ID"]%in%dimnames(gpData$phenoCovars)[[2]]))
           stop("different phenotypes (colnames) in '", substitute(gpData$pheno), "' or '",  substitute(gpData$phenoCovar),"' and '", substitute(pheno), "'")
       df.pheno <- gpData2data.frame(gpData, onlyPheno=TRUE, trait = dimnames(gpData$pheno)[[2]])
