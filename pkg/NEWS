@@ -5,6 +5,11 @@
 
 * Updated maize centromere positions according
   to maizeGDB, version 2
+  
+* Fixed bug in add.individuals
+
+* Added option in codeGeno to code by a reference
+  allele for each marker   
 
 
 0.9-5

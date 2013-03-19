@@ -6,13 +6,13 @@ Recode genotypic data, imputation of missing values and preselection of markers
 }
 \description{
 This function combines all algorithms for processing of marker data within \code{synbreed} package.
-Raw marker data is a matrix with elements of arbitrary format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). The function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded into the number of copies of the minor allele, i.e. 0, 1 and 2.
+Raw marker data is a matrix with elements of arbitrary format (e.g. alleles coded as pair of observed alleles "A/T","G/C", ... , or by genotypes "AA", "BB", "AB"). The function is limited to biallelic markers with a maximum of 3 genotypes per locus. Raw data is recoded into the number of copies of a reference allele, i.e. 0, 1 and 2.
 Imputation of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be carried out according to the minor allele frequency and/or fraction of missing values.
 }
 \usage{
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
          "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
-         nmiss=NULL, label.heter="AB", keep.identical=TRUE, verbose=FALSE, 
+         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE, verbose=FALSE, 
          minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -37,6 +37,9 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 }
   \item{label.heter}{
 This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ... then \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
+}
+  \item{reference.allele}{                                                                                                                                   
+Define the reference allele which is used for the coding. Default is \code{"minor"}, i.e. data is coded by the number of copies of the minor allele. Alternatively, reference allele can specify a single character defining the reference allele for all markers of a vector definint marker specific reference alleles (using the same order as of markers in \code{gpData}).
 }
   \item{keep.identical}{
 \code{logical}. Should duplicated markers be kept? NOTE: From a set of identical markers (with respect to the non-missing alleles) the one with the smallest number of missing values is kept. For those with an identical number of missing values, the first one is kept and all others are removed.
