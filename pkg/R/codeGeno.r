@@ -132,7 +132,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
     major <- unlist(sapply(alleles,major.allele))
     minor <- unlist(sapply(alleles,minor.allele))
-
+    names(major) <- names(minor) <- cnames
    
   }
   }
@@ -158,12 +158,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
     res <- apply(res_ref,2,recode.by.ref.alleles)
     
-    major <- reference.allele
-    minor <-  apply(res_ref,2,get.nonref.allele)
-  
+    if(print.report){
+      major <- reference.allele
+      minor <-  apply(res_ref,2,get.nonref.allele)
+    }
   }
   
-   names(major) <- names(minor) <- cnames
+ 
 
   #============================================================
   # step 2a  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
