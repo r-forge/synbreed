@@ -9,7 +9,12 @@
 * Fixed bug in add.individuals
 
 * Added option in codeGeno to code by a reference
-  allele for each marker   
+  allele for each marker 
+  
+* Option to supply user-specified values instead 
+  of the MAF to correct in function kin for 
+  ret="realized" and ret="realizedAB" (thanks to
+  Yvonne Badke for this suggestion)    
 
 
 0.9-5

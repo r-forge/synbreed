@@ -1,4 +1,4 @@
-kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL){
+kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL, maf = NULL){
 
     ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),several.ok = FALSE)
 
@@ -108,6 +108,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
           if(any(class(gpData)=="gpData")){
              if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'kin'")
              marker <- gpData$geno
+             if(!is.null(maf) & length(maf)!=ncol(gpData$geno))  stop("minor allele frequency not provided for all markers")
           }
            else stop("object is not of class 'gpData'")
 
@@ -116,8 +117,10 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
     n <- nrow(M)
     p <- ncol(M)
 
-    # 2* minor allele frequency as expectation
-    maf <- colMeans(M,na.rm=TRUE)
+    # use user-supplied values for maf
+    # or, otherwise 2* minor allele frequency as expectation
+    if(is.null(maf)) {maf <- colMeans(M, na.rm = TRUE)}
+
     P <- matrix(rep(maf,each=n),ncol=p)
 
     # compute realized relationship matrix G
@@ -135,6 +138,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
           if(any(class(gpData)=="gpData")){
              if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'kin'")
              marker <- gpData$geno
+             if(!is.null(maf) & length(maf)!=ncol(gpData$geno))     stop("minor allele frequency not provided for all markers")
           }
            else stop("object is not of class 'gpData'")
 
@@ -142,9 +146,11 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
         M <- marker
         n <- nrow(M)
         p <- ncol(M)
+        
+        # use user-supplied values for maf
+        # or, otherwise 2* minor allele frequency as expectation
+        if(is.null(maf)) {maf <- colMeans(M, na.rm = TRUE)}
 
-        # 2* minor allele frequency as expectation
-        maf <- colMeans(M,na.rm=TRUE)
         pq2 <- 2*maf/2*(1-maf/2)
         # compute realized relationship matrix U
         Z <- sweep(M,2,maf)

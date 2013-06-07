@@ -20,6 +20,9 @@ object of class \code{gpData}
   \item{DH}{
 \code{logical} vector of length \eqn{n}. \code{TRUE} or 1 if individual is a doubled-haploid (DH) line and \code{FALSE} or 0 otherwise. Only used for pedigree based relatedness coefficients
 }
+  \item{maf}{
+    \code{numeric} vector of length equal the number of markers. Supply values for the \eqn{p_i}{pi} of each marker, which were used to correct the allele counts in \code{ret="realized"} and \code{ret="realizedAB"}. If not specified, \eqn{p_i}{pi} equals the minor allele frequency of each locus.
+  }
 }
 \details{
 
@@ -54,7 +57,7 @@ where \eqn{s} is the matrix of simple matching coefficients. This formula is use
 An object of class "relationshipMatrix".
 }
 \author{
-Valentin Wimmer and Theresa Albrecht
+Valentin Wimmer and Theresa Albrecht, with contributions by Yvonne Badke
 }
 \references{
 
