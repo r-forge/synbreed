@@ -151,7 +151,10 @@ crossVal <- function (gpData,trait=1,cov.matrix=NULL, k=2,Rep=1,Seed=NULL,sampli
     }
     }
     # set seed for replications
-    if(sampling=="commit") Rep <- length(names(TS)) # if TS is committed
+    if(sampling=="commit"){
+     Rep <- length(names(TS)) # if TS is committed
+     k <- length(TS[[1]])
+    } 
     if(!is.null(Seed)) set.seed(Seed)
     seed2<-round(runif(Rep,1,100000),0)
 
