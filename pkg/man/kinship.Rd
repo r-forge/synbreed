@@ -8,7 +8,7 @@ This function implements different measures of relatedness between individuals i
 }
 \usage{
 kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),
-    DH=NULL)
+    DH=NULL, maf=NULL)
 }
 \arguments{
   \item{gpData}{
