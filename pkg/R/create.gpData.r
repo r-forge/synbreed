@@ -171,13 +171,14 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   
   # add covar from arguments, if available 
   if(!is.null(covar)){
-    if(is.matrix(covar)) covar <- as.data.frame(covar)
+    if(is.matrix(covar)){
+      if(is.null(rownames(covar))) warning("the supplied covar's rownames will default to 1:nrow(covar), which is likely not correct.  Inspect the resulting $covar.")
+      covar <- as.data.frame(covar)
+    }
     if(!is.data.frame(covar)) stop('covar must be a data.frame, not a ',class(covar))
-    if(is.null(rownames(covar))) stop("missing rownames in covar")    
     # do not use any existing columns named 'genotyped', 'phenotyped' or 'id'
     covar <- covar[!colnames(covar) %in% c("genotyped","phenotyped","id","family")]
     # merge with existing data
-    ##TOOD check what happens if covar is empty
     obj$covar <- merge(obj$covar,covar,by.x=1,by.y=0,all=TRUE)
   }
   
