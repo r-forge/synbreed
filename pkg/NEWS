@@ -1,3 +1,10 @@
+0.9-7
+======================
+
+* Uploaded on R-Forge 2013 - 09 - 19
+
+* updated dependency from igraph0 to igraph
+
 0.9-6
 ======================
 
@@ -16,7 +23,8 @@
   ret="realized" and ret="realizedAB" (thanks to
   Yvonne Badke for this suggestion)    
   
-* Fixed bug in crossVal when committing a TS  
+* Fixed bug in crossVal when committing a TS
+  
 
 
 0.9-5
