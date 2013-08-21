@@ -12,8 +12,9 @@ Imputation of missing values can be done by random sampling from allele distribu
 \usage{
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
          "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
-         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE, verbose=FALSE,
-         minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE)
+         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE, 
+         verbose=FALSE, minFam=5, showBeagleOutput=FALSE, tester=NULL,
+         print.report=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -9,7 +9,8 @@ Plot marker map
 A function to visualize low and high-density marker maps.
 }
 \usage{
-\method{plot}{GenMap}(x, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, file=NULL, fileFormat="pdf",...)
+\method{plot}{GenMap}(x, dense = FALSE, nMarker = TRUE, bw=1, 
+                      centr=NULL, file=NULL, fileFormat="pdf",...)
 
 plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, file=NULL, fileFormat="pdf",...)
 }
