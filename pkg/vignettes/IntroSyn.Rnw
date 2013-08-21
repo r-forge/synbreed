@@ -89,7 +89,8 @@ options(prompt = "R> ", continue = "+  ", width = 80, useFancyQuotes = FALSE)
 options(SweaveHooks=list(fig=function() par(mar=c(4,4,4,1.5)+0.1,cex.axis=1,cex.lab=1,cex.main=1)))
 options(SweaveSyntax="SweaveSyntaxNoweb")
 set.seed(1234)
-library("synbreed")
+library(synbreed)
+library(synbreedData)
 @
 
 
@@ -378,8 +379,8 @@ where $QTL_{ik}$ is the effect of the $k$-th QTL allele for individual $i$.  Phe
 $$y_i=g_i+e_i, \; i =1,...,n$$
 where $e_i = N(0,\sigma^2)$. Genotypic and phenotypic data was simulated for 1250 DH lines. Moreover, pedigree for additional 360 ancestor individuals is available. These ancestors can be heterozygous. The 1250 DH lines belong to 25 biparental families with 50 lines in each family. The \code{maize} data can be loaded within the \pkg{synbreed} package using
 <<Load the maize data set,results=hide>>=
-library("synbreed")
-data("maize")
+library(synbreed)
+data(maize)
 @
 A basic overview over the contents of the \code{gpData} is available through
 <<>>=
