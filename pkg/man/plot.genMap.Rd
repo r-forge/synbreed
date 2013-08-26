@@ -12,7 +12,8 @@ A function to visualize low and high-density marker maps.
 \method{plot}{GenMap}(x, dense = FALSE, nMarker = TRUE, bw=1, 
                       centr=NULL, file=NULL, fileFormat="pdf",...)
 
-plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1, centr=NULL, file=NULL, fileFormat="pdf",...)
+plotGenMap(map, dense = FALSE, nMarker = TRUE, bw=1, 
+           centr=NULL, file=NULL, fileFormat="pdf",...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
