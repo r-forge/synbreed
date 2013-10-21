@@ -387,7 +387,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
     if(impute.type %in% c("beagle","beagleAfterFamily")){
       if (verbose) cat("step 3c : Imputing of missing values by Beagle \n")
-      if(any(grep(" ",path.package()[grep("synbreed", path.package())]))) warning("The package is installed in folder ",path.package()[grep("synbreed", path.package())]," which contains a space. To run beagle properly, please install the package to a differnt folder without spaces.")
+      #if(any(grep(" ",path.package()[grep("synbreed", path.package())]))) warning("The package is installed in folder ",path.package()[grep("synbreed", path.package())]," which contains a space. To run beagle properly, please install the package to a differnt folder without spaces.")
       # use Beagle and impute NA for polymorphic families
       chr <- unique(gpData$map$chr)
       chr <- chr[!is.na(chr)]
