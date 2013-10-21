@@ -93,9 +93,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if (verbose) cat("step 2  : Recoding alleles \n")
-  
+
   if(reference.allele[1]=="minor"){
-  
+
     # identify heterozygous genotypes
     if(!is.null(label.heter)){
       if (is.character(label.heter)) {
@@ -133,11 +133,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     major <- unlist(sapply(alleles,major.allele))
     minor <- unlist(sapply(alleles,minor.allele))
     names(major) <- names(minor) <- cnames
-   
+
   }
   }
-  
-  
+
+
   else{
      count.ref.alleles <- function(x,ref){
    	    sum(x==ref)		
@@ -149,22 +149,22 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 	     x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
 	     nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
 	     return(nr.ref.alleles)
-    } 
+    }
     res_ref <- rbind(reference.allele,res)
-    
-    get.nonref.allele <- function(x){ 
+
+    get.nonref.allele <- function(x){
       xx <- unlist(strsplit(x[-1],split=""))
       unique(xx)[unique(xx) != x[1] & !is.na(unique(xx))]
     }
     res <- apply(res_ref,2,recode.by.ref.alleles)
-    
+
     if(print.report){
       major <- reference.allele
       minor <-  apply(res_ref,2,get.nonref.allele)
     }
   }
-  
- 
+
+
 
   #============================================================
   # step 2a  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
@@ -423,7 +423,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
            if(.Platform$OS.type == "windows") shell("mkdir beagle")
         }
         write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
-        output <- system(paste("java -Xmx1000m -jar ", shQuote(path.package()[grep("synbreed", path.package())][1]),     # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+        output <- system(paste("java -Xmx1000m -jar ", shQuote(sort(path.package()[grep("synbreed", path.package())])[1]),     # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                      "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
                      intern=!showBeagleOutput)
         if(.Platform$OS.type == "unix") system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
