@@ -12,7 +12,7 @@ Imputation of missing values can be done by random sampling from allele distribu
 \usage{
 codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
          "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
-         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE, 
+         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE,
          verbose=FALSE, minFam=5, showBeagleOutput=FALSE, tester=NULL,
          print.report=FALSE)
 }
@@ -79,7 +79,7 @@ This option is only suitable for homozygous individuals (such as doubled-haploid
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
 the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
 \item{"beagle"}{ Use Beagle Genetic Analysis Software Package (Browning and Browning 2007; 2009) to
-    infer missing genotypes. This software needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available, e.g through putting the command to a public directory or add the directory to the public search path. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
+    infer missing genotypes. This software needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available, e.g through putting the command to a public directory or add the directory to the public search path or environment variable. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
     markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
     Function \code{codeGeno} will create a directory \code{beagle} for Beagle
     input and output files (if it does not exist) and run Beagle with default settings. The information on marker
@@ -150,6 +150,7 @@ gp$geno
 
 # example with heterogeneous stock mice
 \dontrun{
+library(synbreedData)
 data(mice)
 summary(mice)
 # heterozygous values must be labeled  (may run some seconds)
