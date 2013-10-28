@@ -79,7 +79,10 @@ This option is only suitable for homozygous individuals (such as doubled-haploid
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
 the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
 \item{"beagle"}{ Use Beagle Genetic Analysis Software Package (Browning and Browning 2007; 2009) to
-    infer missing genotypes. This software needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available, e.g through putting the command to a public directory or add the directory to the public search path or environment variable. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
+    infer missing genotypes. This software is a java program, so that you have to install java and make it available at your computer.
+    Further beagle needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available,
+    e.g through putting the command to a public directory or add the directory to the public search path or environment variable. If
+    you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
     markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
     Function \code{codeGeno} will create a directory \code{beagle} for Beagle
     input and output files (if it does not exist) and run Beagle with default settings. The information on marker
