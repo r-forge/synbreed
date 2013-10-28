@@ -448,6 +448,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         }
       }
     }
+    
     #########################################################################
     # impute missing values with no population structure or missing positions
     #########################################################################
