@@ -274,12 +274,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
     res <- res[,!which.duplicated]
     cnames <- cnames[!which.duplicated]
-    if (verbose) cat("step 6:",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
+    if (verbose) cat("step 6  :",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
     if (verbose) if(nv>0) cat("         and", nv, "monomorphic marker(s)\n")
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   } else {
-    if (verbose) cat("step 6: No duplicated markers removed \n")
+    if (verbose) cat("step 6  : No duplicated markers removed \n")
   }
 
   # coding of SNPs finished
@@ -515,14 +515,14 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
        cnames <- cnames[!which.duplicated]
-       if (verbose) cat("step 10  :",sum(which.duplicated),"duplicated marker(s) removed \n")
+       if (verbose) cat("step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
        # update map
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
    # update report list
 
 
   } else{
-    if (verbose) cat("step 6  : No duplicated markers removed \n")
+    if (verbose) cat("step 10 : No duplicated markers removed \n")
   }
 
   #============================================================
@@ -536,9 +536,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.fixed,]
     if (verbose)
       if(sum(which.fixed) != 0){
-        cat("step 10a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
+        cat("step 10a:",sum(which.fixed),"in crosses fixed marker(s) removed \n")
       } else {
-        cat("step 10a : No in crosses fixed marker(s) removed \n")
+        cat("step 10a: No in crosses fixed marker(s) removed \n")
       }
   }
 
