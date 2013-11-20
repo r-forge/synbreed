@@ -93,81 +93,75 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if (verbose) cat("step 2  : Recoding alleles \n")
-
-  if(reference.allele[1]=="minor"){
-
-    # identify heterozygous genotypes
-    if(!is.null(label.heter)){
-      if (is.character(label.heter)) {
-        label.heter <- label.heter # 1 label for heterozygous
-      } else {
-        if (is.function(label.heter)){                          # multiple labels for heterozygous values
-          is.heter <- label.heter
-          label.heter <- unique(res[which(is.heter(res),arr.ind=TRUE)])
-      } else stop("label.heter must be a character string or a function")
+  if(gpData$info$codeGeno) {
+    if(reference.allele[1]=="minor"){
+      afCols <- (1:ncol(res))[colMeans(res)>1]
+      res[, afCols] <-  rep(1, nrow(res)) %*% t(rep(2, length(afCols))) - res[, afCols]
+    } else {
+      if(refernece.allele[1]!="keep") gpData$info$codeGeno==FALSE
     }
-    # make sure that NA is not in label.heter
-    # otherwise missing values would be masked
-    label.heter <- label.heter[!is.na(label.heter)]
   }
+  if(!gpData$info$codeGeno) {
+    if(reference.allele[1]=="minor"){
 
-  # inititialize report list
-  if(print.report){
-
-     alleles <- apply(res,2,table,useNA="no")
-     major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
-     minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
-
-
-
-
-     if(class(alleles) != "list"){
-        mytable <- function(x,...) as.data.frame(table(x,...),stringsAsFactors=FALSE)
-        alleles <- apply(res,2,mytable,useNA="no")
-
-        major.allele <- function(x) x$x[which.max(x$Freq)]
-        minor.allele <- function(x) x$x[which.min(x$Freq)]
-
-    }
-
-    major <- unlist(sapply(alleles,major.allele))
-    minor <- unlist(sapply(alleles,minor.allele))
-    names(major) <- names(minor) <- cnames
-
-  }
-  }
-
-
-  else{
-     count.ref.alleles <- function(x,ref){
-   	    sum(x==ref)		
+      # identify heterozygous genotypes
+      if(!is.null(label.heter)){
+        if (is.character(label.heter)) {
+          label.heter <- label.heter # 1 label for heterozygous
+        } else {
+          if (is.function(label.heter)){                          # multiple labels for heterozygous values
+            is.heter <- label.heter
+            label.heter <- unique(res[which(is.heter(res),arr.ind=TRUE)])
+          } else stop("label.heter must be a character string or a function")
+        }
+        # make sure that NA is not in label.heter
+        # otherwise missing values would be masked
+        label.heter <- label.heter[!is.na(label.heter)]
       }
 
-    recode.by.ref.alleles <- function(x){
-	     ref <- x[1]
-	     x <- x[-1]
-	     x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
-	     nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
-	     return(nr.ref.alleles)
-    }
-    res_ref <- rbind(reference.allele,res)
+      # inititialize report list
+      if(print.report){
+        alleles <- apply(res,2,table,useNA="no")
+        major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
+        minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
+        if(class(alleles) != "list"){
+          mytable <- function(x,...) as.data.frame(table(x,...),stringsAsFactors=FALSE)
+          alleles <- apply(res,2,mytable,useNA="no")
+          major.allele <- function(x) x$x[which.max(x$Freq)]
+          minor.allele <- function(x) x$x[which.min(x$Freq)]
+        }
+        major <- unlist(sapply(alleles,major.allele))
+        minor <- unlist(sapply(alleles,minor.allele))
+        names(major) <- names(minor) <- cnames
+      }
+    } else {
+      count.ref.alleles <- function(x,ref){
+   	    sum(x==ref)		
+      }
+      recode.by.ref.alleles <- function(x){
+	    ref <- x[1]
+	    x <- x[-1]
+	    x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
+	    nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
+	    return(nr.ref.alleles)
+      }
+      res_ref <- rbind(reference.allele,res)
+      get.nonref.allele <- function(x){
+        xx <- unlist(strsplit(x[-1],split=""))
+        unique(xx)[unique(xx) != x[1] & !is.na(unique(xx))]
+      }
+      res <- apply(res_ref,2,recode.by.ref.alleles)
 
-    get.nonref.allele <- function(x){
-      xx <- unlist(strsplit(x[-1],split=""))
-      unique(xx)[unique(xx) != x[1] & !is.na(unique(xx))]
-    }
-    res <- apply(res_ref,2,recode.by.ref.alleles)
-
-    if(print.report){
-      major <- reference.allele
-      minor <-  apply(res_ref,2,get.nonref.allele)
+      if(print.report){
+        major <- reference.allele
+        minor <-  apply(res_ref,2,get.nonref.allele)
+      }
     }
   }
-
 
 
   #============================================================
-  # step 2a  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
+  # step 3  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
   #============================================================
 
   if(!is.null(tester)){
@@ -175,9 +169,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     res <- res[,which.miss]
     cnames <- cnames[which.miss]
     if(sum(!which.miss) > 0){
-      if (verbose) cat("step 2a :",sum(!which.miss),"marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
+      if (verbose) cat("step 3 :",sum(!which.miss),"marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
     } else {
-      if (verbose) cat("step 2a : No marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
+      if (verbose) cat("step 3 : No marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
     }
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
@@ -205,7 +199,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   }
 
   #============================================================
-  # step 2b  - Discarding markers for which the tester has the minor allele
+  # step 4  - Discarding markers for which the tester has the minor allele
   #============================================================
 
   if(!is.null(tester)){
@@ -213,16 +207,16 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     res <- res[,which.miss]
     cnames <- cnames[which.miss]
     if(sum(!which.miss) > 0){
-      if (verbose) cat("step 2b :",sum(!which.miss),"marker(s) discarded for which the tester has the minor allele\n")
+      if (verbose) cat("step 4 :",sum(!which.miss),"marker(s) discarded for which the tester has the minor allele\n")
     } else{
-      if (verbose) cat("step 2b : No marker(s) discarded for which the tester has the minor allele\n")
+      if (verbose) cat("step 4 : No marker(s) discarded for which the tester has the minor allele\n")
     }
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
   }
 
   #============================================================
-  # step 2c  - Discarding homozygout values of the minor allele and markers with more than nmiss values
+  # step 5  - Discarding homozygout values of the minor allele and markers with more than nmiss values
   #============================================================
 
   if(!is.null(tester)){
@@ -232,15 +226,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       which.miss <- apply(is.na(res),2,mean,na.rm=TRUE) <= nmiss
       res <- res[,which.miss]
       cnames <- cnames[which.miss]
-      if (verbose) cat("step 2c :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
+      if (verbose) cat("step 5 :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
       # update map
       if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
     } else{
-      if (verbose) cat("step 2c : No markers discarded due to fraction of missing values \n")
+      if (verbose) cat("step 5 : No markers discarded due to fraction of missing values \n")
     }
   }
   #============================================================
-  # step 2.1 - discard duplicated markers   (optional, argument keep.identical=FALSE)
+  # step 6 - discard duplicated markers   (optional, argument keep.identical=FALSE)
   #============================================================
 
   if(!keep.identical){
@@ -280,18 +274,18 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
     res <- res[,!which.duplicated]
     cnames <- cnames[!which.duplicated]
-    if (verbose) cat("step 2.1:",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
+    if (verbose) cat("step 6:",sum(which.duplicated)+step1,"duplicated marker(s) removed \n")
     if (verbose) if(nv>0) cat("         and", nv, "monomorphic marker(s)\n")
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
   } else {
-    if (verbose) cat("step 2.1: No duplicated markers removed \n")
+    if (verbose) cat("step 6: No duplicated markers removed \n")
   }
 
   # coding of SNPs finished
 
   #============================================================
-  # step 3  - imputing missing genotypes  (optional, argument impute=TRUE)
+  # step 7  - imputing missing genotypes  (optional, argument impute=TRUE)
   #============================================================
 
   # initialize counter
@@ -316,13 +310,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     ###########################################################################
     if(impute.type=="fix"){
       res[is.na(res)] <- replace.value
-      if (verbose) cat("step 3a : Replace missing values by",replace.value," \n")
+      if (verbose) cat("step 7a : Replace missing values by",replace.value," \n")
     }
     #########################################################
     # impute missing values according to population structure
     #########################################################
     if(impute.type %in% c("family" ,"beagleAfterFamily")){
-      if (verbose) cat("step 3b : Imputing of missing values by family information \n")
+      if (verbose) cat("step 7b : Imputing of missing values by family information \n")
       # initialize counter (- number of heterozygous values)
       # loop over all markers
       probList <- list(c(1), c(.5,.5), c(.25,.5,.25))
@@ -386,7 +380,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     ###########################
     }
     if(impute.type %in% c("beagle","beagleAfterFamily")){
-      if (verbose) cat("step 3c : Imputing of missing values by Beagle \n")
+      if (verbose) cat("step 7c : Imputing of missing values by Beagle \n")
       #if(any(grep(" ",path.package()[grep("synbreed", path.package())]))) warning("The package is installed in folder ",path.package()[grep("synbreed", path.package())]," which contains a space. To run beagle properly, please install the package to a differnt folder without spaces.")
       # use Beagle and impute NA for polymorphic families
       chr <- unique(gpData$map$chr)
@@ -448,12 +442,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         }
       }
     }
-    
+
     #########################################################################
     # impute missing values with no population structure or missing positions
     #########################################################################
     if(impute.type %in% c("random", "beagle", "beagleAfterFamily")){
-      if (verbose) cat("step 3d : Random imputing of missing values \n")
+      if (verbose) cat("step 7d : Random imputing of missing values \n")
       # initialize counter (- number of heterozygous values)
       for (j in 1:M){
         cnt3[j] <-  sum(is.na(res[,j]))
@@ -474,15 +468,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
 
     #============================================================
-    # step 4 - recoding
+    # step 8 - recoding
     #============================================================
 
     # recode again if allele frequeny changed to to imputing
     if(any(colMeans(res,na.rm=TRUE)>1)){
-      if (verbose) cat("step 4  : Recode alleles due to imputation \n")
+      if (verbose) cat("step 8  : Recode alleles due to imputation \n")
       res[,which(colMeans(res,na.rm=TRUE)>1)] <- 2 - res[,which(colMeans(res,na.rm=TRUE)>1)]
     } else{
-      if (verbose) cat("step 4  : No recoding of alleles necessary after imputation \n")
+      if (verbose) cat("step 8  : No recoding of alleles necessary after imputation \n")
     }
   }
   # update report list
@@ -492,14 +486,14 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
 
   #============================================================
-  # step 5 - remove markers with minor allele frequency < maf  (optional, argument maf>0)
+  # step 9 - remove markers with minor allele frequency < maf  (optional, argument maf>0)
   #============================================================
 
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     if(is.null(tester)) which.maf <- colMeans(res,na.rm=TRUE)>=2*maf else
       which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf
-    if (verbose) cat("step 5  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
+    if (verbose) cat("step 9  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
     cnames <- cnames[which.maf]
     # update map
@@ -508,20 +502,20 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
 
   } else {
-    if (verbose) cat("step 5  : No markers discarded due to minor allele frequency \n")
+    if (verbose) cat("step 9  : No markers discarded due to minor allele frequency \n")
   }
 
 
 
   #============================================================
-  # step 6 - discard duplicated markers   (optional, argument keep.identical=FALSE)
+  # step 10 - discard duplicated markers   (optional, argument keep.identical=FALSE)
   #============================================================
 
   if(!keep.identical){
        which.duplicated <- duplicated(res,MARGIN=2)
        res <- res[,!which.duplicated]
        cnames <- cnames[!which.duplicated]
-       if (verbose) cat("step 6  :",sum(which.duplicated),"duplicated marker(s) removed \n")
+       if (verbose) cat("step 10  :",sum(which.duplicated),"duplicated marker(s) removed \n")
        # update map
        if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.duplicated,]
    # update report list
@@ -532,7 +526,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   }
 
   #============================================================
-  # step 6a - discard markers for which only the tester is different
+  # step 10a - discard markers for which only the tester is different
   #============================================================
 
   if(!is.null(tester)){
@@ -542,17 +536,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.fixed,]
     if (verbose)
       if(sum(which.fixed) != 0){
-        cat("step 6a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
+        cat("step 10a :",sum(which.fixed),"in crosses fixed marker(s) removed \n")
       } else {
-        cat("step 6a : No in crosses fixed marker(s) removed \n")
+        cat("step 10a : No in crosses fixed marker(s) removed \n")
       }
   }
 
   #============================================================
-  # step 7 - restoring original data format
+  # step 11 - restoring original data format
   #============================================================
 
-  #if (verbose) cat("step 7 : Restoring original data format \n")
+  #if (verbose) cat("step 11 : Restoring original data format \n")
   rownames(res) <- rnames
   colnames(res) <- cnames
   if(orgFormat == "matrix"){
