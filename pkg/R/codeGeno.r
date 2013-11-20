@@ -98,7 +98,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       afCols <- (1:ncol(res))[colMeans(res)>1]
       res[, afCols] <-  rep(1, nrow(res)) %*% t(rep(2, length(afCols))) - res[, afCols]
     } else {
-      if(refernece.allele[1]!="keep") gpData$info$codeGeno==FALSE
+      if(reference.allele[1]!="keep") gpData$info$codeGeno==FALSE
     }
   }
   if(!gpData$info$codeGeno) {
