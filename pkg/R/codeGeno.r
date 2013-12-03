@@ -1,7 +1,8 @@
 # coding genotypic data
 
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,
-                     maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE){
+                     maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",#keep.list=NULL,
+                     keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE){
 
   #============================================================
   # read information from arguments
@@ -78,7 +79,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
     which.miss <- apply(is.na(res),2,mean,na.rm=TRUE)<=nmiss
     res <- res[,which.miss]
-    if(reference.allele!="minor")  reference.allele <- reference.allele[which.miss]
+    if(reference.allele[1]!="minor" | reference.allele[1]!="keep")  reference.allele <- reference.allele[which.miss]
     if (verbose) cat("step 1  :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]
     # update map
