@@ -382,7 +382,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
             if(.Platform$OS.type == "windows") shell("mkdir beagle")
           }
           write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
-          output <- system(paste("java -Xmx1000m -jar ", shQuote(sort(path.package()[grep("synbreed", path.package())])[1]),     # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+          output <- system(paste("java -Xmx1000m -jar ", sort(path.package()[grep("synbreed", path.package())])[1],     # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                      "/exec/beagle.jar unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
                      intern=!showBeagleOutput)
           if(.Platform$OS.type == "unix") system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
