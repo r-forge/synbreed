@@ -80,7 +80,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
     which.miss <- apply(is.na(res),2,mean,na.rm=TRUE)<=nmiss
     res <- res[,which.miss]
-    if(reference.allele[1]!="minor" | reference.allele[1]!="keep")  reference.allele <- reference.allele[which.miss]
+    if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
     if (verbose) cat("   step 1  :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]
     # update map
@@ -348,7 +348,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if (verbose) cat("   step 7c : Imputing of missing values by Beagle \n")
         #if(any(grep(" ",path.package()[grep("synbreed", path.package())]))) warning("The package is installed in folder ",path.package()[grep("synbreed", path.package())]," which contains a space. To run beagle properly, please install the package to a differnt folder without spaces.")
         # use Beagle and impute NA for polymorphic families
-        chr <- unique(gpData$map$chr)
+        chr <-  unique(gpData$map$chr)
         chr <- chr[!is.na(chr)]
         if(!is.null(tester))
           res <- res*2
@@ -376,15 +376,18 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
           # write input files for beagle
           pre <- paste("chr",chr[lg],sep="")
+          pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
           if(!"beagle" %in% list.files()){
             if(.Platform$OS.type == "unix") system("mkdir beagle")
             if(.Platform$OS.type == "windows") shell("mkdir beagle")
           }
           write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
-          output <- system(paste("java -Xmx1000m -jar ", shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1],     # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                     "/exec/beagle.jar", sep="")), " unphased=beagle/",pre,"input.bgl markers=beagle/",pre,"marker.txt missing=NA out=",sep=""),
-                     intern=!showBeagleOutput)
+          output <- system(paste("java -Xmx1000m -jar ",
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/exec/beagle.jar", sep="")),
+                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                           " unphased=beagle/", pre, "input.bgl markers=beagle/", pre, "marker.txt missing=NA out=", sep=""),
+                           intern=!showBeagleOutput)
           if(.Platform$OS.type == "unix") system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
           if(.Platform$OS.type == "windows") shell(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
 
