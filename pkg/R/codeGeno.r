@@ -6,12 +6,19 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   #============================================================
   # read information from arguments
+  ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
 
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
   if(is.null(impute.type)) impute.type <- "random"   # default
-  if(impute) impute.type <- match.arg(impute.type)
+  MG <- rownames(gpData$geno)[apply(is.na(gpData$geno),1,all)]
+  if(impute) {
+    impute.type <- match.arg(impute.type)
+    if(impute.type %in% c("beagle") & length(MG) > 0) stop(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
+    else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
+  } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
+
   if (is.character(label.heter)) if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, 3, 3)}
 
   orgFormat <- class(gpData)
@@ -77,16 +84,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(nmiss)){
-    if(nmiss<0 | nmiss>1) stop("'nmiss' must be in [0,1]")
+    if(nmiss<0 | nmiss>1) stop("'nmiss' have to be in [0,1]")
     which.miss <- apply(is.na(res),2,mean,na.rm=TRUE)<=nmiss
     res <- res[,which.miss]
     if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
-    if (verbose) cat("   step 1  :",sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
+    if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]
     # update map
+    gpData$geno <- gpData$geno[, which.miss]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    rm(which.miss)
   } else {
-    res <- res
     if (verbose) cat("   step 1  : No markers removed due to fraction of missing values \n")
   }
 
@@ -379,8 +387,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
           if(!"beagle" %in% list.files()){
-            if(.Platform$OS.type == "unix") system("mkdir beagle")
+            if(.Platform$OS.type == "unix")    system("mkdir beagle")
             if(.Platform$OS.type == "windows") shell("mkdir beagle")
+          } else if(lg == 1 & length(list.files("beagle")) > 0 ) {
+            if(.Platform$OS.type == "unix")    system("rm beagle/*.*")
+            if(.Platform$OS.type == "windows") shell("rm beagle/*.*")
           }
           write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
           output <- system(paste("java -Xmx1000m -jar ",
