@@ -2,7 +2,7 @@
 
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,
                      maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",#keep.list=NULL,
-                     keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE){
+                     keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,check=FALSE){
 
   #============================================================
   # read information from arguments
@@ -11,13 +11,29 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
+
   if(is.null(impute.type)) impute.type <- "random"   # default
   MG <- rownames(gpData$geno)[apply(is.na(gpData$geno),1,all)]
-  if(impute) {
-    impute.type <- match.arg(impute.type)
-    if(impute.type %in% c("beagle") & length(MG) > 0) stop(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
-    else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
-  } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
+  if(check)
+    if(impute) {
+      impute.type <- match.arg(impute.type)
+      if(impute.type %in% c("beagle", "beagleAfterFamily"))
+        if(!"beaglePath" %in% ls()){
+          cat("Due to the policy of R, we removed the executable of beagle\n",
+              "from our package. If you like to use the beagle imputation,\n",
+              "you can put the executable beagle.jar somewhere. Then define\n",
+              "with 'beaglePath' a variable with the location of beagle.jar.\n",
+              "beagle.jar can be found in synbreed versions up to 0.9 in\n",
+              "the synbreed subfolder exec")
+          return(NULL)
+          beaglePath <- NULL
+        }
+      if(impute.type %in% c("beagle", "beagleAfterFamily") & !is.null(gpData$map))
+        if(grepl("string mismatches", all.equal(rownames(gpData$map), colnames(gpData$geno))))
+          stop("Order of markers in geno and map does not fit!")
+      if(impute.type %in% c("beagle") & length(MG) > 0) stop(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
+      else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
+    } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
 
   if (is.character(label.heter)) if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, 3, 3)}
 
@@ -44,11 +60,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$map <- NULL
   }
   #  catch errors
-  if(class(res)!= "data.frame" & class(res) != "matrix") stop("wrong data format")
-  if (any(colMeans(is.na(res))==1)) warning("markers with only missing values in data")
-  if(length(reference.allele)>1 & length(reference.allele)!=ncol(res)) stop("'reference allele' should be of length 1 or match the number of markers")
-  if(class(reference.allele) != "character") stop("'reference allele' should be of class character")
-
+  if(check){
+    if(class(res)!= "data.frame" & class(res) != "matrix") stop("wrong data format")
+    if(any(colMeans(is.na(res))==1)) warning("markers with only missing values in data")
+    if(length(reference.allele)>1 & length(reference.allele)!=ncol(res)) stop("'reference allele' should be of length 1 or match the number of markers")
+    if(class(reference.allele) != "character") stop("'reference allele' should be of class character")
+  }
   # number of genotypes
   n <- nrow(res)
 
@@ -150,7 +167,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
         # do not use heterozygous values
         alleles <- alleles[!alleles %in% label.heter]
-        if (length(alleles)>2) stop("more than 2 marker genotypes found but no 'label.heter' declared")
+        if (length(alleles)>2) stop("more than 2 marker genotypes found, but 'label.heter' is not declared")
         x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
         return(x)
       }
@@ -395,7 +412,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           }
           write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
           output <- system(paste("java -Xmx1000m -jar ",
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/exec/beagle.jar", sep="")),
+          # sort(path.package()[grep("synbreed", path.package())])[1]
+                           shQuote(paste(beaglePath, "/beagle.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                            " unphased=beagle/", pre, "input.bgl markers=beagle/", pre, "marker.txt missing=NA out=", sep=""),
                            intern=!showBeagleOutput)
