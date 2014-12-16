@@ -81,15 +81,12 @@ Imputing is done according to \code{impute.type}
 This option is only suitable for homozygous individuals (such as doubled-haploid lines) structured in families.
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
 the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
-\item{"beagle"}{To use this option, you have to define the variable \code{beaglePath}, so that the function \code{codeGeno} can find the location of the executable beagle.jar. This has changed from version 0.9 to 0.10 due to the policy of R. In the older versions beagle.jar is included in the folder exec in the synbreed library, so that you can find this executable on CRAN. To make your life easier, you can include in the Rprofile.site file the code \code{beaglePath <- "Path/to/beagle"}.
+\item{"beagle"}{To use this option, you have to define the variable \code{beaglePath}, so that the function \code{codeGeno} can find the location of the executable beagle.jar. This has changed from version 0.9 to 0.10 due to the policy of R. In the older versions beagle.jar (version 3.3.1) is included in the folder exec in the synbreed library, so that you can find this executable on CRAN. To make your life more comfortable, you can include in the Rprofile.site file the code \code{beaglePath <- "/Path/to/beagle"}.
 
     With this option the Beagle Genetic Analysis Software Package (Browning and Browning 2007; 2009) to
     infer missing genotypes is used. This software is a java program, so that you have to install java and make it available at your computer.
-    Further beagle needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available,
-    e.g through putting the command to a public directory or add the directory to the public search path or environment variable. If
-    you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking
-    markers. The beagle executive file \code{beagle.jar} (version 3.3.1) is in the directory \code{exec} of the package.
-    Function \code{codeGeno} will create a directory \code{beagle} for Beagle
+    Further beagle needs the program gzip. You have to install this program manually, and make the \code{gzip} command generally available in the shell,
+    e.g through putting the command to a public directory or add the directory to the public search path or environment variable. Alternatively you can install the Rtools. There is \code{gzip} included. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. Function \code{codeGeno} will create a directory \code{beagle} for Beagle
     input and output files (if it does not exist) and run Beagle with default settings. The information on marker
     position is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be
     available for all markers. By default, three genotypes 0, 1, 2 are imputed. To restrict the
