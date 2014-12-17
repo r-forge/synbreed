@@ -126,11 +126,12 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
     # compute realized relationship matrix G
     Z <- M - P
     Zq <- tcrossprod(Z)
-    U <- Zq/(2*sum(maf/2*(1-maf/2)))
+    U <- 2*Zq/(sum(maf*(2-maf)))
 
     kmat <- U
+    attr(kmat, "expectedMAX") <- 2*sum((2-maf)**2)/(sum(maf*(2-maf)))
     attr(kmat, "SNPs") <- colnames(gpData$geno)
-    }
+}
 
     if (ret == "realizedAB"){ # based an Astle & Balding (2009)
 
@@ -151,7 +152,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
         # or, otherwise 2* minor allele frequency as expectation
         if(is.null(maf)) {maf <- colMeans(M, na.rm = TRUE)}
 
-        pq2 <- 2*maf/2*(1-maf/2)
+        pq2 <- 0.5*maf*(2-maf)
         # compute realized relationship matrix U
         Z <- sweep(M,2,maf)
         for (i in 1:p){  # loop for standardizing columns by sd
