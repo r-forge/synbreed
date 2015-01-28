@@ -9,6 +9,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
 
+  impute.type <- match.arg(impute.type)
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
 
@@ -16,7 +17,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   MG <- rownames(gpData$geno)[apply(is.na(gpData$geno),1,all)]
   if(check)
     if(impute) {
-      impute.type <- match.arg(impute.type)
       if(impute.type %in% c("beagle", "beagleAfterFamily"))
         if(!"beaglePath" %in% ls()){
           cat("Due to the policy of R, we removed the executable of beagle\n",
@@ -27,7 +27,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
               "the synbreed subfolder exec")
           beaglePath <- NULL
           return(NULL)
-}
+        }
       if(impute.type %in% c("beagle", "beagleAfterFamily") & !is.null(gpData$map))
         if(grepl("string mismatches", all.equal(rownames(gpData$map), colnames(gpData$geno))))
           stop("Order of markers in geno and map does not fit!")
@@ -48,10 +48,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else {
       popStruc <- gpData$covar$family[gpData$covar$genotyped]
     }
-    if(gpData$info$codeGeno & !noHet){
-       warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
-       label.heter <- "1"
-    }
+    if(!is.null(label.heter))
+      if(gpData$info$codeGeno & is.na(as.numeric(label.heter))){
+        warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
+        label.heter <- "1"
+      }
   } else { # atm other formats are supported too
     if(impute & impute.type %in% c("beagle","beagleAfterFamily")) stop("using Beagle is only possible for a gpData object")
     res <- gpData
@@ -520,9 +521,28 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     set.seed(SEED[2])
     cnms <- sample(1:ncol(res))
     which.duplicated <- duplicated(res[, cnms],MARGIN=2)
-    cnms[!which.duplicated]
-    res <- res[, sort(cnms[!which.duplicated])]
-    cnames <- cnames[sort(cnms[!which.duplicated])]
+    which.duplicated <- which.duplicated[cnms]
+    if(!impute)
+    if(!all(is.na(res))){
+	  which.miss <- apply(is.na(res),2,sum)>0 	
+	  which.miss <- (1:length(which.miss))[which.miss] 	
+	  if(length(which.miss[which.miss]) == ncol(res))
+        which.miss <- which.miss[1:(length(which.miss)-1)] 	
+	  for(i in which.miss){ 	
+	    if(which.duplicated[i]) next 	
+	    for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]) 	
+	      if(all(res[, i] == res[, j], na.rm = TRUE)){ 	
+	        if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
+	          which.duplicated[i] <- TRUE 	
+	          break 	
+	        } else { 	
+	          which.duplicated[j] <- TRUE 	
+            }
+          }
+      }
+    }
+    res <- res[, !which.duplicated]
+    cnames <- cnames[!which.duplicated]
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[sort(cnms[!which.duplicated]),]
