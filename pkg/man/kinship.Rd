@@ -8,7 +8,7 @@ This function implements different measures of relatedness between individuals i
 }
 \usage{
 kin(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),
-    DH=NULL, maf=NULL)
+    DH=NULL, maf=NULL, selfing=NULL)
 }
 \arguments{
   \item{gpData}{
@@ -22,7 +22,10 @@ object of class \code{gpData}
 }
   \item{maf}{
     \code{numeric} vector of length equal the number of markers. Supply values for the \eqn{p_i}{pi} of each marker, which were used to correct the allele counts in \code{ret="realized"} and \code{ret="realizedAB"}. If not specified, \eqn{p_i}{pi} equals the minor allele frequency of each locus.
-  }
+}
+  \item{selfing}{
+\code{numeric} vector of length \eqn{n}. It is used as the number of selfings of the individual. Only used for pedigree based relatedness coefficients. No need for animal relationships.
+}
 }
 \details{
 
