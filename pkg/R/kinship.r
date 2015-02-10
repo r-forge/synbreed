@@ -1,6 +1,6 @@
-kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),DH=NULL, maf=NULL, selfing=NULL){
+kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin","gaussian"),DH=NULL, maf=NULL, selfing=NULL, lambda=1){
 
-    ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin"),several.ok = FALSE)
+    ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin","gaussian"),several.ok = FALSE)
 # (1) expected relatedness
 
     if (ret %in% c("add","kin","dom","gam")){
@@ -195,6 +195,19 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
           kmat <- 2*s
           attr(kmat, "SNPs") <- colnames(gpData$geno)
 
+    }
+
+    if (ret == "gaussian"){ # euklidian distance with gaussian
+      if(any(class(gpData)=="gpData")){
+        if(!gpData$info$codeGeno) stop("use function 'codeGeno' before using 'kin'")
+          marker <- gpData$geno
+      } else stop("object is not of class 'gpData'")
+
+      marker <- scale(marker,center=TRUE,scale=TRUE)
+      Dist <- (as.matrix(dist(marker, method='euclidean'))**2)/ncol(marker)
+      kmat <- exp(-lambda*Dist)
+
+      attr(kmat, "SNPs") <- colnames(gpData$geno)
     }
 
     attr(kmat, "type") <- ret
