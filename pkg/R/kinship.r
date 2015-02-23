@@ -22,6 +22,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
       if(length(IDplus)>1) warning("There are parents in the pedigree, which are not coded as ancestors in the ID column!")
       A <- matrix(data=0,nrow=n+length(IDplus),ncol=n+length(IDplus))
       if(is.null(selfing)) selfing <- rep(0, ncol(A)) else selfing <- c(rep(0, length(IDplus)), selfing)
+      if(is.numeric(c(IDplus, ped$ID))) stop("You use only numbers as identifier of your individuals! This causes trouble!")
       names(selfing) <- colnames(A) <- rownames(A) <- c(IDplus, ped$ID)
       A[IDplus, IDplus] <- diag(length(IDplus))
       A[1, 1] <- 0
@@ -137,6 +138,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
       U <- 2*Zq/(sum(maf*(2-maf)))
 
       kmat <- U
+      attr(kmat, "alleleFrequencies") <- maf
       attr(kmat, "expectedMAX") <- 2*sum((2-maf)**2)/(sum(maf*(2-maf)))
       attr(kmat, "SNPs") <- colnames(gpData$geno)
     }
@@ -168,6 +170,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
         }
         U <- (Z %*% t(Z))/(p)
         kmat <- U
+        attr(kmat, "alleleFrequencies") <- maf
         attr(kmat, "markerVariances") <- pq2
         attr(kmat, "SNPs") <- colnames(gpData$geno)
     }
