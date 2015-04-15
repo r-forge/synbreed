@@ -1,7 +1,7 @@
 # coding genotypic data
 
-codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","fix"),replace.value=NULL,
-                     maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",#keep.list=NULL,
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
+                     maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",keep.list=NULL,
                      keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,check=FALSE){
 
   #============================================================
@@ -17,7 +17,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   MG <- rownames(gpData$geno)[apply(is.na(gpData$geno),1,all)]
   if(check)
     if(impute) {
-      if(impute.type %in% c("beagle", "beagleAfterFamily"))
+      if(impute.type %in% c("beagle", "beagleAfterFamily", "beagleNoRand", "beagleAfterFamilyNoRand"))
         if(!"beaglePath" %in% ls()){
           cat("Due to the policy of R, we removed the executable of beagle\n",
               "from our package. If you like to use the beagle imputation,\n",
@@ -28,7 +28,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           beaglePath <- NULL
           return(NULL)
         }
-      if(impute.type %in% c("beagle", "beagleAfterFamily") & !is.null(gpData$map))
+      if(impute.type %in% c("beagle", "beagleAfterFamily", "beagleNoRand", "beagleAfterFamilyNoRand") & !is.null(gpData$map))
         if(grepl("string mismatches", all.equal(rownames(gpData$map), colnames(gpData$geno))))
           stop("Order of markers in geno and map does not fit!")
       if(impute.type %in% c("beagle") & length(MG) > 0) stop(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
@@ -48,13 +48,16 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else {
       popStruc <- gpData$covar$family[gpData$covar$genotyped]
     }
-    if(!is.null(label.heter))
-      if(gpData$info$codeGeno & is.na(as.numeric(label.heter))){
+    if(gpData$info$codeGeno & !is.null(label.heter))
+      if(is.function(label.heter)){
+        warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
+        label.heter <- "1"
+      } else if(is.na(as.numeric(label.heter))){
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
         label.heter <- "1"
       }
   } else { # atm other formats are supported too
-    if(impute & impute.type %in% c("beagle","beagleAfterFamily")) stop("using Beagle is only possible for a gpData object")
+    if(impute & impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")) stop("using Beagle is only possible for a gpData object")
     res <- gpData
     popStruc <- NULL
     gpData <- list(geno=res)
@@ -86,8 +89,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(!is.logical(impute)) stop("impute has to be logical")
     if(impute.type=="fix" & is.null(replace.value)) stop("'replace.value' must be given for impute.type='fix'")
     # imputing with family information
-    if((impute.type=="family" | impute.type=="beagleAfterFamily") & is.null(popStruc)) stop(paste("family information needed, but '",substitute(gpData),"$covar$family' is empty",sep=""))
-    if((impute.type=="family" | impute.type=="beagleAfterFamily") & !is.null(popStruc)){
+    if((impute.type=="family" | impute.type=="beagleAfterFamily" | impute.type=="beagleAfterFamilyNoRand") & is.null(popStruc)) stop(paste("family information needed, but '",substitute(gpData),"$covar$family' is empty",sep=""))
+    if((impute.type=="family" | impute.type=="beagleAfterFamily" | impute.type=="beagleAfterFamilyNoRand") & !is.null(popStruc)){
       if(any(is.na(popStruc))) warning("missing values in family information, imputation is likely to be incomplete")
       if(length(popStruc)!=n) stop("population structure must have equal length as obsersvations in genotypic data")
     }
@@ -95,7 +98,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   # use same reference allele for all markers if not specified differently
   if(reference.allele[1]!="minor" & length(reference.allele)==1)     reference.allele <- rep(reference.allele,ncol(res))
-
+  knames <- cnames %in% keep.list
 
   #============================================================
   # step 1  - remove markers with more than nmiss fraction of missing values (optional, argument nmiss>0)
@@ -103,11 +106,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(!is.null(nmiss)){
     if(nmiss<0 | nmiss>1) stop("'nmiss' have to be in [0,1]")
-    which.miss <- apply(is.na(res),2,mean,na.rm=TRUE)<=nmiss
+    which.miss <- apply(is.na(res),2,mean,na.rm=TRUE)<=nmiss | knames
     res <- res[,which.miss]
     if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
     if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
-    cnames <- cnames[which.miss]
+    cnames <- cnames[which.miss]; knames <- knames[which.miss]
+    # update map
+    gpData$geno <- gpData$geno[, which.miss]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    rm(which.miss)
+  } else if (any(colMeans(is.na(res))==1)){
+    which.miss <- colMeans(is.na(res))!=1
+    res <- res[,which.miss]
+    if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
+    if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with only missing values \n")
+    cnames <- cnames[which.miss]; knames <- knames[which.miss]
     # update map
     gpData$geno <- gpData$geno[, which.miss]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
@@ -225,9 +238,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(tester)){
-    which.miss <- res[rnames==tester,]!=label.heter&!is.na(res[rnames==tester,])
+    which.miss <- res[rnames==tester,]!=label.heter&!is.na(res[rnames==tester,])| knames
     res <- res[,which.miss]
-    cnames <- cnames[which.miss]
+    cnames <- cnames[which.miss]; knames <- knames[which.miss]
     if(sum(!which.miss) > 0){
       if (verbose) cat("   step 3 :",sum(!which.miss),"marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
     } else {
@@ -245,13 +258,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     if(is.null(tester)){
-      which.maf <- colMeans(res,na.rm=TRUE)>=2*maf
+      which.maf <- colMeans(res,na.rm=TRUE)>=2*maf | knames
     } else {
-      which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf
+      which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf  | knames
     }
     if (verbose) cat("   step 4  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
-    cnames <- cnames[which.maf]
+    cnames <- cnames[which.maf]; knames <- knames[which.maf]
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
      # update report list
@@ -265,9 +278,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(tester)){
-    which.miss <- res[rnames==tester,] != 2
+    which.miss <- res[rnames==tester,] != 2 | knames
     res <- res[,which.miss]
-    cnames <- cnames[which.miss]
+    cnames <- cnames[which.miss]; knames <- knames[which.miss]
     if(sum(!which.miss) > 0){
       if (verbose) cat("   step 5  :",sum(!which.miss),"marker(s) discarded for which the tester has the minor allele\n")
     } else{
@@ -285,9 +298,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     res[res == 2] <- NA
     res <- matrix(as.numeric(res), nrow = n)
     if(!is.null(nmiss)){
-      which.miss <- apply(is.na(res),2,mean,na.rm=TRUE) <= nmiss
+      which.miss <- apply(is.na(res),2,mean,na.rm=TRUE) <= nmiss |knames
       res <- res[,which.miss]
-      cnames <- cnames[which.miss]
+      cnames <- cnames[which.miss]; knames <- knames[which.miss]
       if (verbose) cat("   step 6  :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
       # update map
       if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
@@ -327,7 +340,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     #########################################################
     # impute missing values according to population structure
     #########################################################
-    if(impute.type %in% c("family" ,"beagleAfterFamily")){
+    if(impute.type %in% c("family", "beagleAfterFamily", "beagleAfterFamilyNoRand")){
       if (verbose) cat("   step 7b : Imputing of missing values by family information \n")
       # initialize counter (- number of heterozygous values)
       # loop over all markers
@@ -362,7 +375,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                    # update counter
                    if(polymorph[i]) cnt3[j] <- cnt3[j] + nmissfam[i] else cnt1[j] <- cnt1[j] + nmissfam[i]
                  }
-                 if(impute.type=="beagleAfterFamily"){
+                 if(impute.type %in%c("beagleAfterFamily", "beagleAfterFamilyNoRand")){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
                      res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1, sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                      # update counter
@@ -386,7 +399,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     ###########################
     # run beagle for imputation
     ###########################
-    if(impute.type %in% c("beagle","beagleAfterFamily")){
+    if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")){
       if (verbose) cat("   step 7c : Imputing of missing values by Beagle \n")
         #if(any(grep(" ",path.package()[grep("synbreed", path.package())]))) warning("The package is installed in folder ",path.package()[grep("synbreed", path.package())]," which contains a space. To run beagle properly, please install the package to a differnt folder without spaces.")
         # use Beagle and impute NA for polymorphic families
@@ -499,11 +512,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(!is.null(maf) & impute){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
-    if(is.null(tester)) which.maf <- colMeans(res,na.rm=TRUE)>=2*maf else
-      which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf
+    if(is.null(tester)) which.maf <- colMeans(res,na.rm=TRUE)>=2*maf | knames else
+      which.maf <- colMeans(res,na.rm=TRUE)>=maf & colMeans(res,na.rm=TRUE)<=1-maf | knames
     if (verbose) cat("   step 9  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     res <- res[,which.maf]
-    cnames <- cnames[which.maf]
+    cnames <- cnames[which.maf]; knames <- knames[which.maf]
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
      # update report list
@@ -528,27 +541,49 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 	  which.miss <- (1:length(which.miss))[which.miss] 	
 	  if(length(which.miss[which.miss]) == ncol(res))
         which.miss <- which.miss[1:(length(which.miss)-1)] 	
-	  for(i in which.miss){ 	
-	    if(which.duplicated[i]) next 	
-	    for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]) 	
-	      if(all(res[, i] == res[, j], na.rm = TRUE)){ 	
-	        if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
-	          which.duplicated[i] <- TRUE 	
-	          break 	
-	        } else { 	
-	          which.duplicated[j] <- TRUE 	
+      if(is.null(keep.list)){
+        for(i in which.miss){ 	
+          if(which.duplicated[i]) next 	
+          for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
+            if(all(res[, i] == res[, j], na.rm = TRUE)){ 	
+              if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
+                which.duplicated[i] <- TRUE 	
+                break 	
+              } else { 	
+                which.duplicated[j] <- TRUE 	
+              }
             }
           }
-      }
-    }
+        }
+      } else {
+        for(i in which.miss){ 	
+          if(which.duplicated[i]) next 	
+          for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
+            if(all(res[, i] == res[, j], na.rm = TRUE)){
+              if(knames[i]){
+                if(knames[j]) next else which.duplicated[j] <- TRUE
+              } else {
+                if(knames[j]){ which.duplicated[i] <- TRUE
+                } else {
+                  if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
+                    which.duplicated[i] <- TRUE 	
+                    break 	
+                  } else { 	
+                    which.duplicated[j] <- TRUE 	
+                  } # end choice of not keep.list elements
+                } # end of neither i or j in keep.list
+              } # end of i not in the keep list
+            } # end of to equal i and j proove
+          } # end of the loop from i+1 to j
+        } # end of loop through which.miss
+      } # end of else step of is.null(keep.list) proove
+    } # end of not imputed and missing value step
     res <- res[, !which.duplicated]
     cnames <- cnames[!which.duplicated]
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[sort(cnms[!which.duplicated]),]
-   # update report list
-
-
+    # update report list
   } else{
     if (verbose) cat("   step 10 : No duplicated markers removed \n")
   }
@@ -558,9 +593,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(tester)){
-    which.fixed <- apply(res, 2, sum) == nrow(res)-1
+    which.fixed <- apply(res, 2, sum) == nrow(res)-1 | knames
     res <- res[,!which.fixed]
-    cnames <- cnames[!which.fixed]
+    cnames <- cnames[!which.fixed]; knames <- knames[!which.fixed]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[!which.fixed,]
     if (verbose)
       if(sum(which.fixed) != 0){

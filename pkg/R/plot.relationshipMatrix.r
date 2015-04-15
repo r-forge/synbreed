@@ -49,8 +49,8 @@ plot.relationshipMatrix <- function(x,levelbreaks=NULL,...){
                 at=levelbreaks,
                 pretty=TRUE,...)
     } else {
-      xaxt <- list(at=c(1,size/2,size),rot=c(40,0),labels=c(rownames(x)[size],"...",rownames(x)[1]),tck=0, cex=.75)
-      yaxt <- list(at=c(1,size/2,size),rot=c(40,0),labels=c(rownames(x)[1],"...",rownames(x)[size]),tck=0, cex=.75)
+      yaxt <- list(at=c(1,size/2,size),rot=c(40,0),labels=c(rownames(x)[size],"...",rownames(x)[1]),tck=0, cex=.75)
+      xaxt <- list(at=c(1,size/2,size),rot=c(40,0),labels=c(rownames(x)[1],"...",rownames(x)[size]),tck=0, cex=.75)
       levelplot(relMat,axes=FALSE,
                 col.regions=color,xlab="",ylab="",
                 scales=list(x=xaxt, y=yaxt),

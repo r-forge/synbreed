@@ -10,11 +10,11 @@ Raw marker data is a matrix with elements of arbitrary format (e.g. alleles code
 Imputation of missing values can be done by random sampling from allele distribution, the \code{Beagle} software or family information (see details). Additional preselection of markers can be carried out according to the minor allele frequency and/or fraction of missing values.
 }
 \usage{
-codeGeno(gpData,impute=FALSE,impute.type=c("random","family",
-         "beagle", "beagleAfterFamily","fix"), replace.value=NULL, maf=NULL,
-         nmiss=NULL, label.heter="AB",reference.allele="minor", keep.identical=TRUE,
-         verbose=FALSE, minFam=5, showBeagleOutput=FALSE, tester=NULL,
-         print.report=FALSE, check=FALSE)
+codeGeno(gpData,impute=FALSE,
+         impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"), 
+         replace.value=NULL, maf=NULL, nmiss=NULL, label.heter="AB" ,reference.allele="minor", 
+         keep.list=NULL, keep.identical=TRUE, verbose=FALSE, minFam=5, showBeagleOutput=FALSE, 
+         tester=NULL, print.report=FALSE, check=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{logical}. Should missing value be replaced by imputing?
 }
   \item{impute.type}{
-\code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"} (default = \code{"random"}).  See details.
+\code{character} with one out of \code{"fix"}, \code{"random"} , \code{"family"}, \code{"beagle"}, \code{"beagleAfterFamily"} , \code{"beagleAfterFamilyNoRand"}, \code{"beagleAfterFamilyNoRand"} (default = \code{"random"}).  See details.
 }
   \item{replace.value}{
 \code{numeric} scalar to replace missing values in case \code{impute.type="fix"}.
@@ -41,6 +41,9 @@ This is either a scalar or vector of characters to identify heterozygous genotyp
 }
   \item{reference.allele}{
 Define the reference allele which is used for the coding. Default is \code{"minor"}, i.e. data is coded by the number of copies of the minor allele. Alternatively, \code{reference.allele} can specify a single character defining the reference allele for all markers, or a vector defining marker-specific reference alleles (using the same order as of the markers in \code{gpData}). In case you have already a gpObject with \code{info$codeGeno == TRUE}, and like only to use higher maf or remove duplicated markers, you can use the option \code{"keep"}, than the coding of the original object is kept.
+}
+  \item{keep.list}{
+A vector with the names of markers, which should be kept during the process of coding and filtering.
 }
   \item{keep.identical}{
 \code{logical}. Should duplicated markers be kept? NOTE: From a set of identical markers (with respect to the non-missing alleles) the one with the smallest number of missing values is kept. For those with an identical number of missing values, the first one is kept and all others are removed.
@@ -93,6 +96,9 @@ the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use thi
     imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle. For details of this see the description of the \code{beagle} option.}
+\item{"beagleNoRand" and "beagleAfterFamilyNoRand"}{
+The same as the option \code{beagle}, respectively \code{beagleAfterFamily}, except that markers without map information will be not imputed.}
+
 \item{"random"}{The missing values for a marker \eqn{j} are sampled from the marginal allele distribution of marker \eqn{j}. With 2 possible genotypes (to force this option, use \code{label.heter=NULL}), i.e. 0 and 2, values are sampled from distribution with probabilities \eqn{P(x=0)=1-p} and \eqn{P(x=2)=p}, where \eqn{p} is the minor allele frequency of marker \eqn{j}.  In the standardd case of 3 genotypes, i.e. with heterozygous genotypes, values are sampled from distribution \eqn{P(x=0)=(1-p)^2}, \eqn{P(x=1)=p(1-p)} and \eqn{P(x=2)=p^2} assuming Hardy-Weinberg equilibrium for all loci.}
 \item{"fix"}{All missing values are imputed by \code{replace.value}. Note that only 0, 1 or 2 should be chosen.}
 }
