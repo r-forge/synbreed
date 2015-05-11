@@ -1,6 +1,6 @@
 Package: synbreed
 Type: Package
-Title: Framework for the analysis of genomic prediction data using R
+Title: Framework for the Analysis of Genomic Prediction Data using R
 Version: 0.10-11
 Date: 2015-05-11
 Author: Valentin Wimmer, Hans-Juergen Auinger, Theresa Albrecht, Chris-Carolin Schoen with contributions by Larry Schaeffer, Malena Erbe, Ulrike Ober, Christian Reimer, Yvonne Badke and Peter VandeHaar
