@@ -580,7 +580,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           res[res==3] <- NA
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
-        cat(str(df.ldf, "\n"))
+#        cat(str(df.ld, "\n"))
 	    which.miss <- apply(is.na(res),2,sum)>0 	
 	    which.miss <- (1:length(which.miss))[which.miss] 	
   	  if(length(which.miss[which.miss]) == ncol(res))
