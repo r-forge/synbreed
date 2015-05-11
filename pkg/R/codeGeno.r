@@ -60,7 +60,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(impute & impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")) stop("using Beagle is only possible for a gpData object")
     res <- gpData
     popStruc <- NULL
-    gpData <- list(geno=res)
+    gpData <- list(geno=res, info=list(map.unit="NA", codeGeno=FALSE))
     gpData$map <- NULL
   }
   #  catch errors
@@ -68,7 +68,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(class(res)!= "data.frame" & class(res) != "matrix") stop("wrong data format")
     if(any(colMeans(is.na(res))==1)) warning("markers with only missing values in data")
     if(length(reference.allele)>1 & length(reference.allele)!=ncol(res)) stop("'reference allele' should be of length 1 or match the number of markers")
-    if(class(reference.allele) != "character") stop("'reference allele' should be of class character")
+    if(class(reference.allele) != mode(res)) stop("'reference allele' should be of class character")
   }
   # number of genotypes
   n <- nrow(res)
@@ -157,8 +157,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else {
       if(reference.allele[1]!="keep") gpData$info$codeGeno==FALSE
     }
-  }
-  if(!gpData$info$codeGeno) {
+  } else { # codeGeno condition of gpData FALSE
     if(reference.allele[1]=="minor"){
 
       # identify heterozygous genotypes
@@ -212,20 +211,38 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       count.ref.alleles <- function(x,ref){
    	    sum(x==ref)		
       }
-      recode.by.ref.alleles <- function(x){
-	    ref <- x[1]
-	    x <- x[-1]
-	    x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
-	    nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
-	    return(nr.ref.alleles)
+      if(mode(res) == "character"){
+        recode.by.ref.alleles <- function(x){
+	      ref <- substr(x[1],1,1)
+	      x <- x[-1]
+	      x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
+  	      nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
+	      return(nr.ref.alleles)
+        }
+      } else {
+        recode.by.ref.alleles <- function(x){
+	      ref <- x[1]
+	      x <- x[-1]
+	      x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
+  	      nr.ref.alleles <- unlist(lapply(x2,count.ref.alleles,ref))
+	      return(nr.ref.alleles)
+        }
       }
-      res_ref <- rbind(reference.allele,res)
       get.nonref.allele <- function(x){
         xx <- unlist(strsplit(x[-1],split=""))
         unique(xx)[unique(xx) != x[1] & !is.na(unique(xx))]
       }
+      if(any(is.na(reference.allele))){
+        ref.tab <- lapply(data.frame(res[,is.na(reference.allele)]), table)
+        ref.all <- unlist(lapply(ref.tab, names))[seq(1, by=2, length.out=length(ref.tab))]
+        ref.all <- ifelse(unlist(ref.tab)[seq(1, by=2, length.out=length(ref.tab))] > unlist(ref.tab)[seq(2, by=2, length.out=length(ref.tab))],
+                          ref.all, unlist(lapply(ref.tab, names))[seq(2, by=2, length.out=length(ref.tab))])
+        reference.allele[is.na(reference.allele)] <- ref.all
+        rm(ref.all, ref.tab)
+      }
+      res_ref <- rbind(reference.allele,res)
       res <- apply(res_ref,2,recode.by.ref.alleles)
-
+      rm(res_ref)
       if(print.report){
         major <- reference.allele
         minor <-  apply(res_ref,2,get.nonref.allele)
@@ -534,51 +551,96 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     set.seed(SEED[2])
     cnms <- sample(1:ncol(res))
     which.duplicated <- duplicated(res[, cnms],MARGIN=2)
-    which.duplicated <- which.duplicated[cnms]
-    if(!impute)
-    if(!all(is.na(res))){
-	  which.miss <- apply(is.na(res),2,sum)>0 	
-	  which.miss <- (1:length(which.miss))[which.miss] 	
-	  if(length(which.miss[which.miss]) == ncol(res))
-        which.miss <- which.miss[1:(length(which.miss)-1)] 	
-      if(is.null(keep.list)){
-        for(i in which.miss){ 	
-          if(which.duplicated[i]) next 	
-          for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
-            if(all(res[, i] == res[, j], na.rm = TRUE)){ 	
-              if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
-                which.duplicated[i] <- TRUE 	
-                break 	
-              } else { 	
-                which.duplicated[j] <- TRUE 	
+    which.duplicated <- cnames %in% (cnames[cnms])[which.duplicated]
+    rev.which.duplicated <- duplicated(res[, cnms],MARGIN=2, fromLast=TRUE)
+    rev.which.duplicated <- cnames %in% (cnames[cnms])[rev.which.duplicated]
+    rev.which.duplicated[which.duplicated] <- FALSE
+    if(impute){
+       if(sum(which.duplicated) >0){
+        mat.ld <- cor(res[, which.duplicated], res[, rev.which.duplicated], use="pairwise.complete.obs")
+        df.ld <- data.frame(kept=rep(cnames[which.duplicated], ncol(mat.ld)),
+                            removed=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
+                            ld=as.numeric(mat.ld),
+                            stringsAsFactors=FALSE)
+        df.ld <- df.ld[df.ld$ld>1-1e-14,]
+        df.ld$ld <- NULL
+        rm(mat.ld)
+      } else df.ld <- data.frame(kept=as.character(), removed=as.character())
+    } else {# end of imputed step
+      if(!all(!is.na(res))){
+        if(sum(which.duplicated) >0){
+          res[is.na(res)] <- 3
+          mat.ld <- cor(res[, which.duplicated], res[, rev.which.duplicated])
+          df.ld <- data.frame(kept=rep(cnames[which.duplicated], each=nrow(mat.ld)),
+                              removed=rep(cnames[rev.which.duplicated], ncol(mat.ld)),
+                              ld=as.numeric(mat.ld),
+                              stringsAsFactors=FALSE)
+          df.ld <- df.ld[df.ld$ld>1-1e-14,]
+          df.ld$ld <- NULL
+          res[res==3] <- NA
+          rm(mat.ld)
+        } else df.ld <- data.frame(kept=as.character(), removed=as.character())
+        cat(str(df.ldf, "\n"))
+	    which.miss <- apply(is.na(res),2,sum)>0 	
+	    which.miss <- (1:length(which.miss))[which.miss] 	
+  	  if(length(which.miss[which.miss]) == ncol(res))
+          which.miss <- which.miss[1:(length(which.miss)-1)] 	
+        if(is.null(keep.list)){
+          for(i in which.miss){ 	
+            if(which.duplicated[i]) next 	
+            for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
+              if(all(res[, i] == res[, j], na.rm = TRUE)){ 	
+                if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
+                  which.duplicated[i] <- TRUE 	
+                  df.ld <- rbind(df.ld, data.frame(kept=cnames[j], removed=cnames[i]))
+                  break 	
+                } else { 	
+                  which.duplicated[j] <- TRUE 	
+                  df.ld <- rbind(df.ld, data.frame(kept=cnames[i], removed=cnames[j]))
+                }
               }
             }
           }
-        }
-      } else {
-        for(i in which.miss){ 	
-          if(which.duplicated[i]) next 	
-          for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
-            if(all(res[, i] == res[, j], na.rm = TRUE)){
-              if(knames[i]){
-                if(knames[j]) next else which.duplicated[j] <- TRUE
-              } else {
-                if(knames[j]){ which.duplicated[i] <- TRUE
+        } else {
+          for(i in which.miss){ 	
+            if(which.duplicated[i]) next 	
+            for(j in ((i+1):ncol(res))[!which.duplicated[(i+1):ncol(res)]]){ 	
+              if(all(res[, i] == res[, j], na.rm = TRUE)){
+                if(knames[i]){
+                  if(knames[j]) next else which.duplicated[j] <- TRUE
                 } else {
-                  if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
-                    which.duplicated[i] <- TRUE 	
-                    break 	
-                  } else { 	
-                    which.duplicated[j] <- TRUE 	
-                  } # end choice of not keep.list elements
-                } # end of neither i or j in keep.list
-              } # end of i not in the keep list
-            } # end of to equal i and j proove
-          } # end of the loop from i+1 to j
-        } # end of loop through which.miss
-      } # end of else step of is.null(keep.list) proove
-    } # end of not imputed and missing value step
+                  if(knames[j]){ which.duplicated[i] <- TRUE
+                  } else {
+                    if(sum(is.na(res[, i])) >= sum(is.na(res[, j]))){ 	
+                      which.duplicated[i] <- TRUE 	
+                      df.ld <- rbind(df.ld, data.frame(kept=cnames[j], removed=cnames[i]))
+                      break 	
+                    } else { 	
+                      which.duplicated[j] <- TRUE 	
+                      df.ld <- rbind(df.ld, data.frame(kept=cnames[i], removed=cnames[j]))
+                    } # end choice of not keep.list elements
+                  } # end of neither i or j in keep.list
+                } # end of i not in the keep list
+              } # end of to equal i and j proove
+            } # end of the loop from i+1 to j
+          } # end of loop through which.miss
+        } # end of else step of is.null(keep.list) proove
+        if(is.na(df.ld[1,1])) df.ld <- df.ld[-1,]
+      } else {# end of missing value step
+        if(sum(which.duplicated) >0){
+          mat.ld <- cor(res[, which.duplicated], res[, rev.which.duplicated])
+          df.ld <- data.frame(kept=rep(colnames(mat.ld), nrow(mat.ld)),
+                              removed=rep(rownames(mat.ld), each=ncol(mat.ld)),
+                              ld=as.numeric(mat.ld),
+                              stringsAsFactors=FALSE)
+          df.ld <- df.ld[df.ld$ld>1-1e-14,]
+          df.ld$ld <- NULL
+          rm(mat.ld)
+        } else df.ld <- data.frame(kept=as.character(), removed=as.character())
+      }
+    } # end of not imputed step
     res <- res[, !which.duplicated]
+    attr(res, "identical") <- df.ld
     cnames <- cnames[!which.duplicated]
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
