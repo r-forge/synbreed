@@ -5,6 +5,16 @@
 exportPattern(".")
 
 # Import all packages listed as Imports or Depends
+import( 	
+	   igraph, 	
+	   LDheatmap, 	
+	   qtl, 	
+	   doBy, 	
+	   BLR, 	
+	   regress, 	
+	   abind, 	
+	   synbreedData 	
+	 )
 
 S3method("plot", GenMap)
 S3method("plot", LDdf)
