@@ -13,7 +13,7 @@ import(
 	   BLR, 	
 	   regress, 	
 	   abind, 	
-	   synbreedData 	
+#	   synbreedData 	
 	 )
 
 S3method("plot", GenMap)
