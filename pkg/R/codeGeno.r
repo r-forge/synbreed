@@ -436,8 +436,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           markerTEMPbeagle$geno <- res[, colnames(res)[!colnames(res) %in% sel]]
           # recode for Beagle
           markerTEMPbeagle$geno[markerTEMPbeagle$geno==0] <- "AA"
-          markerTEMPbeagle$geno[markerTEMPbeagle$geno==1] <- "AB"
-          markerTEMPbeagle$geno[markerTEMPbeagle$geno==2] <- "BB"
+          markerTEMPbeagle$geno[markerTEMPbeagle$geno==1] <- "AT"
+          markerTEMPbeagle$geno[markerTEMPbeagle$geno==2] <- "TT"
 
           # update counter
           #cnt2 <- cnt2 + sum(is.na(markerTEMPbeagle$geno))
