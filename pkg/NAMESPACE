@@ -13,9 +13,9 @@ import(igraph,
 	   regress, 	
 	   abind,
        MASS,
-       lattice 	
+       lattice
 )
-#	   synbreedData 	
+#	   synbreedData rJava 	
 
 S3method("plot", GenMap)
 S3method("plot", LDdf)

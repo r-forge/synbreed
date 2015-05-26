@@ -4,6 +4,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
 
   # start with some checks on data
   # geno as matrix but not data.frame (storage)
+  if(!map.unit %in% c("cM", "bp", "kb", "Mb")) warning("The measurement unit for the positions in the map should be either 'cM', 'bp', 'kb' or 'Mb'")
   if(!is.null(geno)){
     if(is.data.frame(geno)){
       geno <- as.matrix(geno)

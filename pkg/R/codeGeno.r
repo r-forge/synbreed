@@ -433,14 +433,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
           sel <- rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% colnames(res) ,])
           markerTEMPbeagle <- discard.markers(gpData,which=sel)
-          markerTEMPbeagle$geno <- res[, colnames(res)[!colnames(res) %in% sel]]
-          # recode for Beagle
-          markerTEMPbeagle$geno[markerTEMPbeagle$geno==0] <- "AA"
-          markerTEMPbeagle$geno[markerTEMPbeagle$geno==1] <- "AT"
-          markerTEMPbeagle$geno[markerTEMPbeagle$geno==2] <- "TT"
-
-          # update counter
-          #cnt2 <- cnt2 + sum(is.na(markerTEMPbeagle$geno))
+          markerTEMPbeagle$geno <- res[, colnames(markerTEMPbeagle$geno)]
 
           # write input files for beagle
           pre <- paste("chr",chr[lg],sep="")
@@ -451,18 +444,24 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           } else if(lg == 1 & length(list.files("beagle")) > 0 ) {
              file.remove(paste("beagle", list.files("beagle"), sep="/"))
           }
-          write.beagle(markerTEMPbeagle,file.path(getwd(),"beagle"),prefix=pre)
+          write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle/"),"/",prefix=pre, "input.vcf", sep=""))
+          if(noHet){
           output <- system(paste("java -Xmx1000m -jar ",
-                           shQuote(paste(beaglePath, "/beagle.jar", sep="")),
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.r1399.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " unphased=beagle/", pre, "input.bgl markers=beagle/", pre, "marker.txt missing=NA out=", sep=""),
+                           " gt=beagle/", pre, "input.vcf usephase=true out=beagle/", pre, "out", sep=""),
                            intern=!showBeagleOutput)
-          if(.Platform$OS.type == "unix") system(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
-          if(.Platform$OS.type == "windows") shell(paste("gzip -d -f beagle/",pre,"input.bgl.dose.gz",sep=""))
-
+          } else {
+          output <- system(paste("java -Xmx1000m -jar ",
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.r1399.jar", sep="")),
+                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                           " gt=beagle/", pre, "input.vcf out=beagle/", pre, "out", sep=""),
+                           intern=!showBeagleOutput)
+          }
           # read data from beagle
-          resTEMP <- read.table(paste("beagle/",pre,"input.bgl.dose",sep=""),header=TRUE,row.names=1)
-          resTEMP <- t(resTEMP[,-c(1:2)])
+          resTEMP <- read.vcf2matrix(file=gzfile(paste("beagle/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE)
+          mode(resTEMP) <- "numeric"
+
 
           # convert dose to genotypes
           if(noHet){
