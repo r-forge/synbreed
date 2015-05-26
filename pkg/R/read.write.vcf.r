@@ -45,3 +45,30 @@ read.vcf2matrix <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow
   return(geno)
 
 }
+
+read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE){
+
+  coding <- match.arg(coding)
+  cnt=0
+  while(scan(file=file, what="character", skip=cnt, nlines=1, quiet=TRUE)[1] !="#CHROM") cnt <- cnt+1
+  Mnames <- scan(file, what="character", skip=cnt, nlines=1, quiet=TRUE)
+  geno <- read.table(file=file, sep="\t", header=FALSE, skip=cnt+1, stringsAsFactors=FALSE)
+  colnames(geno) <- Mnames
+  rownames(geno) <- geno$ID
+  ref <- geno$REF; alternative <- geno$ALT
+  form <- unlist(strsplit(geno$FORMAT, ":"))
+  map <- geno[, c("#CHROM", "POS")]
+  colnames(map) <- c("chr", "pos")
+  class(map) <- c("GenMap", "data.frame")
+  geno <- geno[, !colnames(geno) %in% c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT")]
+  geno[1:nrow(geno), 1:ncol(geno)] <- unlist(lapply(geno, strsplit, ":"))[rep(form, ncol(geno)) == FORMAT]
+  if(FORMAT == "GT" & coding == "allele"){
+    geno[geno=="0|0"] <- rep(paste(ref,ref, sep="|"), ncol(geno))[geno=="0|0"]
+    geno[geno=="1|0"] <- rep(paste(alternative,ref, sep="|"), ncol(geno))[geno=="1|0"]
+    geno[geno=="0|1"] <- rep(paste(ref,alternative, sep="|"), ncol(geno))[geno=="0|1"]
+    geno[geno=="1|1"] <- rep(paste(alternative,alternative, sep="|"), ncol(geno))[geno=="1|1"]
+  }
+  if(IDinRow) geno <- t(geno)
+  return(list(geno=geno, map=map))
+
+}
