@@ -10,9 +10,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   impute.type <- match.arg(impute.type)
-  if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand") &
-     nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),]))){
-    stop("Remove markers with identical Positions!")
+  if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")){
+    if(is.null(gpData$map)){
+      warning("Beagle imputation makes no sense without map information!")
+    } else {
+      if(nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),])))
+        stop("Remove markers with identical positions!")
+    }
   }
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
