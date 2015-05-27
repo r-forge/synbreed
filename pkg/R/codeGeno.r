@@ -10,6 +10,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   impute.type <- match.arg(impute.type)
+  if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand") &
+     nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),]))){
+    stop("Remove markers with identical Positions!")
+  }
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
 
@@ -431,7 +435,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         for (lg in seq(along=chr)){
           if(lg==1) ptm <- proc.time()[3]
           if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
-          sel <- unique(c(rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% colnames(res) ,]),
+          sel <- unique(c(rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% cnames ,]),
                           colnames(gpData$geno)[!colnames(gpData$geno) %in% cnames]))
           markerTEMPbeagle <- discard.markers(gpData,which=sel)
           markerTEMPbeagle$geno <- res[, colnames(markerTEMPbeagle$geno)]
