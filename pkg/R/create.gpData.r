@@ -143,6 +143,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
       # sortcolumns in geno, too
       geno <- geno[,rownames(map)]
     }
+    map$pos[is.na(map$chr)] <- NA
     class(map) <- c("GenMap", "data.frame")
   }
 
