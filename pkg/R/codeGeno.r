@@ -398,28 +398,35 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                    allTab <- table(c(0,2))
                  } else if(all(names(allTab) == c(0, 2)) & !noHet)  allTab <- table(c(0,1,1,2))
                  if (impute.type=="family"){
-                   res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- ifelse(length(allTab)>1, sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
+                   res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,
+                                                                    sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
+                                                                    as.numeric(names(allTab)))
                    # update counter
                    if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
                  }
                  if(impute.type %in%c("beagleAfterFamily")){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
-                     res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- ifelse(length(allTab)>1,
-                                                                                      sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
-                                                                                      as.numeric(names(allTab)))
+                     res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1,
+                                                                      sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
+                                                                      as.numeric(names(allTab)))
                      # update counter
                      if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
                    } else { # use Beagle and impute NA for polymorphic families
                      if(!polymorph[as.character(i)]){
                        # impute values for impute.type="beagleAfterfamily"  : only monomorph markers
-                       res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- as.numeric(rep(major.allele[as.character(i)],nmissfam[as.character(i)]))
+                       res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(rep(major.allele[as.character(i)],nmissfam[as.character(i)]))
                        # update counter
                        cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
                      }
                    }
                  }
                }
-               if(j==ceiling(length(vec.cols)/100)) if(verbose) cat("         approximative run time for imputation by family information ",(proc.time()[3] - ptm)*99," seconds ... \n",sep="")
+               if(j==ceiling(length(vec.cols)/100))
+                 if(verbose) cat("         approximative run time for imputation by family information ",
+                                 ifelse((proc.time()[3] - ptm)*99 < 60, paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep=""),
+                                   ifelse((proc.time()[3] - ptm)*99 < 3600, paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep=""),
+                                                                           , paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))),
+                                 sep="")
           }, silent= !verbose) # end try
         }   # end of if(sum(!is.na(res[,j]))>0)
       } # end of marker loop
@@ -490,8 +497,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           } else {
             res <- resTEMP
           }
-          if(lg==1) if(verbose) cat("\n         approximative run time for beagle imputation ",
-                                        (proc.time()[3] - ptm)/ncol(markerTEMPbeagle$geno)*ncol(res)," seconds ... \n\n",sep="")
+          if(lg==1)
+            if(verbose) cat("         approximative run time for imputation by family information ",
+                            ifelse((proc.time()[3] - ptm)*99 < 60, paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep=""),
+                              ifelse((proc.time()[3] - ptm)*99 < 3600, paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep=""),
+                                                                     , paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))),
+                            sep="")
         }
       }
 
