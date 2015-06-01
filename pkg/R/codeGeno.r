@@ -371,12 +371,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       # loop over all markers
       probList <- list(c(1), c(.5,.5), c(.25,.5,.25))
       vec.cols <- (1:M)[is.na(colSums(res, na.rm = FALSE))]
+      nFam <- table(popStruc)
+      vec.big <- popStruc %in% names(nFam)[nFam > minFam]
       for (j in vec.cols){
         if(j==vec.cols[1]) ptm <- proc.time()[3]
         if(sum(!is.na(res[,j]))>0){
           try({# compute population structure  as counts
-               poptab <- table(popStruc,res[,j])
-               nFam <- table(popStruc)
+               poptab <- table(popStruc[vec.big],res[vec.big,j])
                rS <- rowSums(poptab)
                # compute otherstatistics
                major.allele <- unlist(attr(poptab,"dimnames")[[2]][apply(poptab,1,which.max)])
@@ -385,38 +386,41 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                polymorph2 <- rS > minFam
                polymorph[!polymorph2] <- TRUE
                # count missing values
-               nmissfam <- tapply(is.na(res[,j]),popStruc,sum)
+               nmissfam <- tapply(is.na(res[vec.big,j]),popStruc[vec.big],sum)
                # must be a named list
                names(major.allele) <- names(polymorph)
                # loop over all families
                for (i in rownames(poptab)[nmissfam > 0]){
+                 #print(c(i,j))
                  # impute values for impute.type="family" : all missing genotypes
-                 allTab <- table(res[popStruc == i, j])
+                 allTab <- table(res[popStruc[vec.big] == i, j])
                  if(length(allTab) == 0 & noHet) {
                    allTab <- table(c(0,2))
                  } else if(all(names(allTab) == c(0, 2)) & !noHet)  allTab <- table(c(0,1,1,2))
                  if (impute.type=="family"){
-                   res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1, sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
+                   res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- ifelse(length(allTab)>1, sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
                    # update counter
-                   if(polymorph[i]) cnt3[j] <- cnt3[j] + nmissfam[i] else cnt1[j] <- cnt1[j] + nmissfam[i]
+                   if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
                  }
-                 if(impute.type %in%c("beagleAfterFamily", "beagleAfterFamilyNoRand")){
+                 if(impute.type %in%c("beagleAfterFamily")){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
-                     res[is.na(res[,j]) & popStruc == i ,j] <- ifelse(length(allTab)>1, sample(as.numeric(names(allTab)),size=nmissfam[i],prob=probList[[length(allTab)]],replace=TRUE),as.numeric(names(allTab)))
+                     res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- ifelse(length(allTab)>1,
+                                                                                      sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
+                                                                                      as.numeric(names(allTab)))
                      # update counter
-                     if(polymorph[i]) cnt3[j] <- cnt3[j] +  nmissfam[i] else cnt1[j] <- cnt1[j] +  nmissfam[i]
+                     if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
                    } else { # use Beagle and impute NA for polymorphic families
-                     if(!polymorph[i]){
+                     if(!polymorph[as.character(i)]){
                        # impute values for impute.type="beagleAfterfamily"  : only monomorph markers
-                       res[is.na(res[,j]) & popStruc == i ,j] <- as.numeric(rep(major.allele[i],nmissfam[i]))
+                       res[is.na(res[vec.big,j]) & popStruc[vec.big] == i ,j] <- as.numeric(rep(major.allele[as.character(i)],nmissfam[as.character(i)]))
                        # update counter
-                       cnt1[j] <- cnt1[j] + nmissfam[i]
+                       cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
                      }
                    }
                  }
                }
                if(j==ceiling(length(vec.cols)/100)) if(verbose) cat("         approximative run time for imputation by family information ",(proc.time()[3] - ptm)*99," seconds ... \n",sep="")
-          }) # end try
+          }, silent= !verbose) # end try
         }   # end of if(sum(!is.na(res[,j]))>0)
       } # end of marker loop
     }
@@ -448,27 +452,28 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           pre <- paste("chr",chr[lg],sep="")
           pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
-          if(!"beagle" %in% list.files()){
-            dir.create("beagle")
-          } else if(lg == 1 & length(list.files("beagle")) > 0 ) {
-             file.remove(paste("beagle", list.files("beagle"), sep="/"))
+          beagleDir <- paste("beagle", as.numeric(as.Date(Sys.time())), round(as.numeric(Sys.time())%%(24*3600)), sep="")
+          if(!beagleDir %in% list.files()){
+            dir.create(beagleDir)
+          } else if(lg == 1 & length(list.files(beagleDir)) > 0 ) {
+             file.remove(paste(beagleDir, list.files(beagleDir), sep="/"))
           }
-          write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle/"),"/",prefix=pre, "input.vcf", sep=""))
+          write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
           if(noHet){
-          output <- system(paste("java -Xmx1000m -jar ",
+          output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.r1399.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=beagle/", pre, "input.vcf usephase=true out=beagle/", pre, "out", sep=""),
+                           " gt=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out", sep=""),
                            intern=!showBeagleOutput)
           } else {
-          output <- system(paste("java -Xmx1000m -jar ",
+          output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.r1399.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=beagle/", pre, "input.vcf out=beagle/", pre, "out", sep=""),
+                           " gt=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out", sep=""),
                            intern=!showBeagleOutput)
           }
           # read data from beagle
-          resTEMP <- read.vcf2matrix(file=gzfile(paste("beagle/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE)
+          resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE)
           mode(resTEMP) <- "numeric"
 
 
