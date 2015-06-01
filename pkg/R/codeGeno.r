@@ -422,11 +422,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  }
                }
                if(j==ceiling(length(vec.cols)/100))
-                 if(verbose) cat("         approximative run time for imputation by family information ",
-                                 ifelse((proc.time()[3] - ptm)*99 < 60, paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep=""),
-                                   ifelse((proc.time()[3] - ptm)*99 < 3600, paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep=""),
-                                                                           , paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))),
-                                 sep="")
+                 if(verbose) if((proc.time()[3] - ptm)*99 < 60) cat("         approximative run time for imputation by family information ",
+                                                                    paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep="")) else
+                             if((proc.time()[3] - ptm)*99 < 3600) cat("         approximative run time for imputation by family information ",
+                                                                      paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep="")) else
+                                                                  cat("         approximative run time for imputation by family information ",
+                                                                      paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))
           }, silent= !verbose) # end try
         }   # end of if(sum(!is.na(res[,j]))>0)
       } # end of marker loop
@@ -498,11 +499,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
             res <- resTEMP
           }
           if(lg==1)
-            if(verbose) cat("         approximative run time for imputation by family information ",
-                            ifelse((proc.time()[3] - ptm)*99 < 60, paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep=""),
-                              ifelse((proc.time()[3] - ptm)*99 < 3600, paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep=""),
-                                                                     , paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))),
-                            sep="")
+            if(verbose) if((proc.time()[3] - ptm)*99 < 60) cat("         approximative run time for imputation by family information ",
+                                                               paste((proc.time()[3] - ptm)*99, " seconds ... \n",sep="")) else
+                        if((proc.time()[3] - ptm)*99 < 3600) cat("         approximative run time for imputation by family information ",
+                                                                 paste((proc.time()[3] - ptm)*99/60, " minutes ... \n",sep="")) else
+                                                             cat("         approximative run time for imputation by family information ",
+                                                                 paste((proc.time()[3] - ptm)*99/3600, " houres ... \n",sep=""))
         }
       }
 
