@@ -421,12 +421,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                  }
                }
                if(j==ceiling(length(vec.cols)/50))
-                 if(verbose) if(difftime(Sys.time(), ptm)*50 < 60) cat("         approximative run time for imputation by family information ",
-                                                                    paste(round(as.numeric(difftime(Sys.time(), ptm)*50)), digits=1, " seconds ... \n",sep="")) else
-                             if(difftime(Sys.time(), ptm)*50 < 3600) cat("         approximative run time for imputation by family information ",
-                                                                      paste(round(as.numeric(difftime(Sys.time(), ptm))/6*5, digits=1), " minutes ... \n",sep="")) else
-                                                                  cat("         approximative run time for imputation by family information ",
-                                                                      paste(round(as.numeric(difftime(Sys.time(), ptm))/360*5, digits=1), " houres ... \n",sep=""))
+                 if(verbose)  cat("         approximative run time for imputation by family information ",
+                                  paste(round(as.numeric(difftime(Sys.time(), ptm)*50)), digits=1, " ",
+                                  units(difftime(Sys.time(), ptm))," ... \n",sep=""))
+
 #          }, silent= !verbose) # end try
         }   # end of if(sum(!is.na(gpData$geno[,j]))>0)
       } # end of marker loop
@@ -497,12 +495,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
             gpData$geno <- resTEMP
           }
           if(lg==1)
-            if(verbose) if(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno) < 60) cat("         approximative run time for imputation by beagle ",
-                                                     paste(round(as.numeric(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno)), digits=1), " seconds ... \n",sep="")) else
-                        if(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno) < 3600) cat("         approximative run time for imputation by beagle ",
-                                                     paste(round(as.numeric(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno))/60, digits=1), " minutes ... \n",sep="")) else
-                                                cat("         approximative run time for imputation by beagle ",
-                                                     paste(round(as.numeric(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno))/3600, digits=1), " houres ... \n",sep=""))
+            if(verbose)  cat("         approximative run time for imputation by beagle ",
+                             paste(round(as.numeric(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno)), digits=1), " ",
+                             units(difftime(Sys.time(), ptm))," ... \n",sep=""))
+
         }
       }
 
