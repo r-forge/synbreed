@@ -60,7 +60,7 @@ Object of class \code{gpData} which is a \code{list} with the following elements
 \item{map}{\code{data.frame} with columns 'chr' and 'pos' and markers sorted by 'pos' within 'chr'}
 \item{phenoCovars}{\code{array} with phenotypic covariates}
 \item{info}{\code{list} with additional information on data (coding of data, unit in \code{map})
- From synbreed version 0.11-11 on the function \link{\code{codeGeno}} adds here the package version which was used to do the coding. There are differences in codings between version 0.10-11 and 0.11-0!
+ From synbreed version 0.11-11 on the function \code{\link{codeGeno}} adds here the package version which was used to do the coding. There are differences in codings between version 0.10-11 and 0.11-0!
 }
 }
 \author{
