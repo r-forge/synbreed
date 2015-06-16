@@ -720,6 +720,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # overwrite original genotypic data
   if(orgFormat == "gpData") {
     gpData$info$codeGeno <- TRUE
+    gpData$info$version <- paste("gpData object was coded by synbreed version", sessionInfo()$otherPkgs$synbreed$Version)
   } else gpData <- gpData$geno
 
   if(print.report){
