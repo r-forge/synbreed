@@ -377,64 +377,53 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       for (j in vec.cols){
         if(j==vec.cols[1]) ptm <- Sys.time()
         if(sum(!is.na(gpData$geno[,j]))>0){
-               poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
-               rS <- rowSums(poptab)
-               # compute otherstatistics
-               major.allele <- unlist(attr(poptab,"dimnames")[[2]][apply(poptab,1,which.max)])
-               # look if SNP is segregating  for this population
-               polymorph <- apply(poptab,1,length) > 1 & (apply(poptab,1,min) != 0)
-               polymorph2 <- rS > minFam
-               polymorph[!polymorph2] <- TRUE
-               # count missing values
-               nmissfam <- tapply(is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
-               # must be a named list
-               names(major.allele) <- names(polymorph)
-               # loop over all families
-               for (i in rownames(poptab)[nmissfam > 0]){
-                 # impute values for impute.type="family" : all missing genotypes
-                 allTab <- table(gpData$geno[popStruc[vec.big] %in% i, j])
-                 if(length(allTab) == 0 & noHet) {
-                   allTab <- table(c(0,2))
-                 } else if(all(names(allTab) == c(0, 2)) & !noHet)  allTab <- table(c(0,1,1,2))
-                 if (impute.type=="family"){
-                   gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
-                                                                    sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
-                                                                    as.numeric(names(allTab)))
-                   # update counter
-                   if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
-                 }
-                 if (impute.type=="familyNoRand"){
-                   gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
-                   # update counter
-                   if(!polymorph[as.character(i)]) cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
-                 }
-                 if(impute.type %in%c("beagleAfterFamily")){
-                   if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
-                     gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
-                                                                      sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
-                                                                      as.numeric(names(allTab)))
-                     # update counter
-                     if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
-                   } else { # use Beagle and impute NA for polymorphic families
-                     gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
-                     if(!polymorph[as.character(i)]){
-                       # impute values for impute.type="beagleAfterfamily"  : only monomorph markers
-                       # update counter
-                       cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
-                     }
-                   }
-                 }
-                 if(impute.type %in%c("beagleAfterFamilyNoRand")){
-                      gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
-                     # update counter
-                     if(!polymorph[as.character(i)]) cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
-                 }
-               }
-               if(j==ceiling(length(vec.cols)/50))
-                 if(verbose)  cat("         approximative run time for imputation by family information ",
-                                  paste(round(as.numeric(difftime(Sys.time(), ptm)*50)), digits=1, " ",
-                                  units(difftime(Sys.time(), ptm))," ... \n",sep=""))
-
+          poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
+          rS <- rowSums(poptab)
+          # compute otherstatistics
+          major.allele <- unlist(attr(poptab,"dimnames")[[2]][apply(poptab,1,which.max)])
+          # look if SNP is segregating  for this population
+          polymorph <- apply(poptab,1,length) > 1 & (apply(poptab,1,min) != 0)
+          polymorph2 <- rS > minFam
+          polymorph[!polymorph2] <- TRUE
+          # count missing values
+          nmissfam <- tapply(is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
+          # must be a named list
+          names(major.allele) <- names(polymorph)
+          # loop over all families
+          for (i in rownames(poptab)[nmissfam > 0]){
+            # impute values for impute.type="family" : all missing genotypes
+            allTab <- table(gpData$geno[popStruc[vec.big] %in% i, j])
+            if(length(allTab) == 1){
+              gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- as.numeric(names(allTab))
+              cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
+            } else if(impute.type %in% c("family", "beagleAfterFamily")){
+              if(length(allTab) == 0 & noHet) {
+                allTab <- table(c(0,2))
+              } else if(all(names(allTab) == c(0, 2)) & !noHet){
+                allTab <- table(c(0,1,1,2))
+              }
+              if (impute.type=="family"){
+                gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
+                                                               sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
+                                                               as.numeric(names(allTab)))
+                # update counter
+                if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
+              }
+              if(impute.type %in%c("beagleAfterFamily")){
+                if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
+                  gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
+                                                                   sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
+                                                                   as.numeric(names(allTab)))
+                  # update counter
+                  if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
+                }
+              }
+            }
+          }
+          if(j==ceiling(length(vec.cols)/50))
+            if(verbose)  cat("         approximative run time for imputation by family information ",
+                             paste(round(as.numeric(difftime(Sys.time(), ptm)*50)), digits=1, " ",
+                             units(difftime(Sys.time(), ptm))," ... \n",sep=""))
         }   # end of if(sum(!is.na(gpData$geno[,j]))>0)
       } # end of marker loop
     }
