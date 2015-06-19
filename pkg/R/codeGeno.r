@@ -377,7 +377,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       for (j in vec.cols){
         if(j==vec.cols[1]) ptm <- Sys.time()
         if(sum(!is.na(gpData$geno[,j]))>0){
-#          try({# compute population structure  as counts
                poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
                rS <- rowSums(poptab)
                # compute otherstatistics
@@ -404,6 +403,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                    # update counter
                    if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
                  }
+                 if (impute.type=="familyNoRand"){
+                   gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
+                   # update counter
+                   if(!polymorph[as.character(i)]) cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
+                 }
                  if(impute.type %in%c("beagleAfterFamily")){
                    if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
                      gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
@@ -412,6 +416,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                      # update counter
                      if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
                    } else { # use Beagle and impute NA for polymorphic families
+                     gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
                      if(!polymorph[as.character(i)]){
                        # impute values for impute.type="beagleAfterfamily"  : only monomorph markers
                        # update counter
@@ -419,13 +424,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                      }
                    }
                  }
+                 if(impute.type %in%c("beagleAfterFamilyNoRand")){
+                      gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1, NA, as.numeric(names(allTab)))
+                     # update counter
+                     if(!polymorph[as.character(i)]) cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
+                 }
                }
                if(j==ceiling(length(vec.cols)/50))
                  if(verbose)  cat("         approximative run time for imputation by family information ",
                                   paste(round(as.numeric(difftime(Sys.time(), ptm)*50)), digits=1, " ",
                                   units(difftime(Sys.time(), ptm))," ... \n",sep=""))
 
-#          }, silent= !verbose) # end try
         }   # end of if(sum(!is.na(gpData$geno[,j]))>0)
       } # end of marker loop
     }
@@ -505,7 +514,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       #########################################################################
       # impute missing values with no population structure or missing positions
       #########################################################################
-      if(impute.type %in% c("random", "beagle", "beagleAfterFamily")){
+      if(impute.type %in% c("random", "beagle", "beagleAfterFamily", "family")){
         if (verbose) cat("   step 7d : Random imputing of missing values \n")
         # initialize counter (- number of heterozygous values)
         for (j in (1:M)[apply(is.na(gpData$geno), 2, sum)>0]){
