@@ -402,21 +402,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
               } else if(all(names(allTab) == c(0, 2)) & !noHet){
                 allTab <- table(c(0,1,1,2))
               }
-              if (impute.type=="family"){
+              if (impute.type=="family"|is.na(gpData$map$pos[j])){
                 gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
                                                                sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
                                                                as.numeric(names(allTab)))
-                # update counter
-                if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] + nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
-              }
-              if(impute.type %in%c("beagleAfterFamily")){
-                if (is.na(gpData$map$pos[j])){     # if no position is available use family algorithm
-                  gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- ifelse(length(allTab)>1,
-                                                                   sample(as.numeric(names(allTab)),size=nmissfam[as.character(i)],prob=probList[[length(allTab)]],replace=TRUE),
-                                                                   as.numeric(names(allTab)))
-                  # update counter
-                  if(polymorph[as.character(i)]) cnt3[j] <- cnt3[j] +  nmissfam[as.character(i)] else cnt1[j] <- cnt1[j] +  nmissfam[as.character(i)]
-                }
+                cnt3[j] <- cnt3[j] + nmissfam[as.character(i)]
               }
             }
           }
