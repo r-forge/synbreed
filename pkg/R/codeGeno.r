@@ -713,7 +713,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(print.report){
     if (verbose) cat("  Writing report to file 'SNPreport.txt' \n")
-    report.list <- data.frame(SNPname=cnames,major=major[cnames],minor=minor[cnames],MAF=round(colMeans(res,na.rm=TRUE)/2,3),impute.fam=cnt1[cnames],impute.beagle=cnt2[cnames],impute.ran=cnt3[cnames])
+    report.list <- data.frame(SNPname=cnames,major=major[cnames],minor=minor[cnames],MAF=round(colMeans(gpData$geno,na.rm=TRUE)/2,3),
+                              impute.fam=cnt1[cnames],impute.beagle=cnt2[cnames],impute.ran=cnt3[cnames])
     write.table(report.list,file="SNPreport.txt",quote=FALSE,row.names=FALSE)
    }
 
