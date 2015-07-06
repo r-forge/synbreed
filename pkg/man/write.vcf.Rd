@@ -8,7 +8,7 @@ Prepare genotypic data in vcf-Format
 Create vcf-file for miscellaneous applications. Within the package it is used to write files for beagle usage.
 }
 \usage{
-write.vcf(gp, file, unphase=TRUE)
+write.vcf(gp, file, unphased=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
