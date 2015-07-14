@@ -43,7 +43,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
     } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
 
-  if (is.character(label.heter)) if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, 3, 3)}
+  if (is.character(label.heter)) if(label.heter == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
 
   orgFormat <- class(gpData)
   # check for class 'gpData'
