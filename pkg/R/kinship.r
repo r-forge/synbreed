@@ -210,6 +210,6 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
     }
 
     attr(kmat, "type") <- ret
-    class(kmat) <- "relationshipMatrix"
+    class(kmat) <- c("relationshipMatrix", "matrix")
     return(kmat)
 }
