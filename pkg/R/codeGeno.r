@@ -61,7 +61,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(is.function(label.heter)){
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
         label.heter <- "1"
-      } else if(is.na(as.numeric(label.heter))){
+      } else if(is.na(as.numeric(label.heter[1]))){
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
         label.heter <- "1"
       }
@@ -566,8 +566,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(impute){
        if(sum(which.duplicated) >0){
         mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs")
-        df.ld <- data.frame(kept=rep(cnames[which.duplicated], ncol(mat.ld)),
-                            removed=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
+        df.ld <- data.frame(kept=rep(cnames[which.duplicated], nrow(mat.ld)),
+                            removed=rep(cnames[rev.which.duplicated], each=ncol(mat.ld)),
                             ld=as.numeric(mat.ld),
                             stringsAsFactors=FALSE)
         df.ld <- df.ld[df.ld$ld>1-1e-14,]
@@ -579,8 +579,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(sum(which.duplicated) >0){
           gpData$geno[is.na(gpData$geno)] <- 3
           mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated])
-          df.ld <- data.frame(kept=rep(cnames[which.duplicated], each=nrow(mat.ld)),
-                              removed=rep(cnames[rev.which.duplicated], ncol(mat.ld)),
+          df.ld <- data.frame(kept=rep(cnames[which.duplicated], each=ncol(mat.ld)),
+                              removed=rep(cnames[rev.which.duplicated], nrow(mat.ld)),
                               ld=as.numeric(mat.ld),
                               stringsAsFactors=FALSE)
           df.ld <- df.ld[df.ld$ld>1-1e-14,]
@@ -639,8 +639,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated])
           rownames(mat.ld) <- cnames[which.duplicated]
           colnames(mat.ld) <- cnames[rev.which.duplicated]
-          df.ld <- data.frame(kept=rep(colnames(mat.ld), nrow(mat.ld)),
-                              removed=rep(rownames(mat.ld), each=ncol(mat.ld)),
+          df.ld <- data.frame(kept=rep(colnames(mat.ld), ncol(mat.ld)),
+                              removed=rep(rownames(mat.ld), each=nrow(mat.ld)),
                               ld=as.numeric(mat.ld),
                               stringsAsFactors=FALSE)
           df.ld <- df.ld[df.ld$ld>1-1e-14,]
