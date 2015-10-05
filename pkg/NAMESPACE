@@ -16,6 +16,11 @@ import(igraph,
        lattice
 )
 #	   synbreedData rJava 	
+importFrom("grDevices", "dev.off", "grey", "pdf", "png", "rainbow")
+importFrom("graphics", "axis", "barplot", "box", "curve", "image", "layout", "legend", "lines", "par", "plot", "points", "polygon", "text")
+importFrom("methods", "as", "is")
+importFrom("stats", "as.formula", "coef", "cor", "dist", "lm", "model.matrix", "na.omit", "na.pass", "nls", "quantile", "rnorm", "runif", "sd", "smooth", "step", "terms", "weighted.mean")
+importFrom("utils", "capture.output", "read.table", "sessionInfo", "str", "write.table")
 
 S3method("plot", GenMap)
 S3method("plot", LDdf)
@@ -37,3 +42,5 @@ S3method("summary", gpMod)
 S3method("summary", gpModList)
 S3method("summary", pedigree)
 S3method("summary", relationshipMatrix)
+
+
