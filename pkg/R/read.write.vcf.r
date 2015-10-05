@@ -5,7 +5,7 @@ write.vcf <- function(gp,file,unphased=TRUE){
     stop("Wrong genotypic information!")
   }
   if(unphased) sepSign <- "/" else sepSign <- "|"
-  if(!gp$info$map.unit %in% c("bp", "kb", "Mb")) stop("You need basepairs as map positions to write a vcf-file!")
+  if(!gp$info$map.unit %in% c("bp", "kb", "Mb")) stop(paste("You need basepairs as map positions to write a vcf-file!\nThe map unit of ", substitute(gp)," is '", gp$info$map.unit, "'.", sep=""))
   if(gp$info$map.unit =="kb") gp$map$pos <- gp$map$pos * 1000
   if(gp$info$map.unit =="Mb") gp$map$pos <- gp$map$pos * 1000000
   if(any((gp$map$pos-round(gp$map$pos, digits=0)) >1e-6)) stop("Your map positions and the unit of the position do not fit!")
