@@ -11,15 +11,13 @@ predict.gpMod <- function(object,newdata=NULL,...){
       if(class(newdata)!="gpData") stop("object 'newdata' must be of class 'gpData'")
       X <- newdata$geno
       m <- object$markerEffects
-      mu <- object$fit$mu
-      prediction <- mu + X %*% m
+      prediction <- X %*% m
   }
   if(model == "BLUP" & !is.null(object$markerEffects)){    # if marker effects are available
      if(class(newdata)!="gpData") stop("object 'newdata' must be of class 'gpData'")
      X <- newdata$geno
      m <- object$markerEffects
-     mu <- c(object$fit$beta)
-     prediction <- mu + X %*% m
+     prediction <- X %*% m
   }
   if(model == "BLUP" & is.null(object$markerEffects)){
 #      prediction <- gpData$geno %*% t(gpData$geno[rownames(kin), ]) %*% ginv(kin) %*% genVal[rownames(kin)]
