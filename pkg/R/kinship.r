@@ -208,7 +208,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
 
       attr(kmat, "SNPs") <- colnames(gpData$geno)
     }
-
+    attr(kmat, "info") <-  paste("This relationshipMatrix was calculated by synbreed version", sessionInfo()$otherPkgs$synbreed$Version)
     attr(kmat, "type") <- ret
     class(kmat) <- c("relationshipMatrix", "matrix")
     return(kmat)
