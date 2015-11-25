@@ -1,8 +1,8 @@
 Package: synbreed
 Type: Package
 Title: Framework for the Analysis of Genomic Prediction Data using R
-Version: 0.11-26
-Date: 2015-11-16
+Version: 0.11-27
+Date: 2015-11-25
 Author: Valentin Wimmer, Hans-Juergen Auinger, Theresa Albrecht, Chris-Carolin Schoen with contributions by Larry Schaeffer, Malena Erbe, Ulrike Ober, Christian Reimer, Yvonne Badke and Peter VandeHaar
 Depends: R (>= 2.14)
 Imports: methods, doBy, igraph, lattice, MASS, LDheatmap, abind, BGLR, regress (>= 1.3-8)

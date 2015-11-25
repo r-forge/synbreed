@@ -9,7 +9,7 @@ This function implements different measures of relatedness between individuals i
 \usage{
 kin(gpData, ret=c("add","kin","dom","gam","realized","realizedAB",
                   "sm","sm-smin","gaussian"),
-            DH=NULL, maf=NULL, selfing=NULL, lambda=1)
+            DH=NULL, maf=NULL, selfing=NULL, lambda=1, P=NULL)
 }
 \arguments{
   \item{gpData}{
@@ -28,10 +28,12 @@ object of class \code{gpData}
 \code{numeric} vector of length \eqn{n}. It is used as the number of selfings of an recombinant inbred line individual. This option is only used, if \code{ret} argument is \code{"add"} or \code{"kin"}.
 }
   \item{lambda}{
-\code{numeric} bandwidth parameter for the gaussian kernel. Only used for calculating the gaussian
-kernel. }
+\code{numeric} bandwidth parameter for the gaussian kernel. Only used for calculating the gaussian kernel.
 }
-
+  \item{P}{
+    \code{numeric} matrix of the same dimension as \code{geno} of the \code{gpData} object. This option can be used for own allelefrequencies of different groups in the genotypes.
+}
+}
 \details{
 
 \bold{Pedigree based relatedness (return arguments \code{"add"}, \code{"kin"}, \code{"dom"}, and \code{"gam"})}

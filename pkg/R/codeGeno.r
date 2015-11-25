@@ -127,7 +127,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
     cnames <- cnames[which.miss]; knames <- knames[which.miss]
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
     rm(which.miss)
   } else if (any(colMeans(is.na(gpData$geno))==1)){
     which.miss <- colMeans(is.na(gpData$geno))!=1
@@ -136,7 +136,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with only missing values \n")
     cnames <- cnames[which.miss]; knames <- knames[which.miss]
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
     rm(which.miss)
   } else {
     if (verbose) cat("   step 1  : No markers removed due to fraction of missing values \n")
@@ -277,7 +277,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if (verbose) cat("   step 3 : No marker(s) discarded because heterozygousity at tester locus or \n          missing values of the tester\n")
     }
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
   }
 
 
@@ -296,7 +296,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$geno <- gpData$geno[,which.maf]
     cnames <- cnames[which.maf]; knames <- knames[which.maf]
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
      # update report list
 
 
@@ -317,7 +317,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if (verbose) cat("   step 5  : No marker(s) discarded for which the tester has the minor allele\n")
     }
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
   }
 
   #============================================================
@@ -333,7 +333,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       cnames <- cnames[which.miss]; knames <- knames[which.miss]
       if (verbose) cat("   step 6  :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
       # update map
-      if(!is.null(gpData$map)) gpData$map <- gpData$map[which.miss,]
+      if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
     } else{
       if (verbose) cat("   step 6  : No markers discarded due to fraction of missing values \n")
     }
@@ -547,7 +547,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$geno <- gpData$geno[,which.maf]
     cnames <- cnames[which.maf]; knames <- knames[which.maf]
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[which.maf,]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
      # update report list
 
 
@@ -658,7 +658,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     cnames <- cnames[!which.duplicated]
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
-    if(!is.null(gpData$map)) gpData$map <- gpData$map[sort(cnms[!which.duplicated]),]
+    if(!is.null(gpData$map)) gpData$map <- gpData$map[colnames(gpData$geno),]
     # update report list
   } else{
     if (verbose) cat("   step 10 : No duplicated markers removed \n")
@@ -709,6 +709,16 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(impute.type %in% c("beagle","random","family","beagleAfterFamily")) cat(paste("    number of random imputations                  :",sum(cnt3),"\n"))
   }
 
+  if(!is.null(gpData$map)){
+    gpData$map$sor <- substr(gpData$map$chr, nchar(as.character(gpData$map$chr)), nchar(as.character(gpData$map$chr)))
+    if(any(unique(gpData$map$sor)[!is.na(unique(gpData$map$sor))] %in% 0:9)) gpData$map$sor <- 1
+    # first order by rownames in alphabetical order (important for SNPs with the same position)
+    gpData$map <- gpData$map[order(as.character(rownames(gpData$map))),]
+    gpData$map <- orderBy(~sor+chr+pos,data=gpData$map)
+    gpData$map$sor <- NULL
+    # sortcolumns in geno, too
+    gpData$geno <- gpData$geno[,rownames(gpData$map)]
+  }
   # overwrite original genotypic data
   if(orgFormat == "gpData") {
     gpData$info$codeGeno <- TRUE
