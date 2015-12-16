@@ -18,6 +18,9 @@ object of class \code{gpData}
   \item{which}{
 character vector identifying names of markers which get discarded in \code{geno} from a \code{gpData}-object.
 }
+  \item{whichNot}{
+character vector identifying names of markers which get kept in \code{geno} from a \code{gpData}-object. Overwrites argument \code{which}!
+}
 }
 \value{
 Object of class \code{gpData}

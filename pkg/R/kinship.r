@@ -193,12 +193,11 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
           if(ret=="sm-smin"){
             smin <- min(s,na.rm=TRUE)
             s <- (s-smin)/(1-smin)
+            attr(kmat, "min") <- smin
           }
-
           kmat <- 2*s
           attr(kmat, "SNPs") <- colnames(gpData$geno)
-
-    }
+}
 
     if (ret == "gaussian"){ # euklidian distance with gaussian
       if(any(class(gpData)=="gpData")){
