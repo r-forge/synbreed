@@ -27,7 +27,7 @@ Missing values for parents in the pedigree should be coded with 0 for numeric ID
 An object of class \code{pedigree}. Column \code{gener} starts from 0 and pedigree is sorted by generation.
 }
 \author{
-Hans-Jürgen Auinger
+Hans-Juergen Auinger
 }
 
 \seealso{
