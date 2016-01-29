@@ -149,9 +149,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if (verbose) cat("   step 2  : Recoding alleles \n")
   if(gpData$info$codeGeno) {
-    if(reference.allele[1]=="minor"){
-      afCols <- (1:ncol(gpData$geno))[colMeans(gpData$geno, na.rm=TRUE)>1]
-      gpData$geno[, afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, afCols]
+    if(reference.allele[1]=="minor" | reference.allele[1]=="keep"){
+      afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>1]
+      if(reference.allele[1]!="keep"){
+        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+      }
       # inititialize report list
       if(print.report){
         alleles <- apply(gpData$geno,2,table,useNA="no")
@@ -167,9 +169,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         minor <- unlist(sapply(alleles,minor.allele))
         names(major) <- names(minor) <- cnames
       }
+      if(reference.allele[1]=="keep"){
+        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+      }
 
-    } else {
-      if(reference.allele[1]!="keep") gpData$info$codeGeno==FALSE
     }
   } else { # codeGeno condition of gpData FALSE
     if(reference.allele[1]=="minor"){
@@ -281,7 +284,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
   }
 
-
   #============================================================
   # step 4 - remove markers with minor allele frequency < maf  (optional, argument maf>0)
   #============================================================
@@ -299,7 +301,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
      # update report list
-
 
   } else {
     if (verbose) cat("   step 4  : No markers discarded due to minor allele frequency \n")
@@ -575,7 +576,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                             removed=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
                             ld=as.numeric(mat.ld),
                             stringsAsFactors=FALSE)
-        df.ld <- df.ld[df.ld$ld>1-1e-14,]
+        df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
         df.ld$ld <- NULL
         rm(mat.ld)
       } else df.ld <- data.frame(kept=as.character(), removed=as.character())
@@ -588,7 +589,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                               removed=rep(cnames[rev.which.duplicated], nrow(mat.ld)),
                               ld=as.numeric(mat.ld),
                               stringsAsFactors=FALSE)
-          df.ld <- df.ld[df.ld$ld>1-1e-14,]
+          df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
           df.ld$ld <- NULL
           gpData$geno[gpData$geno==3] <- NA
           rm(mat.ld)
@@ -648,7 +649,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                               removed=rep(rownames(mat.ld), each=ncol(mat.ld)),
                               ld=as.numeric(mat.ld),
                               stringsAsFactors=FALSE)
-          df.ld <- df.ld[df.ld$ld>1-1e-14,]
+          df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
           df.ld$ld <- NULL
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
@@ -738,5 +739,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
    }
 
   # return a gpData object (or a matrix)
+  cat(str(afCols), sum(cnames%in%afCols),"\n")
+  if(reference.allele[1]=="keep"){
+    gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, sum(cnames%in%afCols))) - gpData$geno[, cnames%in%afCols]
+  }
   return(gpData)
 }

@@ -8,12 +8,12 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     else lg <- chr
 
     if(lg[1]=="all"){
-       LDdfall <- list()
-       LDdfall$all <- LDdf[[1]]
-       if(length(LDdf)>1) for(i in 2:length(LDdf)){
-         LDdfall$all <- rbind(LDdfall$all, LDdf[[i]])
-       }
-       LDdf <- LDdfall
+      LDdfall <- list()
+      LDdfall$all <- LDdf[[1]]
+      if(length(LDdf)>1) for(i in 2:length(LDdf)){
+        LDdfall$all <- rbind(LDdfall$all, LDdf[[i]])
+      }
+      LDdf <- LDdfall
     }
     # function for fit according to Hill and Weir (1988)
     smooth.fit <- function(overallDist,overallr2,n,colL){
