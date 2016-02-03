@@ -19,7 +19,7 @@ LDDist <- function(LDdf,chr=NULL,type="p",breaks=NULL,n=NULL,file=NULL,fileForma
     smooth.fit <- function(overallDist,overallr2,n,colL){
       # nls estimate
       nonlinearoverall <- nls(overallr2 ~ ((10 + p*overallDist)) / ((2+p*overallDist) * (11 + p*overallDist) ) *
-      ( 1 + ( (3+ p*overallDist) * (12 + 12 * p + p^2*overallDist^2)) / ( n*(2+p*overallDist) * (11 + p*overallDist))),
+      ( 1 + ( (3+ p*overallDist) * (12 + 12 * p*overallDist + p^2*overallDist^2)) / ( n*(2+p*overallDist) * (11 + p*overallDist))),
       start=list(p=1))
 
       # estimated value for p
