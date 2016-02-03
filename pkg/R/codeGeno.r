@@ -739,7 +739,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
    }
 
   # return a gpData object (or a matrix)
-  cat(str(afCols), sum(cnames%in%afCols),"\n")
   if(reference.allele[1]=="keep"){
     gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, sum(cnames%in%afCols))) - gpData$geno[, cnames%in%afCols]
   }
