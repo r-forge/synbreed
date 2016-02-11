@@ -716,7 +716,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(any(unique(gpData$map$sor)[!is.na(unique(gpData$map$sor))] %in% 0:9)) gpData$map$sor <- 1
     # first order by rownames in alphabetical order (important for SNPs with the same position)
     gpData$map <- gpData$map[order(as.character(rownames(gpData$map))),]
-    gpData$map <- orderBy(~sor+chr+pos,data=gpData$map)
+    gpData$map <- orderBy(~sor+chr+pos,data=as.data.frame(gpData$map))
     gpData$map$sor <- NULL
     # sortcolumns in geno, too
     if(!is.null(attr(gpData$geno, "identical"))) attrG <- attr(gpData$geno, "identical") else attrG <- NULL
