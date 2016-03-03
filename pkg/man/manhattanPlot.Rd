@@ -9,7 +9,7 @@ Plot of SNP effects along the chromosome, e.g. for the visualization of marker e
 }
 \usage{
 manhattanPlot(b, gpData = NULL, colored = FALSE, add = FALSE,
-              pch = 19, ylab = NULL, ...)
+              pch = 19, ylab = NULL, cols = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,13 +31,16 @@ object of class \code{gpData} with map position
   \item{ylab}{
   a title for the y axis: see \code{\link[graphics]{title}}.
 }
+  \item{cols}{
+  color for the different chromosomes.
+}
   \item{\dots}{
 further arguments for function \code{plot}
 }
 }
 
 \author{
-Valentin Wimmer
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 \examples{
