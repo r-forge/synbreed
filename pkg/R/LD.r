@@ -94,11 +94,11 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
                                      stringsAsFactors=FALSE)
               if(lg[i]=="NA") {
                 ld.rini <- cor(gpData$geno[,linkageGroup!=lg[i]],markeri,method="spearman",use="pairwise.complete.obs")
-                ld.r2.dfini <- data.frame(marker1=rep(colnames(ld.r2ini), each=nrow(ld.r2ini)),
-                                          marker2=rep(rownames(ld.r2ini), ncol(ld.r2ini)),
+                ld.r2.dfini <- data.frame(marker1=rep(colnames(ld.rini), each=nrow(ld.rini)),
+                                          marker2=rep(rownames(ld.rini), ncol(ld.rini)),
                                           r=as.numeric(ld.rini),
                                           r2=as.numeric(ld.rini**2),
-                                          dist=rep(NA,ncol(ld.r2ini)*nrow(ld.r2ini)),
+                                          dist=rep(NA,ncol(ld.rini)*nrow(ld.rini)),
                                           stringsAsFactors=FALSE)
                 ld.r2.df <- rbind(ld.r2.df, ld.r2.dfini)
               }
