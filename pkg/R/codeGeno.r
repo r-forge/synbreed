@@ -380,8 +380,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       vec.cols <- (1:M)[is.na(colSums(gpData$geno, na.rm = FALSE))]
       nFam <- table(popStruc)
       vec.big <- popStruc %in% names(nFam)[nFam > minFam]
+      ptm <- Sys.time()
       for (j in vec.cols){
-        if(j==vec.cols[1]) ptm <- Sys.time()
         if(sum(!is.na(gpData$geno[,j]))>0){
           poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
           rS <- rowSums(poptab)
@@ -445,8 +445,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         } else if(length(list.files(beagleDir)) > 0 ) {
            file.remove(paste(beagleDir, list.files(beagleDir), sep="/"))
         }
+        ptm <- Sys.time()
         for (lg in seq(along=chr)){
-          if(lg==1) ptm <- Sys.time()
           if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
           sel <- unique(c(rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% cnames ,]),
                           colnames(gpData$geno)[!colnames(gpData$geno) %in% cnames]))
@@ -502,22 +502,22 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(impute.type %in% c("random", "beagle", "beagleAfterFamily", "family")){
         if (verbose) cat("   step 7d : Random imputing of missing values \n")
         # initialize counter (- number of heterozygous values)
+        ptm <- proc.time()[3]
         for (j in (1:M)[apply(is.na(gpData$geno), 2, sum)>0]){
           cnt3[j] <-  cnt3[j] + sum(is.na(gpData$geno[,j]))
           # estimation of running time after the first iteration
-          if(j==1) ptm <- proc.time()[3]
-            p <- mean(gpData$geno[,j],na.rm=TRUE)/2  # minor allele frequency
-            if(noHet){        # assuming only 2 homozygous genotypes
-              gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,2),size=sum(is.na(gpData$geno[,j])),prob=c(1-p,p),replace=TRUE)
-            } else {                            # assuming 3 genotypes
-              gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,1,2),size=sum(is.na(gpData$geno[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
-            }
-            if(j==ceiling(M/100)) if(verbose) cat("         approximate run time for random imputation ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
+          p <- mean(gpData$geno[,j],na.rm=TRUE)/2  # minor allele frequency
+          if(noHet){        # assuming only 2 homozygous genotypes
+            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,2),size=sum(is.na(gpData$geno[,j])),prob=c(1-p,p),replace=TRUE)
+          } else {                            # assuming 3 genotypes
+            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,1,2),size=sum(is.na(gpData$geno[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
           }
-          # update counter for Beagle, remove those counts which where imputed ranomly
-          if(impute.type == "beagle") cnt2 <- cnt2-cnt3
+          if(j==ceiling(M/100)) if(verbose) cat("         approximate run time for random imputation ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
         }
-        if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) gpData$geno <- gpData$geno/2
+        # update counter for Beagle, remove those counts which where imputed ranomly
+        if(impute.type == "beagle") cnt2 <- cnt2-cnt3
+      }
+      if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) gpData$geno <- gpData$geno/2
 
 
     #============================================================
