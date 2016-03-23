@@ -41,9 +41,9 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
     # loop over all chromosomes (linkage groups)
     for (i in 1:length(lg)){
 
-       if(use.plink){ # i.e. if there are 3 genotypes
+      if(use.plink){ # i.e. if there are 3 genotypes
         # call PLINK to compute the LD as r2
-        sel <- rownames(gpData$map)[gpData$map$chr!= lg[i],]
+        sel <- rownames(gpData$map)[gpData$map$chr!= lg[i]]
         gpTEMP <- discard.markers(gpData,which=sel)
         pre <- paste("chr",lg[i],sep="")
         write.plink(gpTEMP,type=type,ld.threshold=ld.threshold,ld.window=ld.window,prefix=pre)
@@ -64,12 +64,9 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
           #distance <- abs(pos[ld.r2.df.plink$SNP_A]-pos[ld.r2.df.plink$SNP_B])
           ld.r2.df <- with(ld.r2.df.plink,data.frame(marker1=SNP_A,marker2=SNP_B,r2=R2,dist=abs(BP_A-BP_B),stringsAsFactors=FALSE))
         }
-
-
-
-       } # end if(use.plink)
-
-       else{  # i.e. if there are 2 genotypes (e.g. DH lines)
+       ld.r <- sqrt(ld.r2)
+      } # end if(use.plink)
+        else{  # i.e. if there are 2 genotypes (e.g. DH lines)
            # read information from data
            markeri <- gpData$geno[,linkageGroup==lg[i]]
            p <- ncol(markeri)
@@ -115,7 +112,7 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
        # create dataset with information from above in a data.frame
        if(type=="data.frame") retList[[i]] <- ld.r2.df
        # and as a matrix
-       if(type=="matrix") retMat$LD[[i]] <- ld.r2           # omit lower/upper triangle?
+       if(type=="matrix") retMat$LD[[i]] <- ld.r**2           # omit lower/upper triangle?
        if(type=="matrix") retMat$distance[[i]] <- distance
     }
 
