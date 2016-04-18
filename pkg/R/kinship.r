@@ -1,10 +1,10 @@
 kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin","gaussian"), DH=NULL, maf=NULL, selfing=NULL, lambda=1, P=NULL){
 
     ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin","gaussian"),several.ok = FALSE)
+    NAs <- FALSE
+    if (ret %in% c("realized","realizedAB","sm","sm-smin") & any(is.na(gpData$geno))) NAs <- TRUE
 # (1) expected relatedness
-
     if (ret %in% c("add","kin","dom","gam")){
-
     # check for 'gpData'
     if(any(class(gpData)=="gpData")){
       if (is.null(gpData$pedigree)) stop("no pedigree found")
@@ -136,6 +136,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
       } else p <- as.matrix(P)
       # compute realized relationship matrix G
       Z <- W - p
+      if(NAs) Z[is.na(Z)] <- 0
       U <- tcrossprod(Z)
       U <- 2*U/(sum(maf*(2-maf)))
 
@@ -168,6 +169,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
         # compute realized relationship matrix U
         W <- sweep(W,2,maf)
         W <- sweep(W,2,sqrt(pq2), "/")
+        if(NAs) W[is.na(W)] <- 0
         U <- tcrossprod(W) / p
         kmat <- U
         attr(kmat, "alleleFrequencies") <- maf
@@ -187,7 +189,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
           # code marker to -1/0/1 from 0,1,2
           marker <- marker - (max(marker,na.rm=TRUE)-1)
           m <- ncol(marker)
-
+          if(NAs) marker[is.na(marker)] <- 0
           s <- (tcrossprod(marker) + m)/(2*m)
 
           if(ret=="sm-smin"){
