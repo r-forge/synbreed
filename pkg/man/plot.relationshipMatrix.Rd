@@ -8,11 +8,11 @@ Heatmap for relationship Matrix
 Visualization for objects of class \code{relationshipMatrix} using a heatmap of pairwise relatedness coefficients.
 }
 \usage{
-\method{plot}{relationshipMatrix}(x1, x2=NULL, levelbreaks=NULL, axes=TRUE, cols=NULL, \ldots)
+\method{plot}{relationshipMatrix}(x, x2=NULL, levelbreaks=NULL, axes=TRUE, cols=NULL, \ldots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x1}{
+  \item{x}{
 Object of class \code{relationshipMatrix}
 }
   \item{x2}{
