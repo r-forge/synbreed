@@ -1,6 +1,6 @@
 # heatmap for relationshipMatrix objects
 
-plot.relationshipMatrix <- function(x1,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=NULL,...){
+plot.relationshipMatrix <- function(x,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=NULL,...){
   oldPar <- par(no.readonly = TRUE)
   plotRelMatS <- function(x1,levelbreaks=levelbreaks,axes=axes,cols=cols,...){
     relMat <- x1[, nrow(x1):1]
@@ -20,7 +20,7 @@ plot.relationshipMatrix <- function(x1,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=N
         quantiles <- round(quantile(relMat, probs=c(.01, .99), na.rm=TRUE), digits=1)
         if(quantiles[1] == quantiles[2]){
           levelbreaks <- c(Min, quantiles[1], Max)
-          col1 <- c("#FFFFFF", "#000000")
+          col <- c("#FFFFFF", "#000000")
         } else if(quantiles[2] - quantiles[1] <.1){
           levelbreaks <- c(Min, quantiles[1],  quantiles[2], Max)
           col <- col[c(1,11,21)]
@@ -31,7 +31,7 @@ plot.relationshipMatrix <- function(x1,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=N
           } else {
             levelbreaks <- sort(c(seq(mean(quantiles), quantiles[1], -rangbreaks), seq(mean(quantiles)+rangbreaks, quantiles[2], rangbreaks)))
           }
-          while(length(col1)-1 > length(levelbreaks)){
+          while(length(col)-1 > length(levelbreaks)){
             levelbreaks <- c(levelbreaks, max(levelbreaks)+rangbreaks)
           }
           levelbreaks <- levelbreaks[levelbreaks < Max]
@@ -183,10 +183,10 @@ plot.relationshipMatrix <- function(x1,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=N
   }
 
  if(is.null(x2)) {
-   plotRelMatS(x1,levelbreaks,axes,cols,...)
+   plotRelMatS(x,levelbreaks,axes,cols,...)
  } else if(class(x2)[1] != "relationshipMatrix") {
-   plotRelMatS(x1,x2,levelbreaks,axes,cols,...)
+   plotRelMatS(x,x2,levelbreaks,axes,cols,...)
  } else {
-   plotRelMatD(x1,x2,levelbreaks,axes,cols,...)
+   plotRelMatD(x,x2,levelbreaks,axes,cols,...)
  }
 }
