@@ -5,7 +5,7 @@ plot.relationshipMatrix <- function(x1,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=N
   plotRelMatS <- function(x1,levelbreaks=levelbreaks,axes=axes,cols=cols,...){
     relMat <- x1[, nrow(x1):1]
     class(relMat) <- "matrix"
-    size <- nrow(relMat1)
+    size <- nrow(relMat)
     if(is.null(cols))
       col <- c("#ffffff", "#ffe4c8", "#ffdab4", "#ffd0a0", "#ffc182", "#ffb76e", "#ffad5a",
                "#ffa346", "#ff9932", "#ff8f1e", "#ff850a", "#e17100", "#cd6700", "#b95d00",
