@@ -8,15 +8,29 @@ Heatmap for relationship Matrix
 Visualization for objects of class \code{relationshipMatrix} using a heatmap of pairwise relatedness coefficients.
 }
 \usage{
-\method{plot}{relationshipMatrix}(x, levelbreaks=NULL, \ldots)
+\method{plot}{relationshipMatrix}(x1, x2=NULL, levelbreaks=NULL, axes=TRUE, cols=NULL, \ldots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
+  \item{x1}{
 Object of class \code{relationshipMatrix}
 }
+  \item{x2}{
+Optional for comparisons of objects of class \code{relationshipMatrix}
+}
   \item{levelbreaks}{
-Defined breaks in the color scheme of the levelplot. If you make to many breaks, the color scheme repeats!
+\code{list} with one element for \coed{x1} and{x2}. Define breaks in the color scheme of the plot.
+If you make to many breaks, the color scheme repeats! If \code{x2=NULL} this can be an
+\code{vector}. If you like to have the same breaks or both relationship matrices, you can also use
+just one vector.
+}
+  \item{axes}{
+a \code{logical} value indicating whether axes should be drawn on the plot. Default is \code{TRUE}.
+}
+  \item{cols}{
+a \code{list} with one element for each relationship matrix. Colors and the number of levelbreaks
+should fit. But also if not, a plot is drawn. In case option \code{x2=NULL}, \code{cols} can bei a
+\code{vector}.
 }
   \item{\dots}{
 further graphical arguments passed to function \code{levelplot} in package \code{lattice}. To create equal colorkeys for two heatmaps, use \code{at=seq(from,to,length=9)}.
