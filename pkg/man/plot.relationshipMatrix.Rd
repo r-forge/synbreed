@@ -19,7 +19,7 @@ Object of class \code{relationshipMatrix}
 Optional for comparisons of objects of class \code{relationshipMatrix}
 }
   \item{levelbreaks}{
-\code{list} with one element for \coed{x1} and{x2}. Define breaks in the color scheme of the plot.
+\code{list} with one element for \code{x1} and{x2}. Define breaks in the color scheme of the plot.
 If you make to many breaks, the color scheme repeats! If \code{x2=NULL} this can be an
 \code{vector}. If you like to have the same breaks or both relationship matrices, you can also use
 just one vector.
