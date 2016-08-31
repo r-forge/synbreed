@@ -1,9 +1,9 @@
 # heatmap for relationshipMatrix objects
 
-plot.relationshipMatrix <- function(x,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=NULL,...){
+plot.relationshipMatrix <- function(x,y=NULL,levelbreaks=NULL,axes=TRUE,cols=NULL,...){
   oldPar <- par(no.readonly = TRUE)
-  plotRelMatS <- function(x1,levelbreaks=levelbreaks,axes=axes,cols=cols,...){
-    relMat <- x1[, nrow(x1):1]
+  plotRelMatS <- function(x,levelbreaks=levelbreaks,axes=axes,cols=cols,...){
+    relMat <- x[, nrow(x):1]
     class(relMat) <- "matrix"
     size <- nrow(relMat)
     if(is.null(cols))
@@ -56,24 +56,24 @@ plot.relationshipMatrix <- function(x,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=NU
       (size <- nrow(relMat))
       if (size < 35){
         axis(1, at=seq(0, 1, length.out=size), labels=FALSE); axis(2, at=seq(0, 1, length.out=size), labels=FALSE)
-        text(x=seq(0, 1, length.out=size)-.4/size,labels=colnames(x1), srt=40,xpd=TRUE, y=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
-        text(y=seq(1, 0, length.out=size)-.4/size,labels=rownames(x1), srt=40,xpd=TRUE, x=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
+        text(x=seq(0, 1, length.out=size)-.4/size,labels=colnames(x), srt=40,xpd=TRUE, y=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
+        text(y=seq(1, 0, length.out=size)-.4/size,labels=rownames(x), srt=40,xpd=TRUE, x=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
       } else {
         axis(1, at=c(0,1), labels=FALSE); axis(2, at=c(0,1), labels=FALSE)
-        text(x=c(0,1)-.4/size,labels=colnames(x1)[c(1,size)], srt=40,xpd=TRUE, y=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
-        text(y=c(1,0)-.4/size,labels=rownames(x1)[c(1,size)], srt=40,xpd=TRUE, x=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
+        text(x=c(0,1)-.4/size,labels=colnames(x)[c(1,size)], srt=40,xpd=TRUE, y=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
+        text(y=c(1,0)-.4/size,labels=rownames(x)[c(1,size)], srt=40,xpd=TRUE, x=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
         text(y=.5-.4/size,labels="...", srt=90,xpd=TRUE, x=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
         text(x=.5-.4/size,labels="...", srt=0,xpd=TRUE, y=par()$usr[3]-0.075*(par()$usr[4]-par()$usr[3]))
       }
     }
     par(oldPar)
   }
-  plotRelMatD <- function(x1,x2,levelbreaks,axes,cols,...){
-    if(nrow(x1)>nrow(x2)) relMat1 <- relMat2 <- x1[, ncol(x1):1]*NA else  relMat1 <- relMat2 <- x2[, ncol(x2):1]*NA
-    x1[upper.tri(x1, diag=TRUE)] <- NA
-    x2[lower.tri(x2, diag=TRUE)] <- NA
-    relMat1[rownames(x2), colnames(x2)] <- x2
-    relMat2[rownames(x1), colnames(x1)] <- x1
+  plotRelMatD <- function(x,y,levelbreaks,axes,cols,...){
+    if(nrow(x)>nrow(y)) relMat1 <- relMat2 <- x[, ncol(x):1]*NA else  relMat1 <- relMat2 <- y[, ncol(y):1]*NA
+    x[upper.tri(x, diag=TRUE)] <- NA
+    y[lower.tri(y, diag=TRUE)] <- NA
+    relMat1[rownames(y), colnames(y)] <- y
+    relMat2[rownames(x), colnames(x)] <- x
     class(relMat1) <- class(relMat2) <- "matrix"
     size <- nrow(relMat1)
     col1 <- c("#ffffff", "#ffe4c8", "#ffdab4", "#ffd0a0", "#ffc182", "#ffb76e", "#ffad5a",
@@ -182,11 +182,11 @@ plot.relationshipMatrix <- function(x,x2=NULL,levelbreaks=NULL,axes=TRUE,cols=NU
     par(oldPar)
   }
 
- if(is.null(x2)) {
+ if(is.null(y)) {
    plotRelMatS(x,levelbreaks,axes,cols,...)
- } else if(class(x2)[1] != "relationshipMatrix") {
-   plotRelMatS(x,x2,levelbreaks,axes,cols,...)
+ } else if(class(y)[1] != "relationshipMatrix") {
+   plotRelMatS(x,y,levelbreaks,axes,cols,...)
  } else {
-   plotRelMatD(x,x2,levelbreaks,axes,cols,...)
+   plotRelMatD(x,y,levelbreaks,axes,cols,...)
  }
 }
