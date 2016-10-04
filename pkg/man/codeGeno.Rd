@@ -68,6 +68,9 @@ For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family s
 \item{check}{
  This option has as default \code{FALSE}. If something seems to be wrong with the coding, with the option \code{check=TRUE} the function tries to catch the error.
  }
+  \item{nodes}{
+ \code{numeric}. This option is not in use yet.
+ }
 }
 \details{
 Coding of genotypic data is done in the following order (depending on choice of arguments; not all steps are performed):
