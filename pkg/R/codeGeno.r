@@ -3,7 +3,8 @@
 
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
                      maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",keep.list=NULL,
-                     keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,check=FALSE){
+                     keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,
+                     check=FALSE,nodes=NULL){
 
   #============================================================
   # read information from arguments
