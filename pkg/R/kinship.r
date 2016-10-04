@@ -2,14 +2,15 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
 
     ret <- match.arg(ret,choices=c("add","kin","dom","gam","realized","realizedAB","sm","sm-smin","gaussian"),several.ok = FALSE)
     NAs <- FALSE
-    if (ret %in% c("realized","realizedAB","sm","sm-smin") & any(is.na(gpData$geno))) NAs <- TRUE
+    if (ret %in% c("realized","realizedAB","sm","sm-smin")) if(any(is.na(gpData$geno))) NAs <- TRUE
 # (1) expected relatedness
     if (ret %in% c("add","kin","dom","gam")){
     # check for 'gpData'
     if(any(class(gpData)=="gpData")){
       if (is.null(gpData$pedigree)) stop("no pedigree found")
       else ped <- gpData$pedigree
-    }
+    } else if (any(class(gpData) =="pedigree"))
+      ped <- gpData
 
     # number of ids
     n <- nrow(ped)
@@ -165,7 +166,7 @@ kin <- function(gpData,ret=c("add","kin","dom","gam","realized","realizedAB","sm
         # or, otherwise 2* minor allele frequency as expectation
         if(is.null(maf)) {maf <- colMeans(W, na.rm = TRUE)}
 
-        pq2 <- 0.5*maf*(2-maf)
+        pq2 <- .5*maf*(2-maf)
         # compute realized relationship matrix U
         W <- sweep(W,2,maf)
         W <- sweep(W,2,sqrt(pq2), "/")
