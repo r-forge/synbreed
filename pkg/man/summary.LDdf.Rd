@@ -1,4 +1,5 @@
 \name{summary.LDdf}
+\name{summary.LDmat}
 \Rdversion{1.1}
 \alias{summary.LDdf}
 \alias{summary.LDmat}
@@ -23,10 +24,10 @@ not used
 }
 }
 \details{
-Returns for each chromosome: Number of markers; mean, minimum and maximum LD measured as \eqn{r^2}{r2};  fraction of markers with \eqn{r^2>0.2}{r2>0.2};  maximum distance of markers
+Returns for each chromosome: Number of markers; mean, minimum and maximum LD measured as \eqn{r^2}{r2};  fraction of markers with \eqn{r^2>0.2}{r2>0.2};  average and maximum distance of number of markers
 }
 \author{
-Valentin Wimmer
+Valentin Wimmer and Hans-Juergen Auinger
 }
 
 \seealso{
@@ -45,4 +46,3 @@ Valentin Wimmer
 }
 
 \keyword{methods}
-
