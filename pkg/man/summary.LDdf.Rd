@@ -1,6 +1,7 @@
 \name{summary.LDdf}
-\name{summary.LDmat}
+
 \Rdversion{1.1}
+
 \alias{summary.LDdf}
 \alias{summary.LDmat}
 
