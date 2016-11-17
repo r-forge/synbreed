@@ -27,17 +27,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   MG <- rownames(gpData$geno)[apply(is.na(gpData$geno),1,all)]
   if(check)
     if(impute) {
-      if(impute.type %in% c("beagle", "beagleAfterFamily", "beagleNoRand", "beagleAfterFamilyNoRand"))
-        if(!"beaglePath" %in% ls()){
-          cat("Due to the policy of R, we removed the executable of beagle\n",
-              "from our package. If you like to use the beagle imputation,\n",
-              "you can put the executable beagle.jar somewhere. Then define\n",
-              "with 'beaglePath' a variable with the location of beagle.jar.\n",
-              "beagle.jar can be found in synbreed versions up to 0.9 in\n",
-              "the synbreed subfolder exec")
-          beaglePath <- NULL
-          return(NULL)
-        }
       if(impute.type %in% c("beagle", "beagleAfterFamily", "beagleNoRand", "beagleAfterFamilyNoRand") & !is.null(gpData$map))
         if(grepl("string mismatches", all.equal(rownames(gpData$map), colnames(gpData$geno))))
           stop("Order of markers in geno and map does not fit!")
