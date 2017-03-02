@@ -16,7 +16,7 @@ codeGeno(gpData,impute=FALSE,
          replace.value=NULL, maf=NULL, nmiss=NULL, label.heter="AB",
          reference.allele="minor", keep.list=NULL, keep.identical=TRUE, verbose=FALSE,
          minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE, check=FALSE,
-         nodes=NULL)
+         nodes=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,7 +69,7 @@ For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family s
  This option has as default \code{FALSE}. If something seems to be wrong with the coding, with the option \code{check=TRUE} the function tries to catch the error.
  }
   \item{nodes}{
- \code{numeric}. This option is not in use yet.
+ \code{numeric}. Here you can specify the number of nodes you like to use.
  }
 }
 \details{
@@ -89,7 +89,7 @@ Imputing is done according to \code{impute.type}
 This option is only suitable for homozygous individuals (such as doubled-haploid lines) structured in families.
 Suppose an observation \eqn{i} is missing (NA) for a marker \eqn{j} in family \eqn{k}. If marker \eqn{j} is fixed in family \eqn{k}, the imputed value will be the fixed allele. If marker \eqn{j} is segregating for the population \eqn{k},
 the value is 0 with probability of 0.5 and 2 with probability of 0.5. To use this algorithm, family information has to be stored as variable \code{family} in list element \code{covar} of an object of class \code{gpData}. This column should contain a \code{character} or \code{numeric} to identify family of all genotyped individuals.}
-\item{"beagle"}{Use Beagle Genetic Analysis Software Package version 4.1 (r22Apr16.1cf) (Browning and Browning 2007; 2013; 2016) to infer missing genotypes is used. This software is a java program, so that you have to install java (>=1.7) and make it available at your computer. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. Function \code{codeGeno} will create a directory \code{beagle} for Beagle input and output files (if it does not exist) and run Beagle with default settings. The information on marker position is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be available for all markers. The program can only handle the position units "bp", "kb" and "Mb". Make sure that there are than only integer numbers for the unit "bp", because beagle can only work with integer numbers. By default, three genotypes 0, 1, 2 are imputed. To restrict the imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
+\item{"beagle"}{Use Beagle Genetic Analysis Software Package version 4.1 (21Jan17.6cc) (Browning and Browning 2007; 2013; 2016) to infer missing genotypes is used. This software is a java program, so that you have to install java (>=1.7) and make it available at your computer. If you use the \code{beagle} option, please cite the original papers in publications. Beagle uses a HMM to reconstruct missing genotypes by the flanking markers. Function \code{codeGeno} will create a directory \code{beagle} for Beagle input and output files (if it does not exist) and run Beagle with default settings. The information on marker position is taken from element \code{map}. Indeed, the postion in \code{map$pos} must be available for all markers. The program can only handle the position units "bp", "kb" and "Mb". Make sure that there are than only integer numbers for the unit "bp", because beagle can only work with integer numbers. By default, three genotypes 0, 1, 2 are imputed. To restrict the imputation only to homozygous genotypes, use \code{label.heter=NULL}.}
 \item{"beagleAfterFamily"}{
 In the first step, missing genotypes are imputed according to the algorithm with \code{impute.type="family"}, but only for markers that are fixed within the family. Moreover, markers with a missing position (\code{map$pos=NA}) are imputed using the algorithm of \code{impute.type="family"}. In the second step, the remaining genotypes are imputed by Beagle. For details of this see the description of the \code{beagle} option.}
 \item{"beagleNoRand" and "beagleAfterFamilyNoRand"}{
