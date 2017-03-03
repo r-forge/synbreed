@@ -1,7 +1,7 @@
 
 # coding genotypic data
 
-codeGeno4 <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
+codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
                      maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",keep.list=NULL,
                      keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,
                      check=FALSE,nodes=1){
@@ -416,7 +416,7 @@ codeGeno4 <- function(gpData,impute=FALSE,impute.type=c("random","family","beagl
           polymorph2 <- rS > minFam
           polymorph[!polymorph2] <- TRUE
           # count missing values
-          nmissfam <- parTapply(cl,is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
+          nmissfam <- tapply(cl,is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
           # must be a named list
           names(major.allele) <- names(polymorph)
           # loop over all families
@@ -486,6 +486,7 @@ codeGeno4 <- function(gpData,impute=FALSE,impute.type=c("random","family","beagl
           pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
           write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
+          mapfile <- NULL
           if(noHet){
           output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar nthreads=", nodes, mapfile, sep="")),
