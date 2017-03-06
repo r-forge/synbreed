@@ -12,14 +12,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   impute.type <- match.arg(impute.type)
-  if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")){
-    if(is.null(gpData$map)){
-      warning("Beagle imputation makes no sense without map information!")
-    } else {
-      if(nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),])))
-        stop("Remove markers with identical positions!")
-    }
-  }
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
 
@@ -70,6 +62,16 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData <- list(geno=res, info=list(map.unit="NA", codeGeno=FALSE))
     rm(res)
     gpData$map <- NULL
+  }
+  if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")){
+    gpData$map <- gpData$map[rownames(gpData$map) %in% colnames(gpData$geno),]
+    if(is.null(gpData$map)){
+      warning("Beagle imputation makes no sense without map information!")
+    } else {
+      if(nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),])) &
+         !gpData$info$map.unit %in% c("cM", "M"))
+        stop("Remove markers with identical positions!")
+    }
   }
   if(!is.null(attr(gpData$geno, "identical"))) df.ldOld <- attr(gpData$geno, "identical") else df.ldOld <- NULL
   #  catch errors
@@ -485,8 +487,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           pre <- paste("chr",chr[lg],sep="")
           pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
+          if(gpData$info$map.unit %in% c("Mb", "kb", "bp")) mapfile <- NULL else {
+            mapfile <- data.frame(markerTEMPbeagle$map$chr, rownames(markerTEMPbeagle$map), markerTEMPbeagle$map$pos, markerTEMPbeagle$map$pos)
+            if(!is.integer(mapfile[,1])) mapfile[,1] <- as.integer(as.factor(mapfile[,1]))
+            if(gpData$info$map.unit == "M") { markerTEMPbeagle$map$pos <- mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
+            if(gpData$info$map.unit == "cM") markerTEMPbeagle$map$pos <- mapfile[, 4] <- 1000000 * mapfile[, 3]
+            write.table(mapfile, file=paste(beagleDir, "/", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
+            mapfile <- paste(" map=", beagleDir, "/", pre, ".map", sep="")
+          }
           write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
-          mapfile <- NULL
           if(noHet){
           output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar nthreads=", nodes, mapfile, sep="")),
@@ -503,6 +512,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           # read data from beagle
           resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE)
           mode(resTEMP) <- "numeric"
+          print("\ntest...test...test\n")
 
 
           # convert dose to genotypes
