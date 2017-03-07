@@ -505,21 +505,18 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                           " gtgl=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
                            intern=!showBeagleOutput)
           } else {
           output <- system(paste("java -Xmx3000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                           " gtgl=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
                            intern=!showBeagleOutput)
           }
           # read data from beagle
-          print("\ntest...test...test\n")
-          print(gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")))
           resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE, nodes=nodes)
           mode(resTEMP) <- "numeric"
-          print("\ntest...test...test\n")
 
 
           # convert dose to genotypes
