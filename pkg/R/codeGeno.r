@@ -70,7 +70,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else {
       if(nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),])) &
          !gpData$info$map.unit %in% c("cM", "M"))
-        stop("Remove markers with identical positions!")
+        warning("Markers with identical positions will be coded with subsequent numbers!")
     }
   }
   if(!is.null(attr(gpData$geno, "identical"))) df.ldOld <- attr(gpData$geno, "identical") else df.ldOld <- NULL
@@ -487,30 +487,37 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           pre <- paste("chr",chr[lg],sep="")
           pre <- gsub(" ", "_", pre, fixed=TRUE)
           # create new directory "beagle" for beagle input and output files
-          if(gpData$info$map.unit %in% c("Mb", "kb", "bp")) mapfile <- NULL else {
+          if(gpData$info$map.unit %in% c("Mb", "kb", "bp")){
+            mapfile <- NULL
+            while(any(duplicated(markerTEMPbeagle$map))) {markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)] <- markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)]+1}
+          } else {
             mapfile <- data.frame(markerTEMPbeagle$map$chr, rownames(markerTEMPbeagle$map), markerTEMPbeagle$map$pos, markerTEMPbeagle$map$pos)
             if(!is.integer(mapfile[,1])) mapfile[,1] <- as.integer(as.factor(mapfile[,1]))
-            if(gpData$info$map.unit == "M") { markerTEMPbeagle$map$pos <- mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
-            if(gpData$info$map.unit == "cM") markerTEMPbeagle$map$pos <- mapfile[, 4] <- 1000000 * mapfile[, 3]
+            if(gpData$info$map.unit == "M") { mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
+            if(gpData$info$map.unit == "cM")mapfile[, 4] <- 1000000 * mapfile[, 3]
+            while(any(duplicated(markerTEMPbeagle$map))) {mapfile[duplicated(markerTEMPbeagle$map), 4] <- mapfile[duplicated(markerTEMPbeagle$map), 4]+1}
+            markerTEMPbeagle$map$pos <- mapfile[, 4]
             write.table(mapfile, file=paste(beagleDir, "/", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
-            mapfile <- paste(" map=", beagleDir, "/", pre, ".map", sep="")
+            mapfile <- paste(" map=", beagleDir, "/", pre, ".map ", sep="")
           }
           write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
           if(noHet){
           output <- system(paste("java -Xmx3000m -jar ",
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar nthreads=", nodes, mapfile, sep="")),
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out", sep=""),
+                           " gt=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
                            intern=!showBeagleOutput)
           } else {
           output <- system(paste("java -Xmx3000m -jar ",
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar nthreads=", nodes, mapfile, sep="")),
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gt=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out", sep=""),
+                           " gt=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
                            intern=!showBeagleOutput)
           }
           # read data from beagle
-          resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE)
+          print("\ntest...test...test\n")
+          print(gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")))
+          resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE, nodes=nodes)
           mode(resTEMP) <- "numeric"
           print("\ntest...test...test\n")
 
