@@ -476,68 +476,50 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         } else if(length(list.files(beagleDir)) > 0 ) {
            file.remove(paste(beagleDir, list.files(beagleDir), sep="/"))
         }
-        ptm <- Sys.time()
-        for (lg in seq(along=chr)){
-          if(verbose) cat("          chromosome ", as.character(chr)[lg], "\n")
-          sel <- unique(c(rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% cnames ,]),
-                          colnames(gpData$geno)[!colnames(gpData$geno) %in% cnames]))
-          markerTEMPbeagle <- discard.markers(gpData,which=sel)
+        markerTEMPbeagle <- discard.markers(gpData,whichNot=rownames(gpData$map[!is.na(gpData$map$pos),]))
 
-          # write input files for beagle
-          pre <- paste("chr",chr[lg],sep="")
-          pre <- gsub(" ", "_", pre, fixed=TRUE)
-          # create new directory "beagle" for beagle input and output files
-          if(gpData$info$map.unit %in% c("Mb", "kb", "bp")){
-            mapfile <- NULL
-            while(any(duplicated(markerTEMPbeagle$map))) {markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)] <- markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)]+1}
-          } else {
-            mapfile <- data.frame(markerTEMPbeagle$map$chr, rownames(markerTEMPbeagle$map), markerTEMPbeagle$map$pos, markerTEMPbeagle$map$pos)
-            if(!is.integer(mapfile[,1])) mapfile[,1] <- as.integer(as.factor(mapfile[,1]))
-            if(gpData$info$map.unit == "M") { mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
-            if(gpData$info$map.unit == "cM")mapfile[, 4] <- 1000000 * mapfile[, 3]
-            while(any(duplicated(markerTEMPbeagle$map))) {mapfile[duplicated(markerTEMPbeagle$map), 4] <- mapfile[duplicated(markerTEMPbeagle$map), 4]+1}
-            markerTEMPbeagle$map$pos <- mapfile[, 4]
-            write.table(mapfile, file=paste(beagleDir, "/", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
-            mapfile <- paste(" map=", beagleDir, "/", pre, ".map ", sep="")
-          }
-          write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
-          if(noHet){
-          output <- system(paste("java -Xmx3000m -jar ",
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gtgl=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
-                           intern=!showBeagleOutput)
-          } else {
-          output <- system(paste("java -Xmx3000m -jar ",
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gtgl=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
-                           intern=!showBeagleOutput)
-          }
-          # read data from beagle
-          resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE, nodes=nodes)
-          mode(resTEMP) <- "numeric"
-
-
-          # convert dose to genotypes
-          if(noHet){
-            resTEMP[resTEMP<1] <- 0
-            resTEMP[resTEMP>=1] <- 2
-          } else {
-            resTEMP <- round(resTEMP,0) # 0, 1, and 2
-          }
-
-          if (length(sel)>0) {
-            gpData$geno[,!colnames(gpData$geno) %in% sel] <- resTEMP
-          } else {
-            gpData$geno <- resTEMP
-          }
-          if(lg==1)
-            if(verbose)  cat("         approximative run time for imputation by beagle ",
-                             paste(round(as.numeric(difftime(Sys.time(), ptm)/ncol(markerTEMPbeagle$geno)*ncol(gpData$geno)), digits=1), " ",
-                             units(difftime(Sys.time(), ptm))," ... \n",sep=""))
-
+        # write input files for beagle
+        # create new directory "beagle" for beagle input and output files
+        if(gpData$info$map.unit %in% c("Mb", "kb", "bp")){
+          mapfile <- NULL
+          while(any(duplicated(markerTEMPbeagle$map))) {markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)] <- markerTEMPbeagle$map$pos[duplicated(markerTEMPbeagle$map)]+1}
+        } else {
+          mapfile <- data.frame(markerTEMPbeagle$map$chr, rownames(markerTEMPbeagle$map), markerTEMPbeagle$map$pos, markerTEMPbeagle$map$pos)
+          if(!is.integer(mapfile[,1])) mapfile[,1] <- as.integer(as.factor(mapfile[,1]))
+          if(gpData$info$map.unit == "M") { mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
+          if(gpData$info$map.unit == "cM")mapfile[, 4] <- 1000000 * mapfile[, 3]
+          while(any(duplicated(markerTEMPbeagle$map))) {mapfile[duplicated(markerTEMPbeagle$map), 4] <- mapfile[duplicated(markerTEMPbeagle$map), 4]+1}
+          markerTEMPbeagle$map$pos <- mapfile[, 4]
+          write.table(mapfile, file=paste(beagleDir, "/", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
+          mapfile <- paste(" map=", beagleDir, "/", pre, ".map ", sep="")
         }
+        markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
+        write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
+        if(noHet){
+        output <- system(paste("java -Xmx3000m -jar ",
+                         shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
+                         # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                         " gtgl=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                         intern=!showBeagleOutput)
+        } else {
+        output <- system(paste("java -Xmx3000m -jar ",
+                         shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
+                         # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                         " gtgl=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                         intern=!showBeagleOutput)
+        }
+        # read data from beagle
+        resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE, nodes=nodes)
+        mode(resTEMP) <- "numeric"
+
+        # convert dose to genotypes
+        if(noHet){
+          resTEMP[resTEMP<1] <- 0
+          resTEMP[resTEMP>=1] <- 2
+        } else {
+          resTEMP <- round(resTEMP,0) # 0, 1, and 2
+        }
+        gpData$geno[,colnames(resTEMP)] <- resTEMP
       }
 
       #########################################################################
