@@ -2,9 +2,9 @@
 # coding genotypic data
 
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
-                     maf=NULL,nmiss=NULL,label.heter="AB",reference.allele="minor",keep.list=NULL,
+                     maf=NULL,nmiss=NULL,label.heter="alleleCoding",reference.allele="minor",keep.list=NULL,
                      keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,
-                     check=FALSE,nodes=1){
+                     check=FALSE,cores=1){
 
   #============================================================
   # read information from arguments
@@ -16,10 +16,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
 
   if(is.null(impute.type)) impute.type <- "random"   # default
-  cl <- makeCluster(min(nodes, detectCores()))
-  registerDoParallel(cl)
-  MG <- rownames(gpData$geno)[parallel::parRapply(cl, is.na(gpData$geno),all)]
-  stopCluster(cl)
+  if(.Platform$OS.type == "windows"){
+    cl <- makeCluster(min(cores, detectCores()))
+    registerDoParallel(cl)
+    MG <- rownames(gpData$geno)[parallel::parRapply(cl, is.na(gpData$geno),all)]
+    stopCluster(cl)
+  } else
+    MG <- rownames(gpData$geno)[unlist(mclapply(as.data.frame(is.na(t(gpData$geno))),all))]
   if(check)
     if(impute) {
       if(impute.type %in% c("beagle", "beagleAfterFamily", "beagleNoRand", "beagleAfterFamilyNoRand") & !is.null(gpData$map))
@@ -29,7 +32,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
     } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
 
-  if (is.character(label.heter)) if(label.heter[1] == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
+  if (is.character(label.heter)){
+    if(label.heter[1] == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
+  } else if(length(label.heter) != ncol(gpData$geno)){
+    label.heter <- rep(label.heter, ncol(gpData$geno)/length(label.heter))[1:ncol(gpData$geno)]
+    names(label.heter) <- colnames(gpData$geno)
+  }
 
   orgFormat <- class(gpData)
   # check for class 'gpData'
@@ -61,7 +69,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     popStruc <- NULL
     gpData <- list(geno=res, info=list(map.unit="NA", codeGeno=FALSE))
     rm(res)
-    gpData$map <- NULL
   }
   if(impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")){
     gpData$map <- gpData$map[rownames(gpData$map) %in% colnames(gpData$geno),]
@@ -70,8 +77,14 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     } else {
       if(nrow(gpData$map[!is.na(gpData$map$pos),]) != nrow(unique(gpData$map[!is.na(gpData$map$pos),])) &
          !gpData$info$map.unit %in% c("cM", "M"))
-        warning("Markers with identical positions will be coded with subsequent numbers!")
+        warning("Markers with identical positions will be coded with subsequent basepair numbers!")
     }
+  }
+  if(is.null(gpData$map)){
+    gpData$map <- data.frame(row.names=colnames(gpData$geno),chr=NA,pos=NA)
+  } else if(nrow(gpData$map) < ncol(gpData$geno)){
+    gpData$map <- rbind(gpData$map, data.frame(row.names=names(alleles)[!names(alleles) %in% rownames(gpData$map)], chr=NA, pos=NA))
+    gpData$map <- gpData$map[colnames(gpData$geno),]
   }
   if(!is.null(attr(gpData$geno, "identical"))) df.ldOld <- attr(gpData$geno, "identical") else df.ldOld <- NULL
   #  catch errors
@@ -117,12 +130,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # step 1  - remove markers with more than nmiss fraction of missing values (optional, argument nmiss>0)
   #============================================================
 
+  if(.Platform$OS.type == "windows" & cores>1){
+    cl <- makeCluster(min(cores, detectCores()))
+    registerDoParallel(cl)
+    which.miss <- unlist(parLapply(cl, as.data.frame(is.na(gpData$geno)),mean))
+    stopCluster(cl)
+  } else {
+    which.miss <- mclapply(as.data.frame(is.na(gpData$geno)),mean, mc.cores=cores)
+  }
   if(!is.null(nmiss)){
     if(nmiss<0 | nmiss>1) stop("'nmiss' have to be in [0,1]")
-    cl <- makeCluster(min(nodes, detectCores()))
-    registerDoParallel(cl)
-    which.miss <- parCapply(cl, is.na(gpData$geno),mean)<=nmiss | knames
-    stopCluster(cl)
+    which.miss <- which.miss<=nmiss | knames
     gpData$geno <- gpData$geno[,which.miss]
     if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
     if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with >",nmiss*100,"% missing values \n")
@@ -130,8 +148,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
     rm(which.miss)
-  } else if (any(colMeans(is.na(gpData$geno))==1)){
-    which.miss <- colMeans(is.na(gpData$geno))!=1
+  } else if (any(which.miss==1)){
+    which.miss <- which.miss!=1
     gpData$geno <- gpData$geno[,which.miss]
     if(!(reference.allele[1]=="minor" | reference.allele[1]=="keep"))  reference.allele <- reference.allele[which.miss]
     if (verbose) cat("   step 1  :", sum(!which.miss),"marker(s) removed with only missing values \n")
@@ -149,142 +167,86 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if (verbose) cat("   step 2  : Recoding alleles \n")
   if(gpData$info$codeGeno) {
-    if(reference.allele[1]=="minor" | reference.allele[1]=="keep"){
+    if(reference.allele[1]=="minor" | reference.allele[1]!="keep"){
       afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>1]
-      if(reference.allele[1]!="keep"){
-        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+      gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+      if(c("refer", "heter", "alter") %in% colnames(gpData$map)){
+        df.alleles <- matrix(rep(1:3, each=ncol(gpData$geno)), ncol=3)
+        df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
+        gpData$map <- cbind(gpData$map, df.allele)
+      } else {
+        gpData$map[cnames%in%afCols,c("refer", "alter")] <- gpData$map[cnames%in%afCols,c("alter", "refer")]
       }
-      # inititialize report list
-      if(print.report){
-        cl <- makeCluster(min(nodes, detectCores()))
-        registerDoParallel(cl)
-        alleles <- parApply(cl, gpData$geno,2,table,useNA="no")
-        major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
-        minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
-        if(class(alleles) != "list"){
-          mytable <- function(x,...) as.data.frame(table(x,...),stringsAsFactors=FALSE)
-          alleles <- parApply(cl, gpData$geno,2,mytable,useNA="no")
-          major.allele <- function(x) x$x[which.max(x$Freq)]
-          minor.allele <- function(x) x$x[which.min(x$Freq)]
-        }
-        major <- unlist(parSapply(cl, alleles, major.allele))
-        minor <- unlist(parSapply(cl, alleles, minor.allele))
-        stopCluster(cl)
-        names(major) <- names(minor) <- cnames
-      }
-      if(reference.allele[1]=="keep"){
-        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
-      }
-
     }
   } else { # codeGeno condition of gpData FALSE
     if(reference.allele[1]=="minor"){
-
-      # identify heterozygous genotypes
-      if(!is.null(label.heter)){
-        if (is.character(label.heter)) {
-          label.heter <- label.heter # 1 label for heterozygous
+      extract <- function(x,y){x[y]}
+      if(.Platform$OS.type == "windows" & cores>1){
+        cl <- makeCluster(min(cores, detectCores()))
+        registerDoParallel(cl)
+        alleles <- parLapply(cl, as.data.frame(gpData$geno),levels)
+        names(alleles) <- cnames
+        gpData$geno <- parLapply(cl,as.data.frame(gpData$geno), as.numeric)
+        df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
+        if(is.null(label.heter)) {
+          df.allele$refer <- unlist(mclapply(alleles, extract, 1, mc.cores=cores))
+          df.allele$alter <- unlist(mclapply(alleles, extract, 2, mc.cores=cores))
         } else {
-          if (is.function(label.heter)){                          # multiple labels for heterozygous values
-            is.heter <- label.heter
-            label.heter <- unique(gpData$geno[which(is.heter(gpData$geno),arr.ind=TRUE)])
-          } else stop("label.heter must be a character string or a function")
+          whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
+                                             else z <- c((1:3)[x==y], 3)
+                                             return(z[1])}
+          hetPos <- numeric()
+          for(i in unique(label.heter)){
+            namWk <- names(alleles)[unlist(parLapply(cl,label.heter, identical, i))]
+            hetPos <- c(unlist(parLapply(cl,alleles[namWk], whereHetPos, i)), hetPos)
+          }
+          hetPos <- hetPos[names(alleles)]
+          df.allele$heter <- unlist(parLapply(cl, alleles, extract, 2))
+          df.allele$refer <- unlist(parLapply(cl, alleles, extract, 1))
+          df.allele$alter <- unlist(parLapply(cl, alleles, extract, 3))
+          gpData$geno <- matrix(unlist(gpData$geno), ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
+          gpData$geno[, hetPos==1] <- unlist(parLapply(cl, gpData$geno[, hetPos==1], function(x){2*(x%%2)+(x%/%2)}))
+          gpData$geno[, hetPos==3] <- unlist(parLapply(cl, gpData$geno[, hetPos==3], function(x){2*((1+x)%%2)+((1+x)%/%2)}))
+          df.allele[hetPos==1,1:2] <- df.allele[hetPos==1,2:1]
+          df.allele[hetPos==3,3:2] <- df.allele[hetPos==3,2:3]
         }
-        # make sure that NA is not in label.heter
-        # otherwise missing values would be masked
-        label.heter <- label.heter[!is.na(label.heter)]
-      }
-
-      # inititialize report list
-      if(print.report){
-        cl <- makeCluster(min(nodes, detectCores()))
-        registerDoParallel(cl)
-        alleles <- parApply(cl,gpData$geno,2,table,useNA="no")
-        major.allele <- function(x) names(which.max(x[!names(x) %in% label.heter]))
-        minor.allele <- function(x) names(which.min(x[!names(x) %in% label.heter]))
-        if(class(alleles) != "list"){
-          mytable <- function(x,...) as.data.frame(table(x,...),stringsAsFactors=FALSE)
-          alleles <- parApply(cl,gpData$geno,2,mytable,useNA="no")
-          major.allele <- function(x) x$x[which.max(x$Freq)]
-          minor.allele <- function(x) x$x[which.min(x$Freq)]
-        }
-        major <- unlist(parSapply(cl,alleles,major.allele))
-        minor <- unlist(parSapply(cl,alleles,minor.allele))
         stopCluster(cl)
-        names(major) <- names(minor) <- cnames
-      }
-      # function to recode alleles within one locus : 0 = major, 2 = minor
-      codeNumeric <- function(x){
-        # names of alleles ordered by allele frequency
-        alleles <-  names(table(x)[order(table(x),decreasing=TRUE)])
-        # do not use heterozygous values
-        alleles <- alleles[!alleles %in% label.heter]
-        if (length(alleles)>2) stop("more than 2 marker genotypes found, but 'label.heter' is not declared")
-        x[x %in% alleles] <- (as.numeric(factor(x[x %in% alleles],levels=alleles))-1)*2
-        return(x)
-      }
-
-      # apply function on whole genotypic data
-      cl <- makeCluster(min(nodes, detectCores()))
-      registerDoParallel(cl)
-      gpData$geno <- parApply(cl,as.matrix(gpData$geno),2,codeNumeric)
-      stopCluster(cl)
-
-      # set heterozygous genotypes as 1
-      gpData$geno[gpData$geno %in% label.heter] <- 1
-      gpData$geno <- matrix(as.numeric(gpData$geno),nrow=n)
-    } else { #if reference.alle !="minor"
-      count.ref.alleles <- function(x,ref){
-   	    sum(x==ref)		
-      }
-      if(mode(gpData$geno) == "character"){
-        recode.by.ref.alleles <- function(x){
-	      ref <- substr(x[1],1,1)
-	      x <- x[-1]
-	      x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
-          cl <- makeCluster(min(nodes, detectCores()))
-          registerDoParallel(cl)
-  	      nr.ref.alleles <- unlist(parLapply(cl,x2,count.ref.alleles,ref))
-          stopCluster(cl)
-	      return(nr.ref.alleles)
-        }
-      } else {
-        recode.by.ref.alleles <- function(x){
-	      ref <- x[1]
-	      x <- x[-1]
-	      x2 <- ifelse(!is.na(x),strsplit(x,split=""),NA) # split genotype into both alleles
-          cl <- makeCluster(min(nodes, detectCores()))
-          registerDoParallel(cl)
-  	      nr.ref.alleles <- unlist(parLapply(cl,x2,count.ref.alleles,ref))
-          stopCluster(cl)
-	      return(nr.ref.alleles)
+      } else { #unix-like code
+        colnames(gpData$geno) <- cnames
+        alleles <- mclapply(as.data.frame(gpData$geno),levels, mc.cores=cores)
+        names(alleles) <- cnames
+        gpData$geno <- mclapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
+        df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
+        if(is.null(label.heter)) {
+          df.allele$refer <- unlist(mclapply(alleles, extract, 1, mc.cores=cores))
+          df.allele$alter <- unlist(mclapply(alleles, extract, 2, mc.cores=cores))
+        } else {
+          whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
+                                             else z <- c((1:3)[x==y], 3)
+                                             return(z[1])}
+          hetPos <- numeric()
+          for(i in unique(label.heter)){
+            namWk <- names(alleles)[unlist(mclapply(label.heter, identical, i, mc.cores=cores))]
+            hetPos <- c(unlist(mclapply(alleles[namWk], whereHetPos, i, mc.cores=cores)), hetPos)
+          }
+          hetPos <- hetPos[names(alleles)]
+          df.allele$heter <- unlist(mclapply(alleles, extract, 2, mc.cores=cores))
+          df.allele$refer <- unlist(mclapply(alleles, extract, 1, mc.cores=cores))
+          df.allele$alter <- unlist(mclapply(alleles, extract, 3, mc.cores=cores))
+          gpData$geno <- matrix(unlist(gpData$geno), ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
+          gpData$geno[, hetPos==1] <- unlist(mclapply(gpData$geno[, hetPos==1], function(x){2*(x%%2)+(x%/%2)}, mc.cores=cores))
+          gpData$geno[, hetPos==3] <- unlist(mclapply(gpData$geno[, hetPos==3], function(x){2*((1+x)%%2)+((1+x)%/%2)}, mc.cores=cores))
+          df.allele[hetPos==1,1:2] <- df.allele[hetPos==1,2:1]
+          df.allele[hetPos==3,3:2] <- df.allele[hetPos==3,2:3]
         }
       }
-      get.nonref.allele <- function(x){
-        xx <- unlist(strsplit(x[-1],split=""))
-        unique(xx)[unique(xx) != x[1] & !is.na(unique(xx))]
-      }
-      if(any(is.na(reference.allele))){
-        cl <- makeCluster(min(nodes, detectCores()))
-        registerDoParallel(cl)
-        ref.tab <- parLapply(cl,data.frame(gpData$geno[,is.na(reference.allele)]), table)
-        ref.all <- unlist(parLapply(cl,ref.tab, names))[seq(1, by=2, length.out=length(ref.tab))]
-        ref.all <- ifelse(unlist(ref.tab)[seq(1, by=2, length.out=length(ref.tab))] > unlist(ref.tab)[seq(2, by=2, length.out=length(ref.tab))],
-                          ref.all, unlist(parLapply(cl,ref.tab, names))[seq(2, by=2, length.out=length(ref.tab))])
-        stopCluster(cl)
-        reference.allele[is.na(reference.allele)] <- ref.all
-        rm(ref.all, ref.tab)
-      }
-      res_ref <- rbind(reference.allele,gpData$geno)
-      cl <- makeCluster(min(nodes, detectCores()))
-      registerDoParallel(cl)
-      gpData$geno <- parApply(cl,res_ref,2,recode.by.ref.alleles)
-      if(print.report){
-        major <- reference.allele
-        minor <-  parApply(cl,res_ref,2,get.nonref.allele)
-      }
-      stopCluster(cl)
-      rm(res_ref)
+      gpData$geno <- gpData$geno-1
+      afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>1]
+      gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+      df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
+      if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
+        gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])
+      else gpData$alleles <- df.allele
     }
   }
 
@@ -312,9 +274,23 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(!is.null(maf)){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
     if(is.null(tester)){
-      which.maf <- colMeans(gpData$geno,na.rm=TRUE)>=2*maf | knames
+      if(.Platform$OS.type == "windows" & cores>1){
+        cl <- makeCluster(min(cores, detectCores()))
+        registerDoParallel(cl)
+        which.maf <- unlist(parLapply(cl,as.data.frame(gpData$geno),mean, na.rm=TRUE))>=2*maf | knames
+        stopCluster(cl)
+      } else
+        which.maf <- unlist(mclapply(as.data.frame(gpData$geno),mean, na.rm=TRUE, mc.cores=cores))>=2*maf | knames
     } else {
-      which.maf <- colMeans(gpData$geno,na.rm=TRUE)>=maf & colMeans(gpData$geno,na.rm=TRUE)<=1-maf  | knames
+      if(.Platform$OS.type == "windows" & cores>1){
+        cl <- makeCluster(min(cores, detectCores()))
+        registerDoParallel(cl)
+        which.maf <- unlist(parLapply(cl,as.data.frame(gpData$geno),mean, na.rm=TRUE))
+        which.maf <- which.maf>=2*maf | knames
+        stopCluster(cl)
+      } else
+        which.maf <- unlist(mclapply(as.data.frame(gpData$geno),mean, na.rm=TRUE, mc.cores=cores))
+        which.maf <- which.maf>=maf & which.maf<=1-maf | knames
     }
     if (verbose) cat("   step 4  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     gpData$geno <- gpData$geno[,which.maf]
@@ -351,10 +327,14 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$geno[gpData$geno == 2] <- NA
     gpData$geno <- matrix(as.numeric(gpData$geno), nrow = n)
     if(!is.null(nmiss)){
-      cl <- makeCluster(min(nodes, detectCores()))
-      registerDoParallel(cl)
-      which.miss <- parApply(cl,is.na(gpData$geno),2,mean,na.rm=TRUE) <= nmiss |knames
-      stopCluster(cl)
+      if(.Platform$OS.type=="windows" & cores>1){
+        cl <- makeCluster(min(cores, detectCores()))
+        registerDoParallel(cl)
+        which.miss <- parApply(cl,is.na(gpData$geno),2,mean,na.rm=TRUE) <= nmiss |knames
+        stopCluster(cl)
+      } else {
+        which.miss <- mclapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss |knames
+      }
       gpData$geno <- gpData$geno[,which.miss]
       cnames <- cnames[which.miss]; knames <- knames[which.miss]
       if (verbose) cat("   step 6  :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
@@ -407,18 +387,18 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       ptm <- Sys.time()
       for (j in vec.cols){
         if(sum(!is.na(gpData$geno[,j]))>0){
-          cl <- makeCluster(min(nodes, detectCores()))
+          cl <- makeCluster(min(cores, detectCores()))
           registerDoParallel(cl)
           poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
           rS <- rowSums(poptab)
           # compute otherstatistics
-          major.allele <- unlist(attr(poptab,"dimnames")[[2]][parApply(cl,poptab,1,which.max)])
+          major.allele <- unlist(attr(poptab,"dimnames")[[2]][apply(poptab,1,which.max)])
           # look if SNP is segregating  for this population
-          polymorph <- parApply(cl,poptab,1,length) > 1 & (parApply(cl,poptab,1,min) != 0)
+          polymorph <- apply(poptab,1,length) > 1 & (apply(poptab,1,min) != 0)
           polymorph2 <- rS > minFam
           polymorph[!polymorph2] <- TRUE
           # count missing values
-          nmissfam <- tapply(cl,is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
+          nmissfam <- tapply(is.na(gpData$geno[vec.big,j]),popStruc[vec.big],sum)
           # must be a named list
           names(major.allele) <- names(polymorph)
           # loop over all families
@@ -465,16 +445,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gpData$geno <- gpData$geno*2
         rownames(gpData$geno) <- rnames
         colnames(gpData$geno) <- cnames
-        cl <- makeCluster(min(nodes, detectCores()))
-        registerDoParallel(cl)
-        cnt2 <- parApply(cl,is.na(gpData$geno),2,sum)
-        stopCluster(cl)
-        # loop over chromosomses
-        beagleDir <- paste("beagle", as.numeric(as.Date(Sys.time())), round(as.numeric(Sys.time())%%(24*3600)), sep="")
-        if(!beagleDir %in% list.files()){
-          dir.create(beagleDir)
-        } else if(length(list.files(beagleDir)) > 0 ) {
-           file.remove(paste(beagleDir, list.files(beagleDir), sep="/"))
+        if(.Platform$OS.type == "windows" & cores>1){
+          cl <- makeCluster(min(cores, detectCores()))
+          registerDoParallel(cl)
+          cnt2 <- unlist(parLapply(cl, as.data.frame(is.na(gpData$geno)),sum))
+          stopCluster(cl)
+        } else {
+          cnt2 <- unlist(mclapply(as.data.frame(is.na(gpData$geno)),sum, mc.cores=cores))
+        }
+        pre <- paste(as.numeric(as.Date(Sys.time())), round(as.numeric(Sys.time())%%(24*3600)), sep="")
+        if(!"beagle" %in% list.files()){
+          dir.create("beagle")
         }
         markerTEMPbeagle <- discard.markers(gpData,whichNot=rownames(gpData$map[!is.na(gpData$map$pos),]))
 
@@ -490,26 +471,27 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           if(gpData$info$map.unit == "cM")mapfile[, 4] <- 1000000 * mapfile[, 3]
           while(any(duplicated(markerTEMPbeagle$map))) {mapfile[duplicated(markerTEMPbeagle$map), 4] <- mapfile[duplicated(markerTEMPbeagle$map), 4]+1}
           markerTEMPbeagle$map$pos <- mapfile[, 4]
-          write.table(mapfile, file=paste(beagleDir, "/", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
-          mapfile <- paste(" map=", beagleDir, "/", pre, ".map ", sep="")
+          write.table(mapfile, file=paste("beagle/run", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
+          mapfile <- paste(" map=beagle/run", pre, ".map ", sep="")
         }
         markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
-        write.vcf(markerTEMPbeagle,paste(file.path(getwd(), beagleDir),"/",prefix=pre, "input.vcf", sep=""))
+        write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"input.vcf", sep=""))
         if(noHet){
         output <- system(paste("java -Xmx3000m -jar ",
                          shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                          # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                         " gtgl=", beagleDir, "/", pre, "input.vcf usephase=true out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                         " gtgl=beagle/run", pre, "input.vcf out=beagle/run", pre, "out gprobs=true nthreads=", cores, mapfile, sep=""),
                          intern=!showBeagleOutput)
         } else {
         output <- system(paste("java -Xmx3000m -jar ",
                          shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                          # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                         " gtgl=", beagleDir, "/", pre, "input.vcf out=", beagleDir, "/", pre, "out gprobs=true nthreads=", nodes, mapfile, sep=""),
+                         " gtgl=beagle/run", pre, "input.vcf out=beagle/run", pre, "out gprobs=true nthreads=", cores, mapfile, sep=""),
                          intern=!showBeagleOutput)
         }
         # read data from beagle
-        resTEMP <- read.vcf2matrix(file=gzfile(paste(beagleDir, "/",pre,"out.vcf.gz",sep="")), FORMAT="DS", IDinRow=TRUE, nodes=nodes)
+        gz <- gzfile(paste("beagle/run",pre,"out.vcf.gz",sep=""))
+        resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
         mode(resTEMP) <- "numeric"
 
         # convert dose to genotypes
@@ -528,22 +510,29 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(impute.type %in% c("random", "beagle", "beagleAfterFamily", "family")){
         if (verbose) cat("   step 7d : Random imputing of missing values \n")
         # initialize counter (- number of heterozygous values)
+        if(.Platform$OS.type == "windows" & cores>1){
+          cl <- makeCluster(min(cores, detectCores()))
+          registerDoParallel(cl)
+          mImp <- unlist(parLapply(cl,as.data.frame(is.na(gpData$geno)),sum))
+          p <- unlist(parLapply(cl,as.data.frame(gpData$geno),mean,na.rm=TRUE))/2
+          stopCluster(cl)
+        } else {
+          mImp <- unlist(mclapply(as.data.frame(is.na(gpData$geno)),sum, mc.cores=cores))
+          p <- unlist(mclapply(as.data.frame(gpData$geno),mean,na.rm=TRUE, mc.cores=cores))/2
+        }
         ptm <- proc.time()[3]
-        cl <- makeCluster(min(nodes, detectCores()))
-        registerDoParallel(cl)
-        for (j in (1:M)[parApply(cl,is.na(gpData$geno), 2, sum)>0]){
-          cnt3[j] <-  cnt3[j] + sum(is.na(gpData$geno[,j]))
+        for (j in (1:M)[mImp>0]){
+          cnt3[j] <-  cnt3[j] + mImp[j]
           # estimation of running time after the first iteration
           p <- mean(gpData$geno[,j],na.rm=TRUE)/2  # minor allele frequency
           if(noHet){        # assuming only 2 homozygous genotypes
-            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,2),size=sum(is.na(gpData$geno[,j])),prob=c(1-p,p),replace=TRUE)
+            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,2),size=mImp[j],prob=c(1-p[j],p[j]),replace=TRUE)
           } else {                            # assuming 3 genotypes
-            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,1,2),size=sum(is.na(gpData$geno[,j])),prob=c((1-p)^2,2*p*(1-p),p^2),replace=TRUE)
+            gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,1,2),size=mImp[j],prob=c((1-p[j])^2,2*p[j]*(1-p[j]),p[j]^2),replace=TRUE)
           }
           if(j==ceiling(M/100)) if(verbose) cat("         approximate run time for random imputation ",(proc.time()[3] - ptm)*99," seconds \n",sep=" ")
         }
         # update counter for Beagle, remove those counts which where imputed ranomly
-        stopCluster(cl)
         if(impute.type == "beagle") cnt2 <- cnt2-cnt3
       }
       if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) gpData$geno <- gpData$geno/2
@@ -554,16 +543,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     #============================================================
 
     # recode again if allele frequeny changed to to imputing
-    if(any(colMeans(gpData$geno,na.rm=TRUE)>1)&reference.allele[1]=="minor"){
+    if(.Platform$OS.type == "windows" & cores>1){
+      cl <- makeCluster(min(cores, detectCores()))
+      registerDoParallel(cl)
+      p <- unlist(parLapply(cl,as.data.frame(gpData$geno),mean,na.rm=TRUE))
+      stopCluster(cl)
+    } else {
+      p <- unlist(mclapply(as.data.frame(gpData$geno),mean,na.rm=TRUE, mc.cores=cores))
+    }
+    if(any(p>1)&reference.allele[1]=="minor"){
       if (verbose) cat("   step 8  : Recode alleles due to imputation \n")
-      gpData$geno[,which(colMeans(gpData$geno,na.rm=TRUE)>1)] <- 2 - gpData$geno[,which(colMeans(gpData$geno,na.rm=TRUE)>1)]
+      gpData$geno[,which(p>1)] <- 2 - gpData$geno[,which(p>1)]
+      p[which(p>1)] <- 2-p[which(p>1)]
     } else{
       if (verbose) cat("   step 8  : No recoding of alleles necessary after imputation \n")
     }
-  }
-  # update report list
-  if(print.report){
-    major[which(colMeans(gpData$geno,na.rm=TRUE)>1)] <- minor[which(colMeans(gpData$geno,na.rm=TRUE)>1)]
   }
 
   #============================================================
@@ -572,11 +566,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(!is.null(maf) & impute){
     if(maf<0 | maf>1) stop("'maf' must be in [0,1]")
-    if(is.null(tester)) which.maf <- colMeans(gpData$geno,na.rm=TRUE)>=2*maf | knames else
-      which.maf <- colMeans(gpData$geno,na.rm=TRUE)>=maf & colMeans(gpData$geno,na.rm=TRUE)<=1-maf | knames
+    if(is.null(tester)) which.maf <- p>=2*maf | knames else
+      which.maf <- p>=maf & p<=1-maf | knames
     if (verbose) cat("   step 9  :",sum(!which.maf),"marker(s) removed with maf <",maf,"\n")
     gpData$geno <- gpData$geno[,which.maf]
-    cnames <- cnames[which.maf]; knames <- knames[which.maf]
+    cnames <- cnames[which.maf]; knames <- knames[which.maf]; p <- p[which.maf]
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
      # update report list
@@ -624,7 +618,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
 #        cat(str(df.ld, "\n"))
-        cl <- makeCluster(min(nodes, detectCores()))
+        cl <- makeCluster(min(cores, detectCores()))
         registerDoParallel(cl)
 	    which.miss <- parApply(cl,is.na(gpData$geno),2,sum)>0
         stopCluster(cl)
@@ -703,7 +697,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(tester)){
-    cl <- makeCluster(min(nodes, detectCores()))
+    cl <- makeCluster(min(cores, detectCores()))
     registerDoParallel(cl)
     which.fixed <- parApply(cl,gpData$geno, 2, sum) == nrow(gpData$geno)-1 | knames
     stopCluster(cl)

@@ -18,7 +18,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   }
 
   if(!is.null(map)){
-    if(!is.data.frame(map)) stop('map must be a data.frame, not a ', class(map))
+    if(!is.data.frame(map)) stop('map must be a data.frame, not a', class(map), 'object')
     # as a data.frame, map already has rownames
     if(!all(c("chr","pos") %in% colnames(map))) stop("colnames(map) must include 'chr' and 'pos'")
     # test if positions in map are numeric

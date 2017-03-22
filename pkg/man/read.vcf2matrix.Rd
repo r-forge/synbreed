@@ -8,7 +8,7 @@ Read data of a vcf-file to a matrix
 To easily read genomic data in vcf-Format to a matrix. Function \code{codeGeno} uses \code{read.vcf2matrix} with imputing by beagle.
 }
 \usage{
-read.vcf2matrix(file, FORMAT = "GT", coding = c("allele", "ref"), IDinRow = TRUE, nodes=1)
+read.vcf2matrix(file, FORMAT = "GT", coding = c("allele", "ref"), IDinRow = TRUE, cores=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,8 +28,8 @@ allele and \code{"1"} for the alternative allele.
 \code{logical}. Default is \code{TRUE}, this means the genotypes are in the rows and the markers in
 the column. For \code{FALSE} it is the other way round.
 }
-  \item{nodes}{
-\code{numeric}. Specifies the number of nodes for parallel computing.
+  \item{cores}{
+\code{numeric}. Specifies the number of cores for parallel computing.
 }
 }
  \value{

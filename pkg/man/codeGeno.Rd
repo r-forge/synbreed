@@ -13,10 +13,10 @@ Imputation of missing values can be done by random sampling from allele distribu
 codeGeno(gpData,impute=FALSE,
          impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand",
                        "beagleAfterFamilyNoRand","fix"),
-         replace.value=NULL, maf=NULL, nmiss=NULL, label.heter="AB",
+         replace.value=NULL, maf=NULL, nmiss=NULL, label.heter="alleleCoding",
          reference.allele="minor", keep.list=NULL, keep.identical=TRUE, verbose=FALSE,
          minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE, check=FALSE,
-         nodes=1)
+         cores=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,7 +39,7 @@ object of class \code{gpData} with arbitrary coding in element \code{geno}. Miss
 \code{numeric} scalar.  Markers with more than \code{nmiss} fraction of missing values are discarded, thus  \code{nmiss} in [0,1]. If \code{map} in \code{gpData} is available, markers are also removed from \code{map}.
 }
   \item{label.heter}{
-This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ..., "AG", "CG", ..., "T:C", "G:A", ... or "G|T", "A|C", ... then \code{label.heter="alleleCoding"} can be used. Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
+This is either a scalar or vector of characters to identify heterozygous genotypes or a function returning \code{TRUE} if an element of the marker matrix is the heterozygous genotype. Defining a function is useful, if number of unique heterozygous genotypes is large, i.e. if genotypes are coded by alleles. If the heterozygous genotype is coded like "A/T","G/C", ..., "AG", "CG", ..., "T:C", "G:A", ... or "G|T", "A|C", ... then \code{label.heter="alleleCoding"} can be used (This is the default). Note that heterozygous values must be identified unambiguously by \code{label.heter}. Use \code{label.heter=NULL} if there are only homozygous genotypes, i.e. in DH lines, to speed up computation and restrict imputation to values 0 and 2.
 }
   \item{reference.allele}{
 Define the reference allele which is used for the coding. Default is \code{"minor"}, i.e. data is coded by the number of copies of the minor allele. Alternatively, \code{reference.allele} can specify a single character defining the reference allele for all markers, or a vector defining marker-specific reference alleles (using the same order as of the markers in \code{gpData}). In case you have already a gpObject with \code{info$codeGeno == TRUE}, and like only to use higher maf or remove duplicated markers, you can use the option \code{"keep"}, than the coding of the original object is kept.
@@ -68,8 +68,8 @@ For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family s
 \item{check}{
  This option has as default \code{FALSE}. If something seems to be wrong with the coding, with the option \code{check=TRUE} the function tries to catch the error.
  }
-  \item{nodes}{
- \code{numeric}. Here you can specify the number of nodes you like to use.
+  \item{cores}{
+ \code{numeric}. Here you can specify the number of cores you like to use.
  }
 }
 \details{

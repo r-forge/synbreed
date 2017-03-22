@@ -25,7 +25,7 @@ write.vcf <- function(gp,file,unphased=TRUE){
 
 }
 
-read.vcf2matrix <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, nodes=1){
+read.vcf2matrix <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, cores=1){
 coding <- match.arg(coding)
   cnt=0
   while(scan(file=file, what="character", skip=cnt, nlines=1, quiet=TRUE)[1] !="#CHROM") cnt <- cnt+1
@@ -34,11 +34,10 @@ coding <- match.arg(coding)
   colnames(geno) <- Mnames
   rownames(geno) <- geno$ID
   ref <- geno$REF; alternative <- geno$ALT
-  print(table(geno$FORMAT))
   form <- unlist(strsplit(geno$FORMAT, ":"))
   geno <- geno[, !colnames(geno) %in% c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT")]
-  if(nodes>1){
-    cl <- makeCluster(min(nodes, detectCores()))
+  if(cores>1){
+    cl <- makeCluster(min(cores, detectCores()))
     registerDoParallel(cl)
     geno[1:nrow(geno), 1:ncol(geno)] <- unlist(parLapply(c, geno, strsplit, ":"))[rep(form, ncol(geno)) == FORMAT]
     stopCluster(cl)
@@ -56,7 +55,7 @@ coding <- match.arg(coding)
 
 }
 
-read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, nodes=1){
+read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, cores=1){
 
   coding <- match.arg(coding)
   cnt=0
@@ -71,8 +70,8 @@ read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=T
   colnames(map) <- c("chr", "pos")
   class(map) <- c("GenMap", "data.frame")
   geno <- geno[, !colnames(geno) %in% c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT")]
-  if(nodes>1){
-    cl <- makeCluster(min(nodes, detectCores()))
+  if(cores>1){
+    cl <- makeCluster(min(cores, detectCores()))
     registerDoParallel(cl)
     geno[1:nrow(geno), 1:ncol(geno)] <- unlist(parLapply(c, geno, strsplit, ":"))[rep(form, ncol(geno)) == FORMAT]
     stopCluster(cl)
