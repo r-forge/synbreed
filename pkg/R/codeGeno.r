@@ -35,7 +35,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if (is.character(label.heter)){
     if(label.heter[1] == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
   } else if(length(label.heter) != ncol(gpData$geno)){
-    label.heter <- rep(label.heter, ncol(gpData$geno)/length(label.heter))[1:ncol(gpData$geno)]
+    label.heter <- rep(as.list(label.heter), ceiling(ncol(gpData$geno)/length(label.heter)))[1:ncol(gpData$geno)]
     names(label.heter) <- colnames(gpData$geno)
   }
 
