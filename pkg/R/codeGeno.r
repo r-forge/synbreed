@@ -184,13 +184,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         df.allele$heter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
       } else {
         whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
-                                           else if(y=="alleleCoding") z <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
+                                           else if(y=="alleleCoding") z <- c((1:3)[substr(x, 1, 1) != substr(x, nchar(x), nchar(x))],3)
                                            else z <- c((1:3)[x==y], 3)
                                            return(z[1])}
         hetPos <- numeric()
         if(length(label.heter) == 1){
           label.heter <- as.list(label.heter)
-          hetPos <- c(unlist(multiLapply(alleles, whereHetPos, j, mc.cores=cores)))
+          hetPos <- c(unlist(multiLapply(alleles, whereHetPos, label.heter, mc.cores=cores)))
         } else {
           if(length(label.heter) != length(gpData$geno))
             label.heter <- rep(as.list(label.heter), ceiling(length(gpData$geno)/length(label.heter)))[1:length(gpData$geno)]
