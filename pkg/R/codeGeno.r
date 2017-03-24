@@ -190,7 +190,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           hetPos <- c(unlist(multiLapply(alleles, whereHetPos, j, mc.cores=cores)))
         } else {
           if(length(label.heter) != length(gpData$geno))
-            label.heter <- rep(as.list(label.heter), ceiling(ncol(gpData$geno)/length(label.heter)))[1:ncol(gpData$geno)]
+            label.heter <- rep(as.list(label.heter), ceiling(length(gpData$geno)/length(label.heter)))[1:length(gpData$geno)]
           for(i in unique(as.character(label.heter))){
             j <- label.heter[[match(i, as.character(label.heter))]]
             namWk <- names(alleles)[unlist(multiLapply(label.heter, identical, j, mc.cores=cores))]
