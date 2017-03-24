@@ -171,7 +171,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(reference.allele[1]=="minor"){
       extract <- function(x,y){x[y]}
       colnames(gpData$geno) <- cnames
-      alleles <- multiLapply(as.data.frame(gpData$geno),levels, mc.cores=cores)
+      if(is.numeric(gpData$geno))
+        alleles <- multiLapply(as.data.frame(gpData$geno),unique,mc.cores=cores)
+      else
+        alleles <- multiLapply(as.data.frame(gpData$geno),levels,mc.cores=cores)
       names(alleles) <- cnames
       gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
       df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
