@@ -190,7 +190,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                                            else z <- c((1:3)[x==y], 3)
                                            return(z[1])}
         hetPos <- numeric()
-        for(i in unique(label.heter)){
+        for(i in unique(as.character(label.heter))){
           namWk <- names(alleles)[unlist(multiLapply(label.heter, identical, i, mc.cores=cores))]
           hetPos <- c(unlist(multiLapply(alleles[namWk], whereHetPos, i, mc.cores=cores)), hetPos)
         }
