@@ -191,7 +191,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                                            return(z[1])}
         if(noHet) {
           hetPos <- rep(3, length(alleles))
-          names(hetPos) <- cnames)
+          names(hetPos) <- cnames
         } else {
           hetPos <- numeric()
           for(i in unique(as.character(label.heter))){
