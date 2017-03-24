@@ -35,13 +35,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
     } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
 
-  if (is.character(label.heter)){
-    if(label.heter[1] == "alleleCoding") label.heter <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
-  } else if(length(label.heter) != ncol(gpData$geno)){
-    label.heter <- rep(as.list(label.heter), ceiling(ncol(gpData$geno)/length(label.heter)))[1:ncol(gpData$geno)]
-    names(label.heter) <- colnames(gpData$geno)
-  }
-
   orgFormat <- class(gpData)
   # check for class 'gpData'
   if(class(gpData)=="gpData"){
@@ -185,20 +178,24 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(is.null(label.heter)) {
         df.allele$refer <- unlist(multiLapply(alleles, extract, 1, mc.cores=cores))
         df.allele$alter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
+        df.allele$heter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
       } else {
         whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
+                                           else if(y=="alleleCoding") z <- function(x){substr(x, 1, 1) != substr(x, nchar(x), nchar(x))}
                                            else z <- c((1:3)[x==y], 3)
                                            return(z[1])}
-        if(is.null(label.heter)) {
-          hetPos <- rep(3, length(alleles))
-          names(hetPos) <- cnames
+        hetPos <- numeric()
+        if(length(label.heter) == 1){
+          label.heter <- as.list(label.heter)
+          hetPos <- c(unlist(multiLapply(alleles, whereHetPos, j, mc.cores=cores)))
         } else {
-          hetPos <- numeric()
+          if(length(label.heter) != length(gpData$geno))
+            label.heter <- rep(as.list(label.heter), ceiling(ncol(gpData$geno)/length(label.heter)))[1:ncol(gpData$geno)]
           for(i in unique(as.character(label.heter))){
             j <- label.heter[[match(i, as.character(label.heter))]]
-            namWk <- names(alleles)[unlist(multiLapply(label.heter, identical, i, mc.cores=cores))]
-            hetPos <- c(unlist(multiLapply(alleles[namWk], whereHetPos, i, mc.cores=cores)), hetPos)
-        }
+            namWk <- names(alleles)[unlist(multiLapply(label.heter, identical, j, mc.cores=cores))]
+            hetPos <- c(unlist(multiLapply(alleles[namWk], whereHetPos, j, mc.cores=cores)), hetPos)
+          }
         }
         hetPos <- hetPos[names(alleles)]
         df.allele$heter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
