@@ -21,7 +21,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       parLapply(cl,x,y,...)
       stopCluster(cl)
     } else {
-      mclapply(x,y,...,mc.cores=cores)
+      mclapply(x,y,...,mc.cores=mc.cores)
     }
   }
   if(is.null(impute.type)) impute.type <- "random"   # default
@@ -77,9 +77,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
   }
   if(is.null(gpData$map)){
-    gpData$map <- data.frame(row.names=colnames(gpData$geno),chr=NA,pos=NA)
+    gpData$map <- data.frame(row.names=colnames(gpData$geno),chr=rep(NA, ncol(gpData$geno)),pos=rep(NA, ncol(gpData$geno)))
   } else if(nrow(gpData$map) < ncol(gpData$geno)){
-    gpData$map <- rbind(gpData$map, data.frame(row.names=names(alleles)[!names(alleles) %in% rownames(gpData$map)], chr=NA, pos=NA))
+    mnm <- colnames(gpData$geno)[!colnames(gpData$geno) %in% rownames(gpData$map)]
+    gpData$map <- rbind(gpData$map, data.frame(row.names=mnm, chr=rep(NA, length(mnm)), pos=rep(NA, length(mnm))))
     gpData$map <- gpData$map[colnames(gpData$geno),]
   }
   if(!is.null(attr(gpData$geno, "identical"))) df.ldOld <- attr(gpData$geno, "identical") else df.ldOld <- NULL
@@ -459,7 +460,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         for (j in (1:M)[mImp>0]){
           cnt3[j] <-  cnt3[j] + mImp[j]
           # estimation of running time after the first iteration
-          p <- mean(gpData$geno[,j],na.rm=TRUE)/2  # minor allele frequency
           if(noHet){        # assuming only 2 homozygous genotypes
             gpData$geno[is.na(gpData$geno[,j]),j] <- sample(c(0,2),size=mImp[j],prob=c(1-p[j],p[j]),replace=TRUE)
           } else {                            # assuming 3 genotypes
@@ -471,7 +471,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(impute.type == "beagle") cnt2 <- cnt2-cnt3
       }
       if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) gpData$geno <- gpData$geno/2
-
 
     #============================================================
     # step 8 - recoding
@@ -688,7 +687,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(print.report){
     if (verbose) cat("  Writing report to file 'SNPreport.txt' \n")
-    report.list <- data.frame(SNPname=cnames,major=major[cnames], minor=minor[cnames],
+    report.list <- data.frame(SNPname=cnames,reference=gpData$map$refer, alternative=gpData$map$alter,
                               MAF=round(colMeans(gpData$geno,na.rm=TRUE)/2,3),
                               impute.fam=cnt1[cnames], impute.beagle=cnt2[cnames],
                               impute.ran=cnt3[cnames])
