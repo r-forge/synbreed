@@ -21,7 +21,7 @@ object of class \code{gpData}
 \code{character}. Type of genomic prediction model. \code{"BLUP"} indicates best linear unbiased prediction (BLUP) using REML for both pedigree-based (P-BLUP) and marker-based (G-BLUP) model. \code{"BL"} and \code{"BRR"} indicate Bayesian Lasso and Bayesian Ridge Regression, respectively.
 }
   \item{kin}{
-object of class \code{relationshipMatrix} (only required for \code{model = "BLUP"}). Use a pedigree-based kinship to evaluate P-BLUP or a marker-based kinship to evaluate G-BLUP. For \code{"BL"} and \code{"BRR"}, also a kinship structure may be used as additional polygenic effect \eqn{u} in the Bayesian regression models (see \code{BLR} package).
+object of class \code{relationshipMatrix} (only required for \code{model = "BLUP"}). Use a pedigree-based kinship to evaluate P-BLUP or a marker-based kinship to evaluate G-BLUP. For \code{"BL"} and \code{"BRR"}, also a kinship structure may be used as additional polygenic effect \eqn{u} in the Bayesian regression models (see \code{BGLR} package).
 }
   \item{predict}{
 \code{logical}. If \code{TRUE}, genetic values will be predicted for genotyped but not phenotyped individuals. Default is \code{FALSE}. Note that this option is only meaningful for marker-based models. For pedigree-based model, please use function \code{predict.gpMod}.
@@ -71,7 +71,7 @@ Structure. R package version 1.3-8, URL http://www.csiro.au.
 
 Gustavo de los Campos and Paulino Perez Rodriguez, (2010). BLR:
 Bayesian Linear Regression. R package version 1.2.
-http://CRAN.R-project.org/package=BLR
+http://CRAN.R-project.org/package=BGLR
 
 }
 \author{
