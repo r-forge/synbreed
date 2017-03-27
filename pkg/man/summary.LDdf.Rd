@@ -12,13 +12,16 @@ Summary for LD objects
 \code{Summary} method for class ''LDdf''  and  ''LDmat''
 }
 \usage{
-\method{summary}{LDdf}(object,...)
-\method{summary}{LDmat}(object,...)
+\method{summary}{LDdf}(object,cores=1,...)
+\method{summary}{LDmat}(object,cores=1,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
 object of class \code{LDdf} or \code{LDmat} which is the output of function \code{pairwiseLD} and argument \code{type="data.frame"}  or   \code{type="matrix"}
+}
+  \item{cores}{
+\code{numeric}. Specifies the number of cores for parallel computing.
 }
   \item{...}{
 not used

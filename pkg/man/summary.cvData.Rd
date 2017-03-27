@@ -8,7 +8,7 @@ Summary of options and results of the cross validation procedure
 \code{summary} method for class "cvData"
 }
 \usage{
-\method{summary}{cvData}(object,...)
+\method{summary}{cvData}(object,cores=1,...)
 }
 
 \arguments{
