@@ -1,6 +1,6 @@
 # read genomic prediction data
 create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,
-                          reorderMap=TRUE,map.unit="cM",repeated=NULL,modCovar=NULL){
+                          reorderMap=TRUE,map.unit="cM",repeated=NULL,modCovar=NULL, cores=1){
 
   # start with some checks on data
   # geno as matrix but not data.frame (storage)

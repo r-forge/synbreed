@@ -26,7 +26,7 @@ write.vcf <- function(gp,file,unphased=TRUE){
 }
 
 read.vcf2matrix <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, cores=1){
-  multiLapply <- function(x,y,...,mc.cores=1){
+  multiLapply <- function(x,y,...,cores=cores){
     if(.Platform$OS.type == "windows" & cores>1){
       cl <- makeCluster(min(cores, detectCores()))
       registerDoParallel(cl)
@@ -59,7 +59,7 @@ read.vcf2matrix <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow
 }
 
 read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=TRUE, cores=1){
-  multiLapply <- function(x,y,...,mc.cores=1){
+  multiLapply <- function(x,y,...,cores=cores){
     if(.Platform$OS.type == "windows" & cores>1){
       cl <- makeCluster(min(cores, detectCores()))
       registerDoParallel(cl)

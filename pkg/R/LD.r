@@ -1,4 +1,5 @@
-pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=FALSE,ld.threshold=0,ld.window=99999,rm.unmapped=TRUE){
+pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=FALSE,
+                       ld.threshold=0,ld.window=99999,rm.unmapped=TRUE, cores=1){
 
     # catch errors
     if(is.null(gpData$geno)) stop("no genotypic data available")
