@@ -82,7 +82,7 @@ read.vcf2list <- function(file, FORMAT="GT", coding=c("allele","ref"), IDinRow=T
   colnames(map) <- c("chr", "pos")
   class(map) <- c("GenMap", "data.frame")
   geno <- geno[, !colnames(geno) %in% c("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT")]
-  geno[1:nrow(geno), 1:ncol(geno)] <- unlist(multiLapply(geno, strsplit, ":"), cores=cores)[rep(form, ncol(geno)) == FORMAT]
+  geno[1:nrow(geno), 1:ncol(geno)] <- unlist(multiLapply(geno, strsplit, ":", cores=cores))[rep(form, ncol(geno)) == FORMAT]
   if(FORMAT == "GT" & coding == "allele"){
     geno[geno=="0|0"] <- rep(paste(ref,ref, sep="|"), ncol(geno))[geno=="0|0"]
     geno[geno=="1|0"] <- rep(paste(alternative,ref, sep="|"), ncol(geno))[geno=="1|0"]
