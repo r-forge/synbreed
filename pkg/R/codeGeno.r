@@ -24,6 +24,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       mclapply(x,y,...,mc.cores=mc.cores)
     }
   }
+  multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){
+    method <- match.arg(method)
+    ncolX <- ncol(x); namesX <- colnames(x)
+    x <- rbind(x[1,],x); x[1,] <- 1:ncolX
+    pcor <- function(x,y, use, method){
+      cor(x[-1], y[-1,x[1]:ncol(y)], use=use, method=method)
+    }
+    x <- as.data.frame(x)
+    mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
+    mat[lower.tri(mat, diag=TRUE)] <- x <- unlist(multiLapply(x=x, fun=pcor, y=x, use=use, method=method, cores=1))
+    mat <- t(mat)
+    mat[lower.tri(mat, diag=TRUE)] <- x
+    colnames(mat) <- rownames(mat) <- namesX
+    return(mat)
+  }
   if(is.null(impute.type)) impute.type <- "random"   # default
   MG <- rownames(gpData$geno)[unlist(multiLapply(as.data.frame(is.na(t(gpData$geno))),all, mc.cores=cores))]
   if(check)
@@ -521,7 +536,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     rev.which.duplicated[which.duplicated] <- FALSE
     if(impute){
        if(sum(which.duplicated) >0){
-        mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs")
+        mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
         df.ld <- data.frame(kept=rep(cnames[which.duplicated], ncol(mat.ld)),
                             removed=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
                             ld=as.numeric(mat.ld),
@@ -534,7 +549,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(!all(!is.na(gpData$geno))){
         if(sum(which.duplicated) >0){
           gpData$geno[is.na(gpData$geno)] <- 3
-          mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs")
+          mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
           df.ld <- data.frame(kept=rep(cnames[which.duplicated], each=ncol(mat.ld)),
                               removed=rep(cnames[rev.which.duplicated], nrow(mat.ld)),
                               ld=as.numeric(mat.ld),
@@ -595,7 +610,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(is.na(df.ld[1,1])) df.ld <- df.ld[-1,]
       } else {# end of missing value step
         if(sum(which.duplicated) >0){
-          mat.ld <- cor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs")
+          mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
           rownames(mat.ld) <- cnames[which.duplicated]
           colnames(mat.ld) <- cnames[rev.which.duplicated]
           df.ld <- data.frame(kept=rep(colnames(mat.ld), nrow(mat.ld)),

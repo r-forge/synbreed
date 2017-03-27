@@ -1,5 +1,30 @@
 pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=FALSE,
                        ld.threshold=0,ld.window=99999,rm.unmapped=TRUE, cores=1){
+  multiLapply <- function(x,y,...,mc.cores=1){
+    if(.Platform$OS.type == "windows" & cores>1){
+      cl <- makeCluster(min(mc.cores, detectCores()))
+      registerDoParallel(cl)
+      parLapply(cl,x,y,...)
+      stopCluster(cl)
+    } else {
+      mclapply(x,y,...,mc.cores=mc.cores)
+    }
+  }
+  multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){
+    method <- match.arg(method)
+    ncolX <- ncol(x); namesX <- colnames(x)
+    x <- rbind(x[1,],x); x[1,] <- 1:ncolX
+    pcor <- function(x,y, use, method){
+      cor(x[-1], y[-1,x[1]:ncol(y)], use=use, method=method)
+    }
+    x <- as.data.frame(x)
+    mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
+    mat[lower.tri(mat, diag=TRUE)] <- x <- unlist(multiLapply(x=x, fun=pcor, y=x, use=use, method=method, cores=1))
+    mat <- t(mat)
+    mat[lower.tri(mat, diag=TRUE)] <- x
+    colnames(mat) <- rownames(mat) <- namesX
+    return(mat)
+  }
 
     # catch errors
     if(is.null(gpData$geno)) stop("no genotypic data available")
@@ -74,7 +99,7 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
            mn <- colnames(markeri)
            posi <- pos[linkageGroup==lg[i]]
 
-           ld.r <- cor(markeri,method="spearman",use="pairwise.complete.obs")
+           ld.r <- multiCor(markeri,method="spearman",use="pairwise.complete.obs", cores=cores)
 
            if(type=="data.frame"){
               ld.ri <- ld.r[lower.tri(ld.r)]
@@ -91,7 +116,7 @@ pairwiseLD <- function(gpData,chr=NULL,type=c("data.frame","matrix"),use.plink=F
                                      dist=disti,
                                      stringsAsFactors=FALSE)
               if(lg[i]=="NA") {
-                ld.rini <- cor(gpData$geno[,linkageGroup!=lg[i]],markeri,method="spearman",use="pairwise.complete.obs")
+                ld.rini <- multiCor(gpData$geno[,linkageGroup!=lg[i]],markeri,method="spearman",use="pairwise.complete.obs", cores=cores)
                 ld.r2.dfini <- data.frame(marker1=rep(colnames(ld.rini), each=nrow(ld.rini)),
                                           marker2=rep(rownames(ld.rini), ncol(ld.rini)),
                                           r=as.numeric(ld.rini),
