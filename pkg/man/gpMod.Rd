@@ -43,7 +43,7 @@ object of class \code{relationshipMatrix} (only required for \code{model = "BLUP
   A formula for random effects of the model. Specifies the matrices to include in the covariance structure. Each term is either a symmetric matrix, or a factor. Independent Gaussian random effects are included by passing the corresponding block factor. For mor details see \code{\link[regress]{regress}}. Only for \code{model="BLUP"}
 }
   \item{\dots}{
-further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BLR]{BLR}}) or parameters for the REML algorithm in regress.
+further arguments to be used by the genomic prediction models, i.e. prior values and MCMC options for the \code{BLR} function (see \code{\link[BGLR]{BLR}}) or parameters for the REML algorithm in regress.
 }
 }
 \details{
