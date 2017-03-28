@@ -17,3 +17,14 @@
 * Uploaded on r-forge 2017 - 03 - 27
 
 * parallel versions for functions create.gpData, kin, pairwiseLD, summary.LDdf, summary.LDmat
+
+0.12-2
+================================
+
+* Uploaded on r-forge 2017 - 03 - 28
+
+* minor changes due to bug fixes
+
+* ploidy option in codeGeno
+
+* 
