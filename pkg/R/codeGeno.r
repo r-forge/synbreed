@@ -183,7 +183,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         df.alleles[cnames%in%afCols,c(1,3)] <- df.alleles[cnames%in%afCols,c(3,1)]
         gpData$map <- cbind(gpData$map, df.alleles)
       }
-}
     }
   } else {# codeGeno condition of gpData FALSE
     if(ploidy < 3){
