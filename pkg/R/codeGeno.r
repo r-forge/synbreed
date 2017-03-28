@@ -242,7 +242,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         alleles <- multiLapply(as.data.frame(gpData$geno),unique,mc.cores=cores)
       else {
         alleles <- multiLapply(as.data.frame(gpData$geno),levels,mc.cores=cores)
-        if(!all(unlist(multiLapply(alleles, strsplit,"", cores=cores)%in% c("A","B"))) stop("Wrong coding for multiploid species. Only A and B is allowed!")
+        if(!all(unlist(multiLapply(alleles, strsplit,"", cores=cores)%in% c("A","B")))) stop("Wrong coding for multiploid species. Only A and B is allowed!")
       }
       names(alleles) <- cnames
       gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
