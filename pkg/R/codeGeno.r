@@ -4,14 +4,14 @@
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
                      maf=NULL,nmiss=NULL,label.heter="alleleCoding",reference.allele="minor",keep.list=NULL,
                      keep.identical=TRUE,verbose=FALSE,minFam=5,showBeagleOutput=FALSE,tester=NULL,print.report=FALSE,
-                     check=FALSE,cores=1){
+                     check=FALSE,ploidy=2,cores=1){
 
   #============================================================
   # read information from arguments
   ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
 
-  impute.type <- match.arg(impute.type)
+  infoCall <- match.call()
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
   multiLapply <- function(x,y,...,mc.cores=1){
@@ -171,20 +171,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if (verbose) cat("   step 2  : Recoding alleles \n")
+  if(diploidy<3) midDose <- 1 else midDose <- .5
   if(gpData$info$codeGeno) {
     if(reference.allele[1]=="minor" | reference.allele[1]!="keep"){
-      afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>1]
+      afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE) > midDose]
       gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
       if(c("refer", "heter", "alter") %in% colnames(gpData$map)){
         df.alleles <- matrix(rep(1:3, each=ncol(gpData$geno)), ncol=3)
-        df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
-        gpData$map <- cbind(gpData$map, df.allele)
+        df.alleles[cnames%in%afCols,c(1,3)] <- df.alleles[cnames%in%afCols,c(3,1)]
+        gpData$map <- cbind(gpData$map, df.alleles)
       } else {
         gpData$map[cnames%in%afCols,c("refer", "alter")] <- gpData$map[cnames%in%afCols,c("alter", "refer")]
       }
     }
-  } else { # codeGeno condition of gpData FALSE
-    if(reference.allele[1]=="minor"){
+  } else {# codeGeno condition of gpData FALSE
+    if(diploidy < 3){
       extract <- function(x,y){x[y]}
       colnames(gpData$geno) <- cnames
       if(is.numeric(gpData$geno))
@@ -227,11 +228,35 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         df.allele[hetPos==3,3:2] <- df.allele[hetPos==3,2:3]
       }
       gpData$geno <- gpData$geno-1
-      afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>1]
-      gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
-      df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
+      if(reference.allele[1]=="minor"){
+        afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
+        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+        df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
+      }
       if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])
+      else gpData$alleles <- df.allele
+    } else { # diploidy
+      colnames(gpData$geno) <- cnames
+      if(is.numeric(gpData$geno))
+        alleles <- multiLapply(as.data.frame(gpData$geno),unique,mc.cores=cores)
+      else {
+        alleles <- multiLapply(as.data.frame(gpData$geno),levels,mc.cores=cores)
+        if(!all(unlist(multiLapply(alleles, strsplit,"", cores=cores)%in% c("A","B"))) stop("Wrong coding for multiploid species. Only A and B is allowed!")
+      }
+      names(alleles) <- cnames
+      gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
+      gpData$geno <- matrix((unlist(gpData$geno)-1)/diploidy, ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
+      df.allele <- data.frame(id=rownames(gpData$map), refer=NA,alter=NA, stringsAsFactors=FALSE)
+      df.allele$refer <- unlist(multiLapply(alleles, function(x,y){substr(x[y],1,1)}, 1, mc.cores=cores))
+      df.allele$alter <- unlist(multiLapply(alleles, function(x,y){substr(x[y],nchar(x),nchar(x))}, diploidy+1, mc.cores=cores))
+      if(reference.allele[1]=="minor"){
+        afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
+        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(1, length(afCols))) - gpData$geno[, cnames%in%afCols]
+        df.allele[cnames%in%afCols,c(1,2)] <- df.allele[cnames%in%afCols,c(2,1)]
+      }
+      if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
+        gpData$map <- cbind(gpData$map, df.allele[, c("refer", "alter")])
       else gpData$alleles <- df.allele
     }
   }
@@ -559,11 +584,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gpData$geno[gpData$geno==3] <- NA
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
-#        cat(str(df.ld, "\n"))
-        cl <- makeCluster(min(cores, detectCores()))
-        registerDoParallel(cl)
-	    which.miss <- parApply(cl,is.na(gpData$geno),2,sum)>0
-        stopCluster(cl)
+        which.miss <- multiLapply(as.data.frame(gpData$geno),function(x){sum(is.na(x))}, cores=cores)>0
 	    which.miss <- (1:length(which.miss))[which.miss] 	
         if(length(which.miss[which.miss]) == ncol(gpData$geno))
           which.miss <- which.miss[1:(length(which.miss)-1)] 	
@@ -639,10 +660,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if(!is.null(tester)){
-    cl <- makeCluster(min(cores, detectCores()))
-    registerDoParallel(cl)
-    which.fixed <- parApply(cl,gpData$geno, 2, sum) == nrow(gpData$geno)-1 | knames
-    stopCluster(cl)
+    which.fixed <- multiLapply(as.data.frame(gpData$geno), sum, cores=cores) == nrow(gpData$geno)-1 | knames
     gpData$geno <- gpData$geno[,!which.fixed]
     cnames <- cnames[!which.fixed]; knames <- knames[!which.fixed]
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
@@ -698,8 +716,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   if(orgFormat == "gpData") {
     gpData$info$codeGeno <- TRUE
     gpData$info$version <- paste("gpData object was coded by synbreed version", sessionInfo()$otherPkgs$synbreed$Version)
-  } else gpData <- gpData$geno
-
+    gpData$info$Call <- infoCall
+  }
   if(print.report){
     if (verbose) cat("  Writing report to file 'SNPreport.txt' \n")
     report.list <- data.frame(SNPname=cnames,reference=gpData$map$refer, alternative=gpData$map$alter,

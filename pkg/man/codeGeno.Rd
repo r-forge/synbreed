@@ -16,7 +16,7 @@ codeGeno(gpData,impute=FALSE,
          replace.value=NULL, maf=NULL, nmiss=NULL, label.heter="alleleCoding",
          reference.allele="minor", keep.list=NULL, keep.identical=TRUE, verbose=FALSE,
          minFam=5, showBeagleOutput=FALSE, tester=NULL, print.report=FALSE, check=FALSE,
-         cores=1)
+         ploidy=2, cores=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,8 +68,11 @@ For \code{impute.type} \code{family} and \code{beagleAfterFamily}, each family s
 \item{check}{
  This option has as default \code{FALSE}. If something seems to be wrong with the coding, with the option \code{check=TRUE} the function tries to catch the error.
  }
+ \item{ploidy}{
+\code{numeric}. Here you can specify the number homologous alleles. For this option you need a coding with A and B, e.g. for tetraploids "AAAA", "AAAB", "AABB", "ABBB" and "BBBB". In the \code{geno} element of your gpData-object will be than the dosage of the minor allele. The argument label.heter is ignored for \code{ploidy >2}
+}
   \item{cores}{
- \code{numeric}. Here you can specify the number of cores you like to use.
+\code{numeric}. Here you can specify the number of cores you like to use.
  }
 }
 \details{
