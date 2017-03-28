@@ -171,21 +171,22 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
 
   if (verbose) cat("   step 2  : Recoding alleles \n")
-  if(diploidy<3) midDose <- 1 else midDose <- .5
+  if(ploidy<3) midDose <- 1 else midDose <- .5
   if(gpData$info$codeGeno) {
     if(reference.allele[1]=="minor" | reference.allele[1]!="keep"){
       afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE) > midDose]
       gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
-      if(c("refer", "heter", "alter") %in% colnames(gpData$map)){
-        df.alleles <- matrix(rep(1:3, each=ncol(gpData$geno)), ncol=3)
+      if(all(c("refer", "alter") %in% colnames(gpData$map))){
+        gpData$map[cnames%in%afCols,c("refer", "alter")] <- gpData$map[cnames%in%afCols,c("alter", "refer")]
+      } else {
+        df.alleles <- matrix(rep(0:2, each=ncol(gpData$geno)), ncol=3)
         df.alleles[cnames%in%afCols,c(1,3)] <- df.alleles[cnames%in%afCols,c(3,1)]
         gpData$map <- cbind(gpData$map, df.alleles)
-      } else {
-        gpData$map[cnames%in%afCols,c("refer", "alter")] <- gpData$map[cnames%in%afCols,c("alter", "refer")]
       }
+}
     }
   } else {# codeGeno condition of gpData FALSE
-    if(diploidy < 3){
+    if(ploidy < 3){
       extract <- function(x,y){x[y]}
       colnames(gpData$geno) <- cnames
       if(is.numeric(gpData$geno))
@@ -236,7 +237,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])
       else gpData$alleles <- df.allele
-    } else { # diploidy
+    } else { # ploidy
       colnames(gpData$geno) <- cnames
       if(is.numeric(gpData$geno))
         alleles <- multiLapply(as.data.frame(gpData$geno),unique,mc.cores=cores)
@@ -246,10 +247,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       }
       names(alleles) <- cnames
       gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
-      gpData$geno <- matrix((unlist(gpData$geno)-1)/diploidy, ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
+      gpData$geno <- matrix((unlist(gpData$geno)-1)/ploidy, ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
       df.allele <- data.frame(id=rownames(gpData$map), refer=NA,alter=NA, stringsAsFactors=FALSE)
       df.allele$refer <- unlist(multiLapply(alleles, function(x,y){substr(x[y],1,1)}, 1, mc.cores=cores))
-      df.allele$alter <- unlist(multiLapply(alleles, function(x,y){substr(x[y],nchar(x),nchar(x))}, diploidy+1, mc.cores=cores))
+      df.allele$alter <- unlist(multiLapply(alleles, function(x,y){substr(x[y],nchar(x),nchar(x))}, ploidy+1, mc.cores=cores))
       if(reference.allele[1]=="minor"){
         afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
         gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(1, length(afCols))) - gpData$geno[, cnames%in%afCols]
