@@ -33,12 +33,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
     x <- as.data.frame(x)
     mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
-    mat[lower.tri(mat, diag=TRUE)] <- x <- unlist(multiLapply(x=x, fun=pcor, y=x, use=use, method=method, cores=1))
+    mat[lower.tri(mat, diag=TRUE)] <- x <- unlist(multiLapply(x=x, fun=pcor, y=x, use=use, method=method, cores=cores))
     mat <- t(mat)
     mat[lower.tri(mat, diag=TRUE)] <- x
     colnames(mat) <- rownames(mat) <- namesX
     return(mat)
   }
+  multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){ cor(x=x, use=use, method=method)}
   if(is.null(impute.type)) impute.type <- "random"   # default
   MG <- rownames(gpData$geno)[unlist(multiLapply(as.data.frame(is.na(t(gpData$geno))),all, mc.cores=cores))]
   if(check)
