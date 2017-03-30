@@ -1,4 +1,3 @@
-
 # coding genotypic data
 
 codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand","fix"),replace.value=NULL,
@@ -25,21 +24,28 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     }
   }
   multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){
-    method <- match.arg(method)
-    ncolX <- ncol(x); namesX <- colnames(x)
-    x <- rbind(x[1,],x); x[1,] <- 1:ncolX
-    pcor <- function(x,y, use, method){
-      cor(x[-1], y[-1,x[1]:ncol(y)], use=use, method=method)
+    if(cores==1) cor(x, use=use, method=method) else {
+      method <- match.arg(method)
+      ncolX <- ncol(x); namesX <- colnames(x)
+      mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
+      nBlocks <- 1:50; nBlocks <- which.min((nBlocks*(nBlocks+1)*.5)%%cores)
+      if(nBlocks==1) {nBlocks <- 1:50; nBlocks <- which.min((nBlocks*(nBlocks+1)*.5)%%(cores-1))}
+      blocks <- unique(t(apply(cbind(rep(1:nBlocks, nBlocks), rep(1:nBlocks, each=nBlocks)), 1, sort)))
+      groups <- split(1:ncolX,sort(rep(1:nBlocks, ceiling(ncolX/nBlocks))[1:ncolX]))
+      cl <- makeCluster(min(cores, detectCores()))
+      registerDoParallel(cl)
+      cors <- list()
+      res <- foreach(i = 1:nrow(blocks)) %dopar% {
+		cors[[i]] <- cor(x[, groups[[blocks[i,1]]]], x[, groups[[blocks[i,2]]]], use=use, method=method)
+      }
+      stopCluster(cl)
+      for(i in 1:nrow(blocks)) {
+        mat[groups[[blocks[i,1]]], groups[[blocks[i,2]]]] <- res[[i]]
+        mat[groups[[blocks[i,2]]], groups[[blocks[i,1]]]] <- t(res[[i]])
+      }
+      return(mat)
     }
-    x <- as.data.frame(x)
-    mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
-    mat[lower.tri(mat, diag=TRUE)] <- x <- unlist(multiLapply(x=x, fun=pcor, y=x, use=use, method=method, cores=cores))
-    mat <- t(mat)
-    mat[lower.tri(mat, diag=TRUE)] <- x
-    colnames(mat) <- rownames(mat) <- namesX
-    return(mat)
   }
-  multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){ cor(x=x, use=use, method=method)}
   if(is.null(impute.type)) impute.type <- "random"   # default
   MG <- rownames(gpData$geno)[unlist(multiLapply(as.data.frame(is.na(t(gpData$geno))),all, mc.cores=cores))]
   if(check)
