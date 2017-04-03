@@ -10,6 +10,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
 
+  impute.type <- match.arg(impute.type)
   infoCall <- match.call()
   SEED <- round(runif(2,1,1000000),0)
   noHet <- is.null(label.heter)|!is.null(tester) # are there only homozygous genotypes?, we need this for random imputation
@@ -46,7 +47,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       return(mat)
     }
   }
-  if(is.null(impute.type)) impute.type <- "random"   # default
   MG <- rownames(gpData$geno)[unlist(multiLapply(as.data.frame(is.na(t(gpData$geno))),all, mc.cores=cores))]
   if(check)
     if(impute) {
@@ -231,14 +231,21 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         gpData$geno <- matrix(unlist(gpData$geno), ncol=length(gpData$geno), dimnames=list(1:n, names(gpData$geno)))
         gpData$geno[, hetPos==1] <- unlist(multiLapply(gpData$geno[, hetPos==1], function(x){2*(x%%2)+(x%/%2)}, mc.cores=cores))
         gpData$geno[, hetPos==3] <- unlist(multiLapply(gpData$geno[, hetPos==3], function(x){2*((1+x)%%2)+((1+x)%/%2)}, mc.cores=cores))
-        df.allele[hetPos==1,1:2] <- df.allele[hetPos==1,2:1]
-        df.allele[hetPos==3,3:2] <- df.allele[hetPos==3,2:3]
+        df.allele[hetPos==1,2:3] <- df.allele[hetPos==1,3:2]
+        df.allele[hetPos==3,4:3] <- df.allele[hetPos==3,3:4]
+        alterMiss <- !is.na(df.allele$heter) & is.na(df.allele$alter)
+        if(!all(alterMiss)){
+          df.allele$alter[alterMiss] <- multiLapply(as.data.frame(t(df.allele[alterMiss,]), stringsAsFactors=FALSE),
+                          function(x){alt <- unlist(strsplit(x[3],""))[!unlist(strsplit(x[3],"")) %in% unlist(strsplit(x[2],""))]
+                                      mid <- substr(x[3], 2, nchar(x[3])-1)
+                                      return(paste(alt,mid,alt,sep=""))})
+        }
       }
       gpData$geno <- gpData$geno-1
       if(reference.allele[1]=="minor"){
         afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
         gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
-        df.allele[cnames%in%afCols,c(1,3)] <- df.allele[cnames%in%afCols,c(3,1)]
+        df.allele[cnames%in%afCols,c(2,4)] <- df.allele[cnames%in%afCols,c(4,2)]
       }
       if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])

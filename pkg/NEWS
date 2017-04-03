@@ -3,29 +3,29 @@
 
 * Uploaded on r-forge 2017 - 03 - 24
 
-* parallelization of functions codeGeno, read.vcf2matrix, read.vcf2list, write.vcf
+* Parallelization of functions codeGeno, read.vcf2matrix, read.vcf2list, write.vcf
 
-* allelefrequencies and alleles added to the map of gpData-object
+* Allelefrequencies and alleles added to the map of gpData-object
 
 * beagle version 4.1 for imputation
 
-* minor bug fixes
+* Minor bug fixes
 
 0.12-1
 ================================
 
 * Uploaded on r-forge 2017 - 03 - 27
 
-* parallel versions for functions create.gpData, kin, pairwiseLD, summary.LDdf, summary.LDmat
+* Parallel versions for functions create.gpData, kin, pairwiseLD, summary.LDdf, summary.LDmat
 
 0.12-2
 ================================
 
 * Uploaded on r-forge 2017 - 03 - 28
 
-* minor changes due to bug fixes
+* Minor changes due to bug fixes
 
-* ploidy option in codeGeno
+* Ploidy option in codeGeno
 
 0.12-3
 ================================
@@ -33,3 +33,5 @@
 * Uploaded on r-forge 2017 - 04 - 03
 
 * Multi core calculation in pairwiseLD-function for R internal calculations
+
+* bug in codeGeno fixed
