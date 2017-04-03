@@ -27,4 +27,9 @@
 
 * ploidy option in codeGeno
 
-* 
+0.12-3
+================================
+
+* Uploaded on r-forge 2017 - 04 - 03
+
+* Multi core calculation in pairwiseLD-function for R internal calculations
