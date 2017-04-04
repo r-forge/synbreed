@@ -1,3 +1,35 @@
+0.12-4
+================================
+
+* Uploaded on r-forge 2017 - 04 - 04
+
+* smoothier presentation of alleles in gpData$map 
+
+0.12-3
+================================
+
+* Uploaded on r-forge 2017 - 04 - 03
+
+* Multi core calculation in pairwiseLD-function for R internal calculations
+
+* bug in codeGeno fixed
+
+0.12-2
+================================
+
+* Uploaded on r-forge 2017 - 03 - 28
+
+* Minor changes due to bug fixes
+
+* Ploidy option in codeGeno
+
+0.12-1
+================================
+
+* Uploaded on r-forge 2017 - 03 - 27
+
+* Parallel versions for functions create.gpData, kin, pairwiseLD, summary.LDdf, summary.LDmat
+
 0.12-0
 ================================
 
@@ -11,34 +43,3 @@
 
 * Minor bug fixes
 
-0.12-1
-================================
-
-* Uploaded on r-forge 2017 - 03 - 27
-
-* Parallel versions for functions create.gpData, kin, pairwiseLD, summary.LDdf, summary.LDmat
-
-0.12-2
-================================
-
-* Uploaded on r-forge 2017 - 03 - 28
-
-* Minor changes due to bug fixes
-
-* Ploidy option in codeGeno
-
-0.12-3
-================================
-
-* Uploaded on r-forge 2017 - 04 - 03
-
-* Multi core calculation in pairwiseLD-function for R internal calculations
-
-* bug in codeGeno fixed
-
-0.12-4
-================================
-
-* Uploaded on r-forge 2017 - 04 - 04
-
-* smoothier presentation of alleles in gpData$map
