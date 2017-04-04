@@ -6,7 +6,7 @@ Genomic predictions models for objects of class gpData
 }
 \description{
 This function fits genomic prediction models based on phenotypic and genotypic data in an object of class \code{gpData}. The possible models are Best Linear Unbiased Prediction (BLUP) using a pedigree-based or a marker-based genetic relationship matrix and Bayesian Lasso (BL) or Bayesian Ridge regression (BRR).
-BLUP models are fitted using the REML implementation of the \code{regress} package (Clifford and McCullagh, 2012). The Bayesian regression models are fitted using the Gibbs-Sampler of the \code{BLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set used to fit the model.
+BLUP models are fitted using the REML implementation of the \code{regress} package (Clifford and McCullagh, 2012). The Bayesian regression models are fitted using the Gibbs-Sampler of the \code{BGLR} package (de los Campos and Perez, 2010). The covariance structure in the BLUP model is defined by an object of class \code{relationshipMatrix}. The training set for the model fit consists of all individuals with phenotypes and genotypes. All data is restricted to individuals from the training set used to fit the model.
 
 
 } \usage{

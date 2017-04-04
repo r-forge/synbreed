@@ -195,10 +195,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(ploidy < 3){
       extract <- function(x,y){x[y]}
       colnames(gpData$geno) <- cnames
-      if(is.numeric(gpData$geno))
+      if(is.numeric(gpData$geno)){
         alleles <- multiLapply(as.data.frame(gpData$geno),unique,mc.cores=cores)
-      else
+      } else {
         alleles <- multiLapply(as.data.frame(gpData$geno),levels,mc.cores=cores)
+      }
       names(alleles) <- cnames
       gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
       df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
@@ -235,10 +236,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         df.allele[hetPos==3,4:3] <- df.allele[hetPos==3,3:4]
         alterMiss <- !is.na(df.allele$heter) & is.na(df.allele$alter)
         if(!all(alterMiss)){
-          df.allele$alter[alterMiss] <- multiLapply(as.data.frame(t(df.allele[alterMiss,]), stringsAsFactors=FALSE),
+          df.allele$alter[alterMiss] <- unlist(multiLapply(as.data.frame(t(df.allele[alterMiss,]), stringsAsFactors=FALSE),
                           function(x){alt <- unlist(strsplit(x[3],""))[!unlist(strsplit(x[3],"")) %in% unlist(strsplit(x[2],""))]
                                       mid <- substr(x[3], 2, nchar(x[3])-1)
-                                      return(paste(alt,mid,alt,sep=""))})
+                                      return(paste(alt,mid,alt,sep=""))}))
         }
       }
       gpData$geno <- gpData$geno-1
