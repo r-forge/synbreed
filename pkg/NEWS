@@ -35,3 +35,10 @@
 * Multi core calculation in pairwiseLD-function for R internal calculations
 
 * bug in codeGeno fixed
+
+0.12-4
+================================
+
+* Uploaded on r-forge 2017 - 04 - 04
+
+* smoothier presentation of alleles in gpData$map
