@@ -105,7 +105,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$map <- rbind(gpData$map, data.frame(row.names=mnm, chr=rep(NA, length(mnm)), pos=rep(NA, length(mnm))))
     gpData$map <- gpData$map[colnames(gpData$geno),]
   }
-  if(!is.null(attr(gpData$geno, "identical"))) df.ldOld <- attr(gpData$geno, "identical") else df.ldOld <- NULL
+  if(!is.null(attr(gpData$geno, "identical"))){
+    df.ldOld <- attr(gpData$geno, "identical")
+    if(!"removed.refer" %in% colnames(df.ldOld)) {
+      df.ldOld$removed.refer <- NA
+      df.ldOld$removed.alter <- NA
+    }
+  }  else df.ldOld <- NULL
   #  catch errors
   if(check){
     if(class(gpData$geno)!= "data.frame" & class(gpData$geno) != "matrix") stop("wrong data format")
@@ -185,9 +191,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
       if(all(c("refer", "alter") %in% colnames(gpData$map))){
         gpData$map[cnames%in%afCols,c("refer", "alter")] <- gpData$map[cnames%in%afCols,c("alter", "refer")]
+        if(!is.null(attr(gpData$geno, "identical")))
+          attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.refer", "removed.alter")] <-
+             attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.alter", "removed.refer")]
       } else {
         df.alleles <- matrix(rep(0:2, each=ncol(gpData$geno)), ncol=3)
         df.alleles[cnames%in%afCols,c(1,3)] <- df.alleles[cnames%in%afCols,c(3,1)]
+        if(!is.null(attr(gpData$geno, "identical")))
+          attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.refer", "removed.alter")] <-
+             attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.alter", "removed.refer")]
         gpData$map <- cbind(gpData$map, df.alleles)
       }
     }
@@ -269,6 +281,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
         gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(1, length(afCols))) - gpData$geno[, cnames%in%afCols]
         df.allele[cnames%in%afCols,c(1,2)] <- df.allele[cnames%in%afCols,c(2,1)]
+        if(!is.null(attr(gpData$geno, "identical")))
+          attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.refer", "removed.alter")] <-
+             attr(gpData$geno, "identical")[attr(gpData$geno, "identical")$kept %in% afCols, c("removed.alter", "removed.refer")]
       }
       if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "alter")])
@@ -578,8 +593,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if(impute){
        if(sum(which.duplicated) >0){
         mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
-        df.ld <- data.frame(kept=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
-                            removed=rep(cnames[which.duplicated], ncol(mat.ld)),
+        df.ld <- data.frame(kept=rep(colnames(mat.ld),each=nrow(mat.ld)),
+                            removed=rep(rownames(mat.ld),ncol(mat.ld)),
                             ld=as.numeric(mat.ld),
                             stringsAsFactors=FALSE)
         df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
@@ -662,7 +677,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       }
     } # end of not imputed step
     gpData$geno <- gpData$geno[, !which.duplicated]
-    attr(gpData$geno, "identical") <- rbind(df.ldOld, df.ld)
+    df.ld$removed.refer <- gpData$map[df.ld$removed, "refer"]
+    df.ld$removed.alter <- gpData$map[df.ld$removed, "alter"]
+    df.ld <- rbind(df.ldOld, df.ld)
+    df.ld$sort <- match(df.ld$kept, rownames(gpData$map))
+    df.ld <- orderBy(~sort+removed, df.ld)
+    df.ld$sort <- NULL
+    attr(gpData$geno, "identical") <- df.ld
     cnames <- cnames[!which.duplicated]
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
