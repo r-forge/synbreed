@@ -24,9 +24,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       mclapply(x,y,...,mc.cores=mc.cores)
     }
   }
-  multiCor <- function(x, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){
-    if(cores==1) cor(x, use=use, method=method) else {
-      method <- match.arg(method)
+  multiCor <- function(x, y=NULL, use="everything", method = c("pearson", "kendall", "spearman"), cores=1){
+    method <- match.arg(method)
+    if(cores==1) cor(x, y, use=use, method=method) else if(is.null(y)){
       ncolX <- ncol(x); namesX <- colnames(x)
       mat <- matrix(NA, nrow=ncolX, ncol=ncolX)
       nBlocks <- 1:50; nBlocks <- which.min((nBlocks*(nBlocks+1)*.5)%%cores)
@@ -45,7 +45,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         mat[groups[[blocks[i,2]]], groups[[blocks[i,1]]]] <- t(res[[i]])
       }
       return(mat)
-    }
+    } else cor(x, y, use=use, method=method)
   }
   MG <- rownames(gpData$geno)[unlist(multiLapply(as.data.frame(is.na(t(gpData$geno))),all, mc.cores=cores))]
   if(check)
@@ -77,9 +77,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(is.function(label.heter)){
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
         label.heter <- "1"
-      } else if(is.na(as.numeric(label.heter[1]))){
+      } else if(is.character(label.heter[1])){
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
-        label.heter <- "1"
+        label.heter <- 1
       }
   } else { # atm other formats are supported too
     if(impute & impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")) stop("using Beagle is only possible for a gpData object")
@@ -569,17 +569,17 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
 
   if(!keep.identical){
     set.seed(SEED[2])
+    colnames(gpData$geno) <- cnames
     cnms <- sample(1:ncol(gpData$geno))
-    which.duplicated <- duplicated(gpData$geno[, cnms],MARGIN=2)
-    which.duplicated <- cnames %in% (cnames[cnms])[which.duplicated]
-    rev.which.duplicated <- duplicated(gpData$geno[, cnms],MARGIN=2, fromLast=TRUE)
-    rev.which.duplicated <- cnames %in% (cnames[cnms])[rev.which.duplicated]
+    gpData$geno <- gpData$geno[,cnms]; cnames <- cnames[cnms]; knames[cnms]
+    which.duplicated <- duplicated(gpData$geno,MARGIN=2)
+    rev.which.duplicated <- duplicated(gpData$geno,MARGIN=2, fromLast=TRUE)
     rev.which.duplicated[which.duplicated] <- FALSE
     if(impute){
        if(sum(which.duplicated) >0){
         mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
-        df.ld <- data.frame(kept=rep(cnames[which.duplicated], ncol(mat.ld)),
-                            removed=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
+        df.ld <- data.frame(kept=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
+                            removed=rep(cnames[which.duplicated], ncol(mat.ld)),
                             ld=as.numeric(mat.ld),
                             stringsAsFactors=FALSE)
         df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
@@ -591,8 +591,9 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(sum(which.duplicated) >0){
           gpData$geno[is.na(gpData$geno)] <- 3
           mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
-          df.ld <- data.frame(kept=rep(cnames[which.duplicated], each=ncol(mat.ld)),
-                              removed=rep(cnames[rev.which.duplicated], nrow(mat.ld)),
+          print(mat.ld)
+          df.ld <- data.frame(kept=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
+                              removed=rep(cnames[which.duplicated], ncol(mat.ld)),
                               ld=as.numeric(mat.ld),
                               stringsAsFactors=FALSE)
           df.ld <- df.ld[abs(df.ld$ld)>1-1e-14,]
@@ -600,7 +601,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gpData$geno[gpData$geno==3] <- NA
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
-        which.miss <- multiLapply(as.data.frame(gpData$geno),function(x){sum(is.na(x))}, cores=cores)>0
+        which.miss <- unlist(multiLapply(as.data.frame(gpData$geno),function(x){sum(is.na(x))}, mc.cores=cores))>0
 	    which.miss <- (1:length(which.miss))[which.miss] 	
         if(length(which.miss[which.miss]) == ncol(gpData$geno))
           which.miss <- which.miss[1:(length(which.miss)-1)] 	
@@ -666,7 +667,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if (verbose) cat("   step 10 :",sum(which.duplicated),"duplicated marker(s) removed \n")
     # update map
     if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
-    # update report list
+
   } else{
     if (verbose) cat("   step 10 : No duplicated markers removed \n")
   }
