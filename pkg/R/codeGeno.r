@@ -467,11 +467,12 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           mapfile <- data.frame(markerTEMPbeagle$map$chr, rownames(markerTEMPbeagle$map), markerTEMPbeagle$map$pos, markerTEMPbeagle$map$pos)
           if(!is.integer(mapfile[,1])) mapfile[,1] <- as.integer(as.factor(mapfile[,1]))
           if(gpData$info$map.unit == "M") { mapfile[, 4] <- 1000000 * (mapfile[, 3] <- mapfile[, 3] * 100 )}
-          if(gpData$info$map.unit == "cM")mapfile[, 4] <- 1000000 * mapfile[, 3]
+          if(gpData$info$map.unit == "cM") mapfile[, 4] <- 1000000 * mapfile[, 3]
           while(any(duplicated(markerTEMPbeagle$map))) {mapfile[duplicated(markerTEMPbeagle$map), 4] <- mapfile[duplicated(markerTEMPbeagle$map), 4]+1}
           markerTEMPbeagle$map$pos <- mapfile[, 4]
           write.table(mapfile, file=paste("beagle/run", pre, ".map", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE, na=".", sep="\t")
           mapfile <- paste(" map=beagle/run", pre, ".map ", sep="")
+          markerTEMPbeagle$info$map.unit <- "bp"
         }
         markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
         write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"input.vcf", sep=""))

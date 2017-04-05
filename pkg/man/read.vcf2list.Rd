@@ -40,7 +40,7 @@ Hans-Juergen Auinger
 }
 
 \seealso{
-\code{\link{write.vcf}}
+\code{\link{write.vcf}}, \code{\link{read.vcf2matrix}}
 }
 \examples{
 \dontrun{
@@ -50,6 +50,5 @@ maize$info$map.unit <- "kb"
 maize <- codeGeno(maize)
 write.vcf(maize, "maize.vcf")
 genInfo <- read.vcf2list("maize.vcf")
-
 }
 }

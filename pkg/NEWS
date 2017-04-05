@@ -1,9 +1,13 @@
 0.12-4
 ================================
 
-* Uploaded on r-forge 2017 - 04 - 04
+* Uploaded on r-forge 2017 - 04 - 05
 
-* smoothier presentation of alleles in gpData$map 
+* Smoothier presentation of alleles in gpData$map
+
+* Revised version of write.vcf(), missing positions printed for genetic positions
+
+* Removed links in help to packages not needed any more
 
 0.12-3
 ================================
