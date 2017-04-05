@@ -1,7 +1,7 @@
 # read genomic prediction data
 create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NULL,covar=NULL,
                           reorderMap=TRUE,map.unit="cM",repeated=NULL,modCovar=NULL, cores=1){
-
+  infoCall <- match.call()
   # start with some checks on data
   # geno as matrix but not data.frame (storage)
   if(!map.unit %in% c("cM", "bp", "kb", "Mb")) warning("The measurement unit for the positions in the map should be either 'cM', 'bp', 'kb' or 'Mb'")
@@ -195,6 +195,7 @@ create.gpData <- function(pheno=NULL,geno=NULL,map=NULL,pedigree=NULL,family=NUL
   obj$info$codeGeno <- FALSE
   obj$info$attrPhenoCovars <- attrModCovars
   obj$info$version <- paste("gpData object was created by synbreed version", sessionInfo()$otherPkgs$synbreed$Version)
+  obj$info$Call <- infoCall
 
   # return object of class 'gpData'
   class(obj) <- "gpData"
