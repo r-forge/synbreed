@@ -39,7 +39,7 @@ Hans-Juergen Auinger
 }
 
 \seealso{
-\code{\link{read.vcf2matrix}}, \link{read.vcf2list}}, \code{\link{codeGeno}}
+\code{\link{read.vcf2matrix}}, \code{\link{read.vcf2list}}, \code{\link{codeGeno}}
 }
 \examples{
 map <- data.frame(chr=c(1,1,1,1,1,2,2,2,2),pos=1:9)

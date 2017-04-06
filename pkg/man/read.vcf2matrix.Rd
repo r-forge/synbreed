@@ -40,7 +40,7 @@ Hans-Juergen Auinger
 }
 
 \seealso{
-\code{\link{write.vcf}, \link{read.vcf2list}}}
+\code{\link{write.vcf}}, \code{\link{read.vcf2list}}
 }
 \examples{
 \dontrun{
