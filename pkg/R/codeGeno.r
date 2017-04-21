@@ -678,7 +678,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     gpData$geno <- gpData$geno[, !which.duplicated]
     df.ld$removed.refer <- gpData$map[df.ld$removed, "refer"]
     df.ld$removed.alter <- gpData$map[df.ld$removed, "alter"]
-    df.ld <- rbind(df.ldOld, df.ld)
+    df.ld <- rbind(df.ldOld[, colnames(df.ld)], df.ld)
     df.ld$sort <- match(df.ld$kept, rownames(gpData$map))
     df.ld <- orderBy(~sort+removed, df.ld)
     df.ld$sort <- NULL
