@@ -408,8 +408,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       ptm <- Sys.time()
       for (j in vec.cols){
         if(sum(!is.na(gpData$geno[,j]))>0){
-          cl <- makeCluster(min(cores, detectCores()))
-          registerDoParallel(cl)
           poptab <- table(popStruc[vec.big],gpData$geno[vec.big,j])
           rS <- rowSums(poptab)
           # compute otherstatistics
@@ -442,7 +440,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                 cnt3[j] <- cnt3[j] + nmissfam[as.character(i)]
               }
             }
-          stopCluster(cl)
           }
           if(j==ceiling(length(vec.cols)/50))
             if(verbose)  cat("         approximative run time for imputation by family information ",
