@@ -1,3 +1,10 @@
+0.12-7
+================================
+
+* Uploaded on r-forge 2017 - 05 - 08
+
+* Bug fixed in recoding gpData-objects with kept allele frequencies
+
 0.12-6
 ================================
 
