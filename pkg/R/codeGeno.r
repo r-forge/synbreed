@@ -489,35 +489,39 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           markerTEMPbeagle$info$map.unit <- "bp"
         }
         markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
-        write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"input.vcf", sep=""))
-        if(noHet){
-        output <- system(paste("java -Xmx3000m -jar ",
-                         shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                         # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                         " gtgl=beagle/run", pre, "input.vcf out=beagle/run", pre, "out gprobs=true nthreads=", cores, mapfile, sep=""),
-                         intern=!showBeagleOutput)
-        } else {
-        output <- system(paste("java -Xmx3000m -jar ",
-                         shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                         # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                         " gtgl=beagle/run", pre, "input.vcf out=beagle/run", pre, "out gprobs=true nthreads=", cores, mapfile, sep=""),
-                         intern=!showBeagleOutput)
-        }
-        # read data from beagle
-        gz <- gzfile(paste("beagle/run",pre,"out.vcf.gz",sep=""))
-        resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
-        mode(resTEMP) <- "numeric"
+        for(lg in seq(along=chr)){
+          sel <- unique(c(rownames(gpData$map[is.na(gpData$map$pos) | gpData$map$chr != chr[lg] | !rownames(gpData$map) %in% cnames ,]),
+                          colnames(gpData$geno)[!colnames(gpData$geno) %in% cnames]))
+          TEMP <- discard.markers(markerTEMPbeagle,which=sel)
+          write.vcf(TEMP,paste(file.path(getwd(),"beagle"),"/run",pre,"_",lg,"_input.vcf", sep=""))
+          if(noHet){
+          output <- system(paste("java -Xmx3000m -jar ",
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
+                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                           " gtgl=beagle/run", pre, "_",lg,"_input.vcf out=beagle/run", pre, "_",lg,"_out gprobs=true nthreads=", cores, mapfile, sep=""),
+                           intern=!showBeagleOutput)
+          } else {
+          output <- system(paste("java -Xmx3000m -jar ",
+                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
+                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                           " gtgl=beagle/run", pre, "_",lg,"_input.vcf out=beagle/run", pre, "_",lg,"_out gprobs=true nthreads=", cores, mapfile, sep=""),
+                           intern=!showBeagleOutput)
+          }
+          # read data from beagle
+          gz <- gzfile(paste("beagle/run",pre, "_",lg,"_out.vcf.gz",sep=""))
+          resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
+          mode(resTEMP) <- "numeric"
 
-        # convert dose to genotypes
-        if(noHet){
-          resTEMP[resTEMP<1] <- 0
-          resTEMP[resTEMP>=1] <- 2
-        } else {
-          resTEMP <- round(resTEMP,0) # 0, 1, and 2
+          # convert dose to genotypes
+          if(noHet){
+            resTEMP[resTEMP<1] <- 0
+            resTEMP[resTEMP>=1] <- 2
+          } else {
+            resTEMP <- round(resTEMP,0) # 0, 1, and 2
+          }
+          gpData$geno[,colnames(resTEMP)] <- resTEMP
         }
-        gpData$geno[,colnames(resTEMP)] <- resTEMP
       }
-
       #########################################################################
       # impute missing values with no population structure or missing positions
       #########################################################################

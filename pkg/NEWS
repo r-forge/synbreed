@@ -5,6 +5,8 @@
 
 * Bug fixed in recoding gpData-objects with kept allele frequencies
 
+* chromosome wise beagle to save space
+
 0.12-6
 ================================
 
