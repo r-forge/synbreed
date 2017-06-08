@@ -495,13 +495,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           TEMP <- discard.markers(markerTEMPbeagle,which=sel)
           write.vcf(TEMP,paste(file.path(getwd(),"beagle"),"/run",pre,"_",lg,"_input.vcf", sep=""))
           if(noHet){
-          output <- system(paste("java -Xmx3000m -jar ",
+          output <- system(paste("java -Xmx5000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                            " gtgl=beagle/run", pre, "_",lg,"_input.vcf out=beagle/run", pre, "_",lg,"_out gprobs=true nthreads=", cores, mapfile, sep=""),
                            intern=!showBeagleOutput)
           } else {
-          output <- system(paste("java -Xmx3000m -jar ",
+          output <- system(paste("java -Xmx5000m -jar ",
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                            " gtgl=beagle/run", pre, "_",lg,"_input.vcf out=beagle/run", pre, "_",lg,"_out gprobs=true nthreads=", cores, mapfile, sep=""),
@@ -511,6 +511,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gz <- gzfile(paste("beagle/run",pre, "_",lg,"_out.vcf.gz",sep=""))
           resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
           mode(resTEMP) <- "numeric"
+print(str(resTEMP))
 
           # convert dose to genotypes
           if(noHet){
