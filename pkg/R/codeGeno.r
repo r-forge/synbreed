@@ -9,7 +9,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # read information from arguments
   ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
-
   impute.type <- match.arg(impute.type)
   infoCall <- match.call()
   SEED <- round(runif(2,1,1000000),0)
@@ -81,6 +80,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         warning("assuming heterozygous genotypes coded as 1. Use 'label.heter' to specify if that is not the case")
         label.heter <- 1
       }
+    if(is.null(label.heter)) cat("No heterozygous lines were assumed, due to option 'label.heter=NULL'\n")
   } else { # atm other formats are supported too
     if(impute & impute.type %in% c("beagle","beagleAfterFamily","beagleNoRand","beagleAfterFamilyNoRand")) stop("using Beagle is only possible for a gpData object")
     res <- gpData
@@ -114,10 +114,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   }  else df.ldOld <- NULL
   #  catch errors
   if(check){
-    if(class(gpData$geno)!= "data.frame" & class(gpData$geno) != "matrix") stop("wrong data format")
+    if(class(gpData$geno)!="data.frame" & class(gpData$geno)!="matrix") stop("wrong data format")
     if(any(colMeans(is.na(gpData$geno))==1)) warning("markers with only missing values in data")
     if(length(reference.allele)>1 & length(reference.allele)!=ncol(gpData$geno)) stop("'reference allele' should be of length 1 or match the number of markers")
-    if(class(reference.allele) != mode(gpData$geno)) stop("'reference allele' should be of class character")
+    if(reference.allele!="keep") if(class(reference.allele)!=mode(gpData$geno)) stop("'reference allele' should be of class", mode(gpData$geno))
   }
   # number of genotypes
   n <- nrow(gpData$geno)
@@ -490,19 +490,11 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         }
         markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
           write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"_input.vcf", sep=""))
-          if(noHet){
           output <- system(paste("java -jar ",#-Xmx5g
                            shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
                            # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
                            " gtgl=beagle/run", pre, "_input.vcf out=beagle/run", pre, "_out gprobs=true nthreads=", cores, mapfile, sep=""),
                            intern=!showBeagleOutput)
-          } else {
-          output <- system(paste("java -jar ",#-Xmx5g
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gtgl=beagle/run", pre, "_input.vcf out=beagle/run", pre, "_out gprobs=true nthreads=", cores, mapfile, sep=""),
-                           intern=!showBeagleOutput)
-          }
           # read data from beagle
           gz <- gzfile(paste("beagle/run",pre, "_out.vcf.gz",sep=""))
           resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
