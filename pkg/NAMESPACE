@@ -26,8 +26,8 @@ importFrom("stats", "as.formula", "coef", "cor", "dist", "lm", "model.matrix", "
 importFrom("utils", "capture.output", "read.table", "sessionInfo", "str", "write.table")
 
 S3method("plot", GenMap)
-S3method("[.", GenMap)
-S3method("[.", relationshipMatrix)
+S3method("[", GenMap)
+S3method("[", relationshipMatrix)
 S3method("plot", LDdf)
 S3method("plot", LDmat)
 S3method("plot", pedigree)
