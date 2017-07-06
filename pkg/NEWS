@@ -5,6 +5,8 @@
 
 * complete beagle runs, space value removed
 
+* na.strings option in function create.gpData
+
 0.12-7
 ================================
 

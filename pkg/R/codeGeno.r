@@ -489,25 +489,24 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           markerTEMPbeagle$info$map.unit <- "bp"
         }
         markerTEMPbeagle$map$chr <- as.numeric(as.factor(markerTEMPbeagle$map$chr))
-          write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"_input.vcf", sep=""))
-          output <- system(paste("java -jar ",#-Xmx5g
-                           shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
-                           # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
-                           " gtgl=beagle/run", pre, "_input.vcf out=beagle/run", pre, "_out gprobs=true nthreads=", cores, mapfile, sep=""),
-                           intern=!showBeagleOutput)
-          # read data from beagle
-          gz <- gzfile(paste("beagle/run",pre, "_out.vcf.gz",sep=""))
-          resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
-          mode(resTEMP) <- "numeric"
-
-          # convert dose to genotypes
-          if(noHet){
-            resTEMP[resTEMP<1] <- 0
-            resTEMP[resTEMP>=1] <- 2
-          } else {
-            resTEMP <- round(resTEMP,0) # 0, 1, and 2
-          }
-          gpData$geno[,colnames(resTEMP)] <- resTEMP
+        write.vcf(markerTEMPbeagle,paste(file.path(getwd(),"beagle"),"/run",pre,"_input.vcf", sep=""))
+        output <- system(paste("java -jar ",#-Xmx5g
+                         shQuote(paste(sort(path.package()[grep("synbreed", path.package())])[1], "/java/beagle.21Jan17.6cc.jar", sep="")),
+                         # caution with more than one pacakge with names synbreed*, assume synbreed to be the first one
+                         " gtgl=beagle/run", pre, "_input.vcf out=beagle/run", pre, "_out gprobs=true nthreads=", cores, mapfile, sep=""),
+                         intern=!showBeagleOutput)
+        # read data from beagle
+        gz <- gzfile(paste("beagle/run",pre, "_out.vcf.gz",sep=""))
+        resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
+        mode(resTEMP) <- "numeric"
+        # convert dose to genotypes
+        if(noHet){
+          resTEMP[resTEMP<1] <- 0
+          resTEMP[resTEMP>=1] <- 2
+        } else {
+          resTEMP <- round(resTEMP,0) # 0, 1, and 2
+        }
+        gpData$geno[,colnames(resTEMP)] <- resTEMP
       }
       #########################################################################
       # impute missing values with no population structure or missing positions
