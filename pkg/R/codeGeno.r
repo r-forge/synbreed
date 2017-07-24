@@ -254,13 +254,13 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
                                       return(paste(alt,mid,alt,sep=""))}))
         }
       }
-      gpData$geno <- gpData$geno-1
+      gpData$geno <- as.data.frame(gpData$geno)-1
       if(reference.allele[1]=="minor"){
         afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
         gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
         df.allele[cnames%in%afCols,c(2,4)] <- df.allele[cnames%in%afCols,c(4,2)]
       }
-      if(all.equal(colnames(gpData$geno), rownames(gpData$map)))
+      if(all(names(gpData$geno)==rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])
       else gpData$alleles <- df.allele
     } else { # ploidy
@@ -290,6 +290,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       else gpData$alleles <- df.allele
     }
   }
+  gpData$geno <- as.data.frame(gpData$geno)
 
   #============================================================
   # step 3  - Discarding markers for which the tester is not homozygous or values missing (optional, argument tester = "xxx")
@@ -500,6 +501,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         resTEMP <- read.vcf2matrix(file=gz, FORMAT="DS", IDinRow=TRUE, cores=cores)
         mode(resTEMP) <- "numeric"
         # convert dose to genotypes
+        cat("noHet: ", noHet, "\n")
         if(noHet){
           resTEMP[resTEMP<1] <- 0
           resTEMP[resTEMP>=1] <- 2
@@ -595,7 +597,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         if(sum(which.duplicated) >0){
           gpData$geno[is.na(gpData$geno)] <- 3
           mat.ld <- multiCor(gpData$geno[, which.duplicated], gpData$geno[, rev.which.duplicated], use="pairwise.complete.obs", cores=cores)
-          print(mat.ld)
           df.ld <- data.frame(kept=rep(cnames[rev.which.duplicated], each=nrow(mat.ld)),
                               removed=rep(cnames[which.duplicated], ncol(mat.ld)),
                               ld=as.numeric(mat.ld),
@@ -670,7 +671,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       df.ld$removed.refer <- gpData$map[df.ld$removed, "refer"]
       df.ld$removed.alter <- gpData$map[df.ld$removed, "alter"]
     } else {
-      df.ld$removed.refer <- df.ld$removed.alter <- NA
+      df.ld[,"removed.refer"] <- df.ld[,"removed.alter"] <- NA
     }
     df.ld <- rbind(df.ldOld[, colnames(df.ld)], df.ld)
     df.ld$sort <- match(df.ld$kept, rownames(gpData$map))
@@ -759,5 +760,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
    }
 
   # return a gpData object (or a matrix)
+  gpData$geno <- as.matrix(gpData$geno)
   return(gpData)
 }
