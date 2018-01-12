@@ -55,7 +55,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if(impute.type %in% c("beagle") & length(MG) > 0) stop(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
       else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing! \nImputation may be erroneus.", sep=" "))
     } else if(length(MG) > 0) warning(paste("Of genotype(s) ", MG, " all genotypic values are missing!", sep=" "))
-
+  df.ld <- data.frame(kept=character(), removed=character(), removed.refer=character(), removed.alter=character())
   orgFormat <- class(gpData)
   # check for class 'gpData'
   if(class(gpData)=="gpData"){
@@ -352,17 +352,29 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # step 6  - Discarding homozygout values of the minor allele and markers with more than nmiss values
   #============================================================
 
+
   if(!is.null(tester)){
     gpData$geno[gpData$geno == 2] <- NA
-    gpData$geno <- matrix(as.numeric(gpData$geno), nrow = n)
     if(!is.null(nmiss)){
-      which.miss <- multiLapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss |knames
+      which.miss <- multiLapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss | knames
+      gpData$geno <- gpData$geno[,which.miss]
+      cnames <- cnames[which.miss]; knames <- knames[which.miss]
+      if (verbose) cat("   step 6a :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
+      # update map
+      if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
+    } else{
+      if (verbose) cat("   step 6a : No markers discarded due to fraction of missing values \n")
+    }
+  } else if (noHet){
+    gpData$geno[gpData$geno == 1] <- NA
+    if(!is.null(nmiss)){
+      which.miss <- multiLapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss | knames
       gpData$geno <- gpData$geno[,which.miss]
       cnames <- cnames[which.miss]; knames <- knames[which.miss]
       if (verbose) cat("   step 6  :",sum(!which.miss),"marker(s) discarded with >",nmiss*100,"% false genotyping values \n")
       # update map
       if(!is.null(gpData$map)) gpData$map <- gpData$map[rownames(gpData$map) %in% cnames,]
-    } else{
+    } else {
       if (verbose) cat("   step 6  : No markers discarded due to fraction of missing values \n")
     }
   }
@@ -670,7 +682,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     if("refer" %in% colnames(gpData$map)){
       df.ld$removed.refer <- gpData$map[df.ld$removed, "refer"]
       df.ld$removed.alter <- gpData$map[df.ld$removed, "alter"]
-    } else {
+    } else if(nrow(df.ld)>0){
       df.ld[,"removed.refer"] <- df.ld[,"removed.alter"] <- NA
     }
     df.ld <- rbind(df.ldOld[, colnames(df.ld)], df.ld)
