@@ -257,8 +257,10 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       gpData$geno <- as.data.frame(gpData$geno)-1
       if(reference.allele[1]=="minor"){
         afCols <- cnames[colMeans(gpData$geno, na.rm=TRUE)>midDose]
-        gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
-        df.allele[cnames%in%afCols,c(2,4)] <- df.allele[cnames%in%afCols,c(4,2)]
+        if(length(afCols)>0){
+          gpData$geno[, cnames%in%afCols] <-  rep(1, nrow(gpData$geno)) %*% t(rep(2, length(afCols))) - gpData$geno[, cnames%in%afCols]
+          df.allele[cnames%in%afCols,c(2,4)] <- df.allele[cnames%in%afCols,c(4,2)]
+        }
       }
       if(all(names(gpData$geno)==rownames(gpData$map)))
         gpData$map <- cbind(gpData$map, df.allele[, c("refer", "heter", "alter")])
