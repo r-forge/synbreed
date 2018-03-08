@@ -514,17 +514,10 @@ All data sets are already given as objects of class \code{gpData}. Hence the nex
 <<Recode maize data,eval=TRUE>>=
 maizeC <- codeGeno(maize)
 @
-Resulting object \code{maizeC} is again of class \code{gpData} but with recoded genotypic data. This information is stored for further analysis as \code{codeGeno} sets \code{maizeC$info$codeGeno=TRUE}. When there are heterozygous genotypes, the argument \code{label.heter} is required. This is shown for the \code{mice} data, where genotypes are coded by the observed alleles separated by a slash symbol. A heterozygous genotype is identified whenever the first allele differs from the second allele. This can be generalized by the function
-<<Function to identify heterozygous genotypes,keep.source=FALSE>>=
-# function to check if first character of a string equals third character
-is.heter <- function(x){
-  substr(x,1,1)!=substr(x,3,3)
-}
-@
-The function \code{is.heter} checks for unequal alleles at a locus to identify heterozygous genotypes. It is passed to the function \code{codeGeno} by the argument \code{label.heter}.
+Resulting object \code{maizeC} is again of class \code{gpData} but with recoded genotypic data. This information is stored for further analysis as \code{codeGeno} sets \code{maizeC$info$codeGeno=TRUE}. When there are heterozygous genotypes, the argument \code{label.heter} is required. This is shown for the \code{mice} data, where genotypes are coded by the observed alleles separated by a slash symbol. A heterozygous genotype is identified whenever the first allele differs from the second allele. This is implemented in the option \code{"alleleCoding"} for the argument \code{label.heter} of the function \code{codeGeno}. This compares the first and the last letter of the allele code. So that codings like \code{"AA"}, \code{"A/A"} or \code{"A | A"} are possible.
 <<Recode mice data,eval=FALSE,keep.source=FALSE>>=
 # simple recoding of alleles
-miceC <- codeGeno(mice,label.heter=is.heter)
+miceC <- codeGeno(mice,label.heter="alleleCoding")
 @
 The function \code{codeGeno} enables a preselection of markers and the imputing of missing values. For the following analysis, we choose a threshold for the MAF of $0.05$ and of $0.01$ for the fraction of missing values. All SNPs failing these criteria  are discarded from the object of class \code{gpData}. Missing values are sampled from the marginal marker allele distribution. The corresponding call and verbose output is
 <<Recode and impute mice data,eval=FALSE,keep.source=FALSE>>=
