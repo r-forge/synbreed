@@ -3,6 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Join two \code{gpData} objects
+}
 \description{
 Function for joining two \code{gpData} objects
 }
