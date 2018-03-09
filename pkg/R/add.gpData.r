@@ -6,11 +6,13 @@ add.gpData <- function(gpData1, gpData2){
  if(!is.null(gpData1$pheno))
    pheno2 <- gpData2data.frame(gpData2, onlyPheno=TRUE, trait=1:dim(gpData1$pheno)[2], stringsAsFactors=TRUE) else pheno2 <- NULL
  if(is.null(pheno1)){
-   if(is.null(pheno2)) pheno <- pheno1 else{
-     pheno1
+   if(is.null(pheno2)) pheno <- NULL else{
+     pheno <- pheno2
    }
  } else {
-
+   if(is.null(pheno2)) pheno <- pheno1 else {
+     pheno <- abind(pheno1, pheno2, along=1)
+   }
  }
- return(0) 
+ return(0)
 }
