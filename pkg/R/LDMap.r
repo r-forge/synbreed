@@ -11,8 +11,6 @@ LDMap <- function(LDmat,gpData,chr=NULL,file=NULL,fileFormat="pdf",onefile=TRUE,
 
      # use LD from input arguement
     ret <- LDmat
-    cat("This function is not working at the moment!")
-    return(0)
     if(!is.null(file) & onefile & fileFormat == "pdf"){
       if(substr(file, nchar(file)-nchar(fileFormat)+1, nchar(file)) != fileFormat | nchar(file) < 5)
         file <- paste(file, ".", fileFormat, sep="")
