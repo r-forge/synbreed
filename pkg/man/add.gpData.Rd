@@ -30,7 +30,8 @@ It is returned a \code{gpData} object, which contains \code{gpData1} and \code{g
 Hans-Juergen Auinger
 }
 
-\seealso{
+\seealso{ \code{\link{create.gpData} \code{\link{codeGeno}
 }
 \examples{
+\dontrun{add.gpData(maize, maize)}
 }
