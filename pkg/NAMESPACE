@@ -16,7 +16,6 @@ importFrom("graphics", "axis", "barplot", "box", "curve", "image", "layout", "le
 importFrom("grid", "viewport")
 importFrom("igraph", "graph.data.frame", "plot.igraph")
 importFrom("lattice", "levelplot")
-importFrom("LDheatmap", "LDheatmap")
 importFrom("MASS", "ginv")
 importFrom("methods", "as", "is")
 importFrom("parallel", "detectCores", "makeCluster", "parApply", "parSapply", "parLapply", "stopCluster", "mclapply")
