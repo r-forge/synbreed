@@ -11,7 +11,7 @@ add.gpData <- function(gpData1, gpData2){
    }
  } else {
    if(is.null(pheno2)) pheno <- pheno1 else {
-     if(if(dim(pheno1)[1] ==dim(pheno2)[1]))
+     if(dim(pheno1)[1] ==dim(pheno2)[1])
        pheno <- abind(pheno1, pheno2, along=1)
    }
  }
