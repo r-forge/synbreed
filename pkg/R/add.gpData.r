@@ -11,7 +11,18 @@ add.gpData <- function(gpData1, gpData2){
    }
  } else {
    if(is.null(pheno2)) pheno <- pheno1 else {
-     pheno <- abind(pheno1, pheno2, along=1)
+     if(if(dim(pheno1)[1] ==dim(pheno2)[1]))
+       pheno <- abind(pheno1, pheno2, along=1)
+   }
+ }
+ if(is.null(geno1)){
+   if(is.null(geno2)) geno <- NULL else{
+     geno <- geno2
+   }
+ } else {
+   if(is.null(geno2)) geno <- geno1 else {
+     if(ncol(geno1)==ncol(geno2) & colnames(geno1)==colnames(gneo2))
+     geno <- rbind(geno1, geno2)
    }
  }
  return(0)
