@@ -15,14 +15,14 @@ add.gpData <- function(gpData1, gpData2){
        pheno <- abind(pheno1, pheno2, along=1)
    }
  }
- if(is.null(geno1)){
-   if(is.null(geno2)) geno <- NULL else{
-     geno <- geno2
+ if(is.null(gpData1$geno)){
+   if(is.null(gpData2$geno)) geno <- NULL else{
+     geno <- gpData2$geno
    }
  } else {
-   if(is.null(geno2)) geno <- geno1 else {
-     if(ncol(geno1)==ncol(geno2) & colnames(geno1)==colnames(gneo2))
-     geno <- rbind(geno1, geno2)
+   if(is.null(gpData2$geno)) geno <- gpData1$geno else {
+     if(ncol(gpData1$geno)==ncol(gpData2$geno) & colnames(gpData1$geno)==colnames(gneo2))
+     geno <- rbind(gpData1$geno, gpData2$geno)
    }
  }
  return(0)
