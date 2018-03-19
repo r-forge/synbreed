@@ -60,7 +60,7 @@ add.gpData <- function(gpData1, gpData2){
     }
   } else {
     if(is.null(gpData2$geno)) geno <- gpData1$geno else {
-      if(ncol(gpData1$geno)==ncol(gpData2$geno)) cnmsSwtch <- !all(colnames(geno1)==colnames(geno2))
+      if(ncol(gpData1$geno)==ncol(gpData2$geno)) cnmsSwtch <- !all(colnames(gpData1$geno)==colnames(gpData2$geno))
       if(ncol(gpData1$geno)!=ncol(gpData2$geno) | cnmsSwtch){
         colGen1 <- colnames(gpData2$geno)[!colnames(gpData2$geno)%in%colnames(gpData1$geno)]
         colGen2 <- colnames(gpData1$geno)[!colnames(gpData1$geno)%in%colnames(gpData2$geno)]
@@ -83,6 +83,6 @@ add.gpData <- function(gpData1, gpData2){
       pedigree <- add.pedigree(gpData1$pedigree, gpData2$pedigree)
     }
   }
-  create.gpData(geno=geno,pheno=pheno, map=map,pedigree=pedigree,covar=covarUpdate,map.unit=gpData$info$map.unit,modCovar=dimnames(gpData$phenoCovars)[[2]],repeated=repl)
+  create.gpData(geno=geno,pheno=pheno, map=map,pedigree=pedigree,covar=covarUpdate,map.unit=gpData1$info$map.unit,modCovar=dimnames(gpData1$phenoCovars)[[2]],repeated=repl)
   return(0)
 }
