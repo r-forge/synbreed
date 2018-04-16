@@ -217,7 +217,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
       if(is.null(label.heter)) {
         df.allele$refer <- unlist(multiLapply(alleles, extract, 1, mc.cores=cores))
-        df.allele$alter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
+        df.allele$alter <- unlist(multiLapply(alleles, extract, 3, mc.cores=cores))
         df.allele$heter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
       } else {
         whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
@@ -620,14 +620,22 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gpData$geno[gpData$geno==3] <- NA
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
+        print(dim(gpData$geno))
         which.miss <- unlist(multiLapply(as.data.frame(gpData$geno),function(x){sum(is.na(x))}, mc.cores=cores))>0
-	    which.miss <- (1:length(which.miss))[which.miss] 	
+        print(which.miss)
+	    which.miss <- (1:length(which.miss))[which.miss]
+        print(which.miss) 	
         if(length(which.miss[which.miss]) == ncol(gpData$geno))
           which.miss <- which.miss[1:(length(which.miss)-1)] 	
         if(is.null(keep.list)){
           for(i in which.miss){ 	
-            if(which.duplicated[i]) next 	
-            for(j in ((i+1):ncol(gpData$geno))[!which.duplicated[(i+1):ncol(gpData$geno)]]){ 	
+            if(which.duplicated[i]) next
+            print(which.duplicated)
+            cat(length(which.duplicated), ncol(gpData$geno),"\n")
+            J <- which.miss
+            J <- J[J>i]
+            for(j in J){ 	
+              if(which.duplicated[j]) next
               if(all(gpData$geno[, i] == gpData$geno[, j], na.rm = TRUE)){ 	
                 if(sum(is.na(gpData$geno[, i])) >= sum(is.na(gpData$geno[, j]))){ 	
                   which.duplicated[i] <- TRUE 	
@@ -643,7 +651,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         } else {
           for(i in which.miss){ 	
             if(which.duplicated[i]) next 	
-            for(j in ((i+1):ncol(gpData$geno))[!which.duplicated[(i+1):ncol(gpData$geno)]]){ 	
               if(all(gpData$geno[, i] == gpData$geno[, j], na.rm = TRUE)){
                 if(knames[i]){# knames is logical vector for keep.list. Faster than testing if cnames[i] in keep.list!
                   if(knames[j]) next else which.duplicated[j] <- TRUE
