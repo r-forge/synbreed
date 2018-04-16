@@ -620,20 +620,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           gpData$geno[gpData$geno==3] <- NA
           rm(mat.ld)
         } else df.ld <- data.frame(kept=as.character(), removed=as.character())
-        print(dim(gpData$geno))
         which.miss <- unlist(multiLapply(as.data.frame(gpData$geno),function(x){sum(is.na(x))}, mc.cores=cores))>0
-        print(which.miss)
-	    which.miss <- (1:length(which.miss))[which.miss]
-        print(which.miss) 	
+	    which.miss <- (1:length(which.miss))[which.miss] 	
         if(length(which.miss[which.miss]) == ncol(gpData$geno))
           which.miss <- which.miss[1:(length(which.miss)-1)] 	
         if(is.null(keep.list)){
           for(i in which.miss){ 	
             if(which.duplicated[i]) next
-            print(which.duplicated)
-            cat(length(which.duplicated), ncol(gpData$geno),"\n")
             J <- which.miss
-            J <- J[J>i]
+            J <- J[J>i] 	
             for(j in J){ 	
               if(which.duplicated[j]) next
               if(all(gpData$geno[, i] == gpData$geno[, j], na.rm = TRUE)){ 	
@@ -651,6 +646,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         } else {
           for(i in which.miss){ 	
             if(which.duplicated[i]) next 	
+            for(j in ((i+1):ncol(gpData$geno))[!which.duplicated[(i+1):ncol(gpData$geno)]]){ 	
               if(all(gpData$geno[, i] == gpData$geno[, j], na.rm = TRUE)){
                 if(knames[i]){# knames is logical vector for keep.list. Faster than testing if cnames[i] in keep.list!
                   if(knames[j]) next else which.duplicated[j] <- TRUE
