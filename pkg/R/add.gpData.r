@@ -83,6 +83,8 @@ add.gpData <- function(gpData1, gpData2){
       pedigree <- add.pedigree(gpData1$pedigree, gpData2$pedigree)
     }
   }
-  create.gpData(geno=geno,pheno=pheno, map=map,pedigree=pedigree,covar=covarUpdate,map.unit=gpData1$info$map.unit,modCovar=dimnames(gpData1$phenoCovars)[[2]],repeated=repl)
+  create.gpData(geno=geno,pheno=pheno, map=map,pedigree=pedigree,#covar=covarUpdate,
+                map.unit=gpData1$info$map.unit,modCovar=dimnames(gpData1$phenoCovars)[[2]]#,repeated=repl
+               )
   return(0)
 }
