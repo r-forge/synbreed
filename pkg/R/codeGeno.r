@@ -439,7 +439,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           for (i in rownames(poptab)[nmissfam > 0]){
             # impute values for impute.type="family" : all missing genotypes
             allTab <- table(gpData$geno[popStruc[vec.big] %in% i, j])
-            if(length(allTab) == 1){
+            if(length(allTab) == 1 & rS[i] > minFam){
               gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- as.numeric(names(allTab))
               cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
             } else if(impute.type %in% c("family", "beagleAfterFamily")){
