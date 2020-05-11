@@ -9,6 +9,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   # read information from arguments
   ##### rownames(res)[apply(is.na(res), 1, mean)>.5]
   #============================================================
+
   impute.type <- match.arg(impute.type)
   infoCall <- match.call()
   SEED <- round(runif(2,1,1000000),0)
@@ -212,13 +213,15 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       } else {
         alleles <- multiLapply(as.data.frame(gpData$geno),levels,mc.cores=cores)
       }
+      alleleNum <- multiLapply(alleles, length, mc.cores=cores)
       names(alleles) <- cnames
       gpData$geno <- multiLapply(as.data.frame(gpData$geno), as.numeric, mc.cores=cores)
       df.allele <- data.frame(id=rownames(gpData$map), refer=NA, heter=NA, alter=NA, stringsAsFactors=FALSE)
       if(is.null(label.heter)) {
         df.allele$refer <- unlist(multiLapply(alleles, extract, 1, mc.cores=cores))
-        df.allele$alter <- unlist(multiLapply(alleles, extract, 3, mc.cores=cores))
-        df.allele$heter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
+        df.allele$alter <- unlist(multiLapply(alleles, extract, 2, mc.cores=cores))
+        df.allele$heter <- unlist(multiLapply(alleles, extract, 3, mc.cores=cores))
+        df.allele[unlist(alleleNum)==2&!is.na(unlist(alleleNum)), c("alter","heter")] <- df.allele[unlist(alleleNum)==2&!is.na(unlist(alleleNum)), c("heter", "alter")]
       } else {
         whereHetPos <- function(x, y=NULL){if(is.function(y)) z <- c((1:3)[y(x)], 3)
                                            else if(y=="alleleCoding") z <- c((1:3)[substr(x, 1, 1) != substr(x, nchar(x), nchar(x))],3)
@@ -368,7 +371,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if (verbose) cat("   step 6a : No markers discarded due to fraction of missing values \n")
     }
   } else if (noHet){
-    gpData$geno[gpData$geno == 1] <- NA
+    gpData$geno[!is.na(gpData$alleles$heter),][gpData$geno[!is.na(gpData$alleles$heter),] == 1] <- NA
     if(!is.null(nmiss)){
       which.miss <- multiLapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss | knames
       gpData$geno <- gpData$geno[,which.miss]
@@ -586,7 +589,6 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
   #============================================================
   # step 10 - discard duplicated markers   (optional, argument keep.identical=FALSE)
   #============================================================
-
   if(!keep.identical){
     set.seed(SEED[2])
     colnames(gpData$geno) <- cnames
