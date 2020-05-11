@@ -371,7 +371,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       if (verbose) cat("   step 6a : No markers discarded due to fraction of missing values \n")
     }
   } else if (noHet){
-    gpData$geno[!is.na(gpData$alleles$heter),][gpData$geno[!is.na(gpData$alleles$heter),] == 1] <- NA
+    heterSel <- !is.na(gpData$alleles$heter)
+    gpData$geno[,heterSel][gpData$geno[,heterSel] == 1] <- NA
     if(!is.null(nmiss)){
       which.miss <- multiLapply(as.data.frame(is.na(gpData$geno)),mean,na.rm=TRUE, mc.cores=cores) <= nmiss | knames
       gpData$geno <- gpData$geno[,which.miss]
@@ -442,7 +443,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
           for (i in rownames(poptab)[nmissfam > 0]){
             # impute values for impute.type="family" : all missing genotypes
             allTab <- table(gpData$geno[popStruc[vec.big] %in% i, j])
-            if(length(allTab) == 1 & rS[i] > minFam){
+            if(length(allTab) == 1){
               gpData$geno[is.na(gpData$geno[,j]) & popStruc %in% i ,j] <- as.numeric(names(allTab))
               cnt1[j] <- cnt1[j] + nmissfam[as.character(i)]
             } else if(impute.type %in% c("family", "beagleAfterFamily")){
@@ -551,6 +552,8 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
       }
       if(!is.null(tester) & impute.type %in% c("random","beagle", "beagleAfterFamily")) gpData$geno <- gpData$geno/2
 
+
+
     #============================================================
     # step 8 - recoding
     #============================================================
@@ -593,7 +596,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
     set.seed(SEED[2])
     colnames(gpData$geno) <- cnames
     cnms <- sample(1:ncol(gpData$geno))
-    gpData$geno <- gpData$geno[,cnms]; cnames <- cnames[cnms]; knames[cnms]
+   gpData$geno <- gpData$geno[,cnms]; cnames <- cnames[cnms]; knames[cnms]
     which.duplicated <- duplicated(gpData$geno,MARGIN=2)
     rev.which.duplicated <- duplicated(gpData$geno,MARGIN=2, fromLast=TRUE)
     rev.which.duplicated[which.duplicated] <- FALSE
@@ -608,7 +611,7 @@ codeGeno <- function(gpData,impute=FALSE,impute.type=c("random","family","beagle
         df.ld$ld <- NULL
         rm(mat.ld)
       } else df.ld <- data.frame(kept=as.character(), removed=as.character())
-    } else {# end of imputed step
+    } else {# end of impute step
       if(!all(!is.na(gpData$geno))){
         if(sum(which.duplicated) >0){
           gpData$geno[is.na(gpData$geno)] <- 3
