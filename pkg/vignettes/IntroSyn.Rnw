@@ -380,7 +380,7 @@ $$y_i=g_i+e_i, \; i =1,...,n$$
 where $e_i = N(0,\sigma^2)$. Genotypic and phenotypic data was simulated for 1250 DH lines. Moreover, pedigree for additional 360 ancestor individuals is available. These ancestors can be heterozygous. The 1250 DH lines belong to 25 biparental families with 50 lines in each family. The \code{maize} data can be loaded within the \pkg{synbreed} package using
 <<Load the maize data set,results=hide>>=
 library(synbreed)
-library(synbreedData)
+#library(synbreedData)
 data(maize)
 @
 A basic overview over the contents of the \code{gpData} is available through
