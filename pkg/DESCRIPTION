@@ -1,8 +1,8 @@
 Package: synbreed
 Type: Package
 Title: Framework for the Analysis of Genomic Prediction Data using R
-Version: 0.12-13
-Date: 2020-05-11
+Version: 0.12-14
+Date: 2021-03-10
 Encoding: UTF-8
 Author: Hans-Juergen Auinger, Valentin Wimmer, Theresa Albrecht, Chris-Carolin Schoen with contributions by Larry Schaeffer, Malena Erbe, Ulrike Ober, Christian Reimer, Yvonne Badke and Peter VandeHaar
 Depends: R (>= 2.14)

@@ -90,7 +90,7 @@ options(SweaveHooks=list(fig=function() par(mar=c(4,4,4,1.5)+0.1,cex.axis=1,cex.
 options(SweaveSyntax="SweaveSyntaxNoweb")
 set.seed(1234)
 library(synbreed)
-library(synbreedData)
+#library(synbreedData)
 @
 
 
@@ -473,7 +473,7 @@ dev.off()
 
 \subsubsection{Dairy cattle data}
 
-This data set contains genotypic, phenotypic, map and pedigree data of 500 bulls. Genotypic and pedigree data are taken from real cattle data while phenotypes are simulated. The \code{cattle} data was provided by the Animal Breeding and Genetics group of Henner Simianer, Georg-August-Universität Göttingen. The data can be loaded using
+This data set contains genotypic, phenotypic, map and pedigree data of 500 bulls. Genotypic and pedigree data are taken from real cattle data while phenotypes are simulated. The \code{cattle} data was provided by the Animal Breeding and Genetics group of Henner Simianer, Georg-August-Universit?t G?ttingen. The data can be loaded using
 <<Load the cattle data set>>=
 data("cattle")
 @
@@ -835,7 +835,7 @@ There is no universal constraint in the \pkg{synbreed} package with respect to t
 
 This research was funded by the German Federal Ministry of Education and
 Research (BMBF) within the AgroClustEr \textit{Synbreed} $-$  \textit{Synergistic plant and
-animal breeding (FKZ 0315528A)}. We gratefully acknowledge Larry Schaeffer for providing us \proglang{R} code which is used by functions \code{kin} and \code{MME}, Michael Höhle for valuable discussions with respect to the manuscript and package design and Richard Mott for his help with the \code{mice} data. Henner Simianer, Malena Erbe and Christian Reimer are acknowledged for providing and preparing the \code{cattle} data. All users of the beta-version of the \pkg{synbreed} package are acknowledged for their suggestions and contributions.
+animal breeding (FKZ 0315528A)}. We gratefully acknowledge Larry Schaeffer for providing us \proglang{R} code which is used by functions \code{kin} and \code{MME}, Michael H?hle for valuable discussions with respect to the manuscript and package design and Richard Mott for his help with the \code{mice} data. Henner Simianer, Malena Erbe and Christian Reimer are acknowledged for providing and preparing the \code{cattle} data. All users of the beta-version of the \pkg{synbreed} package are acknowledged for their suggestions and contributions.
 
 
 
