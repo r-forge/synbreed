@@ -2,10 +2,6 @@
 % Please edit documentation in R/gpMod.r, R/summary.gpMod.R
 \name{gpMod}
 \alias{gpMod}
-\alias{summary.gpMod}
-\alias{summary.gpModList}
-\alias{print.summary.gpMod}
-\alias{print.summary.gpModList}
 \title{Genomic predictions models for objects of class gpData}
 \usage{
 gpMod(
@@ -140,7 +136,8 @@ mod1 <- gpMod(maizeC, model = "BLUP", kin = K)
 mod2 <- gpMod(maizeC, model = "BLUP", kin = U)
 
 # Bayesian Lasso
-prior <- list(varE = list(df = 3, S = 35), lambda = list(shape = 0.52, rate = 1e-4, value = 20, type = "random"))
+lambdalist <- list(shape = 0.52, rate = 1e-4, value = 20, type = "random")
+prior <- list(varE = list(df = 3, S = 35), lambda = lambdalist)
 mod3 <- gpMod(maizeC, model = "BL", prior = prior, nIter = 6000, burnIn = 1000, thin = 5)
 
 summary(mod1)

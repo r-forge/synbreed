@@ -252,13 +252,6 @@ gp$geno
 
 # example with heterogeneous stock mice
 \dontrun{
-library(synbreedData)
-data(mice)
-summary(mice)
-# heterozygous values must be labeled  (may run some seconds)
-mice.coded <- codeGeno(mice, label.heter = function(x) substr(x, 1, 1) != substr(x, 3, 3))
-
-
 # example with maize data and imputing by family
 data(maize)
 # first only recode alleles

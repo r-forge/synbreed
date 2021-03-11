@@ -45,7 +45,8 @@ in \code{gpMod}.
 \examples{
 
 # Example from Henderson (1977)
-dat <- data.frame(y = c(132, 147, 156, 172), time = c(1, 2, 1, 2), row.names = c("ID1", "ID2", "ID3", "ID4"))
+y <- c(132, 147, 156, 172)
+dat <- data.frame(y = y, time = c(1, 2, 1, 2), row.names = c("ID1", "ID2", "ID3", "ID4"))
 ped <- create.pedigree(
   ID = c("ID6", "ID5", "ID1", "ID2", "ID3", "ID4"),
   Par1 = c(0, 0, "ID5", "ID5", "ID1", "ID6"),
@@ -56,7 +57,7 @@ A <- kin(gp, ret = "add")
 
 # assuming h2=sigma2u/(sigma2u+sigma2)=0.5
 # no REML fit possible due to the limited number of observations
-y <- c(132, 147, 156, 172)
+
 names(y) <- paste("ID", 1:4, sep = "")
 mod1 <- list(fit = list(sigma = c(1, 1), X = matrix(1, ncol = 1, nrow = 4)), kin = A, model = "BLUP", y = y, m = NULL)
 # matrix A included all individuals (including those which should be predicted)
