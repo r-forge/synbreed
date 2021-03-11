@@ -221,6 +221,8 @@ called using \code{path.package()}.
 \examples{
 
 # create marker data for 9 SNPs and 10 homozygous individuals
+
+\dontrun{
 snp9 <- matrix(c(
   "AA", "AA", "AA", "BB", "AA", "AA", "AA", "AA", NA,
   "AA", "AA", "BB", "BB", "AA", "AA", "BB", "AA", NA,
@@ -250,8 +252,7 @@ gp.coded <- codeGeno(gp, impute = TRUE, impute.type = "random")
 gp.coded$geno
 gp$geno
 
-# example with heterogeneous stock mice
-\dontrun{
+
 # example with maize data and imputing by family
 data(maize)
 # first only recode alleles

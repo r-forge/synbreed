@@ -59,7 +59,9 @@ A <- kin(gp, ret = "add")
 # no REML fit possible due to the limited number of observations
 
 names(y) <- paste("ID", 1:4, sep = "")
-mod1 <- list(fit = list(sigma = c(1, 1), X = matrix(1, ncol = 1, nrow = 4)), kin = A, model = "BLUP", y = y, m = NULL)
+mod1 <- list(fit = list(sigma = c(1, 1),
+X = matrix(1, ncol = 1, nrow = 4)), 
+kin = A, model = "BLUP", y = y, m = NULL)
 # matrix A included all individuals (including those which should be predicted)
 class(mod1) <- "gpMod"
 predict(mod1, c("ID5", "ID6"))
